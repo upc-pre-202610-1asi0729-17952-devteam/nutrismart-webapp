@@ -1,0 +1,44 @@
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+  @include mat.theme((
+    color: (
+      primary: mat.$cyan-palette,
+      tertiary: mat.$teal-palette,
+    ),
+    typography: Poppins,
+    density: 0,
+  ));
+}
+
+body {
+  color-scheme: light;
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+  margin: 0;
+  height: 100%;
+}
+
+:root {
+  --nutrismart-primary: #508B89;
+  --nutrismart-primary-dark: #3a6b69;
+  --nutrismart-primary-light: #7ab3b1;
+  --nutrismart-surface: #ffffff;
+  --nutrismart-on-primary: #ffffff;
+  --nutrismart-sidebar-bg: #ffffff;
+  --nutrismart-sidebar-active: #e8f4f4;
+  --nutrismart-streak-bg: #508B89;
+  --nutrismart-text-primary: #1a1a1a;
+  --nutrismart-text-secondary: #6b7280;
+
+  @include mat.toolbar-overrides((
+    container-background-color: #508B89,
+    container-text-color: #ffffff,
+  ));
+
+  @include mat.sidenav-overrides((
+    container-background-color: #ffffff,
+  ));
+}

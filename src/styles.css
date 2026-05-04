@@ -1,0 +1,33 @@
+@import './material-theme.scss';
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', "Helvetica Neue", sans-serif;
+}
+
+.container-with-spacing {
+  margin: 10px;
+}
+
+.ns-card {
+  background: var(--nutrismart-surface);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+}
+
+.ns-primary-bg {
+  background-color: var(--nutrismart-primary);
+  color: var(--nutrismart-on-primary);
+}
+
+.ns-streak-banner {
+  background-color: var(--nutrismart-streak-bg);
+  color: #ffffff;
+  border-radius: 12px;
+  padding: 20px 24px;
+}
