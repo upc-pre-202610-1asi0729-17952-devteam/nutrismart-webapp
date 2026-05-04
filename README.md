@@ -1,59 +1,44 @@
-# NutrismartWebapp
+# nutrismart-webapp
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.9.
+`nutrismart-webapp` is an Angular 21 client application for NutriSmart — an intelligent contextual nutrition SaaS platform. The application helps users reach their fitness goals (weight loss or muscle gain) through smart nutritional tracking, personalized recommendations based on real context (weather, location, history), and visual food analysis.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- Nutrition log tracking with daily macro summaries
+- Smart Scan: visual food analysis via Google Cloud Vision
+- Contextual recommendations based on weather and location
+- Body metrics tracking (BMI, BMR, TDEE)
+- Activity and wearable sync with Google Fit
+- Analytics dashboard with progress reports
+- Subscription and billing management via Stripe (test mode)
+- Internationalization with English (`en_US`) and Spanish (`es_419`) via `ngx-translate`
+- Accessibility with ARIA attributes
+- Angular Material with NutriSmart custom theme
 
-```bash
-ng serve
-```
+## Team
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+| Name | GitHub |
+|---|---|
+| Del Aguila Del Aguila, Olenka Priscilla | [@olenkisha_14](https://github.com/olenkisha_14) |
+| Espinoza Cruz, Angela Milagros | [@Emy127](https://github.com/Emy127) |
+| Mora Rivera, Joel Fernando | [@xJoelFMRx](https://github.com/xJoelFMRx) |
+| Soto Palacios, Brandon Wilder | [@Brandon1677](https://github.com/Brandon1677) |
+| Villarreal Bazan, Angel Martin | [@nevatrix](https://github.com/nevatrix) |
 
-## Code scaffolding
+## Prerequisites
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- Node.js (LTS recommended)
+- npm
+- Angular CLI 21
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Installation
 
 ```bash
-ng test
+npm install
 ```
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
+## Running the Application
 
 ```bash
-ng e2e
+npm start
 ```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
