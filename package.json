@@ -1,6 +1,9 @@
 {
   "name": "nutrismart-webapp",
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "NutriSmart - Intelligent Contextual Nutrition Platform",
+  "author": "NutriSmart Open-Source Team",
+  "license": "MIT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
