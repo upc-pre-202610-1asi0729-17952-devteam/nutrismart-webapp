@@ -1,0 +1,136 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <img src="/logo.svg" alt="NutriSmart" width="48" height="48" />
+      <span class="auth-brand">NutriSmart</span>
+    </div>
+
+    <h1 class="auth-title">Create your account</h1>
+    <p class="auth-subtitle">Start your personalised nutrition journey today</p>
+
+    @if (registerError()) {
+      <div class="auth-error">{{ registerError() }}</div>
+    }
+
+    <button type="button" class="btn-google">
+      <span class="google-icon">G</span> Continue with Google
+    </button>
+
+    <div class="divider"><span>or</span></div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName" class="form-label">First name</label>
+          <input
+            id="firstName"
+            type="text"
+            formControlName="firstName"
+            class="form-input"
+            [class.is-invalid]="form.get('firstName')?.invalid && form.get('firstName')?.touched"
+            placeholder="Ana"
+            autocomplete="given-name"
+          />
+          @if (form.get('firstName')?.invalid && form.get('firstName')?.touched) {
+            <span class="field-error">First name is required.</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="lastName" class="form-label">Last name</label>
+          <input
+            id="lastName"
+            type="text"
+            formControlName="lastName"
+            class="form-input"
+            [class.is-invalid]="form.get('lastName')?.invalid && form.get('lastName')?.touched"
+            placeholder="García"
+            autocomplete="family-name"
+          />
+          @if (form.get('lastName')?.invalid && form.get('lastName')?.touched) {
+            <span class="field-error">Last name is required.</span>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email" class="form-label">Email address</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          class="form-input"
+          [class.is-invalid]="form.get('email')?.invalid && form.get('email')?.touched"
+          placeholder="you@example.com"
+          autocomplete="email"
+        />
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <span class="field-error">
+            @if (form.get('email')?.errors?.['required']) { Email is required. }
+            @else { Please enter a valid email address. }
+          </span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <div class="input-wrapper">
+          <input
+            id="password"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            class="form-input"
+            placeholder="Create a strong password"
+            autocomplete="new-password"
+          />
+          <button type="button" class="eye-toggle" (click)="togglePassword()" aria-label="Toggle password visibility">
+            {{ showPassword() ? '🙈' : '👁️' }}
+          </button>
+        </div>
+
+        @if (form.get('password')?.dirty) {
+          <ul class="password-hints">
+            <li [class.met]="reqLength">At least 8 characters</li>
+            <li [class.met]="reqNumber">Contains a number</li>
+            <li [class.met]="reqUppercase">Contains an uppercase letter</li>
+          </ul>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword" class="form-label">Confirm password</label>
+        <input
+          id="confirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          class="form-input"
+          [class.is-invalid]="form.get('confirmPassword')?.invalid && form.get('confirmPassword')?.touched"
+          placeholder="Repeat your password"
+          autocomplete="new-password"
+        />
+        @if (form.get('confirmPassword')?.invalid && form.get('confirmPassword')?.touched) {
+          <span class="field-error">Passwords do not match.</span>
+        }
+      </div>
+
+      <div class="form-group form-check">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="terms" />
+          I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a>
+        </label>
+        @if (form.get('terms')?.invalid && form.get('terms')?.touched) {
+          <span class="field-error">You must accept the terms to continue.</span>
+        }
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="loading()">
+        @if (loading()) { Creating account… } @else { Create account }
+      </button>
+    </form>
+
+    <p class="auth-switch">
+      Already have an account?
+      <a routerLink="/auth/login" class="link">Sign in</a>
+    </p>
+  </div>
+</div>
