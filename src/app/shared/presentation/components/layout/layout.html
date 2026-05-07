@@ -1,0 +1,58 @@
+<div class="app-shell">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🌿</div>
+      <span class="logo-text">NutriSmart</span>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="section-label">{{ 'nav.principal' | translate }}</div>
+      @for (item of principalNav(); track item.link) {
+        <a class="nav-item"
+           [routerLink]="item.link"
+           routerLinkActive="active"
+           [attr.aria-label]="item.label | translate">
+          <span class="nav-icon">{{ item.icon }}</span>
+          {{ item.label | translate }}
+        </a>
+      }
+    </div>
+
+    <div class="sidebar-section">
+      <div class="section-label">{{ 'nav.tools' | translate }}</div>
+      @for (item of toolsNav(); track item.link) {
+        <a class="nav-item"
+           [routerLink]="item.link"
+           routerLinkActive="active"
+           [attr.aria-label]="item.label | translate">
+          <span class="nav-icon">{{ item.icon }}</span>
+          {{ item.label | translate }}
+        </a>
+      }
+    </div>
+
+    <div class="sidebar-bottom">
+      <app-language-switcher />
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-row">
+        <div class="user-avatar">AG</div>
+        <div class="user-info">
+          <div class="user-name">Ana García</div>
+          <div class="user-links">
+            <a [routerLink]="'/profile'">{{ 'nav.profile' | translate }}</a>
+            · <a href="#">{{ 'nav.logout' | translate }}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <router-outlet />
+    <app-footer-content />
+  </main>
+</div>
