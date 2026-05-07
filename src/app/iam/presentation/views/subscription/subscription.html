@@ -1,0 +1,35 @@
+<div class="subscription-shell">
+  <div class="subscription-header">
+    <div class="brand">NutriSmart</div>
+    <h1 class="page-title">Choose your plan</h1>
+    <p class="page-subtitle">Unlock the full power of AI-driven nutrition. Cancel anytime.</p>
+  </div>
+
+  <div class="plans-grid">
+    @for (plan of plans; track plan.plan) {
+      <div class="plan-card" [class.featured]="plan.featured">
+        @if (plan.badge) {
+          <span class="plan-badge">{{ plan.badge }}</span>
+        }
+
+        <h3 class="plan-name">{{ plan.name }}</h3>
+        <div class="plan-price">{{ plan.price }}</div>
+
+        <ul class="plan-features">
+          @for (feature of plan.features; track feature) {
+            <li>✓ {{ feature }}</li>
+          }
+        </ul>
+
+        <button type="button" class="btn-plan" [class.btn-plan-featured]="plan.featured" (click)="selectPlan(plan.plan)">
+          {{ plan.ctaLabel }}
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="subscription-footer">
+    <p class="legal-text">Cancel anytime · Secure payment via Stripe</p>
+    <button type="button" class="maybe-later" (click)="maybeLater()">Maybe later →</button>
+  </div>
+</div>
