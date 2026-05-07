@@ -170,12 +170,14 @@ export class IamStore {
    *
    * @param updates - Partial object with firstName, lastName and/or email.
    */
-  updateProfile(updates: Partial<{ firstName: string; lastName: string; email: string }>): void {
+  updateProfile(updates: Partial<{ firstName: string; lastName: string; email: string; birthday: string; biologicalSex: string }>): void {
     const user = this._currentUser();
     if (!user) return;
     if (updates.firstName !== undefined) user.firstName = updates.firstName;
     if (updates.lastName !== undefined) user.lastName = updates.lastName;
     if (updates.email !== undefined) user.email = updates.email;
+    if (updates.birthday !== undefined) user.birthday = updates.birthday;
+    if (updates.biologicalSex !== undefined) user.biologicalSex = updates.biologicalSex;
     this._currentUser.set(user);
     this.persist();
   }

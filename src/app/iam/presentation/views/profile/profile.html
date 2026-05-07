@@ -111,11 +111,11 @@
 
             <div class="form-group">
               <label class="form-label">{{ 'profile.activity_level' | translate }}</label>
-              <select class="form-input" [value]="selectedActivity()" (change)="setActivity($any($event.target).value)">
-                <option [value]="ActivityLevel.SEDENTARY">{{ 'onboarding.sedentary' | translate }}</option>
-                <option [value]="ActivityLevel.MODERATE">{{ 'onboarding.moderate' | translate }}</option>
-                <option [value]="ActivityLevel.ACTIVE">{{ 'onboarding.active' | translate }}</option>
-                <option [value]="ActivityLevel.VERY_ACTIVE">{{ 'onboarding.very_active' | translate }}</option>
+              <select class="form-input" (change)="setActivity($any($event.target).value)">
+                <option [value]="ActivityLevel.SEDENTARY"   [selected]="selectedActivity() === ActivityLevel.SEDENTARY">{{ 'onboarding.sedentary' | translate }}</option>
+                <option [value]="ActivityLevel.MODERATE"    [selected]="selectedActivity() === ActivityLevel.MODERATE">{{ 'onboarding.moderate' | translate }}</option>
+                <option [value]="ActivityLevel.ACTIVE"      [selected]="selectedActivity() === ActivityLevel.ACTIVE">{{ 'onboarding.active' | translate }}</option>
+                <option [value]="ActivityLevel.VERY_ACTIVE" [selected]="selectedActivity() === ActivityLevel.VERY_ACTIVE">{{ 'onboarding.very_active' | translate }}</option>
               </select>
             </div>
           </form>

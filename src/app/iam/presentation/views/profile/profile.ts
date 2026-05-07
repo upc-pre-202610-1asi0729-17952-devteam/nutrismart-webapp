@@ -76,11 +76,11 @@ export class Profile {
    * Reactive form for personal information.
    */
   personalForm = this.fb.group({
-    firstName: [this.iamStore.currentUser()?.firstName ?? '', Validators.required],
-    lastName:  [this.iamStore.currentUser()?.lastName ?? '',  Validators.required],
-    email:     [this.iamStore.currentUser()?.email ?? '',     [Validators.required, Validators.email]],
-    birthday:  [''],
-    biologicalSex: [''],
+    firstName:    [this.iamStore.currentUser()?.firstName    ?? '', Validators.required],
+    lastName:     [this.iamStore.currentUser()?.lastName     ?? '', Validators.required],
+    email:        [this.iamStore.currentUser()?.email        ?? '', [Validators.required, Validators.email]],
+    birthday:     [this.iamStore.currentUser()?.birthday     ?? ''],
+    biologicalSex:[this.iamStore.currentUser()?.biologicalSex ?? ''],
   });
 
   // ─── Panel 2 — Physical details and goals ─────────────────────────────────
@@ -207,8 +207,8 @@ export class Profile {
    */
   applyPersonal(): void {
     if (this.personalForm.invalid) { this.personalForm.markAllAsTouched(); return; }
-    const { firstName, lastName } = this.personalForm.value;
-    this.iamStore.updateProfile({ firstName: firstName!, lastName: lastName! });
+    const { firstName, lastName, birthday, biologicalSex } = this.personalForm.value;
+    this.iamStore.updateProfile({ firstName: firstName!, lastName: lastName!, birthday: birthday ?? '', biologicalSex: biologicalSex ?? '' });
     this.personalSaved.set(true);
     setTimeout(() => this.personalSaved.set(false), 2500);
   }

@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "firstName": "Ana",
       "lastName": "García",
       "email": "ana.garcia@gmail.com",
@@ -10,7 +10,10 @@
       "height": 163,
       "activityLevel": "MODERATE",
       "plan": "PRO",
-      "restrictions": ["LACTOSE_FREE", "SEAFOOD_FREE"],
+      "restrictions": [
+        "LACTOSE_FREE",
+        "SEAFOOD_FREE"
+      ],
       "medicalConditions": [],
       "dailyCalorieTarget": 1800,
       "proteinTarget": 120,
@@ -18,80 +21,490 @@
       "fatTarget": 55,
       "fiberTarget": 25,
       "streak": 5,
+      "consecutiveMisses": 0,
+      "birthday": "1998-03-15",
+      "biologicalSex": "female"
+    },
+    {
+      "id": "Mv9paKyK60k",
+      "firstName": "Antonio",
+      "lastName": "Villarreal",
+      "email": "a@gmail.com",
+      "goal": "MUSCLE_GAIN",
+      "weight": 100,
+      "height": 160,
+      "activityLevel": "ACTIVE",
+      "plan": "PREMIUM",
+      "restrictions": [
+        "SEAFOOD_FREE",
+        "VEGETARIAN"
+      ],
+      "medicalConditions": [],
+      "dailyCalorieTarget": 3150,
+      "proteinTarget": 200,
+      "carbsTarget": 390,
+      "fatTarget": 88,
+      "fiberTarget": 25,
+      "streak": 0,
       "consecutiveMisses": 0
     }
   ],
   "nutrition-log": [
-    { "id": 1, "userId": 1, "date": "2026-05-07", "mealType": "BREAKFAST", "foodName": "Cooked oatmeal", "quantity": 80, "calories": 120, "protein": 5, "carbs": 22, "fat": 2 },
-    { "id": 2, "userId": 1, "date": "2026-05-07", "mealType": "BREAKFAST", "foodName": "Medium banana", "quantity": 120, "calories": 107, "protein": 1, "carbs": 27, "fat": 0 },
-    { "id": 3, "userId": 1, "date": "2026-05-07", "mealType": "BREAKFAST", "foodName": "Skim milk", "quantity": 200, "calories": 153, "protein": 7, "carbs": 12, "fat": 5 },
-    { "id": 4, "userId": 1, "date": "2026-05-07", "mealType": "LUNCH", "foodName": "White rice", "quantity": 180, "calories": 234, "protein": 4, "carbs": 52, "fat": 0 },
-    { "id": 5, "userId": 1, "date": "2026-05-07", "mealType": "LUNCH", "foodName": "Grilled chicken breast", "quantity": 150, "calories": 248, "protein": 47, "carbs": 0, "fat": 4 },
-    { "id": 6, "userId": 1, "date": "2026-05-07", "mealType": "LUNCH", "foodName": "Mixed salad", "quantity": 100, "calories": 45, "protein": 2, "carbs": 8, "fat": 0 },
-    { "id": 7, "userId": 1, "date": "2026-05-07", "mealType": "SNACK", "foodName": "Greek yogurt", "quantity": 200, "calories": 130, "protein": 17, "carbs": 8, "fat": 4 },
-    { "id": 8, "userId": 1, "date": "2026-05-07", "mealType": "SNACK", "foodName": "Mixed berries", "quantity": 80, "calories": 55, "protein": 1, "carbs": 14, "fat": 0 }
+    {
+      "id": "1",
+      "userId": 1,
+      "date": "2026-05-07",
+      "mealType": "BREAKFAST",
+      "foodName": "Cooked oatmeal",
+      "quantity": 80,
+      "calories": 120,
+      "protein": 5,
+      "carbs": 22,
+      "fat": 2
+    },
+    {
+      "id": "2",
+      "userId": 1,
+      "date": "2026-05-07",
+      "mealType": "BREAKFAST",
+      "foodName": "Medium banana",
+      "quantity": 120,
+      "calories": 107,
+      "protein": 1,
+      "carbs": 27,
+      "fat": 0
+    },
+    {
+      "id": "3",
+      "userId": 1,
+      "date": "2026-05-07",
+      "mealType": "BREAKFAST",
+      "foodName": "Skim milk",
+      "quantity": 200,
+      "calories": 153,
+      "protein": 7,
+      "carbs": 12,
+      "fat": 5
+    },
+    {
+      "id": "4",
+      "userId": 1,
+      "date": "2026-05-07",
+      "mealType": "LUNCH",
+      "foodName": "White rice",
+      "quantity": 180,
+      "calories": 234,
+      "protein": 4,
+      "carbs": 52,
+      "fat": 0
+    },
+    {
+      "id": "5",
+      "userId": 1,
+      "date": "2026-05-07",
+      "mealType": "LUNCH",
+      "foodName": "Grilled chicken breast",
+      "quantity": 150,
+      "calories": 248,
+      "protein": 47,
+      "carbs": 0,
+      "fat": 4
+    },
+    {
+      "id": "6",
+      "userId": 1,
+      "date": "2026-05-07",
+      "mealType": "LUNCH",
+      "foodName": "Mixed salad",
+      "quantity": 100,
+      "calories": 45,
+      "protein": 2,
+      "carbs": 8,
+      "fat": 0
+    },
+    {
+      "id": "7",
+      "userId": 1,
+      "date": "2026-05-07",
+      "mealType": "SNACK",
+      "foodName": "Greek yogurt",
+      "quantity": 200,
+      "calories": 130,
+      "protein": 17,
+      "carbs": 8,
+      "fat": 4
+    },
+    {
+      "id": "8",
+      "userId": 1,
+      "date": "2026-05-07",
+      "mealType": "SNACK",
+      "foodName": "Mixed berries",
+      "quantity": 80,
+      "calories": 55,
+      "protein": 1,
+      "carbs": 14,
+      "fat": 0
+    }
   ],
   "foods": [
-    { "id": 1, "name": "Grilled chicken breast", "servingSize": 100, "calories": 165, "protein": 31, "carbs": 0, "fat": 3.6, "restricted": false },
-    { "id": 2, "name": "White rice cooked", "servingSize": 100, "calories": 130, "protein": 2.7, "carbs": 28, "fat": 0.3, "restricted": false },
-    { "id": 3, "name": "Greek yogurt with milk", "servingSize": 100, "calories": 97, "protein": 9, "carbs": 4, "fat": 5, "restricted": true, "restriction": "LACTOSE_FREE" },
-    { "id": 4, "name": "Medium banana", "servingSize": 120, "calories": 107, "protein": 1.3, "carbs": 27, "fat": 0.4, "restricted": false },
-    { "id": 5, "name": "Cooked oatmeal", "servingSize": 80, "calories": 120, "protein": 5, "carbs": 22, "fat": 2, "restricted": false },
-    { "id": 6, "name": "Mixed salad", "servingSize": 100, "calories": 45, "protein": 2, "carbs": 8, "fat": 0, "restricted": false },
-    { "id": 7, "name": "Olive oil", "servingSize": 10, "calories": 88, "protein": 0, "carbs": 0, "fat": 10, "restricted": false },
-    { "id": 8, "name": "Skim milk", "servingSize": 200, "calories": 68, "protein": 7, "carbs": 10, "fat": 0.4, "restricted": true, "restriction": "LACTOSE_FREE" },
-    { "id": 9, "name": "Baked salmon", "servingSize": 180, "calories": 282, "protein": 38, "carbs": 0, "fat": 14, "restricted": false },
-    { "id": 10, "name": "Steamed broccoli", "servingSize": 150, "calories": 51, "protein": 4, "carbs": 11, "fat": 0, "restricted": false },
-    { "id": 11, "name": "Natural Greek yogurt", "servingSize": 200, "calories": 130, "protein": 17, "carbs": 8, "fat": 4, "restricted": false },
-    { "id": 12, "name": "Avocado", "servingSize": 100, "calories": 160, "protein": 2, "carbs": 9, "fat": 15, "restricted": false }
+    {
+      "id": "1",
+      "name": "Grilled chicken breast",
+      "servingSize": 100,
+      "calories": 165,
+      "protein": 31,
+      "carbs": 0,
+      "fat": 3.6,
+      "restricted": false
+    },
+    {
+      "id": "2",
+      "name": "White rice cooked",
+      "servingSize": 100,
+      "calories": 130,
+      "protein": 2.7,
+      "carbs": 28,
+      "fat": 0.3,
+      "restricted": false
+    },
+    {
+      "id": "3",
+      "name": "Greek yogurt with milk",
+      "servingSize": 100,
+      "calories": 97,
+      "protein": 9,
+      "carbs": 4,
+      "fat": 5,
+      "restricted": true,
+      "restriction": "LACTOSE_FREE"
+    },
+    {
+      "id": "4",
+      "name": "Medium banana",
+      "servingSize": 120,
+      "calories": 107,
+      "protein": 1.3,
+      "carbs": 27,
+      "fat": 0.4,
+      "restricted": false
+    },
+    {
+      "id": "5",
+      "name": "Cooked oatmeal",
+      "servingSize": 80,
+      "calories": 120,
+      "protein": 5,
+      "carbs": 22,
+      "fat": 2,
+      "restricted": false
+    },
+    {
+      "id": "6",
+      "name": "Mixed salad",
+      "servingSize": 100,
+      "calories": 45,
+      "protein": 2,
+      "carbs": 8,
+      "fat": 0,
+      "restricted": false
+    },
+    {
+      "id": "7",
+      "name": "Olive oil",
+      "servingSize": 10,
+      "calories": 88,
+      "protein": 0,
+      "carbs": 0,
+      "fat": 10,
+      "restricted": false
+    },
+    {
+      "id": "8",
+      "name": "Skim milk",
+      "servingSize": 200,
+      "calories": 68,
+      "protein": 7,
+      "carbs": 10,
+      "fat": 0.4,
+      "restricted": true,
+      "restriction": "LACTOSE_FREE"
+    },
+    {
+      "id": "9",
+      "name": "Baked salmon",
+      "servingSize": 180,
+      "calories": 282,
+      "protein": 38,
+      "carbs": 0,
+      "fat": 14,
+      "restricted": false
+    },
+    {
+      "id": "10",
+      "name": "Steamed broccoli",
+      "servingSize": 150,
+      "calories": 51,
+      "protein": 4,
+      "carbs": 11,
+      "fat": 0,
+      "restricted": false
+    },
+    {
+      "id": "11",
+      "name": "Natural Greek yogurt",
+      "servingSize": 200,
+      "calories": 130,
+      "protein": 17,
+      "carbs": 8,
+      "fat": 4,
+      "restricted": false
+    },
+    {
+      "id": "12",
+      "name": "Avocado",
+      "servingSize": 100,
+      "calories": 160,
+      "protein": 2,
+      "carbs": 9,
+      "fat": 15,
+      "restricted": false
+    }
   ],
   "body-metrics": [
-    { "id": 1, "userId": 1, "date": "2026-05-07", "weight": 70.2, "bmi": 26.4, "bmr": 1480, "tdee": 2035 },
-    { "id": 2, "userId": 1, "date": "2026-04-30", "weight": 70.5, "bmi": 26.5, "bmr": 1482, "tdee": 2037 },
-    { "id": 3, "userId": 1, "date": "2026-04-23", "weight": 70.8, "bmi": 26.6, "bmr": 1484, "tdee": 2040 },
-    { "id": 4, "userId": 1, "date": "2026-04-16", "weight": 71.0, "bmi": 26.7, "bmr": 1486, "tdee": 2042 },
-    { "id": 5, "userId": 1, "date": "2026-04-09", "weight": 71.3, "bmi": 26.8, "bmr": 1488, "tdee": 2044 },
-    { "id": 6, "userId": 1, "date": "2026-04-02", "weight": 71.5, "bmi": 26.9, "bmr": 1490, "tdee": 2046 }
+    {
+      "id": "1",
+      "userId": 1,
+      "date": "2026-05-07",
+      "weight": 70.2,
+      "bmi": 26.4,
+      "bmr": 1480,
+      "tdee": 2035
+    },
+    {
+      "id": "2",
+      "userId": 1,
+      "date": "2026-04-30",
+      "weight": 70.5,
+      "bmi": 26.5,
+      "bmr": 1482,
+      "tdee": 2037
+    },
+    {
+      "id": "3",
+      "userId": 1,
+      "date": "2026-04-23",
+      "weight": 70.8,
+      "bmi": 26.6,
+      "bmr": 1484,
+      "tdee": 2040
+    },
+    {
+      "id": "4",
+      "userId": 1,
+      "date": "2026-04-16",
+      "weight": 71,
+      "bmi": 26.7,
+      "bmr": 1486,
+      "tdee": 2042
+    },
+    {
+      "id": "5",
+      "userId": 1,
+      "date": "2026-04-09",
+      "weight": 71.3,
+      "bmi": 26.8,
+      "bmr": 1488,
+      "tdee": 2044
+    },
+    {
+      "id": "6",
+      "userId": 1,
+      "date": "2026-04-02",
+      "weight": 71.5,
+      "bmi": 26.9,
+      "bmr": 1490,
+      "tdee": 2046
+    }
   ],
   "analytics": [
     {
-      "id": 1, "userId": 1, "period": "weekly",
-      "averageDailyCalories": 1698, "averageProtein": 107,
-      "averageCarbs": 172, "averageFat": 46, "averageFiber": 21,
-      "daysLogged": 5, "currentStreak": 5, "longestStreak": 12,
-      "weightChange": -0.4, "adherenceStatus": "ON_TRACK",
-      "dailyCalories": [1820, 1650, 1900, 1780, 1340, 0, 0],
-      "daysWithCompleteLog": [true, true, true, true, true, false, false]
+      "id": "1",
+      "userId": 1,
+      "period": "weekly",
+      "averageDailyCalories": 1698,
+      "averageProtein": 107,
+      "averageCarbs": 172,
+      "averageFat": 46,
+      "averageFiber": 21,
+      "daysLogged": 5,
+      "currentStreak": 5,
+      "longestStreak": 12,
+      "weightChange": -0.4,
+      "adherenceStatus": "ON_TRACK",
+      "dailyCalories": [
+        1820,
+        1650,
+        1900,
+        1780,
+        1340,
+        0,
+        0
+      ],
+      "daysWithCompleteLog": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false
+      ]
     }
   ],
   "recommendations": [
-    { "id": 1, "userId": 1, "type": "WEATHER_BASED", "weather": "HOT", "city": "Lima", "temperature": 31, "foodName": "Chicken and Cucumber Salad", "description": "Refreshing · High in protein · Hydrating", "calories": 320, "protein": 32, "carbs": 18, "fat": 8, "badge": "Light" },
-    { "id": 2, "userId": 1, "type": "WEATHER_BASED", "weather": "HOT", "city": "Lima", "temperature": 31, "foodName": "Hake ceviche", "description": "Peruvian dish · Fresh and high in protein", "calories": 280, "protein": 38, "carbs": 12, "fat": 6, "badge": "Light" },
-    { "id": 3, "userId": 1, "type": "WEATHER_BASED", "weather": "HOT", "city": "Lima", "temperature": 31, "foodName": "Gazpacho with wholemeal toast", "description": "Cold soup · Filling without making you feel hot", "calories": 210, "protein": 6, "carbs": 32, "fat": 5, "badge": "Light" }
+    {
+      "id": "1",
+      "userId": 1,
+      "type": "WEATHER_BASED",
+      "weather": "HOT",
+      "city": "Lima",
+      "temperature": 31,
+      "foodName": "Chicken and Cucumber Salad",
+      "description": "Refreshing · High in protein · Hydrating",
+      "calories": 320,
+      "protein": 32,
+      "carbs": 18,
+      "fat": 8,
+      "badge": "Light"
+    },
+    {
+      "id": "2",
+      "userId": 1,
+      "type": "WEATHER_BASED",
+      "weather": "HOT",
+      "city": "Lima",
+      "temperature": 31,
+      "foodName": "Hake ceviche",
+      "description": "Peruvian dish · Fresh and high in protein",
+      "calories": 280,
+      "protein": 38,
+      "carbs": 12,
+      "fat": 6,
+      "badge": "Light"
+    },
+    {
+      "id": "3",
+      "userId": 1,
+      "type": "WEATHER_BASED",
+      "weather": "HOT",
+      "city": "Lima",
+      "temperature": 31,
+      "foodName": "Gazpacho with wholemeal toast",
+      "description": "Cold soup · Filling without making you feel hot",
+      "calories": 210,
+      "protein": 6,
+      "carbs": 32,
+      "fat": 5,
+      "badge": "Light"
+    }
   ],
   "pantry": [
-    { "id": 1, "userId": 1, "ingredientName": "White rice", "category": "Grain" },
-    { "id": 2, "userId": 1, "ingredientName": "Chicken breast", "category": "Animal protein" },
-    { "id": 3, "userId": 1, "ingredientName": "Lemon", "category": "Fruit" },
-    { "id": 4, "userId": 1, "ingredientName": "Onion", "category": "Vegetable" },
-    { "id": 5, "userId": 1, "ingredientName": "Garlic", "category": "Seasoning" }
+    {
+      "id": "1",
+      "userId": 1,
+      "ingredientName": "White rice",
+      "category": "Grain"
+    },
+    {
+      "id": "2",
+      "userId": 1,
+      "ingredientName": "Chicken breast",
+      "category": "Animal protein"
+    },
+    {
+      "id": "3",
+      "userId": 1,
+      "ingredientName": "Lemon",
+      "category": "Fruit"
+    },
+    {
+      "id": "4",
+      "userId": 1,
+      "ingredientName": "Onion",
+      "category": "Vegetable"
+    },
+    {
+      "id": "5",
+      "userId": 1,
+      "ingredientName": "Garlic",
+      "category": "Seasoning"
+    }
   ],
   "subscriptions": [
-    { "id": 1, "userId": 1, "plan": "PRO", "price": 14.99, "currency": "USD", "renewalDate": "2026-06-07", "status": "ACTIVE", "features": ["SMART_SCAN_PLATE", "TRAVEL_MODE", "WEATHER_RECS", "PANTRY"] }
+    {
+      "id": "1",
+      "userId": 1,
+      "plan": "PRO",
+      "price": 14.99,
+      "currency": "USD",
+      "renewalDate": "2026-06-07",
+      "status": "ACTIVE",
+      "features": [
+        "SMART_SCAN_PLATE",
+        "TRAVEL_MODE",
+        "WEATHER_RECS",
+        "PANTRY"
+      ]
+    }
   ],
   "billing-history": [
-    { "id": 1, "userId": 1, "date": "2026-05-07", "plan": "Pro", "amount": 14.99, "currency": "USD", "status": "PAID" },
-    { "id": 2, "userId": 1, "date": "2026-04-07", "plan": "Pro", "amount": 14.99, "currency": "USD", "status": "PAID" },
-    { "id": 3, "userId": 1, "date": "2026-03-07", "plan": "Pro (trial)", "amount": 0.00, "currency": "USD", "status": "TRIAL" }
+    {
+      "id": "1",
+      "userId": 1,
+      "date": "2026-05-07",
+      "plan": "Pro",
+      "amount": 14.99,
+      "currency": "USD",
+      "status": "PAID"
+    },
+    {
+      "id": "2",
+      "userId": 1,
+      "date": "2026-04-07",
+      "plan": "Pro",
+      "amount": 14.99,
+      "currency": "USD",
+      "status": "PAID"
+    },
+    {
+      "id": "3",
+      "userId": 1,
+      "date": "2026-03-07",
+      "plan": "Pro (trial)",
+      "amount": 0,
+      "currency": "USD",
+      "status": "TRIAL"
+    }
   ],
   "behavioral-progress": [
     {
-      "id": 1, "userId": 1,
+      "id": "1",
+      "userId": 1,
       "adherenceStatus": "ON_TRACK",
       "streak": 5,
       "consecutiveMisses": 0,
       "lastGoalMetDate": "2026-05-06",
-      "weekDots": [true, true, true, true, true, false, false]
+      "weekDots": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false
+      ]
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

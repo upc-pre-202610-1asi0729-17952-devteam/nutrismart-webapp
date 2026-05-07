@@ -44,6 +44,10 @@ export interface UserProps {
   streak: number;
   /** Number of consecutive days where logs were missed. */
   consecutiveMisses: number;
+  /** Date of birth in ISO format (YYYY-MM-DD). Optional. */
+  birthday?: string;
+  /** Biological sex: 'male' | 'female' | 'other'. Optional. */
+  biologicalSex?: string;
 }
 
 /**
@@ -90,6 +94,10 @@ export class User implements BaseEntity {
   private _streak: number;
   /** @see UserProps.consecutiveMisses */
   private _consecutiveMisses: number;
+  /** @see UserProps.birthday */
+  private _birthday: string;
+  /** @see UserProps.biologicalSex */
+  private _biologicalSex: string;
 
   /**
    * Creates a new User domain entity.
@@ -115,6 +123,8 @@ export class User implements BaseEntity {
     this._fiberTarget = props.fiberTarget;
     this._streak = props.streak;
     this._consecutiveMisses = props.consecutiveMisses;
+    this._birthday = props.birthday ?? '';
+    this._biologicalSex = props.biologicalSex ?? '';
   }
 
   // ─── Getters & Setters ────────────────────────────────────────────────────
@@ -208,6 +218,16 @@ export class User implements BaseEntity {
   get consecutiveMisses(): number { return this._consecutiveMisses; }
   /** @param value - New consecutiveMisses value. */
   set consecutiveMisses(value: number) { this._consecutiveMisses = value; }
+
+  /** Date of birth in ISO format (YYYY-MM-DD). */
+  get birthday(): string { return this._birthday; }
+  /** @param value - New birthday value. */
+  set birthday(value: string) { this._birthday = value; }
+
+  /** Biological sex string. */
+  get biologicalSex(): string { return this._biologicalSex; }
+  /** @param value - New biologicalSex value. */
+  set biologicalSex(value: string) { this._biologicalSex = value; }
 
   // ─── Computed / Behaviour Methods ─────────────────────────────────────────
 

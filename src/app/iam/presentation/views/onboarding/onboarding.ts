@@ -203,7 +203,8 @@ export class Onboarding {
 
     if (step === 1) {
       if (this.bodyForm.invalid) { this.bodyForm.markAllAsTouched(); return; }
-      const { weight, height } = this.bodyForm.value;
+      const { birthday, biologicalSex, weight, height } = this.bodyForm.value;
+      this.iamStore.updateProfile({ birthday: birthday!, biologicalSex: biologicalSex! });
       this.iamStore.updatePhysicalDetails(weight!, height!, this.selectedActivity());
     }
 

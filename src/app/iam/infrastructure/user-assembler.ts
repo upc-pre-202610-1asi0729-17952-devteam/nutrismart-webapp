@@ -42,6 +42,8 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
       fiberTarget: resource.fiberTarget,
       streak: resource.streak,
       consecutiveMisses: resource.consecutiveMisses,
+      birthday: resource.birthday ?? '',
+      biologicalSex: resource.biologicalSex ?? '',
     });
   }
 
@@ -72,6 +74,8 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
       fiberTarget: entity.fiberTarget,
       streak: entity.streak,
       consecutiveMisses: entity.consecutiveMisses,
+      birthday: entity.birthday,
+      biologicalSex: entity.biologicalSex,
     };
   }
 

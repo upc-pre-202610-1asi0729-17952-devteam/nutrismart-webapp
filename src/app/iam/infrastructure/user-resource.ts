@@ -44,6 +44,10 @@ export interface UserResource extends BaseResource {
   streak: number;
   /** Consecutive missed days. */
   consecutiveMisses: number;
+  /** Date of birth in ISO format (YYYY-MM-DD). */
+  birthday?: string;
+  /** Biological sex string ('male' | 'female' | 'other'). */
+  biologicalSex?: string;
 }
 
 /**
