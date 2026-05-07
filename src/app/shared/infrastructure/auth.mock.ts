@@ -1,6 +1,15 @@
 /**
  * Mock authenticated user for Sprint 2 frontend development.
- * All team members use this mock to avoid depending on IAM being complete.
+ *
+ * All team members import this constant to avoid depending on the IAM bounded
+ * context being fully implemented. Replace with real auth state once the
+ * login flow is complete.
+ *
+ * @remarks
+ * - `restrictions` controls which foods the recommendation engine blocks.
+ * - `dailyCalorieTarget`, `proteinTarget`, `carbsTarget`, `fatTarget` and
+ *   `fiberTarget` are calculated using the Mifflin-St Jeor formula for Ana's
+ *   physical data with a MODERATE activity level.
  */
 export const MOCK_USER = {
   id: 1,
