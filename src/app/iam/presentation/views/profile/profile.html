@@ -1,0 +1,316 @@
+<div class="profile-shell">
+  <!-- Left panel nav -->
+  <aside class="profile-nav">
+    <div class="profile-avatar">
+      <div class="avatar-circle">{{ iamStore.currentUser()?.initials }}</div>
+      <div class="avatar-info">
+        <div class="avatar-name">{{ iamStore.currentUser()?.fullName }}</div>
+        <div class="avatar-plan">{{ iamStore.currentUser()?.plan }}</div>
+      </div>
+    </div>
+
+    <nav class="nav-list">
+      @for (item of navItems; track item.id) {
+        <button
+          type="button"
+          class="nav-item"
+          [class.active]="activePanel() === item.id"
+          (click)="setPanel(item.id)"
+        >
+          <span class="nav-icon">{{ item.icon }}</span>
+          <span class="nav-label">{{ item.label }}</span>
+        </button>
+      }
+    </nav>
+  </aside>
+
+  <!-- Right content panel -->
+  <main class="profile-content">
+
+    @switch (activePanel()) {
+
+      <!-- PANEL 1: Personal information -->
+      @case ('personal') {
+        <section class="panel-section">
+          <h2 class="panel-title">Personal information</h2>
+
+          @if (personalSaved()) {
+            <div class="success-banner">Changes saved successfully.</div>
+          }
+
+          <form [formGroup]="personalForm" (ngSubmit)="applyPersonal()" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">First name</label>
+                <input type="text" formControlName="firstName" class="form-input"
+                  [class.is-invalid]="personalForm.get('firstName')?.invalid && personalForm.get('firstName')?.touched" />
+                @if (personalForm.get('firstName')?.invalid && personalForm.get('firstName')?.touched) {
+                  <span class="field-error">Required</span>
+                }
+              </div>
+              <div class="form-group">
+                <label class="form-label">Last name</label>
+                <input type="text" formControlName="lastName" class="form-input"
+                  [class.is-invalid]="personalForm.get('lastName')?.invalid && personalForm.get('lastName')?.touched" />
+                @if (personalForm.get('lastName')?.invalid && personalForm.get('lastName')?.touched) {
+                  <span class="field-error">Required</span>
+                }
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Email address</label>
+              <input type="email" formControlName="email" class="form-input"
+                [class.is-invalid]="personalForm.get('email')?.invalid && personalForm.get('email')?.touched" />
+              @if (personalForm.get('email')?.invalid && personalForm.get('email')?.touched) {
+                <span class="field-error">Enter a valid email.</span>
+              }
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Birthday</label>
+                <input type="date" formControlName="birthday" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Biological sex</label>
+                <select formControlName="biologicalSex" class="form-input">
+                  <option value="">Select…</option>
+                  <option value="man">Man</option>
+                  <option value="woman">Woman</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="plan-info-card">
+              <span class="plan-badge">{{ iamStore.currentUser()?.plan }}</span>
+              <span class="plan-renewal">Active subscription</span>
+            </div>
+
+            <button type="submit" class="btn-save">Save changes</button>
+          </form>
+        </section>
+      }
+
+      <!-- PANEL 2: Physical details and goals -->
+      @case ('physical') {
+        <section class="panel-section">
+          <h2 class="panel-title">Physical details & goals</h2>
+
+          @if (physicalSaved()) {
+            <div class="success-banner">Physical details updated.</div>
+          }
+
+          <form [formGroup]="physicalForm" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Weight (kg)</label>
+                <input type="number" formControlName="weight" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Height (cm)</label>
+                <input type="number" formControlName="height" class="form-input" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Activity level</label>
+              <select class="form-input" [value]="selectedActivity()" (change)="setActivity($any($event.target).value)">
+                <option [value]="ActivityLevel.SEDENTARY">Sedentary</option>
+                <option [value]="ActivityLevel.MODERATE">Moderate</option>
+                <option [value]="ActivityLevel.ACTIVE">Active</option>
+                <option [value]="ActivityLevel.VERY_ACTIVE">Very Active</option>
+              </select>
+            </div>
+          </form>
+
+          <div class="goal-section">
+            <p class="form-label">Goal</p>
+            <div class="goal-toggle">
+              <button type="button" class="goal-btn"
+                [class.active]="selectedGoal() === UserGoal.WEIGHT_LOSS"
+                (click)="setGoal(UserGoal.WEIGHT_LOSS)">
+                🔥 Lose weight
+              </button>
+              <button type="button" class="goal-btn"
+                [class.active]="selectedGoal() === UserGoal.MUSCLE_GAIN"
+                (click)="setGoal(UserGoal.MUSCLE_GAIN)">
+                💪 Gain muscle
+              </button>
+            </div>
+            @if (pendingGoalConfirm()) {
+              <p class="goal-confirm-text">{{ pendingGoalConfirm() }}</p>
+            }
+          </div>
+
+          <button type="button" class="btn-save" (click)="applyPhysical()">Save changes</button>
+        </section>
+      }
+
+      <!-- PANEL 3: Dietary restrictions -->
+      @case ('dietary') {
+        <section class="panel-section">
+          <h2 class="panel-title">Dietary restrictions</h2>
+
+          <h3 class="subsection-title">Active restrictions</h3>
+          <div class="chip-list">
+            @for (r of iamStore.currentUser()?.restrictions ?? []; track r) {
+              <span class="active-chip">
+                {{ restrictionLabel(r) }}
+                <button type="button" class="chip-remove" (click)="iamStore.removeRestriction(r)">×</button>
+              </span>
+            }
+            @if ((iamStore.currentUser()?.restrictions ?? []).length === 0) {
+              <p class="empty-text">No active restrictions.</p>
+            }
+          </div>
+
+          <button type="button" class="btn-add" (click)="showAddRestriction.update(v => !v)">
+            + Add restriction
+          </button>
+
+          @if (showAddRestriction()) {
+            <div class="chip-picker">
+              @for (item of allRestrictions; track item.value) {
+                <button type="button" class="picker-chip"
+                  [class.active]="iamStore.currentUser()?.hasRestriction(item.value)"
+                  (click)="iamStore.addRestriction(item.value)">
+                  {{ item.label }}
+                </button>
+              }
+            </div>
+          }
+
+          <h3 class="subsection-title" style="margin-top: 28px;">Medical conditions</h3>
+          <div class="chip-list">
+            @for (c of iamStore.currentUser()?.medicalConditions ?? []; track c) {
+              <span class="active-chip">
+                {{ c }}
+                <button type="button" class="chip-remove" (click)="iamStore.removeMedicalCondition(c)">×</button>
+              </span>
+            }
+            @if ((iamStore.currentUser()?.medicalConditions ?? []).length === 0) {
+              <p class="empty-text">No medical conditions recorded.</p>
+            }
+          </div>
+          <div class="add-condition-row">
+            <input type="text" class="form-input" placeholder="e.g. Diabetes type 2"
+              [value]="newCondition()"
+              (input)="newCondition.set($any($event.target).value)" />
+            <button type="button" class="btn-add-inline" (click)="addCondition()">Add</button>
+          </div>
+
+          <h3 class="subsection-title" style="margin-top: 28px;">Notifications</h3>
+          <div class="notif-list">
+            <div class="notif-row">
+              <span>Daily log reminder</span>
+              <button type="button" class="toggle-btn" [class.on]="notif1()" (click)="notif1.update(v => !v)">
+                {{ notif1() ? 'On' : 'Off' }}
+              </button>
+            </div>
+            <div class="notif-row">
+              <span>Weekly progress report</span>
+              <button type="button" class="toggle-btn" [class.on]="notif2()" (click)="notif2.update(v => !v)">
+                {{ notif2() ? 'On' : 'Off' }}
+              </button>
+            </div>
+            <div class="notif-row">
+              <span>Meal suggestions</span>
+              <button type="button" class="toggle-btn" [class.on]="notif3()" (click)="notif3.update(v => !v)">
+                {{ notif3() ? 'On' : 'Off' }}
+              </button>
+            </div>
+            <div class="notif-row">
+              <span>Streak alerts</span>
+              <button type="button" class="toggle-btn" [class.on]="notif4()" (click)="notif4.update(v => !v)">
+                {{ notif4() ? 'On' : 'Off' }}
+              </button>
+            </div>
+            <div class="notif-row">
+              <span>Marketing emails</span>
+              <button type="button" class="toggle-btn" [class.on]="notif5()" (click)="notif5.update(v => !v)">
+                {{ notif5() ? 'On' : 'Off' }}
+              </button>
+            </div>
+          </div>
+        </section>
+      }
+
+      <!-- PANEL 4: Language -->
+      @case ('language') {
+        <section class="panel-section">
+          <h2 class="panel-title">Language</h2>
+          <p class="panel-desc">Choose the language used throughout the app.</p>
+
+          <div class="lang-options">
+            <label class="lang-option">
+              <input type="radio" name="lang" value="en"
+                [checked]="selectedLang() === 'en'"
+                (change)="selectedLang.set('en')" />
+              <span>English</span>
+            </label>
+            <label class="lang-option">
+              <input type="radio" name="lang" value="es"
+                [checked]="selectedLang() === 'es'"
+                (change)="selectedLang.set('es')" />
+              <span>Español</span>
+            </label>
+          </div>
+
+          <button type="button" class="btn-save" (click)="applyLanguage()">Save language</button>
+        </section>
+      }
+
+      <!-- PANEL 5: Security and privacy -->
+      @case ('security') {
+        <section class="panel-section">
+          <h2 class="panel-title">Security & privacy</h2>
+
+          <h3 class="subsection-title">Change password</h3>
+
+          @if (passwordChanged()) {
+            <div class="success-banner">Password changed successfully.</div>
+          }
+
+          <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" novalidate>
+            <div class="form-group">
+              <label class="form-label">Current password</label>
+              <input type="password" formControlName="currentPassword" class="form-input"
+                [class.is-invalid]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">New password</label>
+              <input type="password" formControlName="newPassword" class="form-input"
+                [class.is-invalid]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched" />
+              @if (passwordForm.get('newPassword')?.errors?.['minlength'] && passwordForm.get('newPassword')?.touched) {
+                <span class="field-error">Minimum 8 characters.</span>
+              }
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm new password</label>
+              <input type="password" formControlName="confirmPassword" class="form-input" />
+            </div>
+            <button type="submit" class="btn-save">Update password</button>
+          </form>
+
+          <div class="security-divider"></div>
+
+          <h3 class="subsection-title">Active sessions</h3>
+          <p class="panel-desc">You are currently signed in on this device (browser session).</p>
+
+          <button type="button" class="btn-outline-danger" (click)="logoutAll()">
+            Log out of all devices
+          </button>
+
+          <div class="security-divider"></div>
+
+          <h3 class="subsection-title danger-text">Danger zone</h3>
+          <button type="button" class="btn-delete-account">Delete my account</button>
+        </section>
+      }
+
+    }
+
+  </main>
+</div>
