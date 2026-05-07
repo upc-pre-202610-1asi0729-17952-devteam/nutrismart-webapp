@@ -16,7 +16,9 @@
       "proteinTarget": 120,
       "carbsTarget": 200,
       "fatTarget": 55,
-      "fiberTarget": 25
+      "fiberTarget": 25,
+      "streak": 5,
+      "consecutiveMisses": 0
     }
   ],
   "nutrition-log": [
