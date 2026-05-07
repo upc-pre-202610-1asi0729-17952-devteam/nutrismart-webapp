@@ -166,7 +166,10 @@
     "feature_wearable": "Sincronización con dispositivos (Google Fit)",
     "feature_restaurant": "Análisis de menús de restaurantes",
     "feature_unlimited": "Historial ilimitado",
-    "feature_pdf": "Informes en PDF"
+    "feature_pdf": "Informes en PDF",
+    "manage_title": "Tu Plan",
+    "manage_subtitle": "Actualiza tu suscripción cuando quieras.",
+    "cta_current_plan": "Plan actual"
   },
   "profile": {
     "title": "Perfil y configuración",

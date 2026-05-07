@@ -14,5 +14,9 @@ const subscription = () =>
   );
 
 export const subscriptionsRoutes: Routes = [
-  { path: '', loadComponent: subscription, title: 'NutriSmart - Choose Your Plan' },
+  { path: '', loadComponent: subscription, data: { mode: 'setup' }, title: 'NutriSmart - Choose Your Plan' },
+];
+
+export const myPlanRoutes: Routes = [
+  { path: '', loadComponent: subscription, data: { mode: 'manage' }, title: 'NutriSmart - My Plan' },
 ];

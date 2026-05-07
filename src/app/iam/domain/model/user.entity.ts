@@ -24,8 +24,8 @@ export interface UserProps {
   height: number;
   /** Daily physical activity level. */
   activityLevel: ActivityLevel;
-  /** Current subscription tier. */
-  plan: SubscriptionPlan;
+  /** Current subscription tier. Null when no plan has been chosen yet. */
+  plan: SubscriptionPlan | null;
   /** Active dietary restrictions. */
   restrictions: DietaryRestriction[];
   /** Free-text medical conditions relevant to diet. */
@@ -75,7 +75,7 @@ export class User implements BaseEntity {
   /** @see UserProps.activityLevel */
   private _activityLevel: ActivityLevel;
   /** @see UserProps.plan */
-  private _plan: SubscriptionPlan;
+  private _plan: SubscriptionPlan | null;
   /** @see UserProps.restrictions */
   private _restrictions: DietaryRestriction[];
   /** @see UserProps.medicalConditions */
@@ -169,10 +169,10 @@ export class User implements BaseEntity {
   /** @param value - New activity level. */
   set activityLevel(value: ActivityLevel) { this._activityLevel = value; }
 
-  /** Current subscription tier. */
-  get plan(): SubscriptionPlan { return this._plan; }
+  /** Current subscription tier. Null when no plan has been chosen yet. */
+  get plan(): SubscriptionPlan | null { return this._plan; }
   /** @param value - New subscription plan. */
-  set plan(value: SubscriptionPlan) { this._plan = value; }
+  set plan(value: SubscriptionPlan | null) { this._plan = value; }
 
   /** Active dietary restrictions. Returns a copy of the internal array. */
   get restrictions(): DietaryRestriction[] { return [...this._restrictions]; }
@@ -273,7 +273,7 @@ export class User implements BaseEntity {
   /**
    * Determines whether the user can upgrade their subscription tier.
    *
-   * @returns `true` if the user is not already on PREMIUM.
+   * @returns `true` if the user has no plan yet or is not already on PREMIUM.
    */
   canUpgrade(): boolean {
     return this._plan !== SubscriptionPlan.PREMIUM;

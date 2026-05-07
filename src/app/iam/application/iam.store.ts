@@ -119,7 +119,9 @@ export class IamStore {
         this._loading.set(false);
         this.saveSession(user);
         const incomplete = !user.birthday || !user.biologicalSex;
-        this.router.navigate([incomplete ? '/onboarding' : '/dashboard']);
+        if (incomplete) this.router.navigate(['/onboarding']);
+        else if (!user.plan) this.router.navigate(['/subscription']);
+        else this.router.navigate(['/dashboard']);
       }),
       catchError(err => {
         this._loading.set(false);
@@ -154,7 +156,7 @@ export class IamStore {
       weight: 70,
       height: 170,
       activityLevel: ActivityLevel.MODERATE,
-      plan: SubscriptionPlan.BASIC,
+      plan: null,
       restrictions: [],
       medicalConditions: [],
       dailyCalorieTarget: 2000,

@@ -166,7 +166,10 @@
     "feature_wearable": "Wearable Sync (Google Fit)",
     "feature_restaurant": "Restaurant Menu Analysis",
     "feature_unlimited": "Unlimited History",
-    "feature_pdf": "PDF Reports"
+    "feature_pdf": "PDF Reports",
+    "manage_title": "Your Plan",
+    "manage_subtitle": "Upgrade your subscription anytime.",
+    "cta_current_plan": "Current plan"
   },
   "profile": {
     "title": "Profile & Settings",

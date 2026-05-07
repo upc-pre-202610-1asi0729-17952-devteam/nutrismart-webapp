@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, computed, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { SubscriptionPlan } from '../../../../iam/domain/model/subscription-plan.enum';
@@ -47,6 +47,12 @@ export class Subscription {
 
   /** Angular router for post-selection navigation. */
   private router = inject(Router);
+
+  /** True when rendered as the post-onboarding gate (no sidebar). */
+  readonly isSetupMode = inject(ActivatedRoute).snapshot.data['mode'] === 'setup';
+
+  /** The user's currently active plan, or null if none selected yet. */
+  readonly currentPlan = computed(() => this.iamStore.currentUser()?.plan ?? null);
 
   /**
    * Plan card definitions rendered in the template.
@@ -110,9 +116,10 @@ export class Subscription {
   }
 
   /**
-   * Navigates to the dashboard, deferring the plan selection.
+   * Logs the user out without selecting a plan.
+   * On next login they will be redirected back here until a plan is chosen.
    */
   maybeLater(): void {
-    this.router.navigate(['/dashboard']);
+    this.iamStore.logout();
   }
 }

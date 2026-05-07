@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './iam/application/auth.guard';
 import { onboardingGuard } from './iam/application/onboarding.guard';
+import { subscriptionGuard } from './iam/application/subscription.guard';
 
 /**
  * Lazy-loads the PageNotFound standalone component.
@@ -71,10 +72,16 @@ const analyticsRoutes = () =>
     m => m.analyticsRoutes
   );
 
-/** Lazy-loads the subscriptions child routes. */
+/** Lazy-loads the subscriptions child routes (post-onboarding gate). */
 const subscriptionsRoutes = () =>
   import('./subscriptions/presentation/subscriptions.routes').then(
     m => m.subscriptionsRoutes
+  );
+
+/** Lazy-loads the my-plan child routes (active subscription management). */
+const myPlanRoutes = () =>
+  import('./subscriptions/presentation/subscriptions.routes').then(
+    m => m.myPlanRoutes
   );
 
 const baseTitle = 'NutriSmart';
@@ -89,16 +96,17 @@ const baseTitle = 'NutriSmart';
 export const routes: Routes = [
   { path: 'auth',            loadChildren: iamRoutes },
   { path: 'onboarding',      loadChildren: onboardingRoutes,      canActivate: [onboardingGuard] },
-  { path: 'profile',         loadChildren: profileRoutes,         canActivate: [authGuard] },
-  { path: 'dashboard',       loadChildren: dashboardRoutes,       canActivate: [authGuard] },
-  { path: 'nutrition',       loadChildren: nutritionRoutes,       canActivate: [authGuard] },
-  { path: 'smart-scan',      loadChildren: smartScanRoutes,       canActivate: [authGuard] },
-  { path: 'recommendations', loadChildren: recommendationsRoutes, canActivate: [authGuard] },
-  { path: 'body-progress',   loadChildren: bodyProgressRoutes,    canActivate: [authGuard] },
-  { path: 'pantry',          loadChildren: pantryRoutes,          canActivate: [authGuard] },
-  { path: 'wearable',        loadChildren: wearableRoutes,        canActivate: [authGuard] },
-  { path: 'analytics',       loadChildren: analyticsRoutes,       canActivate: [authGuard] },
+  { path: 'profile',         loadChildren: profileRoutes,         canActivate: [authGuard, subscriptionGuard] },
+  { path: 'dashboard',       loadChildren: dashboardRoutes,       canActivate: [authGuard, subscriptionGuard] },
+  { path: 'nutrition',       loadChildren: nutritionRoutes,       canActivate: [authGuard, subscriptionGuard] },
+  { path: 'smart-scan',      loadChildren: smartScanRoutes,       canActivate: [authGuard, subscriptionGuard] },
+  { path: 'recommendations', loadChildren: recommendationsRoutes, canActivate: [authGuard, subscriptionGuard] },
+  { path: 'body-progress',   loadChildren: bodyProgressRoutes,    canActivate: [authGuard, subscriptionGuard] },
+  { path: 'pantry',          loadChildren: pantryRoutes,          canActivate: [authGuard, subscriptionGuard] },
+  { path: 'wearable',        loadChildren: wearableRoutes,        canActivate: [authGuard, subscriptionGuard] },
+  { path: 'analytics',       loadChildren: analyticsRoutes,       canActivate: [authGuard, subscriptionGuard] },
   { path: 'subscription',    loadChildren: subscriptionsRoutes,   canActivate: [authGuard] },
+  { path: 'my-plan',         loadChildren: myPlanRoutes,          canActivate: [authGuard, subscriptionGuard] },
   { path: '',                redirectTo: '/auth/login', pathMatch: 'full' },
   {
     path: '**',
