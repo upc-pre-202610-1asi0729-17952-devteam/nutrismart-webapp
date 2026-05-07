@@ -5,94 +5,62 @@
   </div>
 
   <div class="onboarding-header">
-    <span class="step-label">Step {{ currentStep() }} of 5</span>
-    @if (currentStep() < 5) {
-      <button type="button" class="skip-btn" (click)="skip()">Skip</button>
-    }
+    <span class="step-label">{{ 'onboarding.step_of' | translate: { current: currentStep(), total: totalSteps } }}</span>
   </div>
 
   <div class="onboarding-card">
 
     @switch (currentStep()) {
 
-      <!-- STEP 1: About you -->
+      <!-- STEP 1: About you + Body -->
       @case (1) {
         <div class="step-content">
-          <div class="step-icon">👤</div>
-          <h2 class="step-title">About you</h2>
-          <p class="step-subtitle">Tell us a bit about yourself</p>
+          <h2 class="step-title">{{ 'onboarding.about_you_title' | translate }}</h2>
+          <p class="step-subtitle">{{ 'onboarding.about_you_desc' | translate }}</p>
 
-          <form [formGroup]="step1Form" novalidate>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">First name</label>
-                <input type="text" formControlName="firstName" class="form-input"
-                  [class.is-invalid]="step1Form.get('firstName')?.invalid && step1Form.get('firstName')?.touched"
-                  placeholder="Ana" />
-                @if (step1Form.get('firstName')?.invalid && step1Form.get('firstName')?.touched) {
-                  <span class="field-error">Required</span>
-                }
-              </div>
-              <div class="form-group">
-                <label class="form-label">Last name</label>
-                <input type="text" formControlName="lastName" class="form-input"
-                  [class.is-invalid]="step1Form.get('lastName')?.invalid && step1Form.get('lastName')?.touched"
-                  placeholder="García" />
-                @if (step1Form.get('lastName')?.invalid && step1Form.get('lastName')?.touched) {
-                  <span class="field-error">Required</span>
-                }
-              </div>
-            </div>
-
+          <form [formGroup]="bodyForm" novalidate>
             <div class="form-group">
-              <label class="form-label">Birthday</label>
+              <label class="form-label">{{ 'onboarding.birthdate' | translate }}</label>
               <input type="date" formControlName="birthday" class="form-input" />
             </div>
 
             <div class="form-group">
-              <label class="form-label">Biological sex</label>
+              <label class="form-label">{{ 'onboarding.biological_sex' | translate }}</label>
               <select formControlName="biologicalSex" class="form-input">
-                <option value="">Select…</option>
-                <option value="man">Man</option>
-                <option value="woman">Woman</option>
-                <option value="other">Other / Prefer not to say</option>
+                <option value="">{{ 'common.empty' | translate }}</option>
+                <option value="male">{{ 'onboarding.biological_sex_male' | translate }}</option>
+                <option value="female">{{ 'onboarding.biological_sex_female' | translate }}</option>
+                <option value="other">{{ 'onboarding.biological_sex_other' | translate }}</option>
               </select>
             </div>
-          </form>
-        </div>
-      }
 
-      <!-- STEP 2: Your body -->
-      @case (2) {
-        <div class="step-content">
-          <div class="step-icon">⚖️</div>
-          <h2 class="step-title">Your body</h2>
-          <p class="step-subtitle">We'll use this to calculate your calorie needs</p>
-
-          <form [formGroup]="step2Form" novalidate>
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">Weight (kg)</label>
+                <label class="form-label">{{ 'onboarding.weight' | translate }}</label>
                 <input type="number" formControlName="weight" class="form-input"
-                  [class.is-invalid]="step2Form.get('weight')?.invalid && step2Form.get('weight')?.touched"
+                  [class.is-invalid]="bodyForm.get('weight')?.invalid && bodyForm.get('weight')?.touched"
                   placeholder="70" />
-                @if (step2Form.get('weight')?.invalid && step2Form.get('weight')?.touched) {
-                  <span class="field-error">Enter a valid weight</span>
+                @if (bodyForm.get('weight')?.touched && bodyForm.get('weight')?.errors?.['required']) {
+                  <span class="field-error">{{ 'common.required' | translate }}</span>
+                } @else if (bodyForm.get('weight')?.touched && (bodyForm.get('weight')?.errors?.['min'] || bodyForm.get('weight')?.errors?.['max'])) {
+                  <span class="field-error">{{ 'onboarding.weight' | translate }} (30–300)</span>
                 }
               </div>
               <div class="form-group">
-                <label class="form-label">Height (cm)</label>
+                <label class="form-label">{{ 'onboarding.height' | translate }}</label>
                 <input type="number" formControlName="height" class="form-input"
-                  [class.is-invalid]="step2Form.get('height')?.invalid && step2Form.get('height')?.touched"
+                  [class.is-invalid]="bodyForm.get('height')?.invalid && bodyForm.get('height')?.touched"
                   placeholder="170" />
-                @if (step2Form.get('height')?.invalid && step2Form.get('height')?.touched) {
-                  <span class="field-error">Enter a valid height</span>
+                @if (bodyForm.get('height')?.touched && bodyForm.get('height')?.errors?.['required']) {
+                  <span class="field-error">{{ 'common.required' | translate }}</span>
+                } @else if (bodyForm.get('height')?.touched && (bodyForm.get('height')?.errors?.['min'] || bodyForm.get('height')?.errors?.['max'])) {
+                  <span class="field-error">{{ 'onboarding.height' | translate }} (100–250)</span>
                 }
               </div>
             </div>
           </form>
 
-          <p class="form-label" style="margin-top: 16px;">Activity level</p>
+          <p class="form-label" style="margin-top: 16px;">{{ 'onboarding.activity_level' | translate }}</p>
           <div class="activity-grid">
             @for (card of activityCards; track card.level) {
               <button
@@ -101,21 +69,19 @@
                 [class.selected]="selectedActivity() === card.level"
                 (click)="selectActivity(card.level)"
               >
-                <span class="activity-icon">{{ card.icon }}</span>
-                <span class="activity-label">{{ card.label }}</span>
-                <span class="activity-desc">{{ card.description }}</span>
+                <span class="activity-label">{{ card.labelKey | translate }}</span>
+                <span class="activity-desc">{{ card.descKey | translate }}</span>
               </button>
             }
           </div>
         </div>
       }
 
-      <!-- STEP 3: Your goal -->
-      @case (3) {
+      <!-- STEP 2: Your goal -->
+      @case (2) {
         <div class="step-content">
-          <div class="step-icon">🎯</div>
-          <h2 class="step-title">Your goal</h2>
-          <p class="step-subtitle">What do you want to achieve with NutriSmart?</p>
+          <h2 class="step-title">{{ 'onboarding.step1_title' | translate }}</h2>
+          <p class="step-subtitle">{{ 'onboarding.step1_desc' | translate }}</p>
 
           <div class="goal-grid">
             <button
@@ -124,9 +90,8 @@
               [class.selected]="selectedGoal() === UserGoal.WEIGHT_LOSS"
               (click)="selectGoal(UserGoal.WEIGHT_LOSS)"
             >
-              <span class="goal-icon">🔥</span>
-              <span class="goal-label">Lose weight</span>
-              <span class="goal-desc">Caloric deficit with optimised macros</span>
+              <span class="goal-label">{{ 'onboarding.goal_weight_loss' | translate }}</span>
+              <span class="goal-desc">{{ 'onboarding.goal_weight_loss_desc' | translate }}</span>
             </button>
 
             <button
@@ -135,21 +100,20 @@
               [class.selected]="selectedGoal() === UserGoal.MUSCLE_GAIN"
               (click)="selectGoal(UserGoal.MUSCLE_GAIN)"
             >
-              <span class="goal-icon">💪</span>
-              <span class="goal-label">Gain muscle</span>
-              <span class="goal-desc">Caloric surplus with high protein targets</span>
+              <span class="goal-label">{{ 'onboarding.goal_muscle_gain' | translate }}</span>
+              <span class="goal-desc">{{ 'onboarding.goal_muscle_gain_desc' | translate }}</span>
             </button>
           </div>
         </div>
       }
 
-      <!-- STEP 4: Dietary restrictions -->
-      @case (4) {
+      <!-- STEP 3: Dietary restrictions & Medical conditions -->
+      @case (3) {
         <div class="step-content">
-          <div class="step-icon">🥗</div>
-          <h2 class="step-title">Dietary restrictions</h2>
-          <p class="step-subtitle">Select everything that applies — you can change this later</p>
+          <h2 class="step-title">{{ 'onboarding.step3_title' | translate }}</h2>
+          <p class="step-subtitle">{{ 'onboarding.restrictions_desc' | translate }}</p>
 
+          <h3 class="subsection-title">{{ 'profile.restrictions_title' | translate }}</h3>
           <div class="chip-grid">
             @for (chip of restrictionChips; track chip.value) {
               <button
@@ -158,43 +122,50 @@
                 [class.selected]="isRestrictionSelected(chip.value)"
                 (click)="toggleRestriction(chip.value)"
               >
-                {{ chip.label }}
+                {{ chip.labelKey | translate }}
+              </button>
+            }
+          </div>
+
+          <h3 class="subsection-title" style="margin-top: 24px;">{{ 'profile.conditions_title' | translate }}</h3>
+          <div class="chip-grid">
+            @for (chip of conditionChips; track chip.value) {
+              <button
+                type="button"
+                class="restriction-chip"
+                [class.selected]="isConditionSelected(chip.value)"
+                (click)="toggleCondition(chip.value)"
+              >
+                {{ chip.labelKey | translate }}
               </button>
             }
           </div>
         </div>
       }
 
-      <!-- STEP 5: All set -->
-      @case (5) {
+      <!-- STEP 4: Summary -->
+      @case (4) {
         <div class="step-content step-summary">
-          <div class="step-icon">🎉</div>
-          <h2 class="step-title">You're all set, {{ iamStore.currentUser()?.fullName }}!</h2>
-          <p class="step-subtitle">Here's your personalised daily nutrition plan</p>
+          <h2 class="step-title">{{ 'onboarding.summary_title' | translate }}</h2>
+          <p class="step-subtitle">{{ 'onboarding.summary_desc' | translate }}</p>
 
           <div class="summary-card">
-            <div class="summary-goal">
-              Goal: <strong>{{ iamStore.currentUser()?.goal === 'WEIGHT_LOSS' ? 'Lose weight 🔥' : 'Gain muscle 💪' }}</strong>
-            </div>
-            <div class="summary-macros">
-              {{ iamStore.currentUser()?.dailySummary() }}
-            </div>
             <div class="summary-details">
               <div class="macro-item">
                 <span class="macro-value">{{ iamStore.currentUser()?.dailyCalorieTarget }}</span>
-                <span class="macro-label">kcal/day</span>
+                <span class="macro-label">{{ 'onboarding.tdee_label' | translate }}</span>
               </div>
               <div class="macro-item">
                 <span class="macro-value">{{ iamStore.currentUser()?.proteinTarget }}g</span>
-                <span class="macro-label">Protein</span>
+                <span class="macro-label">{{ 'onboarding.protein_label' | translate }}</span>
               </div>
               <div class="macro-item">
                 <span class="macro-value">{{ iamStore.currentUser()?.carbsTarget }}g</span>
-                <span class="macro-label">Carbs</span>
+                <span class="macro-label">{{ 'onboarding.carbs_label' | translate }}</span>
               </div>
               <div class="macro-item">
                 <span class="macro-value">{{ iamStore.currentUser()?.fatTarget }}g</span>
-                <span class="macro-label">Fat</span>
+                <span class="macro-label">{{ 'onboarding.fat_label' | translate }}</span>
               </div>
             </div>
           </div>
@@ -203,13 +174,23 @@
 
     }
 
-    <!-- Continue / Finish button -->
-    <button type="button" class="btn-continue" (click)="continue()">
-      @if (currentStep() === 5) {
-        Choose your plan →
+    <!-- Footer buttons -->
+    <div class="onboarding-footer">
+      @if (currentStep() > 1) {
+        <button type="button" class="btn-back" (click)="back()">
+          {{ 'onboarding.back_btn' | translate }}
+        </button>
       } @else {
-        Continue
+        <span></span>
       }
-    </button>
+
+      <button type="button" class="btn-continue" (click)="continue()">
+        @if (currentStep() === totalSteps) {
+          {{ 'onboarding.finish_btn' | translate }}
+        } @else {
+          {{ 'onboarding.continue_btn' | translate }}
+        }
+      </button>
+    </div>
   </div>
 </div>
