@@ -5,15 +5,15 @@
       <span class="auth-brand">NutriSmart</span>
     </div>
 
-    <h1 class="auth-title">Create your account</h1>
-    <p class="auth-subtitle">Start your personalised nutrition journey today</p>
+    <h1 class="auth-title">{{ 'auth.register_title' | translate }}</h1>
+    <p class="auth-subtitle">{{ 'auth.register_subtitle' | translate }}</p>
 
     @if (registerError()) {
       <div class="auth-error">{{ registerError() }}</div>
     }
 
     <button type="button" class="btn-google">
-      <span class="google-icon">G</span> Continue with Google
+      <span class="google-icon">G</span> {{ 'auth.google_btn' | translate }}
     </button>
 
     <div class="divider"><span>or</span></div>
@@ -21,116 +21,129 @@
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
       <div class="form-row">
         <div class="form-group">
-          <label for="firstName" class="form-label">First name</label>
+          <label for="firstName" class="form-label">{{ 'auth.first_name' | translate }}</label>
           <input
             id="firstName"
             type="text"
             formControlName="firstName"
             class="form-input"
             [class.is-invalid]="form.get('firstName')?.invalid && form.get('firstName')?.touched"
-            placeholder="Ana"
+            [placeholder]="'auth.first_name' | translate"
             autocomplete="given-name"
           />
           @if (form.get('firstName')?.invalid && form.get('firstName')?.touched) {
-            <span class="field-error">First name is required.</span>
+            <span class="field-error">{{ 'common.required' | translate }}</span>
           }
         </div>
 
         <div class="form-group">
-          <label for="lastName" class="form-label">Last name</label>
+          <label for="lastName" class="form-label">{{ 'auth.last_name' | translate }}</label>
           <input
             id="lastName"
             type="text"
             formControlName="lastName"
             class="form-input"
             [class.is-invalid]="form.get('lastName')?.invalid && form.get('lastName')?.touched"
-            placeholder="García"
+            [placeholder]="'auth.last_name' | translate"
             autocomplete="family-name"
           />
           @if (form.get('lastName')?.invalid && form.get('lastName')?.touched) {
-            <span class="field-error">Last name is required.</span>
+            <span class="field-error">{{ 'common.required' | translate }}</span>
           }
         </div>
       </div>
 
       <div class="form-group">
-        <label for="email" class="form-label">Email address</label>
+        <label for="email" class="form-label">{{ 'auth.email' | translate }}</label>
         <input
           id="email"
           type="email"
           formControlName="email"
           class="form-input"
           [class.is-invalid]="form.get('email')?.invalid && form.get('email')?.touched"
-          placeholder="you@example.com"
+          [placeholder]="'auth.email' | translate"
           autocomplete="email"
         />
         @if (form.get('email')?.invalid && form.get('email')?.touched) {
           <span class="field-error">
-            @if (form.get('email')?.errors?.['required']) { Email is required. }
-            @else { Please enter a valid email address. }
+            @if (form.get('email')?.errors?.['required']) {
+              {{ 'auth.error_email_required' | translate }}
+            } @else {
+              {{ 'auth.error_email_invalid' | translate }}
+            }
           </span>
         }
       </div>
 
       <div class="form-group">
-        <label for="password" class="form-label">Password</label>
+        <label for="password" class="form-label">{{ 'auth.password' | translate }}</label>
         <div class="input-wrapper">
           <input
             id="password"
             [type]="showPassword() ? 'text' : 'password'"
             formControlName="password"
             class="form-input"
-            placeholder="Create a strong password"
+            [placeholder]="'auth.password' | translate"
             autocomplete="new-password"
           />
           <button type="button" class="eye-toggle" (click)="togglePassword()" aria-label="Toggle password visibility">
-            {{ showPassword() ? '🙈' : '👁️' }}
+            {{ showPassword() ? 'Hide' : 'Show' }}
           </button>
         </div>
 
         @if (form.get('password')?.dirty) {
           <ul class="password-hints">
-            <li [class.met]="reqLength">At least 8 characters</li>
-            <li [class.met]="reqNumber">Contains a number</li>
-            <li [class.met]="reqUppercase">Contains an uppercase letter</li>
+            <li [class.met]="reqLength">{{ 'auth.password_hint_length' | translate }}</li>
+            <li [class.met]="reqNumber">{{ 'auth.password_hint_number' | translate }}</li>
+            <li [class.met]="reqUppercase">{{ 'auth.password_hint_uppercase' | translate }}</li>
           </ul>
         }
       </div>
 
       <div class="form-group">
-        <label for="confirmPassword" class="form-label">Confirm password</label>
+        <label for="confirmPassword" class="form-label">{{ 'auth.confirm_password' | translate }}</label>
         <input
           id="confirmPassword"
           type="password"
           formControlName="confirmPassword"
           class="form-input"
           [class.is-invalid]="form.get('confirmPassword')?.invalid && form.get('confirmPassword')?.touched"
-          placeholder="Repeat your password"
+          [placeholder]="'auth.confirm_password' | translate"
           autocomplete="new-password"
         />
         @if (form.get('confirmPassword')?.invalid && form.get('confirmPassword')?.touched) {
-          <span class="field-error">Passwords do not match.</span>
+          <span class="field-error">
+            @if (form.get('confirmPassword')?.errors?.['required']) {
+              {{ 'auth.error_confirm_required' | translate }}
+            } @else {
+              {{ 'auth.error_passwords_mismatch' | translate }}
+            }
+          </span>
         }
       </div>
 
       <div class="form-group form-check">
         <label class="checkbox-label">
           <input type="checkbox" formControlName="terms" />
-          I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a>
+          {{ 'auth.terms' | translate }}
         </label>
         @if (form.get('terms')?.invalid && form.get('terms')?.touched) {
-          <span class="field-error">You must accept the terms to continue.</span>
+          <span class="field-error">{{ 'auth.error_terms' | translate }}</span>
         }
       </div>
 
       <button type="submit" class="btn-primary" [disabled]="loading()">
-        @if (loading()) { Creating account… } @else { Create account }
+        @if (loading()) {
+          {{ 'common.loading' | translate }}
+        } @else {
+          {{ 'auth.register_btn' | translate }}
+        }
       </button>
     </form>
 
     <p class="auth-switch">
-      Already have an account?
-      <a routerLink="/auth/login" class="link">Sign in</a>
+      {{ 'auth.already_account' | translate }}
+      <a routerLink="/auth/login" class="link">{{ 'auth.login_link' | translate }}</a>
     </p>
   </div>
 </div>

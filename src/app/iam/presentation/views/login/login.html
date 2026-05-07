@@ -5,8 +5,8 @@
       <span class="auth-brand">NutriSmart</span>
     </div>
 
-    <h1 class="auth-title">Welcome back</h1>
-    <p class="auth-subtitle">Sign in to continue your nutrition journey</p>
+    <h1 class="auth-title">{{ 'auth.login_title' | translate }}</h1>
+    <p class="auth-subtitle">{{ 'auth.login_subtitle' | translate }}</p>
 
     @if (loginError()) {
       <div class="auth-error">{{ loginError() }}</div>
@@ -14,26 +14,29 @@
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
       <div class="form-group">
-        <label for="email" class="form-label">Email address</label>
+        <label for="email" class="form-label">{{ 'auth.email' | translate }}</label>
         <input
           id="email"
           type="email"
           formControlName="email"
           class="form-input"
           [class.is-invalid]="form.get('email')?.invalid && form.get('email')?.touched"
-          placeholder="you@example.com"
+          [placeholder]="'auth.email' | translate"
           autocomplete="email"
         />
         @if (form.get('email')?.invalid && form.get('email')?.touched) {
           <span class="field-error">
-            @if (form.get('email')?.errors?.['required']) { Email is required. }
-            @else { Please enter a valid email address. }
+            @if (form.get('email')?.errors?.['required']) {
+              {{ 'auth.error_email_required' | translate }}
+            } @else {
+              {{ 'auth.error_email_invalid' | translate }}
+            }
           </span>
         }
       </div>
 
       <div class="form-group">
-        <label for="password" class="form-label">Password</label>
+        <label for="password" class="form-label">{{ 'auth.password' | translate }}</label>
         <div class="input-wrapper">
           <input
             id="password"
@@ -41,33 +44,40 @@
             formControlName="password"
             class="form-input"
             [class.is-invalid]="form.get('password')?.invalid && form.get('password')?.touched"
-            placeholder="Min. 8 characters"
+            [placeholder]="'auth.password' | translate"
             autocomplete="current-password"
           />
           <button type="button" class="eye-toggle" (click)="togglePassword()" aria-label="Toggle password visibility">
-            {{ showPassword() ? '🙈' : '👁️' }}
+            {{ showPassword() ? 'Hide' : 'Show' }}
           </button>
         </div>
         @if (form.get('password')?.invalid && form.get('password')?.touched) {
           <span class="field-error">
-            @if (form.get('password')?.errors?.['required']) { Password is required. }
-            @else { Password must be at least 8 characters. }
+            @if (form.get('password')?.errors?.['required']) {
+              {{ 'auth.error_password_required' | translate }}
+            } @else {
+              {{ 'auth.error_password_min' | translate }}
+            }
           </span>
         }
       </div>
 
       <div class="form-footer-link">
-        <a routerLink="/auth/forgot-password" class="link">Forgot your password?</a>
+        <a routerLink="/auth/forgot-password" class="link">{{ 'auth.forgot_link' | translate }}</a>
       </div>
 
       <button type="submit" class="btn-primary" [disabled]="loading()">
-        @if (loading()) { Signing in… } @else { Sign in }
+        @if (loading()) {
+          {{ 'common.loading' | translate }}
+        } @else {
+          {{ 'auth.login_btn' | translate }}
+        }
       </button>
     </form>
 
     <p class="auth-switch">
-      Don't have an account?
-      <a routerLink="/auth/register" class="link">Create one</a>
+      {{ 'auth.no_account' | translate }}
+      <a routerLink="/auth/register" class="link">{{ 'auth.register_link' | translate }}</a>
     </p>
   </div>
 </div>

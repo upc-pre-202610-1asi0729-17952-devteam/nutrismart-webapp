@@ -8,6 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 
 /**
@@ -58,7 +59,7 @@ export function confirmPasswordValidator(passwordKey: string): ValidatorFn {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
