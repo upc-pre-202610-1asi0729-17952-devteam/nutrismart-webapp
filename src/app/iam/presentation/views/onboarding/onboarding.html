@@ -1,0 +1,215 @@
+<div class="onboarding-shell">
+  <!-- Progress bar -->
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" [style.width.%]="progressPercent"></div>
+  </div>
+
+  <div class="onboarding-header">
+    <span class="step-label">Step {{ currentStep() }} of 5</span>
+    @if (currentStep() < 5) {
+      <button type="button" class="skip-btn" (click)="skip()">Skip</button>
+    }
+  </div>
+
+  <div class="onboarding-card">
+
+    @switch (currentStep()) {
+
+      <!-- STEP 1: About you -->
+      @case (1) {
+        <div class="step-content">
+          <div class="step-icon">👤</div>
+          <h2 class="step-title">About you</h2>
+          <p class="step-subtitle">Tell us a bit about yourself</p>
+
+          <form [formGroup]="step1Form" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">First name</label>
+                <input type="text" formControlName="firstName" class="form-input"
+                  [class.is-invalid]="step1Form.get('firstName')?.invalid && step1Form.get('firstName')?.touched"
+                  placeholder="Ana" />
+                @if (step1Form.get('firstName')?.invalid && step1Form.get('firstName')?.touched) {
+                  <span class="field-error">Required</span>
+                }
+              </div>
+              <div class="form-group">
+                <label class="form-label">Last name</label>
+                <input type="text" formControlName="lastName" class="form-input"
+                  [class.is-invalid]="step1Form.get('lastName')?.invalid && step1Form.get('lastName')?.touched"
+                  placeholder="García" />
+                @if (step1Form.get('lastName')?.invalid && step1Form.get('lastName')?.touched) {
+                  <span class="field-error">Required</span>
+                }
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Birthday</label>
+              <input type="date" formControlName="birthday" class="form-input" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Biological sex</label>
+              <select formControlName="biologicalSex" class="form-input">
+                <option value="">Select…</option>
+                <option value="man">Man</option>
+                <option value="woman">Woman</option>
+                <option value="other">Other / Prefer not to say</option>
+              </select>
+            </div>
+          </form>
+        </div>
+      }
+
+      <!-- STEP 2: Your body -->
+      @case (2) {
+        <div class="step-content">
+          <div class="step-icon">⚖️</div>
+          <h2 class="step-title">Your body</h2>
+          <p class="step-subtitle">We'll use this to calculate your calorie needs</p>
+
+          <form [formGroup]="step2Form" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Weight (kg)</label>
+                <input type="number" formControlName="weight" class="form-input"
+                  [class.is-invalid]="step2Form.get('weight')?.invalid && step2Form.get('weight')?.touched"
+                  placeholder="70" />
+                @if (step2Form.get('weight')?.invalid && step2Form.get('weight')?.touched) {
+                  <span class="field-error">Enter a valid weight</span>
+                }
+              </div>
+              <div class="form-group">
+                <label class="form-label">Height (cm)</label>
+                <input type="number" formControlName="height" class="form-input"
+                  [class.is-invalid]="step2Form.get('height')?.invalid && step2Form.get('height')?.touched"
+                  placeholder="170" />
+                @if (step2Form.get('height')?.invalid && step2Form.get('height')?.touched) {
+                  <span class="field-error">Enter a valid height</span>
+                }
+              </div>
+            </div>
+          </form>
+
+          <p class="form-label" style="margin-top: 16px;">Activity level</p>
+          <div class="activity-grid">
+            @for (card of activityCards; track card.level) {
+              <button
+                type="button"
+                class="activity-card"
+                [class.selected]="selectedActivity() === card.level"
+                (click)="selectActivity(card.level)"
+              >
+                <span class="activity-icon">{{ card.icon }}</span>
+                <span class="activity-label">{{ card.label }}</span>
+                <span class="activity-desc">{{ card.description }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- STEP 3: Your goal -->
+      @case (3) {
+        <div class="step-content">
+          <div class="step-icon">🎯</div>
+          <h2 class="step-title">Your goal</h2>
+          <p class="step-subtitle">What do you want to achieve with NutriSmart?</p>
+
+          <div class="goal-grid">
+            <button
+              type="button"
+              class="goal-card"
+              [class.selected]="selectedGoal() === UserGoal.WEIGHT_LOSS"
+              (click)="selectGoal(UserGoal.WEIGHT_LOSS)"
+            >
+              <span class="goal-icon">🔥</span>
+              <span class="goal-label">Lose weight</span>
+              <span class="goal-desc">Caloric deficit with optimised macros</span>
+            </button>
+
+            <button
+              type="button"
+              class="goal-card"
+              [class.selected]="selectedGoal() === UserGoal.MUSCLE_GAIN"
+              (click)="selectGoal(UserGoal.MUSCLE_GAIN)"
+            >
+              <span class="goal-icon">💪</span>
+              <span class="goal-label">Gain muscle</span>
+              <span class="goal-desc">Caloric surplus with high protein targets</span>
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- STEP 4: Dietary restrictions -->
+      @case (4) {
+        <div class="step-content">
+          <div class="step-icon">🥗</div>
+          <h2 class="step-title">Dietary restrictions</h2>
+          <p class="step-subtitle">Select everything that applies — you can change this later</p>
+
+          <div class="chip-grid">
+            @for (chip of restrictionChips; track chip.value) {
+              <button
+                type="button"
+                class="restriction-chip"
+                [class.selected]="isRestrictionSelected(chip.value)"
+                (click)="toggleRestriction(chip.value)"
+              >
+                {{ chip.label }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- STEP 5: All set -->
+      @case (5) {
+        <div class="step-content step-summary">
+          <div class="step-icon">🎉</div>
+          <h2 class="step-title">You're all set, {{ iamStore.currentUser()?.fullName }}!</h2>
+          <p class="step-subtitle">Here's your personalised daily nutrition plan</p>
+
+          <div class="summary-card">
+            <div class="summary-goal">
+              Goal: <strong>{{ iamStore.currentUser()?.goal === 'WEIGHT_LOSS' ? 'Lose weight 🔥' : 'Gain muscle 💪' }}</strong>
+            </div>
+            <div class="summary-macros">
+              {{ iamStore.currentUser()?.dailySummary() }}
+            </div>
+            <div class="summary-details">
+              <div class="macro-item">
+                <span class="macro-value">{{ iamStore.currentUser()?.dailyCalorieTarget }}</span>
+                <span class="macro-label">kcal/day</span>
+              </div>
+              <div class="macro-item">
+                <span class="macro-value">{{ iamStore.currentUser()?.proteinTarget }}g</span>
+                <span class="macro-label">Protein</span>
+              </div>
+              <div class="macro-item">
+                <span class="macro-value">{{ iamStore.currentUser()?.carbsTarget }}g</span>
+                <span class="macro-label">Carbs</span>
+              </div>
+              <div class="macro-item">
+                <span class="macro-value">{{ iamStore.currentUser()?.fatTarget }}g</span>
+                <span class="macro-label">Fat</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+    }
+
+    <!-- Continue / Finish button -->
+    <button type="button" class="btn-continue" (click)="continue()">
+      @if (currentStep() === 5) {
+        Choose your plan →
+      } @else {
+        Continue
+      }
+    </button>
+  </div>
+</div>
