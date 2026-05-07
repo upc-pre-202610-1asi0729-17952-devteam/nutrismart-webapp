@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { LanguageSwitcher } from '../../../../shared/presentation/components/language-switcher/language-switcher';
 
 /**
  * Forgot password view for the NutriSmart auth flow.
@@ -13,7 +14,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, LanguageSwitcher],
   templateUrl: './forgot-password.html',
   styleUrl: './forgot-password.css',
 })
