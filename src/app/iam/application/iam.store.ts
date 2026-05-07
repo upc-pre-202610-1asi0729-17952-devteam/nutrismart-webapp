@@ -7,8 +7,10 @@ import { DietaryRestriction } from '../domain/model/dietary-restriction.enum';
 import { MedicalCondition } from '../domain/model/medical-condition.enum';
 import { SubscriptionPlan } from '../domain/model/subscription-plan.enum';
 import { UserGoal } from '../domain/model/user-goal.enum';
-import { User } from '../domain/model/user.entity';
+import { User, UserProps } from '../domain/model/user.entity';
 import { IamApi } from '../infrastructure/iam-api';
+
+const SESSION_KEY = 'nutrismart_session';
 
 /**
  * Central state store for the IAM bounded context.
@@ -38,6 +40,10 @@ export class IamStore {
   /** Last error message from a failed async operation, or `null`. */
   private _error = signal<string | null>(null);
 
+  constructor() {
+    this.restoreSession();
+  }
+
   // ─── Public readonly signals ───────────────────────────────────────────────
 
   /** Read-only signal exposing the currently authenticated {@link User}. */
@@ -51,6 +57,39 @@ export class IamStore {
 
   /** Read-only signal holding the most recent error message, or `null`. */
   readonly error = this._error.asReadonly();
+
+  // ─── Session persistence ───────────────────────────────────────────────────
+
+  private saveSession(user: User): void {
+    const props: UserProps = {
+      id: user.id, firstName: user.firstName, lastName: user.lastName,
+      email: user.email, goal: user.goal, weight: user.weight, height: user.height,
+      activityLevel: user.activityLevel, plan: user.plan,
+      restrictions: user.restrictions, medicalConditions: user.medicalConditions,
+      dailyCalorieTarget: user.dailyCalorieTarget, proteinTarget: user.proteinTarget,
+      carbsTarget: user.carbsTarget, fatTarget: user.fatTarget,
+      fiberTarget: user.fiberTarget, streak: user.streak,
+      consecutiveMisses: user.consecutiveMisses,
+      birthday: user.birthday, biologicalSex: user.biologicalSex,
+    };
+    localStorage.setItem(SESSION_KEY, JSON.stringify(props));
+  }
+
+  private clearSession(): void {
+    localStorage.removeItem(SESSION_KEY);
+  }
+
+  private restoreSession(): void {
+    try {
+      const raw = localStorage.getItem(SESSION_KEY);
+      if (!raw) return;
+      const props = JSON.parse(raw) as UserProps;
+      this._currentUser.set(new User(props));
+      this._isAuthenticated.set(true);
+    } catch {
+      this.clearSession();
+    }
+  }
 
   // ─── Authentication ────────────────────────────────────────────────────────
 
@@ -78,6 +117,7 @@ export class IamStore {
         this._currentUser.set(user);
         this._isAuthenticated.set(true);
         this._loading.set(false);
+        this.saveSession(user);
         const incomplete = !user.birthday || !user.biologicalSex;
         this.router.navigate([incomplete ? '/onboarding' : '/dashboard']);
       }),
@@ -131,6 +171,7 @@ export class IamStore {
         this._currentUser.set(created);
         this._isAuthenticated.set(true);
         this._loading.set(false);
+        this.saveSession(created);
         this.router.navigate(['/onboarding']);
       }),
       catchError(err => {
@@ -147,6 +188,7 @@ export class IamStore {
   logout(): void {
     this._isAuthenticated.set(false);
     this._currentUser.set(null);
+    this.clearSession();
     this.router.navigate(['/auth/login']);
   }
 
@@ -160,7 +202,10 @@ export class IamStore {
     const user = this._currentUser();
     if (!user) return;
     this.iamApi.updateUser(user).subscribe({
-      next: updated => this._currentUser.set(updated),
+      next: updated => {
+        this._currentUser.set(updated);
+        this.saveSession(updated);
+      },
       error: err => this._error.set(err.message),
     });
   }

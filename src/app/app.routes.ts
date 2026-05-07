@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './iam/application/auth.guard';
+import { onboardingGuard } from './iam/application/onboarding.guard';
 
 /**
  * Lazy-loads the PageNotFound standalone component.
@@ -86,17 +88,17 @@ const baseTitle = 'NutriSmart';
  */
 export const routes: Routes = [
   { path: 'auth',            loadChildren: iamRoutes },
-  { path: 'onboarding',      loadChildren: onboardingRoutes },
-  { path: 'profile',         loadChildren: profileRoutes },
-  { path: 'dashboard',       loadChildren: dashboardRoutes },
-  { path: 'nutrition',       loadChildren: nutritionRoutes },
-  { path: 'smart-scan',      loadChildren: smartScanRoutes },
-  { path: 'recommendations', loadChildren: recommendationsRoutes },
-  { path: 'body-progress',   loadChildren: bodyProgressRoutes },
-  { path: 'pantry',          loadChildren: pantryRoutes },
-  { path: 'wearable',        loadChildren: wearableRoutes },
-  { path: 'analytics',       loadChildren: analyticsRoutes },
-  { path: 'subscription',    loadChildren: subscriptionsRoutes },
+  { path: 'onboarding',      loadChildren: onboardingRoutes,      canActivate: [onboardingGuard] },
+  { path: 'profile',         loadChildren: profileRoutes,         canActivate: [authGuard] },
+  { path: 'dashboard',       loadChildren: dashboardRoutes,       canActivate: [authGuard] },
+  { path: 'nutrition',       loadChildren: nutritionRoutes,       canActivate: [authGuard] },
+  { path: 'smart-scan',      loadChildren: smartScanRoutes,       canActivate: [authGuard] },
+  { path: 'recommendations', loadChildren: recommendationsRoutes, canActivate: [authGuard] },
+  { path: 'body-progress',   loadChildren: bodyProgressRoutes,    canActivate: [authGuard] },
+  { path: 'pantry',          loadChildren: pantryRoutes,          canActivate: [authGuard] },
+  { path: 'wearable',        loadChildren: wearableRoutes,        canActivate: [authGuard] },
+  { path: 'analytics',       loadChildren: analyticsRoutes,       canActivate: [authGuard] },
+  { path: 'subscription',    loadChildren: subscriptionsRoutes,   canActivate: [authGuard] },
   { path: '',                redirectTo: '/auth/login', pathMatch: 'full' },
   {
     path: '**',
