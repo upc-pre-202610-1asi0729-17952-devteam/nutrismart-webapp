@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { SubscriptionPlan } from '../../../../iam/domain/model/subscription-plan.enum';
 
@@ -9,32 +10,34 @@ import { SubscriptionPlan } from '../../../../iam/domain/model/subscription-plan
 interface PlanCard {
   /** The {@link SubscriptionPlan} this card represents. */
   plan: SubscriptionPlan;
-  /** Marketing name shown on the card. */
-  name: string;
-  /** Price string (e.g. "Free", "$9.99/mo"). */
+  /** i18n key for the plan name. */
+  nameKey: string;
+  /** Price string (e.g. "$7.99"). */
   price: string;
-  /** Optional badge text (e.g. "Most popular", "Save 33%"). */
-  badge?: string;
-  /** Whether the card uses the featured (teal-bordered) style. */
+  /** i18n key for an optional badge (e.g. "Most popular", "Best value"). */
+  badgeKey?: string;
+  /** Whether the card uses the featured (highlighted) style. */
   featured: boolean;
-  /** List of feature bullet points. */
+  /** List of i18n feature keys. */
   features: string[];
-  /** CTA button label. */
-  ctaLabel: string;
+  /** i18n key for the CTA button label. */
+  ctaKey: string;
+  /** i18n key for the plan description. */
+  descKey: string;
 }
 
 /**
  * Subscription plan selection view.
  *
- * Displays three plan cards (FREE, PRO, ANNUAL_PRO) and lets the user pick
- * a tier. The PRO card is featured with a teal border and "Most popular" badge.
- * ANNUAL_PRO shows a "Save 33%" badge. On selection the store is updated and
- * the user is navigated to `/dashboard`.
+ * Displays three plan cards (BASIC, PRO, PREMIUM) and lets the user pick
+ * a tier. The PRO card is featured with a "Most popular" badge. PREMIUM shows
+ * a "Best value" badge. On selection the store is updated and the user is
+ * navigated to `/dashboard`.
  */
 @Component({
   selector: 'app-subscription',
   standalone: true,
-  imports: [],
+  imports: [TranslatePipe],
   templateUrl: './subscription.html',
   styleUrl: './subscription.css',
 })
@@ -50,47 +53,49 @@ export class Subscription {
    */
   readonly plans: PlanCard[] = [
     {
-      plan: SubscriptionPlan.FREE,
-      name: 'Free',
-      price: 'Free',
+      plan: SubscriptionPlan.BASIC,
+      nameKey: 'subscription.plan_basic',
+      price: '$7.99',
       featured: false,
+      descKey: 'subscription.desc_basic',
       features: [
-        'Basic calorie tracking',
-        'Manual food log',
-        '7-day history',
-        'Limited recommendations',
+        'subscription.feature_nutrition_log',
+        'subscription.feature_basic_dashboard',
+        'subscription.feature_bmi_bmr_tdee',
       ],
-      ctaLabel: 'Get started for free',
+      ctaKey: 'subscription.cta_basic',
     },
     {
       plan: SubscriptionPlan.PRO,
-      name: 'Pro',
-      price: '$9.99/mo',
-      badge: 'Most popular',
+      nameKey: 'subscription.plan_pro',
+      price: '$14.99',
+      badgeKey: 'subscription.badge_popular',
       featured: true,
+      descKey: 'subscription.desc_pro',
       features: [
-        'Everything in Free',
-        'AI Smart Scan',
-        'Unlimited history',
-        'Advanced recommendations',
-        'Body progress tracking',
-        'Wearable sync',
+        'subscription.feature_everything_basic',
+        'subscription.feature_smart_scan',
+        'subscription.feature_travel_mode',
+        'subscription.feature_weather_rec',
+        'subscription.feature_pantry',
       ],
-      ctaLabel: 'Start Pro',
+      ctaKey: 'subscription.cta_pro',
     },
     {
-      plan: SubscriptionPlan.ANNUAL_PRO,
-      name: 'Annual Pro',
-      price: '$7.99/mo',
-      badge: 'Save 33%',
+      plan: SubscriptionPlan.PREMIUM,
+      nameKey: 'subscription.plan_premium',
+      price: '$19.99',
+      badgeKey: 'subscription.badge_best',
       featured: false,
+      descKey: 'subscription.desc_premium',
       features: [
-        'Everything in Pro',
-        'Billed annually ($95.88/yr)',
-        'Priority support',
-        'Early access to new features',
+        'subscription.feature_everything_pro',
+        'subscription.feature_wearable',
+        'subscription.feature_restaurant',
+        'subscription.feature_unlimited',
+        'subscription.feature_pdf',
       ],
-      ctaLabel: 'Start Annual Pro',
+      ctaKey: 'subscription.cta_premium',
     },
   ];
 
@@ -105,9 +110,9 @@ export class Subscription {
   }
 
   /**
-   * Navigates to the login page, effectively deferring the plan selection.
+   * Navigates to the dashboard, deferring the plan selection.
    */
   maybeLater(): void {
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/dashboard']);
   }
 }
