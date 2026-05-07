@@ -1,3 +1,10 @@
+.auth-lang {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 10;
+}
+
 .auth-container {
   min-height: 100vh;
   display: flex;

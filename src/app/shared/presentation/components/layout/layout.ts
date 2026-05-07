@@ -2,7 +2,6 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
-import { LanguageSwitcher } from '../language-switcher/language-switcher';
 
 /**
  * Represents a single navigation item in the sidebar.
@@ -31,7 +30,6 @@ interface NavItem {
     RouterLink,
     RouterLinkActive,
     TranslatePipe,
-    LanguageSwitcher,
   ],
   templateUrl: './layout.html',
   styleUrl: './layout.css',
