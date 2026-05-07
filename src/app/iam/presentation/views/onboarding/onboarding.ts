@@ -1,6 +1,33 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
+
+/**
+ * Validates that the date entered corresponds to a person at least `minAge`
+ * years old. Assumes the control value is an ISO date string (YYYY-MM-DD).
+ *
+ * @param minAge - Minimum age in full years required.
+ */
+function minAgeValidator(minAge: number): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value: string = control.value;
+    if (!value) return null; // handled by Validators.required
+    const birth = new Date(value);
+    if (isNaN(birth.getTime())) return { invalidDate: true };
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+    return age < minAge ? { minAge: { required: minAge, actual: age } } : null;
+  };
+}
 import { TranslatePipe } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { ActivityLevel } from '../../../../iam/domain/model/activity-level.enum';
@@ -103,10 +130,10 @@ export class Onboarding {
    * Step 1 reactive form (body stats + demographics).
    */
   bodyForm = this.fb.group({
-    birthday: [''],
-    biologicalSex: [''],
-    weight: [70, [Validators.required, Validators.min(30), Validators.max(300)]],
-    height: [170, [Validators.required, Validators.min(100), Validators.max(250)]],
+    birthday:     ['', [Validators.required, minAgeValidator(13)]],
+    biologicalSex:['', Validators.required],
+    weight:       [null as number | null, [Validators.required, Validators.min(30), Validators.max(300)]],
+    height:       [null as number | null, [Validators.required, Validators.min(100), Validators.max(250)]],
   });
 
   // ─── Static data ──────────────────────────────────────────────────────────

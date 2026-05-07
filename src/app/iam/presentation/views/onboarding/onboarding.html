@@ -20,41 +20,55 @@
 
           <form [formGroup]="bodyForm" novalidate>
             <div class="form-group">
-              <label class="form-label">{{ 'onboarding.birthdate' | translate }}</label>
-              <input type="date" formControlName="birthday" class="form-input" />
+              <label class="form-label">{{ 'onboarding.birthdate' | translate }} *</label>
+              <input type="date" formControlName="birthday" class="form-input"
+                [class.is-invalid]="bodyForm.get('birthday')?.invalid && bodyForm.get('birthday')?.touched" />
+              @if (bodyForm.get('birthday')?.touched) {
+                @if (bodyForm.get('birthday')?.errors?.['required']) {
+                  <span class="field-error">{{ 'onboarding.error_birthday_required' | translate }}</span>
+                } @else if (bodyForm.get('birthday')?.errors?.['minAge']) {
+                  <span class="field-error">{{ 'onboarding.error_birthday_min_age' | translate }}</span>
+                } @else if (bodyForm.get('birthday')?.errors?.['invalidDate']) {
+                  <span class="field-error">{{ 'onboarding.error_birthday_invalid' | translate }}</span>
+                }
+              }
             </div>
 
             <div class="form-group">
-              <label class="form-label">{{ 'onboarding.biological_sex' | translate }}</label>
-              <select formControlName="biologicalSex" class="form-input">
-                <option value="">{{ 'common.empty' | translate }}</option>
+              <label class="form-label">{{ 'onboarding.biological_sex' | translate }} *</label>
+              <select formControlName="biologicalSex" class="form-input"
+                [class.is-invalid]="bodyForm.get('biologicalSex')?.invalid && bodyForm.get('biologicalSex')?.touched">
+                <option value="">{{ 'onboarding.select_option' | translate }}</option>
                 <option value="male">{{ 'onboarding.biological_sex_male' | translate }}</option>
                 <option value="female">{{ 'onboarding.biological_sex_female' | translate }}</option>
                 <option value="other">{{ 'onboarding.biological_sex_other' | translate }}</option>
               </select>
+              @if (bodyForm.get('biologicalSex')?.invalid && bodyForm.get('biologicalSex')?.touched) {
+                <span class="field-error">{{ 'onboarding.error_sex_required' | translate }}</span>
+              }
             </div>
 
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">{{ 'onboarding.weight' | translate }}</label>
+                <label class="form-label">{{ 'onboarding.weight' | translate }} *</label>
                 <input type="number" formControlName="weight" class="form-input"
                   [class.is-invalid]="bodyForm.get('weight')?.invalid && bodyForm.get('weight')?.touched"
                   placeholder="70" />
                 @if (bodyForm.get('weight')?.touched && bodyForm.get('weight')?.errors?.['required']) {
                   <span class="field-error">{{ 'common.required' | translate }}</span>
                 } @else if (bodyForm.get('weight')?.touched && (bodyForm.get('weight')?.errors?.['min'] || bodyForm.get('weight')?.errors?.['max'])) {
-                  <span class="field-error">{{ 'onboarding.weight' | translate }} (30–300)</span>
+                  <span class="field-error">{{ 'onboarding.error_weight_range' | translate }}</span>
                 }
               </div>
               <div class="form-group">
-                <label class="form-label">{{ 'onboarding.height' | translate }}</label>
+                <label class="form-label">{{ 'onboarding.height' | translate }} *</label>
                 <input type="number" formControlName="height" class="form-input"
                   [class.is-invalid]="bodyForm.get('height')?.invalid && bodyForm.get('height')?.touched"
                   placeholder="170" />
                 @if (bodyForm.get('height')?.touched && bodyForm.get('height')?.errors?.['required']) {
                   <span class="field-error">{{ 'common.required' | translate }}</span>
                 } @else if (bodyForm.get('height')?.touched && (bodyForm.get('height')?.errors?.['min'] || bodyForm.get('height')?.errors?.['max'])) {
-                  <span class="field-error">{{ 'onboarding.height' | translate }} (100–250)</span>
+                  <span class="field-error">{{ 'onboarding.error_height_range' | translate }}</span>
                 }
               </div>
             </div>
