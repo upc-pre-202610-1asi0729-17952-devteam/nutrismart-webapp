@@ -1,1 +1,5 @@
-<app-layout />
+@if (isPublicRoute()) {
+  <router-outlet />
+} @else {
+  <app-layout />
+}
