@@ -325,6 +325,30 @@
   color: #ffffff;
 }
 
+.chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.restriction-chip {
+  padding: 8px 16px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: 20px;
+  background: var(--nutrismart-white, #ffffff);
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.restriction-chip.selected {
+  border-color: var(--nutrismart-primary, #508B89);
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+}
+
 .add-condition-row {
   display: flex;
   gap: 10px;

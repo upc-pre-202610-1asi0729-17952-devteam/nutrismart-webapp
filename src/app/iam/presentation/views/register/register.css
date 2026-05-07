@@ -256,3 +256,27 @@
   font-size: 0.875rem;
   color: var(--nutrismart-text-mid, #4a6060);
 }
+
+.auth-back {
+  text-align: center;
+  margin-top: 12px;
+}
+
+.btn-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.875rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+  text-decoration: none;
+  padding: 8px 16px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-back-link:hover {
+  background: var(--nutrismart-primary-lighter, #f0f6f6);
+  border-color: var(--nutrismart-primary, #508B89);
+  color: var(--nutrismart-primary, #508B89);
+}

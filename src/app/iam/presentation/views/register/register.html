@@ -1,7 +1,7 @@
 <div class="auth-container">
   <div class="auth-card">
     <div class="auth-logo">
-      <img src="/logo.svg" alt="NutriSmart" width="48" height="48" />
+      <img src="/logo.png" alt="NutriSmart" width="48" height="48" />
       <span class="auth-brand">NutriSmart</span>
     </div>
 
@@ -11,12 +11,6 @@
     @if (registerError()) {
       <div class="auth-error">{{ registerError() }}</div>
     }
-
-    <button type="button" class="btn-google">
-      <span class="google-icon">G</span> {{ 'auth.google_btn' | translate }}
-    </button>
-
-    <div class="divider"><span>or</span></div>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
       <div class="form-row">
@@ -145,5 +139,9 @@
       {{ 'auth.already_account' | translate }}
       <a routerLink="/auth/login" class="link">{{ 'auth.login_link' | translate }}</a>
     </p>
+
+    <div class="auth-back">
+      <a routerLink="/auth/login" class="btn-back-link">{{ 'auth.back_to_login' | translate }}</a>
+    </div>
   </div>
 </div>
