@@ -6,7 +6,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs';
 
 /** Route prefixes that should render without the sidebar layout. */
-const PUBLIC_PREFIXES = ['/auth', '/onboarding'];
+const PUBLIC_PREFIXES = ['/auth', '/onboarding', '/subscription'];
 
 /**
  * Root component of the NutriSmart application.

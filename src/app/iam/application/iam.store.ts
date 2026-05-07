@@ -5,6 +5,7 @@ import { delay, tap } from 'rxjs/operators';
 import { MOCK_USER } from '../../shared/infrastructure/auth.mock';
 import { ActivityLevel } from '../domain/model/activity-level.enum';
 import { DietaryRestriction } from '../domain/model/dietary-restriction.enum';
+import { MedicalCondition } from '../domain/model/medical-condition.enum';
 import { SubscriptionPlan } from '../domain/model/subscription-plan.enum';
 import { UserGoal } from '../domain/model/user-goal.enum';
 import { User } from '../domain/model/user.entity';
@@ -152,7 +153,7 @@ export class IamStore {
       weight: 70,
       height: 170,
       activityLevel: ActivityLevel.MODERATE,
-      plan: SubscriptionPlan.FREE,
+      plan: SubscriptionPlan.BASIC,
       restrictions: [],
       medicalConditions: [],
       dailyCalorieTarget: 2000,
@@ -276,6 +277,15 @@ export class IamStore {
   }
 
   /**
+   * Adds a {@link MedicalCondition} enum value to the current user.
+   *
+   * @param condition - The {@link MedicalCondition} to add.
+   */
+  addMedicalConditionEnum(condition: MedicalCondition): void {
+    this.addMedicalCondition(condition as string);
+  }
+
+  /**
    * Removes a medical condition from the current user via the entity method.
    *
    * @param c - The medical condition description to remove.
@@ -285,6 +295,32 @@ export class IamStore {
     if (!user) return;
 
     user.removeMedicalCondition(c);
+    this._currentUser.set(user);
+  }
+
+  /**
+   * Replaces all dietary restrictions on the current user.
+   *
+   * @param restrictions - The new set of {@link DietaryRestriction} values.
+   */
+  setRestrictions(restrictions: DietaryRestriction[]): void {
+    const user = this._currentUser();
+    if (!user) return;
+
+    user.restrictions = restrictions;
+    this._currentUser.set(user);
+  }
+
+  /**
+   * Replaces all medical conditions on the current user.
+   *
+   * @param conditions - The new array of condition strings (enum values).
+   */
+  setMedicalConditions(conditions: string[]): void {
+    const user = this._currentUser();
+    if (!user) return;
+
+    user.medicalConditions = conditions;
     this._currentUser.set(user);
   }
 

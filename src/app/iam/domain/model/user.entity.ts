@@ -244,19 +244,19 @@ export class User implements BaseEntity {
   /**
    * Determines whether the user has an active paid subscription.
    *
-   * @returns `true` if the user is on PRO or ANNUAL_PRO; `false` for FREE.
+   * @returns `true` if the user is on PRO or PREMIUM; `false` for BASIC.
    */
   isPro(): boolean {
-    return this._plan !== SubscriptionPlan.FREE;
+    return this._plan === SubscriptionPlan.PRO || this._plan === SubscriptionPlan.PREMIUM;
   }
 
   /**
    * Determines whether the user can upgrade their subscription tier.
    *
-   * @returns `true` if the user is not already on ANNUAL_PRO.
+   * @returns `true` if the user is not already on PREMIUM.
    */
   canUpgrade(): boolean {
-    return this._plan !== SubscriptionPlan.ANNUAL_PRO;
+    return this._plan !== SubscriptionPlan.PREMIUM;
   }
 
   /**
