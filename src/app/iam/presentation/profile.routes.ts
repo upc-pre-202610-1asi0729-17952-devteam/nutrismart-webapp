@@ -1,7 +1,13 @@
 /**
  * User profile routes.
  *
- * Register profile view and edit-profile views here.
+ * Lazy-loads the profile and settings view at the `/profile` path.
  */
 import { Routes } from '@angular/router';
-export const profileRoutes: Routes = [];
+
+/** Lazy-loads the {@link Profile} standalone component. */
+const profile = () => import('./views/profile/profile').then(m => m.Profile);
+
+export const profileRoutes: Routes = [
+  { path: '', loadComponent: profile, title: 'NutriSmart - Profile & Settings' },
+];
