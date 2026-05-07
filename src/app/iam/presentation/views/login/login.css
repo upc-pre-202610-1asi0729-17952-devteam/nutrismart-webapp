@@ -1,0 +1,171 @@
+.auth-lang {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 10;
+}
+
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--nutrismart-bg, #f5f7f7);
+  padding: 24px;
+}
+
+.auth-card {
+  background: var(--nutrismart-white, #ffffff);
+  border-radius: var(--nutrismart-radius, 14px);
+  box-shadow: var(--nutrismart-shadow, 0 2px 12px rgba(80, 139, 137, 0.08));
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.auth-brand {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--nutrismart-primary, #508B89);
+}
+
+.auth-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  text-align: center;
+  margin: 0 0 8px;
+}
+
+.auth-subtitle {
+  color: var(--nutrismart-text-mid, #4a6060);
+  text-align: center;
+  margin: 0 0 28px;
+  font-size: 0.95rem;
+}
+
+.auth-error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  font-size: 0.95rem;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  background: var(--nutrismart-white, #ffffff);
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--nutrismart-primary, #508B89);
+}
+
+.form-input.is-invalid {
+  border-color: #dc2626;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper .form-input {
+  padding-right: 44px;
+}
+
+.eye-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px;
+  line-height: 1;
+  color: var(--nutrismart-text-mid, #4a6060);
+}
+
+.field-error {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #dc2626;
+}
+
+.form-footer-link {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.link {
+  color: var(--nutrismart-primary, #508B89);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.btn-primary {
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+  width: 100%;
+  border: none;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--nutrismart-primary-dark, #3d6e6c);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 0.875rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+}

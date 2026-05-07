@@ -1,0 +1,5 @@
+<div class="not-found-container">
+  <h1>{{ 'page_not_found.title' | translate }}</h1>
+  <p [innerHTML]="'page_not_found.content' | translate: { invalid_path: invalidPath }"></p>
+  <button (click)="goHome()">{{ 'page_not_found.go_home' | translate }}</button>
+</div>

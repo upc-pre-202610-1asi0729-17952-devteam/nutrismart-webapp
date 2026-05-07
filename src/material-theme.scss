@@ -1,11 +1,33 @@
 @use '@angular/material' as mat;
+@include mat.core();
+
+:root {
+  --nutrismart-primary: #508B89;
+  --nutrismart-primary-dark: #3d6e6c;
+  --nutrismart-primary-light: #e8f2f2;
+  --nutrismart-primary-lighter: #f0f6f6;
+  --nutrismart-bg: #f5f7f7;
+  --nutrismart-border: #e0eaea;
+  --nutrismart-text-dark: #1a2e2e;
+  --nutrismart-text-mid: #4a6060;
+  --nutrismart-text-light: #8aa8a8;
+  --nutrismart-white: #ffffff;
+  --nutrismart-radius: 14px;
+  --nutrismart-radius-sm: 10px;
+  --nutrismart-shadow: 0 2px 12px rgba(80, 139, 137, 0.08);
+  --nutrismart-shadow-md: 0 4px 20px rgba(80, 139, 137, 0.12);
+
+  @include mat.toolbar-overrides((
+    container-background-color: #508B89,
+    container-text-color: white
+  ));
+}
 
 html {
-  height: 100%;
   @include mat.theme((
     color: (
       primary: mat.$cyan-palette,
-      tertiary: mat.$teal-palette,
+      tertiary: mat.$green-palette,
     ),
     typography: Poppins,
     density: 0,
@@ -14,31 +36,8 @@ html {
 
 body {
   color-scheme: light;
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
+  background-color: var(--nutrismart-bg);
+  color: var(--nutrismart-text-dark);
+  font-family: 'Poppins', sans-serif;
   margin: 0;
-  height: 100%;
-}
-
-:root {
-  --nutrismart-primary: #508B89;
-  --nutrismart-primary-dark: #3a6b69;
-  --nutrismart-primary-light: #7ab3b1;
-  --nutrismart-surface: #ffffff;
-  --nutrismart-on-primary: #ffffff;
-  --nutrismart-sidebar-bg: #ffffff;
-  --nutrismart-sidebar-active: #e8f4f4;
-  --nutrismart-streak-bg: #508B89;
-  --nutrismart-text-primary: #1a1a1a;
-  --nutrismart-text-secondary: #6b7280;
-
-  @include mat.toolbar-overrides((
-    container-background-color: #508B89,
-    container-text-color: #ffffff,
-  ));
-
-  @include mat.sidenav-overrides((
-    container-background-color: #ffffff,
-  ));
 }

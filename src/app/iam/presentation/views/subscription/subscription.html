@@ -1,0 +1,46 @@
+<div class="subscription-shell">
+  <div class="subscription-header">
+    <div class="brand">NutriSmart</div>
+    <h1 class="page-title">{{ 'subscription.title' | translate }}</h1>
+    <p class="page-subtitle">{{ 'subscription.subtitle' | translate }}</p>
+  </div>
+
+  <div class="plans-grid">
+    @for (plan of plans; track plan.plan) {
+      <div class="plan-card" [class.featured]="plan.featured">
+        @if (plan.badgeKey) {
+          <span class="plan-badge">{{ plan.badgeKey | translate }}</span>
+        }
+
+        <h3 class="plan-name">{{ plan.nameKey | translate }}</h3>
+        <div class="plan-price">
+          <span class="price-amount">{{ plan.price }}</span>
+          <span class="price-period">{{ 'subscription.per_month' | translate }}</span>
+        </div>
+        <p class="plan-desc">{{ plan.descKey | translate }}</p>
+
+        <ul class="plan-features">
+          @for (feature of plan.features; track feature) {
+            <li>{{ feature | translate }}</li>
+          }
+        </ul>
+
+        <button
+          type="button"
+          class="btn-plan"
+          [class.btn-plan-featured]="plan.featured"
+          (click)="selectPlan(plan.plan)"
+        >
+          {{ plan.ctaKey | translate }}
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="subscription-footer">
+    <p class="legal-text">{{ 'subscription.legal' | translate }}</p>
+    <button type="button" class="maybe-later" (click)="maybeLater()">
+      {{ 'subscription.maybe_later' | translate }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,492 @@
+.profile-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--nutrismart-bg, #f5f7f7);
+}
+
+/* ─── Left panel ─────────────────────────────────────────────────────────── */
+
+.profile-nav {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--nutrismart-white, #ffffff);
+  border-right: 1px solid var(--nutrismart-border, #e0eaea);
+  padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.profile-avatar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--nutrismart-border, #e0eaea);
+}
+
+.avatar-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.avatar-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.avatar-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+}
+
+.avatar-plan {
+  font-size: 0.75rem;
+  color: var(--nutrismart-primary, #508B89);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s;
+  color: var(--nutrismart-text-mid, #4a6060);
+  font-size: 0.9rem;
+}
+
+.nav-item:hover {
+  background: var(--nutrismart-primary-lighter, #f0f6f6);
+}
+
+.nav-item.active {
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  color: var(--nutrismart-primary, #508B89);
+  font-weight: 600;
+}
+
+.nav-icon {
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+}
+
+/* ─── Right content panel ─────────────────────────────────────────────────── */
+
+.profile-content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.panel-section {
+  max-width: 640px;
+}
+
+.panel-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  margin: 0 0 24px;
+}
+
+.panel-desc {
+  font-size: 0.9rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+  margin: 0 0 20px;
+}
+
+.subsection-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  margin: 0 0 12px;
+}
+
+.success-banner {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  margin-bottom: 20px;
+}
+
+/* ─── Forms ───────────────────────────────────────────────────────────────── */
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  font-size: 0.9rem;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  background: var(--nutrismart-white, #ffffff);
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--nutrismart-primary, #508B89);
+}
+
+.form-input.is-invalid {
+  border-color: #dc2626;
+}
+
+.form-input-readonly {
+  background: var(--nutrismart-bg, #f5f7f7);
+  color: var(--nutrismart-text-light, #8aa8a8);
+  cursor: not-allowed;
+}
+
+.field-error {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #dc2626;
+}
+
+.plan-info-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+
+.plan-badge {
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.plan-renewal {
+  font-size: 0.875rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+}
+
+/* ─── Physical panel ──────────────────────────────────────────────────────── */
+
+.goal-section {
+  margin-bottom: 20px;
+}
+
+.goal-toggle {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.goal-btn {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  background: var(--nutrismart-white, #ffffff);
+  color: var(--nutrismart-text-mid, #4a6060);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.goal-btn.active {
+  border-color: var(--nutrismart-primary, #508B89);
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  color: var(--nutrismart-primary, #508B89);
+  font-weight: 600;
+}
+
+.goal-confirm-text {
+  font-size: 0.82rem;
+  color: var(--nutrismart-primary, #508B89);
+  margin-top: 8px;
+}
+
+/* ─── Dietary panel ───────────────────────────────────────────────────────── */
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.active-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  color: var(--nutrismart-primary, #508B89);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.chip-remove {
+  background: none;
+  border: none;
+  color: var(--nutrismart-primary, #508B89);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.empty-text {
+  font-size: 0.85rem;
+  color: var(--nutrismart-text-light, #8aa8a8);
+  margin: 0;
+}
+
+.btn-add {
+  background: none;
+  border: 1.5px dashed var(--nutrismart-primary, #508B89);
+  color: var(--nutrismart-primary, #508B89);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-bottom: 14px;
+  transition: background 0.2s;
+}
+
+.btn-add:hover {
+  background: var(--nutrismart-primary-lighter, #f0f6f6);
+}
+
+.chip-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.picker-chip {
+  padding: 6px 14px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: 20px;
+  background: var(--nutrismart-white, #ffffff);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.picker-chip.active {
+  border-color: var(--nutrismart-primary, #508B89);
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+}
+
+.chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.restriction-chip {
+  padding: 8px 16px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: 20px;
+  background: var(--nutrismart-white, #ffffff);
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.restriction-chip.selected {
+  border-color: var(--nutrismart-primary, #508B89);
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+}
+
+.add-condition-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-add-inline {
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 10px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notif-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--nutrismart-white, #ffffff);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  border: 1px solid var(--nutrismart-border, #e0eaea);
+  font-size: 0.9rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+}
+
+.toggle-btn {
+  border: none;
+  border-radius: 20px;
+  padding: 5px 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--nutrismart-border, #e0eaea);
+  color: var(--nutrismart-text-mid, #4a6060);
+  transition: background 0.2s;
+}
+
+.toggle-btn.on {
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+}
+
+/* ─── Language panel ──────────────────────────────────────────────────────── */
+
+.lang-options {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  cursor: pointer;
+}
+
+.lang-option input[type="radio"] {
+  accent-color: var(--nutrismart-primary, #508B89);
+  width: 16px;
+  height: 16px;
+}
+
+/* ─── Security panel ──────────────────────────────────────────────────────── */
+
+.security-divider {
+  height: 1px;
+  background: var(--nutrismart-border, #e0eaea);
+  margin: 28px 0;
+}
+
+.danger-text {
+  color: #dc2626;
+}
+
+.btn-outline-danger {
+  border: 1.5px solid #dc2626;
+  background: transparent;
+  color: #dc2626;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 8px;
+}
+
+.btn-outline-danger:hover {
+  background: #fef2f2;
+}
+
+.btn-delete-account {
+  border: 1.5px solid #dc2626;
+  background: transparent;
+  color: #dc2626;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ─── Save button ─────────────────────────────────────────────────────────── */
+
+.btn-save {
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 11px 28px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 8px;
+}
+
+.btn-save:hover {
+  background: var(--nutrismart-primary-dark, #3d6e6c);
+}
