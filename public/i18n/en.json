@@ -66,6 +66,7 @@
     "error_passwords_mismatch": "Passwords do not match",
     "error_invalid_credentials": "Invalid email or password",
     "error_email_taken": "This email is already registered",
+    "checking_email": "Checking availability…",
     "error_terms": "You must accept the terms",
     "error_confirm_required": "Please confirm your password",
     "google_btn": "Continue with Google",

@@ -197,6 +197,13 @@
   color: #dc2626;
 }
 
+.field-checking {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: var(--nutrismart-text-light, #8aa8a8);
+}
+
 .form-check {
   margin-bottom: 20px;
 }

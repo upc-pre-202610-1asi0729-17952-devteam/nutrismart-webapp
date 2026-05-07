@@ -58,10 +58,15 @@
           [placeholder]="'auth.email' | translate"
           autocomplete="email"
         />
-        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+        @if (checkingEmail) {
+          <span class="field-checking">{{ 'auth.checking_email' | translate }}</span>
+        }
+        @if (form.get('email')?.invalid && form.get('email')?.touched && !checkingEmail) {
           <span class="field-error">
             @if (form.get('email')?.errors?.['required']) {
               {{ 'auth.error_email_required' | translate }}
+            } @else if (form.get('email')?.errors?.['emailTaken']) {
+              {{ 'auth.error_email_taken' | translate }}
             } @else {
               {{ 'auth.error_email_invalid' | translate }}
             }
