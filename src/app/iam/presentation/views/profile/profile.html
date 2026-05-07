@@ -59,11 +59,7 @@
 
             <div class="form-group">
               <label class="form-label">{{ 'profile.email' | translate }}</label>
-              <input type="email" formControlName="email" class="form-input"
-                [class.is-invalid]="personalForm.get('email')?.invalid && personalForm.get('email')?.touched" />
-              @if (personalForm.get('email')?.invalid && personalForm.get('email')?.touched) {
-                <span class="field-error">{{ 'auth.error_email_invalid' | translate }}</span>
-              }
+              <input type="email" formControlName="email" class="form-input form-input-readonly" readonly />
             </div>
 
             <div class="form-row">

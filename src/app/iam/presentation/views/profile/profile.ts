@@ -207,8 +207,8 @@ export class Profile {
    */
   applyPersonal(): void {
     if (this.personalForm.invalid) { this.personalForm.markAllAsTouched(); return; }
-    const { firstName, lastName, email } = this.personalForm.value;
-    this.iamStore.updateProfile({ firstName: firstName!, lastName: lastName!, email: email! });
+    const { firstName, lastName } = this.personalForm.value;
+    this.iamStore.updateProfile({ firstName: firstName!, lastName: lastName! });
     this.personalSaved.set(true);
     setTimeout(() => this.personalSaved.set(false), 2500);
   }

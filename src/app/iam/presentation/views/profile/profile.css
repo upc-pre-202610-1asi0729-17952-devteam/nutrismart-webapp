@@ -179,6 +179,12 @@
   border-color: #dc2626;
 }
 
+.form-input-readonly {
+  background: var(--nutrismart-bg, #f5f7f7);
+  color: var(--nutrismart-text-light, #8aa8a8);
+  cursor: not-allowed;
+}
+
 .field-error {
   display: block;
   margin-top: 4px;
