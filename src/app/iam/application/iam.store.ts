@@ -78,6 +78,8 @@ export class IamStore {
         this._currentUser.set(user);
         this._isAuthenticated.set(true);
         this._loading.set(false);
+        const incomplete = !user.birthday || !user.biologicalSex;
+        this.router.navigate([incomplete ? '/onboarding' : '/dashboard']);
       }),
       catchError(err => {
         this._loading.set(false);

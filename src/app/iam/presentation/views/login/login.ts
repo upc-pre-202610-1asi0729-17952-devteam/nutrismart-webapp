@@ -82,7 +82,6 @@ export class Login {
     this.iamStore.login(email!, password!).subscribe({
       next: () => {
         this.loading.set(false);
-        this.router.navigate(['/dashboard']);
       },
       error: (err: Error) => {
         this.loading.set(false);
