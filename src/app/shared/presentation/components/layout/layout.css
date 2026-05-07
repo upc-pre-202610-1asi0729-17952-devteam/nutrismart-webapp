@@ -26,23 +26,9 @@
   border-bottom: 1px solid var(--nutrismart-border);
 }
 
-.logo-icon {
-  width: 36px;
+.logo-img {
   height: 36px;
-  background: var(--nutrismart-primary);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.logo-text {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--nutrismart-text-dark);
-  letter-spacing: -0.3px;
+  width: auto;
 }
 
 .sidebar-section {
