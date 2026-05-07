@@ -97,7 +97,7 @@ export const routes: Routes = [
   { path: 'wearable',        loadChildren: wearableRoutes },
   { path: 'analytics',       loadChildren: analyticsRoutes },
   { path: 'subscription',    loadChildren: subscriptionsRoutes },
-  { path: '',                redirectTo: '/dashboard', pathMatch: 'full' },
+  { path: '',                redirectTo: '/auth/login', pathMatch: 'full' },
   {
     path: '**',
     loadComponent: pageNotFound,
