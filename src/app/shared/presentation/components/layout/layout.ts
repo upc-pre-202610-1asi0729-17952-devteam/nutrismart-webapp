@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { IamStore } from '../../../../iam/application/iam.store';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
 
 /**
@@ -36,6 +37,9 @@ interface NavItem {
   styleUrl: './layout.css',
 })
 export class Layout {
+  /** IAM store providing the current user for the sidebar footer. */
+  iamStore = inject(IamStore);
+
   /** Primary navigation items shown in the PRINCIPAL section. */
   principalNav = signal<NavItem[]>([
     { link: '/dashboard',        label: 'nav.dashboard',        icon: '⊞' },

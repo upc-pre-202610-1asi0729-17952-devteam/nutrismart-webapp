@@ -40,12 +40,12 @@
 
     <div class="sidebar-footer">
       <div class="user-row">
-        <div class="user-avatar">AG</div>
+        <div class="user-avatar">{{ iamStore.currentUser()?.initials }}</div>
         <div class="user-info">
-          <div class="user-name">Ana García</div>
+          <div class="user-name">{{ iamStore.currentUser()?.fullName }}</div>
           <div class="user-links">
             <a [routerLink]="'/profile'">{{ 'nav.profile' | translate }}</a>
-            · <a href="#">{{ 'nav.logout' | translate }}</a>
+            · <a href="#" (click)="iamStore.logout()">{{ 'nav.logout' | translate }}</a>
           </div>
         </div>
       </div>
