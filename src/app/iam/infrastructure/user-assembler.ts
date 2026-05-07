@@ -32,7 +32,7 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
       weight: resource.weight,
       height: resource.height,
       activityLevel: resource.activityLevel as ActivityLevel,
-      plan: resource.plan as SubscriptionPlan,
+      plan: resource.plan ? resource.plan as SubscriptionPlan : null,
       restrictions: resource.restrictions.map(r => r as DietaryRestriction),
       medicalConditions: resource.medicalConditions,
       dailyCalorieTarget: resource.dailyCalorieTarget,

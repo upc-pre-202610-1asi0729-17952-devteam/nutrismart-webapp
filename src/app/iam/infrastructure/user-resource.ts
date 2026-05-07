@@ -24,8 +24,8 @@ export interface UserResource extends BaseResource {
   height: number;
   /** Activity level as a raw string (e.g. `"MODERATE"`). */
   activityLevel: string;
-  /** Subscription plan as a raw string (e.g. `"PRO"`). */
-  plan: string;
+  /** Subscription plan as a raw string (e.g. `"PRO"`), or null when not yet chosen. */
+  plan: string | null;
   /** Array of active restriction strings (e.g. `["LACTOSE_FREE"]`). */
   restrictions: string[];
   /** Free-text medical conditions. */

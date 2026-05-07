@@ -52,6 +52,6 @@ export class Layout {
     { link: '/pantry',       label: 'nav.pantry',       icon: '♡' },
     { link: '/wearable',     label: 'nav.wearable',     icon: '▣' },
     { link: '/analytics',    label: 'nav.analytics',    icon: '↑' },
-    { link: '/subscription', label: 'nav.subscription', icon: '◉' },
+    { link: '/my-plan',      label: 'nav.subscription', icon: '◉' },
   ]);
 }
