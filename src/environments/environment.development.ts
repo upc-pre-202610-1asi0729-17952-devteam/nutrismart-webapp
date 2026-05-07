@@ -1,0 +1,14 @@
+export const environment = {
+  production: false,
+  apiBaseUrl: 'http://localhost:3000/api/v1',
+  iamEndpointPath: '/users',
+  nutritionLogEndpointPath: '/nutrition-log',
+  foodSearchEndpointPath: '/foods',
+  bodyMetricsEndpointPath: '/body-metrics',
+  analyticsEndpointPath: '/analytics',
+  recommendationsEndpointPath: '/recommendations',
+  pantryEndpointPath: '/pantry',
+  subscriptionsEndpointPath: '/subscriptions',
+  billingHistoryEndpointPath: '/billing-history',
+  behavioralProgressEndpointPath: '/behavioral-progress',
+};
