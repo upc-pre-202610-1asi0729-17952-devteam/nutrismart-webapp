@@ -1,9 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { ActivityLevel } from '../../../../iam/domain/model/activity-level.enum';
 import { DietaryRestriction } from '../../../../iam/domain/model/dietary-restriction.enum';
+import { MedicalCondition } from '../../../../iam/domain/model/medical-condition.enum';
 import { UserGoal } from '../../../../iam/domain/model/user-goal.enum';
 
 /**
@@ -45,7 +46,7 @@ interface PanelNavItem {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
@@ -119,11 +120,6 @@ export class Profile {
   // ─── Panel 3 — Dietary restrictions ───────────────────────────────────────
 
   /**
-   * Signal holding a new medical condition being typed by the user.
-   */
-  newCondition = signal('');
-
-  /**
    * Signal controlling the visibility of the "add restriction" dropdown panel.
    */
   showAddRestriction = signal(false);
@@ -132,14 +128,14 @@ export class Profile {
    * All available dietary restriction options (for adding new ones).
    */
   readonly allRestrictions: Array<{ value: DietaryRestriction; label: string }> = [
-    { value: DietaryRestriction.LACTOSE_FREE,  label: 'Lactose-free' },
-    { value: DietaryRestriction.GLUTEN_FREE,   label: 'Gluten-free' },
-    { value: DietaryRestriction.VEGAN,         label: 'Vegan' },
-    { value: DietaryRestriction.VEGETARIAN,    label: 'Vegetarian' },
-    { value: DietaryRestriction.NUT_FREE,      label: 'Nut-free' },
-    { value: DietaryRestriction.SEAFOOD_FREE,  label: 'Seafood-free' },
-    { value: DietaryRestriction.KOSHER,        label: 'Kosher' },
-    { value: DietaryRestriction.HALAL,         label: 'Halal' },
+    { value: DietaryRestriction.LACTOSE_FREE,  label: 'restrictions.LACTOSE_FREE' },
+    { value: DietaryRestriction.GLUTEN_FREE,   label: 'restrictions.GLUTEN_FREE' },
+    { value: DietaryRestriction.VEGAN,         label: 'restrictions.VEGAN' },
+    { value: DietaryRestriction.VEGETARIAN,    label: 'restrictions.VEGETARIAN' },
+    { value: DietaryRestriction.NUT_FREE,      label: 'restrictions.NUT_FREE' },
+    { value: DietaryRestriction.SEAFOOD_FREE,  label: 'restrictions.SEAFOOD_FREE' },
+    { value: DietaryRestriction.KOSHER,        label: 'restrictions.KOSHER' },
+    { value: DietaryRestriction.HALAL,         label: 'restrictions.HALAL' },
   ];
 
   /** Notification toggle signals (visual only). */
@@ -176,11 +172,23 @@ export class Profile {
    * Left-panel navigation items.
    */
   readonly navItems: PanelNavItem[] = [
-    { id: 'personal',  label: 'Personal information',      icon: '👤' },
-    { id: 'physical',  label: 'Physical details & goals',  icon: '⚖️' },
-    { id: 'dietary',   label: 'Dietary restrictions',      icon: '🥗' },
-    { id: 'language',  label: 'Language',                  icon: '🌐' },
-    { id: 'security',  label: 'Security & privacy',        icon: '🔒' },
+    { id: 'personal',  label: 'profile.nav_personal',  icon: '' },
+    { id: 'physical',  label: 'profile.nav_physical',  icon: '' },
+    { id: 'dietary',   label: 'profile.nav_dietary',   icon: '' },
+    { id: 'language',  label: 'profile.nav_language',  icon: '' },
+    { id: 'security',  label: 'profile.nav_security',  icon: '' },
+  ];
+
+  /**
+   * All available medical condition options.
+   */
+  readonly allConditions: Array<{ value: MedicalCondition; label: string }> = [
+    { value: MedicalCondition.TYPE_2_DIABETES,     label: 'medical.TYPE_2_DIABETES' },
+    { value: MedicalCondition.HIGH_BLOOD_PRESSURE, label: 'medical.HIGH_BLOOD_PRESSURE' },
+    { value: MedicalCondition.COELIAC_DISEASE,     label: 'medical.COELIAC_DISEASE' },
+    { value: MedicalCondition.HYPOTHYROIDISM,      label: 'medical.HYPOTHYROIDISM' },
+    { value: MedicalCondition.KIDNEY_DISEASE,      label: 'medical.KIDNEY_DISEASE' },
+    { value: MedicalCondition.GOUT,                label: 'medical.GOUT' },
   ];
 
   // ─── Methods ──────────────────────────────────────────────────────────────
@@ -249,13 +257,28 @@ export class Profile {
   }
 
   /**
-   * Adds a medical condition from the input signal value.
+   * Toggles a medical condition chip in the dietary panel.
+   *
+   * @param condition - The {@link MedicalCondition} to toggle.
    */
-  addCondition(): void {
-    const c = this.newCondition().trim();
-    if (!c) return;
-    this.iamStore.addMedicalCondition(c);
-    this.newCondition.set('');
+  toggleCondition(condition: MedicalCondition): void {
+    const current = this.iamStore.currentUser()?.medicalConditions ?? [];
+    const condStr = condition as string;
+    if (current.includes(condStr)) {
+      this.iamStore.removeMedicalCondition(condStr);
+    } else {
+      this.iamStore.addMedicalConditionEnum(condition);
+    }
+  }
+
+  /**
+   * Returns whether a given medical condition is currently active on the user.
+   *
+   * @param condition - The {@link MedicalCondition} to check.
+   * @returns `true` if the condition is active.
+   */
+  isConditionSelected(condition: MedicalCondition): boolean {
+    return (this.iamStore.currentUser()?.medicalConditions ?? []).includes(condition as string);
   }
 
   /**
@@ -287,4 +310,7 @@ export class Profile {
 
   /** Exposes {@link UserGoal} enum to the template. */
   readonly UserGoal = UserGoal;
+
+  /** Exposes {@link MedicalCondition} enum to the template. */
+  readonly MedicalCondition = MedicalCondition;
 }

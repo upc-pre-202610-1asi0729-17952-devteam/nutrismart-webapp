@@ -17,8 +17,7 @@
           [class.active]="activePanel() === item.id"
           (click)="setPanel(item.id)"
         >
-          <span class="nav-icon">{{ item.icon }}</span>
-          <span class="nav-label">{{ item.label }}</span>
+          <span class="nav-label">{{ item.label | translate }}</span>
         </button>
       }
     </nav>
@@ -32,63 +31,63 @@
       <!-- PANEL 1: Personal information -->
       @case ('personal') {
         <section class="panel-section">
-          <h2 class="panel-title">Personal information</h2>
+          <h2 class="panel-title">{{ 'profile.personal_title' | translate }}</h2>
 
           @if (personalSaved()) {
-            <div class="success-banner">Changes saved successfully.</div>
+            <div class="success-banner">{{ 'profile.saved_msg' | translate }}</div>
           }
 
           <form [formGroup]="personalForm" (ngSubmit)="applyPersonal()" novalidate>
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">First name</label>
+                <label class="form-label">{{ 'profile.first_name' | translate }}</label>
                 <input type="text" formControlName="firstName" class="form-input"
                   [class.is-invalid]="personalForm.get('firstName')?.invalid && personalForm.get('firstName')?.touched" />
                 @if (personalForm.get('firstName')?.invalid && personalForm.get('firstName')?.touched) {
-                  <span class="field-error">Required</span>
+                  <span class="field-error">{{ 'common.required' | translate }}</span>
                 }
               </div>
               <div class="form-group">
-                <label class="form-label">Last name</label>
+                <label class="form-label">{{ 'profile.last_name' | translate }}</label>
                 <input type="text" formControlName="lastName" class="form-input"
                   [class.is-invalid]="personalForm.get('lastName')?.invalid && personalForm.get('lastName')?.touched" />
                 @if (personalForm.get('lastName')?.invalid && personalForm.get('lastName')?.touched) {
-                  <span class="field-error">Required</span>
+                  <span class="field-error">{{ 'common.required' | translate }}</span>
                 }
               </div>
             </div>
 
             <div class="form-group">
-              <label class="form-label">Email address</label>
+              <label class="form-label">{{ 'profile.email' | translate }}</label>
               <input type="email" formControlName="email" class="form-input"
                 [class.is-invalid]="personalForm.get('email')?.invalid && personalForm.get('email')?.touched" />
               @if (personalForm.get('email')?.invalid && personalForm.get('email')?.touched) {
-                <span class="field-error">Enter a valid email.</span>
+                <span class="field-error">{{ 'auth.error_email_invalid' | translate }}</span>
               }
             </div>
 
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">Birthday</label>
+                <label class="form-label">{{ 'profile.birthday' | translate }}</label>
                 <input type="date" formControlName="birthday" class="form-input" />
               </div>
               <div class="form-group">
-                <label class="form-label">Biological sex</label>
+                <label class="form-label">{{ 'profile.biological_sex' | translate }}</label>
                 <select formControlName="biologicalSex" class="form-input">
-                  <option value="">Select…</option>
-                  <option value="man">Man</option>
-                  <option value="woman">Woman</option>
-                  <option value="other">Other</option>
+                  <option value="">{{ 'common.empty' | translate }}</option>
+                  <option value="male">{{ 'onboarding.biological_sex_male' | translate }}</option>
+                  <option value="female">{{ 'onboarding.biological_sex_female' | translate }}</option>
+                  <option value="other">{{ 'onboarding.biological_sex_other' | translate }}</option>
                 </select>
               </div>
             </div>
 
             <div class="plan-info-card">
               <span class="plan-badge">{{ iamStore.currentUser()?.plan }}</span>
-              <span class="plan-renewal">Active subscription</span>
+              <span class="plan-renewal">{{ 'profile.nav_personal' | translate }}</span>
             </div>
 
-            <button type="submit" class="btn-save">Save changes</button>
+            <button type="submit" class="btn-save">{{ 'profile.save_btn' | translate }}</button>
           </form>
         </section>
       }
@@ -96,47 +95,47 @@
       <!-- PANEL 2: Physical details and goals -->
       @case ('physical') {
         <section class="panel-section">
-          <h2 class="panel-title">Physical details & goals</h2>
+          <h2 class="panel-title">{{ 'profile.physical_title' | translate }}</h2>
 
           @if (physicalSaved()) {
-            <div class="success-banner">Physical details updated.</div>
+            <div class="success-banner">{{ 'profile.saved_msg' | translate }}</div>
           }
 
           <form [formGroup]="physicalForm" novalidate>
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">Weight (kg)</label>
+                <label class="form-label">{{ 'profile.weight' | translate }}</label>
                 <input type="number" formControlName="weight" class="form-input" />
               </div>
               <div class="form-group">
-                <label class="form-label">Height (cm)</label>
+                <label class="form-label">{{ 'profile.height' | translate }}</label>
                 <input type="number" formControlName="height" class="form-input" />
               </div>
             </div>
 
             <div class="form-group">
-              <label class="form-label">Activity level</label>
+              <label class="form-label">{{ 'profile.activity_level' | translate }}</label>
               <select class="form-input" [value]="selectedActivity()" (change)="setActivity($any($event.target).value)">
-                <option [value]="ActivityLevel.SEDENTARY">Sedentary</option>
-                <option [value]="ActivityLevel.MODERATE">Moderate</option>
-                <option [value]="ActivityLevel.ACTIVE">Active</option>
-                <option [value]="ActivityLevel.VERY_ACTIVE">Very Active</option>
+                <option [value]="ActivityLevel.SEDENTARY">{{ 'onboarding.sedentary' | translate }}</option>
+                <option [value]="ActivityLevel.MODERATE">{{ 'onboarding.moderate' | translate }}</option>
+                <option [value]="ActivityLevel.ACTIVE">{{ 'onboarding.active' | translate }}</option>
+                <option [value]="ActivityLevel.VERY_ACTIVE">{{ 'onboarding.very_active' | translate }}</option>
               </select>
             </div>
           </form>
 
           <div class="goal-section">
-            <p class="form-label">Goal</p>
+            <p class="form-label">{{ 'profile.goal' | translate }}</p>
             <div class="goal-toggle">
               <button type="button" class="goal-btn"
                 [class.active]="selectedGoal() === UserGoal.WEIGHT_LOSS"
                 (click)="setGoal(UserGoal.WEIGHT_LOSS)">
-                🔥 Lose weight
+                {{ 'onboarding.goal_weight_loss' | translate }}
               </button>
               <button type="button" class="goal-btn"
                 [class.active]="selectedGoal() === UserGoal.MUSCLE_GAIN"
                 (click)="setGoal(UserGoal.MUSCLE_GAIN)">
-                💪 Gain muscle
+                {{ 'onboarding.goal_muscle_gain' | translate }}
               </button>
             </div>
             @if (pendingGoalConfirm()) {
@@ -144,30 +143,30 @@
             }
           </div>
 
-          <button type="button" class="btn-save" (click)="applyPhysical()">Save changes</button>
+          <button type="button" class="btn-save" (click)="applyPhysical()">{{ 'profile.save_btn' | translate }}</button>
         </section>
       }
 
-      <!-- PANEL 3: Dietary restrictions -->
+      <!-- PANEL 3: Dietary restrictions & medical conditions -->
       @case ('dietary') {
         <section class="panel-section">
-          <h2 class="panel-title">Dietary restrictions</h2>
+          <h2 class="panel-title">{{ 'profile.dietary_title' | translate }}</h2>
 
-          <h3 class="subsection-title">Active restrictions</h3>
+          <h3 class="subsection-title">{{ 'profile.restrictions_title' | translate }}</h3>
           <div class="chip-list">
             @for (r of iamStore.currentUser()?.restrictions ?? []; track r) {
               <span class="active-chip">
-                {{ restrictionLabel(r) }}
-                <button type="button" class="chip-remove" (click)="iamStore.removeRestriction(r)">×</button>
+                {{ ('restrictions.' + r) | translate }}
+                <button type="button" class="chip-remove" (click)="iamStore.removeRestriction(r)">x</button>
               </span>
             }
             @if ((iamStore.currentUser()?.restrictions ?? []).length === 0) {
-              <p class="empty-text">No active restrictions.</p>
+              <p class="empty-text">{{ 'common.empty' | translate }}</p>
             }
           </div>
 
           <button type="button" class="btn-add" (click)="showAddRestriction.update(v => !v)">
-            + Add restriction
+            {{ 'common.add' | translate }}
           </button>
 
           @if (showAddRestriction()) {
@@ -176,29 +175,24 @@
                 <button type="button" class="picker-chip"
                   [class.active]="iamStore.currentUser()?.hasRestriction(item.value)"
                   (click)="iamStore.addRestriction(item.value)">
-                  {{ item.label }}
+                  {{ item.label | translate }}
                 </button>
               }
             </div>
           }
 
-          <h3 class="subsection-title" style="margin-top: 28px;">Medical conditions</h3>
-          <div class="chip-list">
-            @for (c of iamStore.currentUser()?.medicalConditions ?? []; track c) {
-              <span class="active-chip">
-                {{ c }}
-                <button type="button" class="chip-remove" (click)="iamStore.removeMedicalCondition(c)">×</button>
-              </span>
+          <h3 class="subsection-title" style="margin-top: 28px;">{{ 'profile.conditions_title' | translate }}</h3>
+          <div class="chip-grid">
+            @for (item of allConditions; track item.value) {
+              <button
+                type="button"
+                class="restriction-chip"
+                [class.selected]="isConditionSelected(item.value)"
+                (click)="toggleCondition(item.value)"
+              >
+                {{ item.label | translate }}
+              </button>
             }
-            @if ((iamStore.currentUser()?.medicalConditions ?? []).length === 0) {
-              <p class="empty-text">No medical conditions recorded.</p>
-            }
-          </div>
-          <div class="add-condition-row">
-            <input type="text" class="form-input" placeholder="e.g. Diabetes type 2"
-              [value]="newCondition()"
-              (input)="newCondition.set($any($event.target).value)" />
-            <button type="button" class="btn-add-inline" (click)="addCondition()">Add</button>
           </div>
 
           <h3 class="subsection-title" style="margin-top: 28px;">Notifications</h3>
@@ -240,8 +234,7 @@
       <!-- PANEL 4: Language -->
       @case ('language') {
         <section class="panel-section">
-          <h2 class="panel-title">Language</h2>
-          <p class="panel-desc">Choose the language used throughout the app.</p>
+          <h2 class="panel-title">{{ 'profile.language_title' | translate }}</h2>
 
           <div class="lang-options">
             <label class="lang-option">
@@ -258,40 +251,40 @@
             </label>
           </div>
 
-          <button type="button" class="btn-save" (click)="applyLanguage()">Save language</button>
+          <button type="button" class="btn-save" (click)="applyLanguage()">{{ 'profile.apply_language' | translate }}</button>
         </section>
       }
 
       <!-- PANEL 5: Security and privacy -->
       @case ('security') {
         <section class="panel-section">
-          <h2 class="panel-title">Security & privacy</h2>
+          <h2 class="panel-title">{{ 'profile.security_title' | translate }}</h2>
 
-          <h3 class="subsection-title">Change password</h3>
+          <h3 class="subsection-title">{{ 'profile.change_password_btn' | translate }}</h3>
 
           @if (passwordChanged()) {
-            <div class="success-banner">Password changed successfully.</div>
+            <div class="success-banner">{{ 'profile.password_changed' | translate }}</div>
           }
 
           <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" novalidate>
             <div class="form-group">
-              <label class="form-label">Current password</label>
+              <label class="form-label">{{ 'profile.current_password' | translate }}</label>
               <input type="password" formControlName="currentPassword" class="form-input"
                 [class.is-invalid]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched" />
             </div>
             <div class="form-group">
-              <label class="form-label">New password</label>
+              <label class="form-label">{{ 'profile.new_password' | translate }}</label>
               <input type="password" formControlName="newPassword" class="form-input"
                 [class.is-invalid]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched" />
               @if (passwordForm.get('newPassword')?.errors?.['minlength'] && passwordForm.get('newPassword')?.touched) {
-                <span class="field-error">Minimum 8 characters.</span>
+                <span class="field-error">{{ 'auth.error_password_min' | translate }}</span>
               }
             </div>
             <div class="form-group">
-              <label class="form-label">Confirm new password</label>
+              <label class="form-label">{{ 'profile.confirm_password' | translate }}</label>
               <input type="password" formControlName="confirmPassword" class="form-input" />
             </div>
-            <button type="submit" class="btn-save">Update password</button>
+            <button type="submit" class="btn-save">{{ 'profile.change_password_btn' | translate }}</button>
           </form>
 
           <div class="security-divider"></div>
@@ -300,13 +293,13 @@
           <p class="panel-desc">You are currently signed in on this device (browser session).</p>
 
           <button type="button" class="btn-outline-danger" (click)="logoutAll()">
-            Log out of all devices
+            {{ 'profile.logout_all_btn' | translate }}
           </button>
 
           <div class="security-divider"></div>
 
           <h3 class="subsection-title danger-text">Danger zone</h3>
-          <button type="button" class="btn-delete-account">Delete my account</button>
+          <button type="button" class="btn-delete-account">{{ 'profile.delete_account' | translate }}</button>
         </section>
       }
 
