@@ -131,10 +131,13 @@ export class Onboarding {
    * Step 1 reactive form (body stats + demographics).
    */
   bodyForm = this.fb.group({
-    birthday:     ['', [Validators.required, minAgeValidator(13)]],
-    biologicalSex:['', Validators.required],
-    weight:       [null as number | null, [Validators.required, Validators.min(30), Validators.max(300)]],
-    height:       [null as number | null, [Validators.required, Validators.min(100), Validators.max(250)]],
+    birthday: ['', [Validators.required, minAgeValidator(13)]],
+    biologicalSex: ['', Validators.required],
+    weight: [null as number | null, [Validators.required, Validators.min(30), Validators.max(300)]],
+    height: [
+      null as number | null,
+      [Validators.required, Validators.min(100), Validators.max(250)],
+    ],
   });
 
   // ─── Static data ──────────────────────────────────────────────────────────
@@ -143,36 +146,52 @@ export class Onboarding {
    * Activity level cards displayed in step 1.
    */
   readonly activityCards: ActivityCard[] = [
-    { level: ActivityLevel.SEDENTARY,   labelKey: 'onboarding.sedentary',   descKey: 'onboarding.sedentary_desc' },
-    { level: ActivityLevel.MODERATE,    labelKey: 'onboarding.moderate',    descKey: 'onboarding.moderate_desc' },
-    { level: ActivityLevel.ACTIVE,      labelKey: 'onboarding.active',      descKey: 'onboarding.active_desc' },
-    { level: ActivityLevel.VERY_ACTIVE, labelKey: 'onboarding.very_active', descKey: 'onboarding.very_active_desc' },
+    {
+      level: ActivityLevel.SEDENTARY,
+      labelKey: 'onboarding.sedentary',
+      descKey: 'onboarding.sedentary_desc',
+    },
+    {
+      level: ActivityLevel.MODERATE,
+      labelKey: 'onboarding.moderate',
+      descKey: 'onboarding.moderate_desc',
+    },
+    {
+      level: ActivityLevel.ACTIVE,
+      labelKey: 'onboarding.active',
+      descKey: 'onboarding.active_desc',
+    },
+    {
+      level: ActivityLevel.VERY_ACTIVE,
+      labelKey: 'onboarding.very_active',
+      descKey: 'onboarding.very_active_desc',
+    },
   ];
 
   /**
    * Restriction chips displayed in step 3.
    */
   readonly restrictionChips: RestrictionChip[] = [
-    { value: DietaryRestriction.LACTOSE_FREE,  labelKey: 'restrictions.LACTOSE_FREE' },
-    { value: DietaryRestriction.GLUTEN_FREE,   labelKey: 'restrictions.GLUTEN_FREE' },
-    { value: DietaryRestriction.VEGAN,         labelKey: 'restrictions.VEGAN' },
-    { value: DietaryRestriction.VEGETARIAN,    labelKey: 'restrictions.VEGETARIAN' },
-    { value: DietaryRestriction.NUT_FREE,      labelKey: 'restrictions.NUT_FREE' },
-    { value: DietaryRestriction.SEAFOOD_FREE,  labelKey: 'restrictions.SEAFOOD_FREE' },
-    { value: DietaryRestriction.KOSHER,        labelKey: 'restrictions.KOSHER' },
-    { value: DietaryRestriction.HALAL,         labelKey: 'restrictions.HALAL' },
+    { value: DietaryRestriction.LACTOSE_FREE, labelKey: 'restrictions.LACTOSE_FREE' },
+    { value: DietaryRestriction.GLUTEN_FREE, labelKey: 'restrictions.GLUTEN_FREE' },
+    { value: DietaryRestriction.VEGAN, labelKey: 'restrictions.VEGAN' },
+    { value: DietaryRestriction.VEGETARIAN, labelKey: 'restrictions.VEGETARIAN' },
+    { value: DietaryRestriction.NUT_FREE, labelKey: 'restrictions.NUT_FREE' },
+    { value: DietaryRestriction.SEAFOOD_FREE, labelKey: 'restrictions.SEAFOOD_FREE' },
+    { value: DietaryRestriction.KOSHER, labelKey: 'restrictions.KOSHER' },
+    { value: DietaryRestriction.HALAL, labelKey: 'restrictions.HALAL' },
   ];
 
   /**
    * Medical condition chips displayed in step 3.
    */
   readonly conditionChips: ConditionChip[] = [
-    { value: MedicalCondition.TYPE_2_DIABETES,     labelKey: 'medical.TYPE_2_DIABETES' },
+    { value: MedicalCondition.TYPE_2_DIABETES, labelKey: 'medical.TYPE_2_DIABETES' },
     { value: MedicalCondition.HIGH_BLOOD_PRESSURE, labelKey: 'medical.HIGH_BLOOD_PRESSURE' },
-    { value: MedicalCondition.COELIAC_DISEASE,     labelKey: 'medical.COELIAC_DISEASE' },
-    { value: MedicalCondition.HYPOTHYROIDISM,      labelKey: 'medical.HYPOTHYROIDISM' },
-    { value: MedicalCondition.KIDNEY_DISEASE,      labelKey: 'medical.KIDNEY_DISEASE' },
-    { value: MedicalCondition.GOUT,                labelKey: 'medical.GOUT' },
+    { value: MedicalCondition.COELIAC_DISEASE, labelKey: 'medical.COELIAC_DISEASE' },
+    { value: MedicalCondition.HYPOTHYROIDISM, labelKey: 'medical.HYPOTHYROIDISM' },
+    { value: MedicalCondition.KIDNEY_DISEASE, labelKey: 'medical.KIDNEY_DISEASE' },
+    { value: MedicalCondition.GOUT, labelKey: 'medical.GOUT' },
   ];
 
   // ─── Navigation ───────────────────────────────────────────────────────────
@@ -191,7 +210,7 @@ export class Onboarding {
    */
   back(): void {
     if (this.currentStep() > 1) {
-      this.currentStep.update(s => s - 1);
+      this.currentStep.update((s) => s - 1);
     }
   }
 
@@ -203,7 +222,10 @@ export class Onboarding {
     const step = this.currentStep();
 
     if (step === 1) {
-      if (this.bodyForm.invalid) { this.bodyForm.markAllAsTouched(); return; }
+      if (this.bodyForm.invalid) {
+        this.bodyForm.markAllAsTouched();
+        return;
+      }
       const { birthday, biologicalSex, weight, height } = this.bodyForm.value;
       this.iamStore.updateProfile({ birthday: birthday!, biologicalSex: biologicalSex! });
       this.iamStore.updatePhysicalDetails(weight!, height!, this.selectedActivity());
@@ -223,7 +245,7 @@ export class Onboarding {
       return;
     }
 
-    this.currentStep.update(s => s + 1);
+    this.currentStep.update((s) => s + 1);
   }
 
   // ─── Step 1 helpers ───────────────────────────────────────────────────────

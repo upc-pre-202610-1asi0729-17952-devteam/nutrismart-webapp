@@ -1,0 +1,86 @@
+<div class="dialog-backdrop" (click)="onBackdropClick($event)">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+
+    <h2 id="dialog-title" class="dialog-title">{{ 'nutrition.add_to_daily_log' | translate }}</h2>
+    <p class="dialog-subtitle">
+      {{ 'nutrition.adding_to' | translate: { meal: getTargetMealLabel() } }}
+    </p>
+
+    <!-- Selected food info -->
+    <div class="food-info">
+      <span class="food-name">{{ food().getLocalizedName(currentLang) }}</span>
+      <span class="food-base">
+        {{ 'nutrition.base_info' | translate: {
+          size:     food().servingSize,
+          unit:     food().servingUnit,
+          calories: food().caloriesPer100g,
+          protein:  food().proteinPer100g,
+          carbs:    food().carbsPer100g,
+          fat:      food().fatPer100g
+        } }}
+      </span>
+    </div>
+
+    <!-- Quantity input -->
+    <div class="quantity-section">
+      <label class="field-label" for="quantity-input">
+        {{ 'nutrition.quantity_unit' | translate: { unit: food().servingUnit } }}
+      </label>
+      <input
+        id="quantity-input"
+        type="number"
+        class="quantity-input"
+        [value]="quantity()"
+        min="1"
+        max="9999"
+        (input)="onQuantityChange($event)"
+        aria-required="true" />
+    </div>
+
+    <!-- Meal type selector -->
+    <div class="meal-type-section">
+      <label class="field-label">{{ 'nutrition.meal_type' | translate }}</label>
+      <div class="meal-type-buttons" role="group" [attr.aria-label]="'nutrition.meal_type' | translate">
+        @for (mt of mealTypes; track mt) {
+          <button class="meal-btn"
+                  [class.meal-btn--active]="selectedMealType === mt"
+                  [attr.aria-pressed]="selectedMealType === mt"
+                  (click)="selectedMealType = mt">
+            {{ getMealTypeLabel(mt) }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Macro preview grid - T20 -->
+    <div class="macro-grid" aria-live="polite" [attr.aria-label]="'nutrition.macro_preview' | translate">
+      <div class="macro-chip">
+        <span class="chip-value">{{ nutrients().calories }}</span>
+        <span class="chip-label">{{ 'nutrition.calories' | translate }}</span>
+      </div>
+      <div class="macro-chip">
+        <span class="chip-value">{{ nutrients().protein }}g</span>
+        <span class="chip-label">{{ 'nutrition.protein' | translate }}</span>
+      </div>
+      <div class="macro-chip">
+        <span class="chip-value">{{ nutrients().carbs }}g</span>
+        <span class="chip-label">{{ 'nutrition.carbs' | translate }}</span>
+      </div>
+      <div class="macro-chip">
+        <span class="chip-value">{{ nutrients().fat }}g</span>
+        <span class="chip-label">{{ 'nutrition.fat' | translate }}</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <button class="btn btn--outline" (click)="cancel.emit()">{{ 'common.cancel' | translate }}</button>
+      <button class="btn btn--primary"
+              [disabled]="quantity() <= 0"
+              (click)="onConfirm()">
+        {{ 'nutrition.confirm_and_save' | translate }}
+      </button>
+    </div>
+
+  </div>
+</div>

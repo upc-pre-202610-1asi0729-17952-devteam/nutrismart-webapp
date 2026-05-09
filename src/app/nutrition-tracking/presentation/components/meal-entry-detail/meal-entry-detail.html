@@ -1,0 +1,46 @@
+<div class="dialog-backdrop" (click)="onBackdropClick($event)">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+
+    <div class="dialog-header">
+      <h2 id="detail-title" class="dialog-title">{{ entry().getLocalizedFoodName(currentLang) }}</h2>
+      <button class="close-btn" aria-label="Close" (click)="close.emit()">✕</button>
+    </div>
+
+    <div class="meal-badge">{{ ('nutrition.' + entry().mealType.toLowerCase()) | translate }}</div>
+
+    <div class="quantity-row">
+      <span class="qty-label">{{ 'nutrition.quantity_logged' | translate }}</span>
+      <span class="qty-value">{{ entry().quantity }} {{ entry().unit }}</span>
+    </div>
+
+    <div class="macros-grid">
+      <div class="macro-card macro-card--calories">
+        <span class="macro-value">{{ entry().calories }}</span>
+        <span class="macro-label">{{ 'nutrition.calories' | translate }} ({{ 'nutrition.kcal' | translate }})</span>
+      </div>
+      <div class="macro-card">
+        <span class="macro-value">{{ entry().protein }}g</span>
+        <span class="macro-label">{{ 'nutrition.protein' | translate }}</span>
+      </div>
+      <div class="macro-card">
+        <span class="macro-value">{{ entry().carbs }}g</span>
+        <span class="macro-label">{{ 'nutrition.carbs' | translate }}</span>
+      </div>
+      <div class="macro-card">
+        <span class="macro-value">{{ entry().fat }}g</span>
+        <span class="macro-label">{{ 'nutrition.fat' | translate }}</span>
+      </div>
+      <div class="macro-card">
+        <span class="macro-value">{{ entry().fiber }}g</span>
+        <span class="macro-label">{{ 'nutrition.fiber' | translate }}</span>
+      </div>
+      <div class="macro-card">
+        <span class="macro-value">{{ entry().sugar }}g</span>
+        <span class="macro-label">{{ 'nutrition.sugar' | translate }}</span>
+      </div>
+    </div>
+
+    <p class="logged-at">{{ 'nutrition.logged_at' | translate: { time: loggedTime() } }}</p>
+
+  </div>
+</div>

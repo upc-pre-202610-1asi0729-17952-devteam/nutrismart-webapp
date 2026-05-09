@@ -1,0 +1,88 @@
+<div class="search-panel" [class.search-panel--highlight]="hasNoRecords()">
+  <h3 class="panel-title">{{ 'nutrition.search_food' | translate }}</h3>
+
+  <!-- First-meal hint banner -->
+  @if (hasNoRecords()) {
+    <div class="first-meal-banner" role="status" aria-live="polite">
+      <span class="material-icons first-meal-icon">restaurant</span>
+      <span>{{ 'nutrition.first_meal_hint' | translate }}</span>
+    </div>
+  }
+
+  <!-- Search input -->
+  <div class="search-input-wrap">
+    <span class="material-icons search-icon">search</span>
+    <input
+      type="text"
+      class="search-input"
+      [placeholder]="'nutrition.search_placeholder' | translate"
+      [value]="nutritionStore.searchQuery()"
+      (input)="onSearchInput($event)"
+      [attr.aria-label]="'nutrition.search_food' | translate" />
+  </div>
+
+  <!-- Initial hint -->
+  @if (!nutritionStore.searchQuery() && !nutritionStore.loading()) {
+    <p class="hint-text">{{ 'nutrition.search_hint' | translate }}</p>
+  }
+
+  <!-- Loading -->
+  @if (nutritionStore.loading()) {
+    <div class="loading-wrap" aria-label="Loading">
+      <div class="spinner"></div>
+    </div>
+  }
+
+  <!-- Restriction warning -->
+  @if (!nutritionStore.loading() && hasAnyRestriction() && nutritionStore.foodItems().length > 0) {
+    <div class="restriction-warning" role="alert">
+      {{ 'nutrition.restrictions_warning' | translate: { restrictions: conflictingRestrictionNames() } }}
+    </div>
+  }
+
+  <!-- Results list -->
+  @if (!nutritionStore.loading() && nutritionStore.foodItems().length > 0) {
+    <div class="results-list" role="list">
+      @for (food of nutritionStore.foodItems(); track food.id) {
+        <div class="result-item"
+             [class.result-item--restricted]="isRestricted(food)"
+             role="listitem"
+             [attr.aria-disabled]="isRestricted(food)"
+             (click)="onSelectFood(food)">
+
+          <div class="result-info">
+            <span class="result-name">{{ food.getLocalizedName(currentLang) }}</span>
+
+            <!-- Restriction chips (T18) -->
+            @for (tag of getConflictTags(food); track tag) {
+              <span class="restriction-chip">{{ tag }}</span>
+            }
+
+            <span class="result-source">
+              {{ food.servingSize }}{{ food.servingUnit }} · {{ food.source }}
+            </span>
+          </div>
+
+          <span class="result-kcal">
+            {{ food.getNutrientsForQuantity(food.servingSize).calories }} kcal
+          </span>
+        </div>
+      }
+    </div>
+
+    @if (hasAnyRestriction()) {
+      <p class="restricted-note">{{ 'nutrition.restricted_items_note' | translate }}</p>
+    }
+  }
+
+  <!-- No results (T18) -->
+  @if (!nutritionStore.loading() && nutritionStore.searchQuery().length >= 2 && nutritionStore.foodItems().length === 0) {
+    <div class="empty-state" role="status" aria-live="polite">
+      <span class="material-icons empty-icon">search</span>
+      <p class="empty-text">
+        {{ 'nutrition.no_results' | translate: { query: nutritionStore.searchQuery() } }}
+      </p>
+      <button class="add-manually-btn">{{ 'nutrition.add_manually' | translate }}</button>
+    </div>
+  }
+</div>

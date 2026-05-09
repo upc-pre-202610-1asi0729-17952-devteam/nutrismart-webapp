@@ -60,7 +60,7 @@ export class Login {
    * Toggles the password field between plain text and masked mode.
    */
   togglePassword(): void {
-    this.showPassword.update(v => !v);
+    this.showPassword.update((v) => !v);
   }
 
   /**
