@@ -1,7 +1,5 @@
 import { Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { startWith } from 'rxjs';
 import { MealType } from '../../../domain/model/meal-type.enum';
 import { MealRecord } from '../../../domain/model/meal-record.entity';
 
@@ -40,17 +38,12 @@ export class MealSectionComponent {
 
   @Output() viewEntry = new EventEmitter<MealRecord>();
 
-  private translate   = inject(TranslateService);
-  private langChange  = toSignal(
-    this.translate.onLangChange.pipe(startWith(null)),
-    { initialValue: null },
-  );
+  private translate = inject(TranslateService);
 
-  /** Translated meal name — recomputes automatically on language change. */
-  protected mealLabel = computed(() => {
-    this.langChange();
+  /** Returns the translated meal name for the current language. */
+  protected getMealLabel(): string {
     return this.translate.instant('nutrition.' + this.mealType().toLowerCase());
-  });
+  }
 
   /** Total kilocalories for this meal section. */
   protected totalCalories = computed(() => this.records().reduce((sum, r) => sum + r.calories, 0));

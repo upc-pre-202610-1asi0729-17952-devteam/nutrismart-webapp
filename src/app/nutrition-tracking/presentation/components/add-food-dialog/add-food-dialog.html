@@ -3,7 +3,7 @@
 
     <h2 id="dialog-title" class="dialog-title">{{ 'nutrition.add_to_daily_log' | translate }}</h2>
     <p class="dialog-subtitle">
-      {{ 'nutrition.adding_to' | translate: { meal: ('nutrition.' + targetMealType().toLowerCase()) | translate } }}
+      {{ 'nutrition.adding_to' | translate: { meal: getTargetMealLabel() } }}
     </p>
 
     <!-- Selected food info -->
@@ -11,12 +11,12 @@
       <span class="food-name">{{ food().name }}</span>
       <span class="food-base">
         {{ 'nutrition.base_info' | translate: {
-          size:    food().servingSize,
-          unit:    food().servingUnit,
+          size:     food().servingSize,
+          unit:     food().servingUnit,
           calories: food().caloriesPer100g,
-          protein: food().proteinPer100g,
-          carbs:   food().carbsPer100g,
-          fat:     food().fatPer100g
+          protein:  food().proteinPer100g,
+          carbs:    food().carbsPer100g,
+          fat:      food().fatPer100g
         } }}
       </span>
     </div>
@@ -46,7 +46,7 @@
                   [class.meal-btn--active]="selectedMealType === mt"
                   [attr.aria-pressed]="selectedMealType === mt"
                   (click)="selectedMealType = mt">
-            {{ ('nutrition.' + mt.toLowerCase()) | translate }}
+            {{ getMealTypeLabel(mt) }}
           </button>
         }
       </div>

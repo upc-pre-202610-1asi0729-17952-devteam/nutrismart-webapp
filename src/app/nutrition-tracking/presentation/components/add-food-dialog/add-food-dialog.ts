@@ -1,5 +1,5 @@
-import { Component, computed, EventEmitter, input, Output, signal } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Component, computed, EventEmitter, inject, input, Output, signal } from '@angular/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { FoodItem } from '../../../domain/model/food-item.entity';
 import { MealType } from '../../../domain/model/meal-type.enum';
 
@@ -41,9 +41,21 @@ export class AddFoodDialogComponent {
   /** Emitted when the user cancels. */
   @Output() cancel = new EventEmitter<void>();
 
-  protected mealTypes     = Object.values(MealType);
+  private translate = inject(TranslateService);
+
+  protected mealTypes        = Object.values(MealType);
   protected selectedMealType: MealType = MealType.LUNCH;
   protected quantity = signal(100);
+
+  /** Returns the translated label for a given meal type. */
+  protected getMealTypeLabel(mt: MealType): string {
+    return this.translate.instant('nutrition.' + mt.toLowerCase());
+  }
+
+  /** Returns the translated label for the pre-selected target meal type. */
+  protected getTargetMealLabel(): string {
+    return this.translate.instant('nutrition.' + this.targetMealType().toLowerCase());
+  }
 
   /** Reactively scaled nutrients. */
   protected nutrients = computed(() =>
