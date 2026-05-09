@@ -73,19 +73,23 @@ export class SmartScan implements OnInit {
   ];
 
   constructor() {
-    // Reset when navigating to /smart-scan — handles same-URL sidebar clicks
-    // (requires onSameUrlNavigation: 'reload' in router config).
+    // Reset and refresh nutrition data when navigating to /smart-scan so that
+    // macroAlerts always reflects the current daily totals, not a cached state.
     this.router.events
       .pipe(
         filter(e => e instanceof NavigationEnd),
         filter(e => (e as NavigationEnd).urlAfterRedirects.startsWith('/smart-scan')),
         takeUntilDestroyed(),
       )
-      .subscribe(() => this.smartScanStore.reset());
+      .subscribe(() => {
+        this.smartScanStore.reset();
+        this.smartScanStore.refreshDailyTotals();
+      });
   }
 
   ngOnInit(): void {
     this.smartScanStore.reset();
+    this.smartScanStore.refreshDailyTotals();
   }
 
   // ─── Plate drop zone ──────────────────────────────────────────────────────

@@ -131,6 +131,11 @@ export class SmartScanStore {
     this._uploadedImagePreview.set(null);
   }
 
+  /** Fetches fresh daily meal records so macroAlerts reflects the current state. */
+  async refreshDailyTotals(): Promise<void> {
+    await this.nutritionStore.fetchMealEntries();
+  }
+
   async scanFoodPlate(imageBase64: string): Promise<void> {
     this._uploadedImagePreview.set(imageBase64);
     this._view.set('analyzing-plate');
