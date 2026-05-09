@@ -179,11 +179,8 @@ export class DailyLog implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    await Promise.all([
-      this.nutritionStore.loadAllFoods(),
-      this.nutritionStore.fetchMealEntries(),
-      this.nutritionStore.fetchDailyBalance(),
-    ]);
+    await this.nutritionStore.fetchMealEntries();
+    await this.nutritionStore.fetchDailyBalance();
   }
 
   // ─── Event Handlers ───────────────────────────────────────────────────────
