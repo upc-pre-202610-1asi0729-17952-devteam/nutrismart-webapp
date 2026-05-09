@@ -15,10 +15,6 @@
         {{ consumed() | number }} kcal
       </span>
     </div>
-    <div class="balance-row">
-      <span class="balance-label">Active (Google Fit)</span>
-      <span class="balance-value val--active">-{{ active() }} kcal</span>
-    </div>
     <div class="balance-row balance-row--total">
       <span class="balance-label">{{ exceeded() ? 'Exceeded' : 'Remaining' }}</span>
       <span class="balance-value" [class.val--danger]="exceeded()" [class.val--remaining]="!exceeded()">
