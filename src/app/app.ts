@@ -44,7 +44,5 @@ export class App {
 
   constructor() {
     this.translate.addLangs(['en', 'es']);
-    const saved = localStorage.getItem('lang');
-    this.translate.use(saved === 'es' ? 'es' : 'en');
   }
 }

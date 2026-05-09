@@ -1,10 +1,19 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
-import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { firstValueFrom } from 'rxjs';
 
 import { routes } from './app.routes';
+
+function initLanguage(translate: TranslateService) {
+  return () => {
+    const saved = localStorage.getItem('lang') ?? 'en';
+    translate.setDefaultLang('en');
+    return firstValueFrom(translate.use(saved));
+  };
+}
 
 /**
  * Global application configuration.
@@ -12,7 +21,7 @@ import { routes } from './app.routes';
  * Registers the following providers:
  * - `provideRouter` — client-side routing with the application route tree.
  * - `provideHttpClient` — Angular's HTTP client (required by TranslateHttpLoader).
- * - `provideTranslateService` — ngx-translate with English as the default language.
+ * - `provideTranslateService` — ngx-translate (language bootstrapped via APP_INITIALIZER).
  * - `provideTranslateHttpLoader` — loads translation files from `/i18n/<lang>.json`.
  */
 export const appConfig: ApplicationConfig = {
@@ -20,7 +29,13 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(),
-    provideTranslateService({ defaultLanguage: 'en' }),
+    provideTranslateService(),
     provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initLanguage,
+      deps: [TranslateService],
+      multi: true,
+    },
   ],
 };
