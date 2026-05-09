@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatChipsModule } from '@angular/material/chips';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { SubscriptionPlan } from '../../../../iam/domain/model/subscription-plan.enum';
 import { MealType } from '../../../../nutrition-tracking/domain/model/meal-type.enum';
@@ -26,6 +27,7 @@ import { SmartScanStore } from '../../../application/smart-scan.store';
 @Component({
   selector: 'app-smart-scan',
   imports: [
+    TranslatePipe,
     FormsModule,
     RouterLink,
     MatCardModule,
@@ -68,10 +70,10 @@ export class SmartScan implements OnInit {
   });
 
   protected readonly mealTypes = [
-    { value: MealType.BREAKFAST, label: 'Breakfast' },
-    { value: MealType.LUNCH,     label: 'Lunch' },
-    { value: MealType.DINNER,    label: 'Dinner' },
-    { value: MealType.SNACK,     label: 'Snack' },
+    { value: MealType.BREAKFAST, labelKey: 'nutrition.breakfast' },
+    { value: MealType.LUNCH,     labelKey: 'nutrition.lunch' },
+    { value: MealType.DINNER,    labelKey: 'nutrition.dinner' },
+    { value: MealType.SNACK,     labelKey: 'nutrition.snack' },
   ];
 
   ngOnInit(): void {

@@ -1,31 +1,31 @@
 <div class="pantry-page">
 
-  <!-- ── Page header ─────────────────────────────���──────────────── -->
+  <!-- ── Page header ─────────────────────────────────────────────── -->
   <header class="page-header">
-    <h1 class="page-title">Pantry</h1>
-    <p class="page-subtitle">Manage your ingredients and get personalised recipe suggestions</p>
+    <h1 class="page-title">{{ 'pantry.page_title' | translate }}</h1>
+    <p class="page-subtitle">{{ 'pantry.page_subtitle' | translate }}</p>
   </header>
 
   <!-- ── Two-column grid ────────────────────────────────────────── -->
   <div class="pantry-grid">
 
-    <!-- ══ LEFT PANEL — ingredients ═══════════════════════════���══ -->
-    <section class="panel panel--left" aria-label="My ingredients">
-      <h2 class="panel__title">My ingredients</h2>
+    <!-- ══ LEFT PANEL — ingredients ══════════════════════════════ -->
+    <section class="panel panel--left" [attr.aria-label]="'pantry.my_ingredients' | translate">
+      <h2 class="panel__title">{{ 'pantry.my_ingredients' | translate }}</h2>
 
       <!-- Search / Add input -->
       <div class="add-ingredient-row">
         <input class="ingredient-input"
                type="text"
-               placeholder="Add ingredient..."
+               [placeholder]="'pantry.add_placeholder' | translate"
                [(ngModel)]="searchText"
                (keyup.enter)="onAddIngredient()"
-               aria-label="Search or add ingredient">
+               [attr.aria-label]="'pantry.add_placeholder' | translate">
         <button mat-flat-button
                 class="btn-go"
                 [disabled]="!searchText.trim() || pantryStore.loading()"
                 (click)="onAddIngredient()">
-          Go
+          {{ 'pantry.go_btn' | translate }}
         </button>
       </div>
 
@@ -40,7 +40,7 @@
               </div>
               <div class="ingredient-item__actions">
                 <button class="btn-remove"
-                        aria-label="Remove {{ item.name }}"
+                        [attr.aria-label]="item.name"
                         [disabled]="pantryStore.loading()"
                         (click)="onRemoveItem(item.id)">
                   <mat-icon class="btn-remove__icon">close</mat-icon>
@@ -53,25 +53,23 @@
         <!-- Empty state -->
         <div class="empty-pantry">
           <mat-icon class="empty-pantry__icon">kitchen</mat-icon>
-          <p class="empty-pantry__title">Your pantry is empty</p>
-          <p class="empty-pantry__desc">
-            Add ingredients to get personalised recipe suggestions based on what you have at home.
-          </p>
+          <p class="empty-pantry__title">{{ 'pantry.empty_title' | translate }}</p>
+          <p class="empty-pantry__desc">{{ 'pantry.empty_desc' | translate }}</p>
         </div>
       }
 
       <!-- ── Daily balance footer ─────────────────────────────── -->
       <footer class="balance-footer">
         <div class="balance-footer__row">
-          <span class="balance-footer__label">Daily Goal:</span>
+          <span class="balance-footer__label">{{ 'pantry.daily_goal' | translate }}</span>
           <span class="balance-footer__value">{{ pantryStore.dailyGoal() }} kcal</span>
         </div>
         <div class="balance-footer__row">
-          <span class="balance-footer__label">Consumed:</span>
+          <span class="balance-footer__label">{{ 'pantry.consumed' | translate }}</span>
           <span class="balance-footer__value">{{ pantryStore.dailyConsumed() }} kcal</span>
         </div>
         <div class="balance-footer__row">
-          <span class="balance-footer__label">Remaining:</span>
+          <span class="balance-footer__label">{{ 'pantry.remaining_label' | translate }}</span>
           <span class="balance-footer__value balance-footer__value--remaining">
             {{ pantryStore.remainingCalories() }} kcal
           </span>
@@ -84,27 +82,28 @@
                [style.width.%]="dailyProgressPct()"></div>
         </div>
         @if (pantryStore.userGoal() === UserGoal.WEIGHT_LOSS) {
-          <p class="balance-footer__hint">Suggested recipes respect your remaining deficit</p>
+          <p class="balance-footer__hint">{{ 'pantry.deficit_hint' | translate }}</p>
         } @else {
           <p class="balance-footer__hint">
-            Remaining protein: {{ pantryStore.remainingProtein() }}g of
-            {{ iamStore.currentUser()?.proteinTarget ?? 120 }}g
-            · Recipes ranked by protein content
+            {{ 'pantry.protein_hint' | translate: {
+                remaining: pantryStore.remainingProtein(),
+                total: iamStore.currentUser()?.proteinTarget ?? 120
+              }
+            }}
           </p>
         }
       </footer>
     </section>
 
     <!-- ══ RIGHT PANEL — recipe suggestions ══════════════════════ -->
-    <section class="panel panel--right" aria-label="Suggested recipes">
-      <h2 class="panel__title">Suggested recipes using what's in your cupboard</h2>
+    <section class="panel panel--right" [attr.aria-label]="'pantry.recipes_title' | translate">
+      <h2 class="panel__title">{{ 'pantry.recipes_title' | translate }}</h2>
       <p class="panel__subtitle">{{ recipeSubtitle() }}</p>
 
       @if (pantryStore.isEmpty()) {
-        <!-- Empty pantry state for recipes panel -->
         <div class="empty-recipes">
           <mat-icon class="empty-recipes__icon">menu_book</mat-icon>
-          <p class="empty-recipes__text">Add at least one ingredient to see recipe suggestions.</p>
+          <p class="empty-recipes__text">{{ 'pantry.empty_recipes' | translate }}</p>
         </div>
       } @else if (pantryStore.loading() && pantryStore.recipeSuggestions().length === 0) {
         <div class="loading-state">
@@ -123,13 +122,15 @@
                 <span class="macro-badge macro-badge--protein">P {{ recipe.protein }}g</span>
                 <span class="macro-badge macro-badge--fat">G {{ recipe.fat }}g</span>
                 <span class="goal-badge" [style.background-color]="recipe.goalBadgeColor">
-                  {{ recipe.goalBadgeLabel }}
+                  {{ (recipe.goalType === UserGoal.WEIGHT_LOSS
+                      ? 'pantry.goal_weight_loss'
+                      : 'pantry.goal_muscle_gain') | translate }}
                 </span>
               </div>
               <button mat-flat-button
                       class="btn-add-log"
                       (click)="onAddToLog(recipe.id)">
-                + Add to log
+                {{ 'common.add_to_log' | translate }}
               </button>
             </li>
           }

@@ -6,6 +6,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { UserGoal } from '../../../../iam/domain/model/user-goal.enum';
 import { PantryStore } from '../../../application/pantry.store';
@@ -22,6 +23,7 @@ import { PantryStore } from '../../../application/pantry.store';
 @Component({
   selector: 'app-pantry',
   imports: [
+    TranslatePipe,
     FormsModule,
     MatButtonModule,
     MatIconModule,
@@ -36,6 +38,7 @@ import { PantryStore } from '../../../application/pantry.store';
 export class Pantry implements OnInit {
   protected iamStore    = inject(IamStore);
   protected pantryStore = inject(PantryStore);
+  private   translate   = inject(TranslateService);
 
   protected readonly UserGoal = UserGoal;
 
@@ -54,16 +57,20 @@ export class Pantry implements OnInit {
   protected recipeSubtitle = computed(() => {
     const goal = this.pantryStore.userGoal();
     if (goal === UserGoal.MUSCLE_GAIN) {
-      return `Ranked by protein content · Covers your protein deficit`;
+      return this.translate.instant('pantry.recipes_ranked_protein');
     }
     const remaining = this.pantryStore.remainingCalories();
     const user      = this.iamStore.currentUser();
     const parts: string[] = [
-      `Based on your ingredients`,
-      `Filtered by your remaining calorie deficit of ${remaining} kcal`,
+      this.translate.instant('pantry.recipes_based_on'),
+      this.translate.instant('pantry.recipes_filtered_deficit', { kcal: remaining }),
     ];
     if (user?.restrictions?.length) {
-      parts.push(user.restrictions.map(r => r.replace('_FREE', '-free')).join(' · '));
+      parts.push(
+        user.restrictions
+          .map(r => this.translate.instant('restrictions.' + r))
+          .join(' · '),
+      );
     }
     return parts.join(' · ');
   });

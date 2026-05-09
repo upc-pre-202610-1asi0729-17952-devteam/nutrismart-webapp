@@ -2,24 +2,21 @@
 
   <!-- ── Page header ───────────────────────────────────────────── -->
   <header class="page-header">
-    <h1 class="page-title">Smart Scan</h1>
-    <p class="page-subtitle">Photograph a meal or restaurant menu to log instantly</p>
+    <h1 class="page-title">{{ 'smart_scan.page_title' | translate }}</h1>
+    <p class="page-subtitle">{{ 'smart_scan.page_subtitle' | translate }}</p>
   </header>
 
   @if (isBasic()) {
 
     <!-- ════════════════════════════════════════════════════════════
-         PAYWALL — Basic plan (only this block renders for Basic)
+         PAYWALL — Basic plan
     ═══════════════════════════════════════════════════════════════ -->
     <div class="paywall-card">
       <span class="paywall-icon material-icons">crop_free</span>
-      <h2 class="paywall-title">Smart Scan requires Pro or Premium</h2>
-      <p class="paywall-description">
-        Analyze photos of food plates to log meals instantly.
-        Available from $14.99/month.
-      </p>
+      <h2 class="paywall-title">{{ 'smart_scan.paywall_title' | translate }}</h2>
+      <p class="paywall-description">{{ 'smart_scan.paywall_desc' | translate }}</p>
       <a routerLink="/my-plan" mat-flat-button class="btn-teal paywall-cta">
-        Upgrade to Pro
+        {{ 'smart_scan.paywall_cta' | translate }}
       </a>
     </div>
 
@@ -34,12 +31,10 @@
         <!-- Card: Scan food dish (Pro + Premium) -->
         <mat-card class="scan-card scan-card--teal">
           <mat-card-header>
-            <mat-card-title>Scan food dish</mat-card-title>
+            <mat-card-title>{{ 'smart_scan.plate_card_title' | translate }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <p class="scan-card__desc">
-              Take or upload a photo of your dish to get an estimated nutritional breakdown
-            </p>
+            <p class="scan-card__desc">{{ 'smart_scan.plate_card_desc' | translate }}</p>
             <div class="drop-zone"
                  [class.drop-zone--active]="plateDragActive()"
                  aria-label="Drag and drop food photo"
@@ -47,18 +42,17 @@
                  (dragleave)="onPlateDragLeave($event)"
                  (drop)="onPlateDrop($event)">
               <span class="material-icons drop-zone__icon">photo_camera</span>
-              <span class="drop-zone__hint">Drag &amp; drop or use buttons below</span>
+              <span class="drop-zone__hint">{{ 'smart_scan.drop_hint' | translate }}</span>
             </div>
           </mat-card-content>
           <mat-card-actions>
-            <button mat-flat-button class="btn-teal"
-                    (click)="onTakePhotoPlate()">
+            <button mat-flat-button class="btn-teal" (click)="onTakePhotoPlate()">
               <mat-icon>photo_camera</mat-icon>
-              Take photo
+              {{ 'common.take_photo' | translate }}
             </button>
             <label class="btn-outline" role="button" tabindex="0">
               <mat-icon>upload</mat-icon>
-              Upload image
+              {{ 'common.upload_image' | translate }}
               <input type="file" accept="image/*" class="file-input" (change)="onUploadPlate($event)">
             </label>
           </mat-card-actions>
@@ -67,18 +61,16 @@
         <!-- Card: Scan restaurant menu (Premium only) -->
         <mat-card class="scan-card" [class.scan-card--locked]="!isPremium()">
           <mat-card-header>
-            <mat-card-title>Scan restaurant menu</mat-card-title>
+            <mat-card-title>{{ 'smart_scan.menu_card_title' | translate }}</mat-card-title>
             @if (!isPremium()) {
               <span class="plan-badge">
                 <mat-icon class="plan-badge__star">star</mat-icon>
-                Plan Premium
+                {{ 'smart_scan.plan_premium_badge' | translate }}
               </span>
             }
           </mat-card-header>
           <mat-card-content>
-            <p class="scan-card__desc">
-              This option allows you to scan the menu of any restaurant you choose.
-            </p>
+            <p class="scan-card__desc">{{ 'smart_scan.menu_card_desc' | translate }}</p>
             <div class="drop-zone"
                  [class.drop-zone--active]="menuDragActive()"
                  aria-label="Drag and drop menu photo"
@@ -86,28 +78,28 @@
                  (dragleave)="onMenuDragLeave($event)"
                  (drop)="onMenuDrop($event)">
               <span class="material-icons drop-zone__icon">description</span>
-              <span class="drop-zone__hint">Drag &amp; drop or use buttons below</span>
+              <span class="drop-zone__hint">{{ 'smart_scan.drop_hint' | translate }}</span>
             </div>
           </mat-card-content>
           <mat-card-actions>
             @if (isPremium()) {
               <button mat-flat-button class="btn-teal" (click)="onTakePhotoMenu()">
                 <mat-icon>photo_camera</mat-icon>
-                Take photo
+                {{ 'common.take_photo' | translate }}
               </button>
               <label class="btn-outline" role="button" tabindex="0">
                 <mat-icon>upload</mat-icon>
-                Upload image
+                {{ 'common.upload_image' | translate }}
                 <input type="file" accept="image/*" class="file-input" (change)="onUploadMenu($event)">
               </label>
             } @else {
               <button mat-flat-button class="btn-teal btn--disabled" disabled>
                 <mat-icon>photo_camera</mat-icon>
-                Take photo
+                {{ 'common.take_photo' | translate }}
               </button>
               <button mat-stroked-button class="btn--disabled" disabled>
                 <mat-icon>upload</mat-icon>
-                Upload image
+                {{ 'common.upload_image' | translate }}
               </button>
             }
           </mat-card-actions>
@@ -129,11 +121,11 @@
           }
           <div class="analyzing-state__overlay">
             <mat-spinner diameter="48" class="analyzing-spinner"></mat-spinner>
-            <p class="analyzing-state__label">Analyzing your meal...</p>
-            <p class="analyzing-state__source">Google Cloud Vision API · Open Food Facts</p>
+            <p class="analyzing-state__label">{{ 'smart_scan.analyzing_plate' | translate }}</p>
+            <p class="analyzing-state__source">{{ 'smart_scan.api_source' | translate }}</p>
           </div>
         </div>
-        <button mat-stroked-button (click)="onCancel()">Cancel</button>
+        <button mat-stroked-button (click)="onCancel()">{{ 'common.cancel' | translate }}</button>
       </div>
     }
 
@@ -143,8 +135,8 @@
     @if (smartScanStore.view() === 'plate-result' && smartScanStore.scanResult()) {
       <div class="result-panel">
         <header class="result-panel__header">
-          <h2 class="result-panel__title">Scan result</h2>
-          <p class="result-panel__subtitle">Review and confirm items before logging</p>
+          <h2 class="result-panel__title">{{ 'smart_scan.result_title' | translate }}</h2>
+          <p class="result-panel__subtitle">{{ 'smart_scan.result_subtitle' | translate }}</p>
         </header>
 
         <ul class="detected-items" role="list">
@@ -170,22 +162,22 @@
         </ul>
 
         <div class="result-totals">
-          <span>Total estimated:</span>
+          <span>{{ 'smart_scan.total_estimated' | translate }}</span>
           <strong class="result-totals__kcal">{{ smartScanStore.totalEstimatedCalories() }} kcal</strong>
         </div>
 
         <mat-form-field appearance="outline" class="meal-type-field">
-          <mat-label>Select meal type</mat-label>
+          <mat-label>{{ 'smart_scan.select_meal_type' | translate }}</mat-label>
           <mat-select [value]="selectedMealType" (valueChange)="selectedMealType = $event">
             @for (opt of mealTypes; track opt.value) {
-              <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+              <mat-option [value]="opt.value">{{ opt.labelKey | translate }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
 
         <p class="result-note">
           <mat-icon class="result-note__icon">info_outline</mat-icon>
-          Quantities are estimated. Adjust if needed before confirming.
+          {{ 'smart_scan.quantities_note' | translate }}
         </p>
 
         <button mat-flat-button
@@ -195,11 +187,11 @@
           @if (smartScanStore.loading()) {
             <mat-spinner diameter="20"></mat-spinner>
           } @else {
-            Confirm and log &nbsp;·&nbsp; MealRecorded →
+            {{ 'smart_scan.confirm_log' | translate }}
           }
         </button>
         <button mat-stroked-button class="btn-back" (click)="onCancel()">
-          ← Cancel
+          {{ 'smart_scan.cancel_result' | translate }}
         </button>
       </div>
     }
@@ -210,14 +202,15 @@
     @if (smartScanStore.view() === 'plate-invalid') {
       <div class="invalid-state">
         <span class="material-icons invalid-state__icon">error_outline</span>
-        <h2 class="invalid-state__title">No food items could be detected</h2>
-        <p class="invalid-state__desc">
-          The image may be blurry or doesn't contain recognizable food.
-          Please try again or log manually.
-        </p>
+        <h2 class="invalid-state__title">{{ 'smart_scan.invalid_title' | translate }}</h2>
+        <p class="invalid-state__desc">{{ 'smart_scan.invalid_desc' | translate }}</p>
         <div class="invalid-state__actions">
-          <button mat-flat-button class="btn-teal" (click)="onCancel()">Try again</button>
-          <a routerLink="/nutrition/log" mat-button class="btn-link">Log manually →</a>
+          <button mat-flat-button class="btn-teal" (click)="onCancel()">
+            {{ 'smart_scan.try_again' | translate }}
+          </button>
+          <a routerLink="/nutrition/log" mat-button class="btn-link">
+            {{ 'smart_scan.log_manually' | translate }}
+          </a>
         </div>
       </div>
     }
@@ -229,10 +222,10 @@
       <div class="analyzing-state">
         <div class="analyzing-state__overlay analyzing-state__overlay--solo">
           <mat-spinner diameter="48" class="analyzing-spinner"></mat-spinner>
-          <p class="analyzing-state__label">Analyzing menu...</p>
-          <p class="analyzing-state__source">Google Cloud Vision API · Open Food Facts</p>
+          <p class="analyzing-state__label">{{ 'smart_scan.analyzing_menu' | translate }}</p>
+          <p class="analyzing-state__source">{{ 'smart_scan.api_source' | translate }}</p>
         </div>
-        <button mat-stroked-button (click)="onCancel()">Cancel</button>
+        <button mat-stroked-button (click)="onCancel()">{{ 'common.cancel' | translate }}</button>
       </div>
     }
 
@@ -242,10 +235,8 @@
     @if (smartScanStore.view() === 'menu-result' && smartScanStore.menuAnalysis()) {
       <div class="menu-result-panel">
         <header class="result-panel__header">
-          <h2 class="result-panel__title">Menu analysis</h2>
-          <p class="result-panel__subtitle">
-            Filtered by your restrictions · Ranked by compatibility with your remaining macros
-          </p>
+          <h2 class="result-panel__title">{{ 'smart_scan.menu_title' | translate }}</h2>
+          <p class="result-panel__subtitle">{{ 'smart_scan.menu_subtitle' | translate }}</p>
         </header>
 
         @if (smartScanStore.menuAnalysis()!.bestDish; as best) {
@@ -253,7 +244,7 @@
             <mat-card-header>
               <span class="best-badge">
                 <mat-icon class="best-badge__star">star</mat-icon>
-                Best match
+                {{ 'smart_scan.best_match' | translate }}
               </span>
               <mat-card-title>{{ best.name }}</mat-card-title>
             </mat-card-header>
@@ -267,7 +258,7 @@
               </div>
             </mat-card-content>
             <mat-card-actions>
-              <button mat-flat-button class="btn-teal">Log this dish →</button>
+              <button mat-flat-button class="btn-teal">{{ 'smart_scan.log_dish' | translate }}</button>
             </mat-card-actions>
           </mat-card>
         }
@@ -281,10 +272,13 @@
                   <span class="alternative-item__name">{{ dish.name }}</span>
                   <span class="alternative-item__meta">
                     {{ dish.calories }} kcal · P{{ dish.protein }}g ·
-                    Compatibility: {{ smartScanStore.menuAnalysis()!.compatibilityLabel(dish) }}
+                    {{ 'smart_scan.compatibility' | translate }}
+                    {{ smartScanStore.menuAnalysis()!.compatibilityLabel(dish) }}
                   </span>
                 </div>
-                <button mat-stroked-button class="alternative-item__log">Log</button>
+                <button mat-stroked-button class="alternative-item__log">
+                  {{ 'common.log_this' | translate }}
+                </button>
               </li>
             }
           </ul>
@@ -294,21 +288,26 @@
           <mat-expansion-panel class="restricted-panel" hideToggle>
             <mat-expansion-panel-header>
               <mat-panel-title class="restricted-panel__title">
-                🚫 Restricted dishes ({{ smartScanStore.menuAnalysis()!.restrictedDishes.length }} items hidden)
+                {{ 'smart_scan.restricted_dishes' | translate: { count: smartScanStore.menuAnalysis()!.restrictedDishes.length } }}
               </mat-panel-title>
             </mat-expansion-panel-header>
             <ul class="restricted-list" role="list">
               @for (dish of smartScanStore.menuAnalysis()!.restrictedDishes; track dish.name) {
                 <li class="restricted-item">
                   <span class="restricted-item__name">{{ dish.name }}</span>
-                  <span class="restricted-item__reason">contains {{ dish.restriction }}</span>
+                  <span class="restricted-item__reason">
+                    {{ 'smart_scan.contains' | translate }}
+                    {{ 'restrictions.' + dish.restriction | translate }}
+                  </span>
                 </li>
               }
             </ul>
           </mat-expansion-panel>
         }
 
-        <button mat-stroked-button class="btn-back" (click)="onCancel()">← Back to scan</button>
+        <button mat-stroked-button class="btn-back" (click)="onCancel()">
+          {{ 'smart_scan.back_to_scan' | translate }}
+        </button>
       </div>
     }
 
