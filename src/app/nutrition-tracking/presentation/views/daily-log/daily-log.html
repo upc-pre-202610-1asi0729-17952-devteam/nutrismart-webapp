@@ -3,8 +3,8 @@
   <!-- ── Page header ───────────────────────────────────────── -->
   <header class="page-header">
     <div>
-      <h1 class="page-title">Daily Log</h1>
-      <p class="page-subtitle">Log your meals and track your macros in real time</p>
+      <h1 class="page-title">{{ 'nutrition.page_title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'nutrition.page_subtitle' | translate }}</p>
     </div>
   </header>
 
@@ -12,10 +12,7 @@
   @if (isDailyGoalExceeded()) {
     <div class="alert alert--danger" role="alert" aria-live="polite">
       <span class="alert-icon">⚠</span>
-      <span>
-        Daily goal exceeded. DailyGoalExceeded event emitted ·
-        You consumed <strong>{{ exceededBy() }} kcal</strong> over target.
-      </span>
+      <span>{{ 'nutrition.goal_exceeded_alert' | translate: { kcal: exceededBy() } }}</span>
     </div>
   }
 
@@ -23,21 +20,18 @@
   @if (!isDailyGoalExceeded() && allMealsLogged() && showGoalMetAlert()) {
     <div class="alert alert--success" role="alert" aria-live="polite">
       <span class="alert-icon">✓</span>
-      <span>
-        Daily goal met! DailyGoalMet event emitted ·
-        AdherenceStatus: ON_TRACK.
-      </span>
+      <span>{{ 'nutrition.goal_met_alert' | translate }}</span>
     </div>
   }
 
   <!-- ── Daily Summary bar ───────────────────────────────────── -->
-  <section class="summary-card" aria-label="Daily nutritional summary">
-    <h2 class="summary-title">Daily Summary</h2>
+  <section class="summary-card" [attr.aria-label]="'nutrition.daily_summary' | translate">
+    <h2 class="summary-title">{{ 'nutrition.daily_summary' | translate }}</h2>
     <div class="summary-grid">
 
       @for (macro of summaryMacros(); track macro.label) {
         <div class="macro-col">
-          <span class="macro-label">{{ macro.label }}</span>
+          <span class="macro-label">{{ macro.label | translate }}</span>
           <div class="macro-value-row">
             <span class="macro-value" [class.macro-value--over]="macro.over">
               {{ macro.value }}

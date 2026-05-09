@@ -1,19 +1,19 @@
-<div class="meal-section" [attr.aria-label]="mealType() + ' section'">
+<div class="meal-section" [attr.aria-label]="('nutrition.' + mealType().toLowerCase()) | translate">
 
   <div class="meal-header">
     <div class="meal-dot" [style.backgroundColor]="color()"></div>
-    <span class="meal-name">{{ mealType() }}</span>
+    <span class="meal-name">{{ ('nutrition.' + mealType().toLowerCase()) | translate }}</span>
     @if (isSkipped()) {
-      <span class="badge badge--skipped" role="status">Missed window · MealSkipped emitted</span>
+      <span class="badge badge--skipped" role="status">{{ 'nutrition.meal_skipped' | translate }}</span>
     } @else {
-      <span class="meal-kcal">{{ totalCalories() }} kcal</span>
+      <span class="meal-kcal">{{ totalCalories() }} {{ 'nutrition.kcal' | translate }}</span>
     }
   </div>
 
   @if (isSkipped()) {
-    <p class="skipped-text" aria-live="polite">Not logged · MealSkipped event emitted</p>
+    <p class="skipped-text" aria-live="polite">{{ 'nutrition.meal_skipped_text' | translate }}</p>
   } @else if (records().length === 0) {
-    <p class="empty-text">Not yet logged</p>
+    <p class="empty-text">{{ 'nutrition.not_yet_logged' | translate }}</p>
   } @else {
     <div class="records-list" role="list">
       @for (record of records(); track record.id) {
@@ -24,7 +24,7 @@
             <span class="record-qty">{{ record.quantity }}{{ record.unit }}</span>
           </div>
           <div class="record-macros">
-            <span class="record-kcal">{{ record.calories }} kcal</span>
+            <span class="record-kcal">{{ record.calories }} {{ 'nutrition.kcal' | translate }}</span>
             <span class="record-detail">{{ record.macroSummary }}</span>
           </div>
           <button class="remove-btn"
@@ -38,9 +38,9 @@
   }
 
   <button class="add-food-btn"
-          [attr.aria-label]="'Add food to ' + mealType()"
+          [attr.aria-label]="'nutrition.add_food_to' | translate: { meal: ('nutrition.' + mealType().toLowerCase()) | translate }"
           (click)="addFood.emit(mealType())">
-    + Add food to {{ mealType() }}
+    {{ 'nutrition.add_food_to' | translate: { meal: ('nutrition.' + mealType().toLowerCase()) | translate } }}
   </button>
 
 </div>

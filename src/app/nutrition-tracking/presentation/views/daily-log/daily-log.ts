@@ -14,6 +14,7 @@ import {
 } from '../../components/add-food-dialog/add-food-dialog';
 import { RestrictedItemDialogComponent } from '../../components/restricted-item-dialog/restricted-item-dialog';
 import { MealEntryDetailComponent } from '../../components/meal-entry-detail/meal-entry-detail';
+import { TranslatePipe } from '@ngx-translate/core';
 
 /**
  * Main Daily Log view — route `/nutrition/log`.
@@ -33,6 +34,7 @@ import { MealEntryDetailComponent } from '../../components/meal-entry-detail/mea
     AddFoodDialogComponent,
     RestrictedItemDialogComponent,
     MealEntryDetailComponent,
+    TranslatePipe,
   ],
   templateUrl: './daily-log.html',
   styleUrl: './daily-log.css',
@@ -90,7 +92,7 @@ export class DailyLog implements OnInit {
 
     return [
       {
-        label: 'Calories',
+        label: 'nutrition.calories',
         value: t.calories,
         target: user?.dailyCalorieTarget ?? 1800,
         unit: 'kcal',
@@ -99,7 +101,7 @@ export class DailyLog implements OnInit {
         over: t.calories > (user?.dailyCalorieTarget ?? 1800),
       },
       {
-        label: 'Protein',
+        label: 'nutrition.protein',
         value: t.protein,
         target: user?.proteinTarget ?? 120,
         unit: 'g',
@@ -108,7 +110,7 @@ export class DailyLog implements OnInit {
         over: t.protein > (user?.proteinTarget ?? 120),
       },
       {
-        label: 'Carbohydrates',
+        label: 'nutrition.carbohydrates',
         value: t.carbs,
         target: user?.carbsTarget ?? 200,
         unit: 'g',
@@ -117,7 +119,7 @@ export class DailyLog implements OnInit {
         over: t.carbs > (user?.carbsTarget ?? 200),
       },
       {
-        label: 'Fats',
+        label: 'nutrition.fats',
         value: t.fat,
         target: user?.fatTarget ?? 55,
         unit: 'g',
@@ -126,7 +128,7 @@ export class DailyLog implements OnInit {
         over: t.fat > (user?.fatTarget ?? 55),
       },
       {
-        label: 'Fiber',
+        label: 'nutrition.fiber',
         value: t.fiber,
         target: user?.fiberTarget ?? 25,
         unit: 'g',

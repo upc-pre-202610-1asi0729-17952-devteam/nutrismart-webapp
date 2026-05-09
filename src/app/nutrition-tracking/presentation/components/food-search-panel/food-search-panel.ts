@@ -1,4 +1,5 @@
 import { Component, computed, EventEmitter, inject, Output } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { DietaryRestriction } from '../../../../iam/domain/model/dietary-restriction.enum';
 import { NutritionStore } from '../../../application/nutrition.store';
@@ -15,6 +16,7 @@ import { FoodItem } from '../../../domain/model/food-item.entity';
  */
 @Component({
   selector: 'app-food-search-panel',
+  imports: [TranslatePipe],
   templateUrl: './food-search-panel.html',
   styleUrl: './food-search-panel.css',
 })

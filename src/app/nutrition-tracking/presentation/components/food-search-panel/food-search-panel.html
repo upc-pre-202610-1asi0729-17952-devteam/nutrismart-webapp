@@ -1,5 +1,5 @@
 <div class="search-panel">
-  <h3 class="panel-title">Search food</h3>
+  <h3 class="panel-title">{{ 'nutrition.search_food' | translate }}</h3>
 
   <!-- Search input -->
   <div class="search-input-wrap">
@@ -7,15 +7,15 @@
     <input
       type="text"
       class="search-input"
-      placeholder="E.g.: rice, chicken breast, yogurt..."
+      [placeholder]="'nutrition.search_placeholder' | translate"
       [value]="nutritionStore.searchQuery()"
       (input)="onSearchInput($event)"
-      aria-label="Search food" />
+      [attr.aria-label]="'nutrition.search_food' | translate" />
   </div>
 
   <!-- Initial hint -->
   @if (!nutritionStore.searchQuery() && !nutritionStore.loading()) {
-    <p class="hint-text">Type a food name to search the nutritional database.</p>
+    <p class="hint-text">{{ 'nutrition.search_hint' | translate }}</p>
   }
 
   <!-- Loading -->
@@ -28,8 +28,7 @@
   <!-- Restriction warning -->
   @if (!nutritionStore.loading() && hasAnyRestriction() && nutritionStore.foodItems().length > 0) {
     <div class="restriction-warning" role="alert">
-      Some results contain ingredients that match your active restrictions:
-      {{ conflictingRestrictionNames() }}
+      {{ 'nutrition.restrictions_warning' | translate: { restrictions: conflictingRestrictionNames() } }}
     </div>
   }
 
@@ -64,7 +63,7 @@
     </div>
 
     @if (hasAnyRestriction()) {
-      <p class="restricted-note">Restricted items are disabled. Only available items can be added.</p>
+      <p class="restricted-note">{{ 'nutrition.restricted_items_note' | translate }}</p>
     }
   }
 
@@ -73,9 +72,9 @@
     <div class="empty-state" role="status" aria-live="polite">
       <span class="empty-icon">🔍</span>
       <p class="empty-text">
-        No results for "{{ nutritionStore.searchQuery() }}". Try a different name or add it manually.
+        {{ 'nutrition.no_results' | translate: { query: nutritionStore.searchQuery() } }}
       </p>
-      <button class="add-manually-btn">+ Add manually</button>
+      <button class="add-manually-btn">{{ 'nutrition.add_manually' | translate }}</button>
     </div>
   }
 </div>
