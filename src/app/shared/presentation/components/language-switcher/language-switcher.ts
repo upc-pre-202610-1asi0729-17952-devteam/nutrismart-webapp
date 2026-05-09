@@ -30,5 +30,6 @@ export class LanguageSwitcher {
    */
   switchLanguage(lang: string): void {
     this.translate.use(lang);
+    localStorage.setItem('lang', lang);
   }
 }
