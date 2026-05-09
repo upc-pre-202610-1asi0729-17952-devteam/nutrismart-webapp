@@ -1,0 +1,142 @@
+<div class="pantry-page">
+
+  <!-- ── Page header ─────────────────────────────���──────────────── -->
+  <header class="page-header">
+    <h1 class="page-title">Pantry</h1>
+    <p class="page-subtitle">Manage your ingredients and get personalised recipe suggestions</p>
+  </header>
+
+  <!-- ── Two-column grid ────────────────────────────────────────── -->
+  <div class="pantry-grid">
+
+    <!-- ══ LEFT PANEL — ingredients ═══════════════════════════���══ -->
+    <section class="panel panel--left" aria-label="My ingredients">
+      <h2 class="panel__title">My ingredients</h2>
+
+      <!-- Search / Add input -->
+      <div class="add-ingredient-row">
+        <input class="ingredient-input"
+               type="text"
+               placeholder="Add ingredient..."
+               [(ngModel)]="searchText"
+               (keyup.enter)="onAddIngredient()"
+               aria-label="Search or add ingredient">
+        <button mat-flat-button
+                class="btn-go"
+                [disabled]="!searchText.trim() || pantryStore.loading()"
+                (click)="onAddIngredient()">
+          Go
+        </button>
+      </div>
+
+      <!-- ── Ingredient list ──────────────────────────────────── -->
+      @if (!pantryStore.isEmpty()) {
+        <ul class="ingredient-list" role="list">
+          @for (item of pantryStore.pantryItems(); track item.id) {
+            <li class="ingredient-item">
+              <div class="ingredient-item__info">
+                <span class="ingredient-item__name">{{ item.name }}</span>
+                <span class="ingredient-item__category">· {{ item.category }}</span>
+              </div>
+              <div class="ingredient-item__actions">
+                <button class="btn-remove"
+                        aria-label="Remove {{ item.name }}"
+                        [disabled]="pantryStore.loading()"
+                        (click)="onRemoveItem(item.id)">
+                  <mat-icon class="btn-remove__icon">close</mat-icon>
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <!-- Empty state -->
+        <div class="empty-pantry">
+          <mat-icon class="empty-pantry__icon">kitchen</mat-icon>
+          <p class="empty-pantry__title">Your pantry is empty</p>
+          <p class="empty-pantry__desc">
+            Add ingredients to get personalised recipe suggestions based on what you have at home.
+          </p>
+        </div>
+      }
+
+      <!-- ── Daily balance footer ─────────────────────────────── -->
+      <footer class="balance-footer">
+        <div class="balance-footer__row">
+          <span class="balance-footer__label">Daily Goal:</span>
+          <span class="balance-footer__value">{{ pantryStore.dailyGoal() }} kcal</span>
+        </div>
+        <div class="balance-footer__row">
+          <span class="balance-footer__label">Consumed:</span>
+          <span class="balance-footer__value">{{ pantryStore.dailyConsumed() }} kcal</span>
+        </div>
+        <div class="balance-footer__row">
+          <span class="balance-footer__label">Remaining:</span>
+          <span class="balance-footer__value balance-footer__value--remaining">
+            {{ pantryStore.remainingCalories() }} kcal
+          </span>
+        </div>
+        <div class="balance-footer__bar"
+             role="progressbar"
+             [attr.aria-valuenow]="pantryStore.dailyConsumed()"
+             [attr.aria-valuemax]="pantryStore.dailyGoal()">
+          <div class="balance-footer__bar-fill"
+               [style.width.%]="dailyProgressPct()"></div>
+        </div>
+        @if (pantryStore.userGoal() === UserGoal.WEIGHT_LOSS) {
+          <p class="balance-footer__hint">Suggested recipes respect your remaining deficit</p>
+        } @else {
+          <p class="balance-footer__hint">
+            Remaining protein: {{ pantryStore.remainingProtein() }}g of
+            {{ iamStore.currentUser()?.proteinTarget ?? 120 }}g
+            · Recipes ranked by protein content
+          </p>
+        }
+      </footer>
+    </section>
+
+    <!-- ══ RIGHT PANEL — recipe suggestions ══════════════════════ -->
+    <section class="panel panel--right" aria-label="Suggested recipes">
+      <h2 class="panel__title">Suggested recipes using what's in your cupboard</h2>
+      <p class="panel__subtitle">{{ recipeSubtitle() }}</p>
+
+      @if (pantryStore.isEmpty()) {
+        <!-- Empty pantry state for recipes panel -->
+        <div class="empty-recipes">
+          <mat-icon class="empty-recipes__icon">menu_book</mat-icon>
+          <p class="empty-recipes__text">Add at least one ingredient to see recipe suggestions.</p>
+        </div>
+      } @else if (pantryStore.loading() && pantryStore.recipeSuggestions().length === 0) {
+        <div class="loading-state">
+          <mat-spinner diameter="36"></mat-spinner>
+        </div>
+      } @else {
+        <ul class="recipe-list" role="list">
+          @for (recipe of pantryStore.recipeSuggestions(); track recipe.id) {
+            <li class="recipe-card">
+              <div class="recipe-card__header">
+                <span class="recipe-card__name">{{ recipe.name }}</span>
+                <span class="recipe-card__kcal">{{ recipe.calories }} kcal</span>
+              </div>
+              <p class="recipe-card__ingredients">{{ recipe.ingredientList }}</p>
+              <div class="recipe-card__badges">
+                <span class="macro-badge macro-badge--protein">P {{ recipe.protein }}g</span>
+                <span class="macro-badge macro-badge--fat">G {{ recipe.fat }}g</span>
+                <span class="goal-badge" [style.background-color]="recipe.goalBadgeColor">
+                  {{ recipe.goalBadgeLabel }}
+                </span>
+              </div>
+              <button mat-flat-button
+                      class="btn-add-log"
+                      (click)="onAddToLog(recipe.id)">
+                + Add to log
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+  </div>
+
+</div>
