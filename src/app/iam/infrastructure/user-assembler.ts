@@ -32,8 +32,8 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
       weight: resource.weight,
       height: resource.height,
       activityLevel: resource.activityLevel as ActivityLevel,
-      plan: resource.plan ? resource.plan as SubscriptionPlan : null,
-      restrictions: resource.restrictions.map(r => r as DietaryRestriction),
+      plan: resource.plan ? (resource.plan as SubscriptionPlan) : null,
+      restrictions: resource.restrictions.map((r) => r as DietaryRestriction),
       medicalConditions: resource.medicalConditions,
       dailyCalorieTarget: resource.dailyCalorieTarget,
       proteinTarget: resource.proteinTarget,
@@ -86,6 +86,6 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
    * @returns An array of {@link User} domain entities.
    */
   toEntitiesFromResponse(response: UsersResponse): User[] {
-    return response.users.map(r => this.toEntityFromResource(r));
+    return response.users.map((r) => this.toEntityFromResource(r));
   }
 }
