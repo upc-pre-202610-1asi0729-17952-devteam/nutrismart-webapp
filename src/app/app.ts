@@ -35,11 +35,11 @@ export class App {
    */
   isPublicRoute = toSignal(
     this.router.events.pipe(
-      filter(e => e instanceof NavigationEnd),
-      map(() => PUBLIC_PREFIXES.some(p => this.router.url.startsWith(p))),
-      startWith(PUBLIC_PREFIXES.some(p => this.router.url.startsWith(p)))
+      filter((e) => e instanceof NavigationEnd),
+      map(() => PUBLIC_PREFIXES.some((p) => this.router.url.startsWith(p))),
+      startWith(PUBLIC_PREFIXES.some((p) => this.router.url.startsWith(p))),
     ),
-    { initialValue: false }
+    { initialValue: false },
   );
 
   constructor() {

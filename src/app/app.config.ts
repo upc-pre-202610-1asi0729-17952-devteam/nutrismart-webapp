@@ -22,5 +22,5 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideTranslateService({ defaultLanguage: 'en' }),
     provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),
-  ]
+  ],
 };
