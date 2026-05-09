@@ -40,7 +40,12 @@
             <p class="scan-card__desc">
               Take or upload a photo of your dish to get an estimated nutritional breakdown
             </p>
-            <div class="drop-zone" aria-label="Drag and drop food photo">
+            <div class="drop-zone"
+                 [class.drop-zone--active]="plateDragActive()"
+                 aria-label="Drag and drop food photo"
+                 (dragover)="onPlateDragOver($event)"
+                 (dragleave)="onPlateDragLeave($event)"
+                 (drop)="onPlateDrop($event)">
               <span class="material-icons drop-zone__icon">photo_camera</span>
               <span class="drop-zone__hint">Drag &amp; drop or use buttons below</span>
             </div>
@@ -74,7 +79,12 @@
             <p class="scan-card__desc">
               This option allows you to scan the menu of any restaurant you choose.
             </p>
-            <div class="drop-zone" aria-label="Drag and drop menu photo">
+            <div class="drop-zone"
+                 [class.drop-zone--active]="menuDragActive()"
+                 aria-label="Drag and drop menu photo"
+                 (dragover)="onMenuDragOver($event)"
+                 (dragleave)="onMenuDragLeave($event)"
+                 (drop)="onMenuDrop($event)">
               <span class="material-icons drop-zone__icon">description</span>
               <span class="drop-zone__hint">Drag &amp; drop or use buttons below</span>
             </div>

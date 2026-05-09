@@ -131,10 +131,12 @@ mat-card-header {
   gap: 0.5rem;
   background: rgba(255,255,255,0.5);
   cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
 
-.scan-card--teal .drop-zone {
+.drop-zone--active {
   border-color: #2d9e8f;
+  background: #f0fdf9;
 }
 
 .drop-zone__icon {

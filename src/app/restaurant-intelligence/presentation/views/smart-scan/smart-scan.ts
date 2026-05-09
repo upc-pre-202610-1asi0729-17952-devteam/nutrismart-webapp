@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -49,6 +49,12 @@ export class SmartScan implements OnInit {
   /** Meal type selected by the user before confirming scan log. */
   protected selectedMealType = MealType.LUNCH;
 
+  /** Whether a file is being dragged over the plate drop zone. */
+  protected plateDragActive = signal(false);
+
+  /** Whether a file is being dragged over the menu drop zone. */
+  protected menuDragActive = signal(false);
+
   /** Computed: current user is Basic plan (shows paywall). */
   protected isBasic = computed(() => {
     const user = this.iamStore.currentUser();
@@ -72,38 +78,68 @@ export class SmartScan implements OnInit {
     this.smartScanStore.reset();
   }
 
-  // ─── Image Upload / Demo Triggers ────────────────────────────────────────
+  // ─── Plate drop zone drag events ─────────────────────────────────────────
 
-  /** Simulates uploading a plate image (demo: triggers scan with a stub base64). */
-  async onUploadPlate(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    const file  = input?.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async () => {
-      await this.smartScanStore.scanFoodPlate(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+  onPlateDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.plateDragActive.set(true);
   }
 
-  /** Demo: triggers plate scan with a placeholder image. */
+  onPlateDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    this.plateDragActive.set(false);
+  }
+
+  async onPlateDrop(event: DragEvent): Promise<void> {
+    event.preventDefault();
+    event.stopPropagation();
+    this.plateDragActive.set(false);
+    const file = event.dataTransfer?.files?.[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    await this._readAndScanPlate(file);
+  }
+
+  // ─── Menu drop zone drag events ───────────────────────────────────────────
+
+  onMenuDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.menuDragActive.set(true);
+  }
+
+  onMenuDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    this.menuDragActive.set(false);
+  }
+
+  async onMenuDrop(event: DragEvent): Promise<void> {
+    event.preventDefault();
+    event.stopPropagation();
+    this.menuDragActive.set(false);
+    const file = event.dataTransfer?.files?.[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    await this._readAndScanMenu(file);
+  }
+
+  // ─── Image Upload / Demo Triggers ─────────────────────────────────────────
+
+  async onUploadPlate(event: Event): Promise<void> {
+    const file = (event.target as HTMLInputElement)?.files?.[0];
+    if (!file) return;
+    await this._readAndScanPlate(file);
+  }
+
   async onTakePhotoPlate(): Promise<void> {
     await this.smartScanStore.scanFoodPlate('demo-plate-base64');
   }
 
-  /** Simulates uploading a menu image. */
   async onUploadMenu(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    const file  = input?.files?.[0];
+    const file = (event.target as HTMLInputElement)?.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async () => {
-      await this.smartScanStore.scanMenuPhoto(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    await this._readAndScanMenu(file);
   }
 
-  /** Demo: triggers menu scan with a placeholder image. */
   async onTakePhotoMenu(): Promise<void> {
     await this.smartScanStore.scanMenuPhoto('demo-menu-base64');
   }
@@ -127,5 +163,29 @@ export class SmartScan implements OnInit {
 
   onCancel(): void {
     this.smartScanStore.reset();
+  }
+
+  // ─── Private helpers ──────────────────────────────────────────────────────
+
+  private _readAndScanPlate(file: File): Promise<void> {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        await this.smartScanStore.scanFoodPlate(reader.result as string);
+        resolve();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  private _readAndScanMenu(file: File): Promise<void> {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        await this.smartScanStore.scanMenuPhoto(reader.result as string);
+        resolve();
+      };
+      reader.readAsDataURL(file);
+    });
   }
 }
