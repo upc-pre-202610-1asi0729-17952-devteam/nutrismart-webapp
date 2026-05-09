@@ -8,6 +8,34 @@
     </div>
   </header>
 
+  <!-- ── Date Navigator ────────────────────────────────────── -->
+  <div class="date-nav">
+    <button class="date-nav-btn"
+            [disabled]="isAtAccountStart()"
+            (click)="goToPreviousDay()"
+            aria-label="Previous day">
+      &#8249;
+    </button>
+    <div class="date-nav-label" [class.date-nav-label--today]="isToday()">
+      <span class="material-icons date-nav-icon">calendar_today</span>
+      <span class="date-nav-text">{{ formattedDate() }}</span>
+    </div>
+    <button class="date-nav-btn"
+            [disabled]="isToday()"
+            (click)="goToNextDay()"
+            aria-label="Next day">
+      &#8250;
+    </button>
+  </div>
+
+  <!-- ── Read-only notice ───────────────────────────────────── -->
+  @if (!isEditable()) {
+    <div class="read-only-notice" role="status">
+      <span class="material-icons">lock</span>
+      <span>{{ 'nutrition.entry_read_only' | translate }}</span>
+    </div>
+  }
+
   <!-- ── DailyGoalExceeded alert - T22 ──────────────────────── -->
   @if (isDailyGoalExceeded()) {
     <div class="alert alert--danger" role="alert" aria-live="polite">
@@ -106,6 +134,8 @@
 @if (selectedEntry()) {
   <app-meal-entry-detail
     [entry]="selectedEntry()!"
-    (close)="selectedEntry.set(null)">
+    [isEditable]="isEditable()"
+    (close)="selectedEntry.set(null)"
+    (editConfirm)="onEditEntry($event)">
   </app-meal-entry-detail>
 }

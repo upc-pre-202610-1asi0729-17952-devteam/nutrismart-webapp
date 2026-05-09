@@ -48,6 +48,8 @@ export interface UserProps {
   birthday?: string;
   /** Biological sex: 'male' | 'female' | 'other'. Optional. */
   biologicalSex?: string;
+  /** Account creation date in ISO format (YYYY-MM-DD). */
+  createdAt?: string;
 }
 
 /**
@@ -98,6 +100,8 @@ export class User implements BaseEntity {
   private _birthday: string;
   /** @see UserProps.biologicalSex */
   private _biologicalSex: string;
+  /** @see UserProps.createdAt */
+  private _createdAt: string;
 
   /**
    * Creates a new User domain entity.
@@ -125,6 +129,7 @@ export class User implements BaseEntity {
     this._consecutiveMisses = props.consecutiveMisses;
     this._birthday = props.birthday ?? '';
     this._biologicalSex = props.biologicalSex ?? '';
+    this._createdAt = props.createdAt ?? '';
   }
 
   // ─── Getters & Setters ────────────────────────────────────────────────────
@@ -307,6 +312,15 @@ export class User implements BaseEntity {
   /** @param value - New biologicalSex value. */
   set biologicalSex(value: string) {
     this._biologicalSex = value;
+  }
+
+  /** Account creation date in ISO format (YYYY-MM-DD). */
+  get createdAt(): string {
+    return this._createdAt;
+  }
+  /** @param value - New createdAt value. */
+  set createdAt(value: string) {
+    this._createdAt = value;
   }
 
   // ─── Computed / Behaviour Methods ─────────────────────────────────────────

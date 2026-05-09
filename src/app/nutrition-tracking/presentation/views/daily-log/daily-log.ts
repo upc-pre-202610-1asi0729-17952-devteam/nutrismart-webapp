@@ -1,4 +1,5 @@
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { DietaryRestriction } from '../../../../iam/domain/model/dietary-restriction.enum';
 import { NutritionStore } from '../../../application/nutrition.store';
@@ -14,14 +15,13 @@ import {
 } from '../../components/add-food-dialog/add-food-dialog';
 import { RestrictedItemDialogComponent } from '../../components/restricted-item-dialog/restricted-item-dialog';
 import { MealEntryDetailComponent } from '../../components/meal-entry-detail/meal-entry-detail';
-import { TranslatePipe } from '@ngx-translate/core';
 
 /**
  * Main Daily Log view — route `/nutrition/log`.
  *
  * Orchestrates all nutrition-tracking child components: summary bar,
  * meal sections (T19), food search panel (T18), add-food dialog (T20),
- * and alert banners for DailyGoalExceeded / DailyGoalMet / MealSkipped (T21–T22).
+ * date navigator, and alert banners for DailyGoalExceeded / DailyGoalMet / MealSkipped (T21–T22).
  *
  * @author Mora Rivera, Joel Fernando
  */
@@ -41,6 +41,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 })
 export class DailyLog implements OnInit {
   private iamStore = inject(IamStore);
+  private translate = inject(TranslateService);
   protected nutritionStore = inject(NutritionStore);
 
   /** Food selected from the search panel — drives the Add Food dialog. */
@@ -57,37 +58,119 @@ export class DailyLog implements OnInit {
 
   protected showGoalMetAlert = signal(true);
 
+  /** Currently selected date for the day navigator. */
+  protected selectedDate = signal<Date>(new Date());
+
+  /** Meal record selected for detail view. */
+  protected selectedEntry = signal<MealRecord | null>(null);
+
   constructor() {
     effect(() => {
-      if (this.nutritionStore.allMealsLogged() && !this.nutritionStore.isDailyGoalExceeded()) {
+      if (this.allMealsLogged() && !this.isDailyGoalExceeded()) {
         this.showGoalMetAlert.set(true);
         setTimeout(() => this.showGoalMetAlert.set(false), 4000);
       }
     });
   }
 
-  /** Meal record selected for detail view. */
-  protected selectedEntry = signal<MealRecord | null>(null);
+  // ─── Date Navigator Computeds ─────────────────────────────────────────────
+
+  /** True when the selected date is today. */
+  protected isToday = computed(() => {
+    const today = new Date();
+    return this.selectedDate().toDateString() === today.toDateString();
+  });
+
+  /** True when the selected date is on or before the user's account creation date. */
+  protected isAtAccountStart = computed(() => {
+    const user = this.iamStore.currentUser();
+    if (!user?.createdAt) return false;
+    const created = new Date(user.createdAt);
+    const createdDay = new Date(created.getFullYear(), created.getMonth(), created.getDate());
+    const sel = this.selectedDate();
+    const selDay = new Date(sel.getFullYear(), sel.getMonth(), sel.getDate());
+    return selDay <= createdDay;
+  });
+
+  /** True when entries for the selected date can still be edited (within 7 days). */
+  protected isEditable = computed(() => {
+    const today = new Date();
+    const todayDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const sel = this.selectedDate();
+    const selDay = new Date(sel.getFullYear(), sel.getMonth(), sel.getDate());
+    const diffDays = (todayDay.getTime() - selDay.getTime()) / (1000 * 60 * 60 * 24);
+    return diffDays < 7;
+  });
+
+  /** Formatted label for the date navigator pill. */
+  protected formattedDate = computed(() => {
+    if (this.isToday()) return this.translate.instant('nutrition.date_today');
+    const lang = this.translate.currentLang ?? 'en';
+    return new Intl.DateTimeFormat(lang === 'es' ? 'es-ES' : 'en-US', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+    }).format(this.selectedDate());
+  });
+
+  // ─── Filtered Records ─────────────────────────────────────────────────────
+
+  private filteredRecords = computed(() => {
+    const selectedDateStr = this.selectedDate().toDateString();
+    return this.nutritionStore.mealRecords().filter(
+      (r) => new Date(r.loggedAt).toDateString() === selectedDateStr,
+    );
+  });
+
+  private filteredByMealType = computed(() => {
+    const records = this.filteredRecords();
+    return {
+      [MealType.BREAKFAST]: records.filter((r) => r.mealType === MealType.BREAKFAST),
+      [MealType.LUNCH]: records.filter((r) => r.mealType === MealType.LUNCH),
+      [MealType.SNACK]: records.filter((r) => r.mealType === MealType.SNACK),
+      [MealType.DINNER]: records.filter((r) => r.mealType === MealType.DINNER),
+    };
+  });
+
+  private filteredTotals = computed(() =>
+    this.filteredRecords().reduce(
+      (acc, r) => ({
+        calories: Math.round((acc.calories + r.calories) * 10) / 10,
+        protein: Math.round((acc.protein + r.protein) * 10) / 10,
+        carbs: Math.round((acc.carbs + r.carbs) * 10) / 10,
+        fat: Math.round((acc.fat + r.fat) * 10) / 10,
+        fiber: Math.round((acc.fiber + r.fiber) * 10) / 10,
+        sugar: Math.round((acc.sugar + r.sugar) * 10) / 10,
+      }),
+      { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, sugar: 0 },
+    ),
+  );
 
   // ─── Computed ─────────────────────────────────────────────────────────────
 
-  /** Whether the daily goal has been exceeded (T22). */
-  protected isDailyGoalExceeded = this.nutritionStore.isDailyGoalExceeded;
+  /** Whether the daily goal has been exceeded for the selected date (T22). */
+  protected isDailyGoalExceeded = computed(() => {
+    const intake = this.nutritionStore.dailyIntake();
+    if (!intake) return false;
+    return this.filteredTotals().calories > intake.dailyGoal;
+  });
 
-  /** Whether all 4 meal windows are logged (T22). */
-  protected allMealsLogged = this.nutritionStore.allMealsLogged;
+  /** Whether all 4 meal windows are logged for the selected date (T22). */
+  protected allMealsLogged = computed(() =>
+    Object.values(this.filteredByMealType()).every((arr) => arr.length > 0),
+  );
 
   /** Kilocalories consumed beyond the daily goal (T22). */
   protected exceededBy = computed(() => {
     const intake = this.nutritionStore.dailyIntake();
     if (!intake) return 0;
-    return Math.abs(this.nutritionStore.dailyTotals().calories - intake.dailyGoal);
+    return Math.abs(this.filteredTotals().calories - intake.dailyGoal);
   });
 
   /** Summary bar macro descriptors. */
   protected summaryMacros = computed(() => {
     const user = this.iamStore.currentUser();
-    const t = this.nutritionStore.dailyTotals();
+    const t = this.filteredTotals();
     const pct = (v: number, max: number) => Math.min(Math.round((v / max) * 100), 100);
 
     return [
@@ -141,7 +224,7 @@ export class DailyLog implements OnInit {
 
   /** Meal section descriptors used by the template. */
   protected mealSections = computed(() => {
-    const groups = this.nutritionStore.recordsByMealType();
+    const groups = this.filteredByMealType();
     const skipped = this.skippedMeals();
     return [
       {
@@ -173,17 +256,33 @@ export class DailyLog implements OnInit {
 
   // ─── Lifecycle ────────────────────────────────────────────────────────────
 
-  /** Opens the meal entry detail dialog. */
-  onViewEntry(record: MealRecord): void {
-    this.selectedEntry.set(record);
-  }
-
   async ngOnInit(): Promise<void> {
     await this.nutritionStore.fetchMealEntries();
     await this.nutritionStore.fetchDailyBalance();
   }
 
+  // ─── Date Navigation ──────────────────────────────────────────────────────
+
+  goToPreviousDay(): void {
+    if (this.isAtAccountStart()) return;
+    const d = new Date(this.selectedDate());
+    d.setDate(d.getDate() - 1);
+    this.selectedDate.set(d);
+  }
+
+  goToNextDay(): void {
+    if (this.isToday()) return;
+    const d = new Date(this.selectedDate());
+    d.setDate(d.getDate() + 1);
+    this.selectedDate.set(d);
+  }
+
   // ─── Event Handlers ───────────────────────────────────────────────────────
+
+  /** Opens the meal entry detail dialog. */
+  onViewEntry(record: MealRecord): void {
+    this.selectedEntry.set(record);
+  }
 
   /** Removes a meal record and refreshes the balance. */
   async onRemoveEntry(id: number): Promise<void> {
@@ -241,5 +340,21 @@ export class DailyLog implements OnInit {
   onCloseBlocked(): void {
     this.blockedFood.set(null);
     this.nutritionStore.clearSearch();
+  }
+
+  /** Updates a meal entry's quantity and recalculates macros proportionally. */
+  async onEditEntry(payload: { id: number; quantity: number }): Promise<void> {
+    const record = this.nutritionStore.mealRecords().find((r) => r.id === payload.id);
+    if (!record || record.quantity === 0) return;
+    const ratio = payload.quantity / record.quantity;
+    record.quantity = payload.quantity;
+    record.calories = Math.round(record.calories * ratio * 10) / 10;
+    record.protein = Math.round(record.protein * ratio * 10) / 10;
+    record.carbs = Math.round(record.carbs * ratio * 10) / 10;
+    record.fat = Math.round(record.fat * ratio * 10) / 10;
+    record.fiber = Math.round(record.fiber * ratio * 10) / 10;
+    record.sugar = Math.round(record.sugar * ratio * 10) / 10;
+    await this.nutritionStore.updateMealEntry(record);
+    this.selectedEntry.set(null);
   }
 }

@@ -286,6 +286,11 @@
     "quantity_logged": "Cantidad registrada",
     "logged_at": "Registrado a las {{ time }}",
     "add_to_daily_log": "Agregar al Registro Diario",
+    "date_today": "Hoy",
+    "edit_entry": "Editar registro",
+    "save_changes": "Guardar cambios",
+    "entry_read_only": "Este registro tiene más de 7 días y ya no puede editarse",
+    "new_quantity": "Nueva cantidad",
     "adding_to": "Agregando a: {{ meal }}",
     "quantity_unit": "Cantidad ({{ unit }})",
     "meal_type": "Tipo de comida"
