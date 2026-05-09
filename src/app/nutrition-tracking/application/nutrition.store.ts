@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { debounceTime, Subject, switchMap } from 'rxjs';
+import { debounceTime, Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { IamStore } from '../../iam/application/iam.store';
 import { MealType } from '../domain/model/meal-type.enum';
@@ -25,11 +25,12 @@ export class NutritionStore {
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
-  private _foodItems = signal<FoodItem[]>([]);
+  private _allFoods    = signal<FoodItem[]>([]);
+  private _foodItems   = signal<FoodItem[]>([]);
   private _mealRecords = signal<MealRecord[]>([]);
   private _dailyIntake = signal<DailyIntake | null>(null);
-  private _loading = signal<boolean>(false);
-  private _error = signal<string | null>(null);
+  private _loading     = signal<boolean>(false);
+  private _error       = signal<string | null>(null);
   private _searchQuery = signal<string>('');
 
   /** Subject for debounced food search. */
@@ -97,29 +98,24 @@ export class NutritionStore {
   });
 
   constructor() {
-    // Wire up the debounced search pipeline (400 ms)
+    // Debounced local search pipeline — filters _allFoods in memory (no HTTP per keystroke)
     this._searchSubject
-      .pipe(
-        debounceTime(400),
-        switchMap((query) => {
-          if (query.trim().length < 2) {
-            this._foodItems.set([]);
-            return [];
-          }
-          this._loading.set(true);
-          return this.nutritionApi.searchFoods(query);
-        }),
-        takeUntilDestroyed(),
-      )
-      .subscribe({
-        next: (items) => {
-          this._foodItems.set(items);
+      .pipe(debounceTime(300), takeUntilDestroyed())
+      .subscribe((query) => {
+        const q = query.trim().toLowerCase();
+        if (q.length < 2) {
+          this._foodItems.set([]);
           this._loading.set(false);
-        },
-        error: (err) => {
-          this._error.set('Failed to search foods.');
-          this._loading.set(false);
-        },
+          return;
+        }
+        this._foodItems.set(
+          this._allFoods().filter(
+            (f) =>
+              f.name.toLowerCase().includes(q) ||
+              (f.nameEs && f.nameEs.toLowerCase().includes(q)),
+          ),
+        );
+        this._loading.set(false);
       });
   }
 
@@ -130,8 +126,23 @@ export class NutritionStore {
    *
    * @param query - Partial food name typed by the user.
    */
+  /**
+   * Loads all food items from the server once and caches them locally.
+   * Must be called before any search is performed.
+   */
+  async loadAllFoods(): Promise<void> {
+    if (this._allFoods().length > 0) return;
+    return new Promise((resolve) => {
+      this.nutritionApi.getAllFoods().subscribe({
+        next: (foods) => { this._allFoods.set(foods); resolve(); },
+        error: () => { this._error.set('Failed to load food catalog.'); resolve(); },
+      });
+    });
+  }
+
   searchFoods(query: string): void {
     this._searchQuery.set(query);
+    this._loading.set(query.trim().length >= 2);
     this._searchSubject.next(query);
   }
 

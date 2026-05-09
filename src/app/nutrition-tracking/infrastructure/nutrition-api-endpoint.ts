@@ -35,6 +35,12 @@ export class FoodSearchEndpoint extends BaseApiEndpoint<
    * @param query - Partial food name to search for.
    * @returns Observable emitting matching {@link FoodItem} entities.
    */
+  getAll(): Observable<FoodItem[]> {
+    return this.http
+      .get<FoodItemResource[]>(this.endpointUrl)
+      .pipe(map((resources) => resources.map((r) => this.assembler.toEntityFromResource(r))));
+  }
+
   searchByName(query: string): Observable<FoodItem[]> {
     return this.http
       .get<FoodItemResource[]>(this.endpointUrl)
