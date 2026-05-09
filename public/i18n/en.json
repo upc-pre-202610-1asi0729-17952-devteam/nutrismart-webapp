@@ -286,6 +286,11 @@
     "quantity_logged": "Quantity logged",
     "logged_at": "Logged at {{ time }}",
     "add_to_daily_log": "Add to Daily Log",
+    "date_today": "Today",
+    "edit_entry": "Edit entry",
+    "save_changes": "Save changes",
+    "entry_read_only": "This entry is older than 7 days and can no longer be edited",
+    "new_quantity": "New quantity",
     "adding_to": "Adding to: {{ meal }}",
     "quantity_unit": "Quantity ({{ unit }})",
     "meal_type": "Meal type"
