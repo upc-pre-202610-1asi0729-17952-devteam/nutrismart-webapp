@@ -6,10 +6,11 @@
     <p class="page-subtitle">Photograph a meal or restaurant menu to log instantly</p>
   </header>
 
-  <!-- ══════════════════════════════════════════════════════════════
-       PAYWALL — Basic plan
-  ════════════════════════════════════════════════════════════════ -->
   @if (isBasic()) {
+
+    <!-- ════════════════════════════════════════════════════════════
+         PAYWALL — Basic plan (only this block renders for Basic)
+    ═══════════════════════════════════════════════════════════════ -->
     <div class="paywall-card">
       <span class="paywall-icon material-icons">crop_free</span>
       <h2 class="paywall-title">Smart Scan requires Pro or Premium</h2>
@@ -20,288 +21,284 @@
       <a routerLink="/subscription" mat-flat-button class="btn-teal paywall-cta">
         Upgrade to Pro
       </a>
-      <a routerLink="/my-plan" class="paywall-link">Compare plans</a>
     </div>
-  }
 
-  <!-- ══════════════════════════════════════════════════════════════
-       LANDING — two mode cards (T27)
-  ════════════════════════════════════════════════════════════════ -->
-  @if (!isBasic() && smartScanStore.view() === 'landing') {
-    <div class="scan-cards-grid">
+  } @else {
 
-      <!-- Card: Scan food dish (Pro + Premium) -->
-      <mat-card class="scan-card scan-card--teal">
-        <mat-card-header>
-          <mat-card-title>Scan food dish</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <p class="scan-card__desc">
-            Take or upload a photo of your dish to get an estimated nutritional breakdown
-          </p>
-          <div class="drop-zone" aria-label="Drag and drop food photo">
-            <span class="material-icons drop-zone__icon">photo_camera</span>
-            <span class="drop-zone__hint">Drag &amp; drop or use buttons below</span>
-          </div>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-flat-button class="btn-teal"
-                  (click)="onTakePhotoPlate()">
-            <mat-icon>photo_camera</mat-icon>
-            Take photo
-          </button>
-          <label class="btn-outline" role="button" tabindex="0">
-            <mat-icon>upload</mat-icon>
-            Upload image
-            <input type="file" accept="image/*" class="file-input" (change)="onUploadPlate($event)">
-          </label>
-        </mat-card-actions>
-      </mat-card>
+    <!-- ════════════════════════════════════════════════════════════
+         LANDING — two mode cards (T27)
+    ═══════════════════════════════════════════════════════════════ -->
+    @if (smartScanStore.view() === 'landing') {
+      <div class="scan-cards-grid">
 
-      <!-- Card: Scan restaurant menu (Premium only) -->
-      <mat-card class="scan-card" [class.scan-card--locked]="!isPremium()">
-        <mat-card-header>
-          <mat-card-title>Scan restaurant menu</mat-card-title>
-          @if (!isPremium()) {
-            <span class="plan-badge">
-              <mat-icon class="plan-badge__star">star</mat-icon>
-              Plan Premium
-            </span>
-          }
-        </mat-card-header>
-        <mat-card-content>
-          <p class="scan-card__desc">
-            This option allows you to scan the menu of any restaurant you choose.
-          </p>
-          <div class="drop-zone" aria-label="Drag and drop menu photo">
-            <span class="material-icons drop-zone__icon">description</span>
-            <span class="drop-zone__hint">Drag &amp; drop or use buttons below</span>
-          </div>
-        </mat-card-content>
-        <mat-card-actions>
-          @if (isPremium()) {
-            <button mat-flat-button class="btn-teal" (click)="onTakePhotoMenu()">
+        <!-- Card: Scan food dish (Pro + Premium) -->
+        <mat-card class="scan-card scan-card--teal">
+          <mat-card-header>
+            <mat-card-title>Scan food dish</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="scan-card__desc">
+              Take or upload a photo of your dish to get an estimated nutritional breakdown
+            </p>
+            <div class="drop-zone" aria-label="Drag and drop food photo">
+              <span class="material-icons drop-zone__icon">photo_camera</span>
+              <span class="drop-zone__hint">Drag &amp; drop or use buttons below</span>
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-flat-button class="btn-teal"
+                    (click)="onTakePhotoPlate()">
               <mat-icon>photo_camera</mat-icon>
               Take photo
             </button>
             <label class="btn-outline" role="button" tabindex="0">
               <mat-icon>upload</mat-icon>
               Upload image
-              <input type="file" accept="image/*" class="file-input" (change)="onUploadMenu($event)">
+              <input type="file" accept="image/*" class="file-input" (change)="onUploadPlate($event)">
             </label>
-          } @else {
-            <button mat-flat-button class="btn-teal btn--disabled" disabled>
-              <mat-icon>photo_camera</mat-icon>
-              Take photo
-            </button>
-            <button mat-stroked-button class="btn--disabled" disabled>
-              <mat-icon>upload</mat-icon>
-              Upload image
-            </button>
-          }
-        </mat-card-actions>
-      </mat-card>
+          </mat-card-actions>
+        </mat-card>
 
-    </div>
-  }
-
-  <!-- ══════════════════════════════════════════════════════════════
-       ANALYZING — plate scan spinner (T28)
-  ════════════════════════════════════════════════════════════════ -->
-  @if (smartScanStore.view() === 'analyzing-plate') {
-    <div class="analyzing-state">
-      <div class="analyzing-state__preview">
-        @if (smartScanStore.uploadedImagePreview()) {
-          <img [src]="smartScanStore.uploadedImagePreview()!"
-               alt="Uploaded meal photo"
-               class="analyzing-state__img">
-        }
-        <div class="analyzing-state__overlay">
-          <mat-spinner diameter="48" class="analyzing-spinner"></mat-spinner>
-          <p class="analyzing-state__label">Analyzing your meal...</p>
-          <p class="analyzing-state__source">Google Cloud Vision API · Open Food Facts</p>
-        </div>
-      </div>
-      <button mat-stroked-button (click)="onCancel()">Cancel</button>
-    </div>
-  }
-
-  <!-- ══════════════════════════════════════════════════════════════
-       PLATE RESULT — MealPhotoAnalyzed (T28)
-  ════════════════════════════════════════════════════════════════ -->
-  @if (smartScanStore.view() === 'plate-result' && smartScanStore.scanResult()) {
-    <div class="result-panel">
-      <header class="result-panel__header">
-        <h2 class="result-panel__title">Scan result</h2>
-        <p class="result-panel__subtitle">Review and confirm items before logging</p>
-      </header>
-
-      <!-- Detected items list -->
-      <ul class="detected-items" role="list">
-        @for (item of smartScanStore.scanResult()!.detectedItems; track item.id) {
-          <li class="detected-item">
-            <span class="detected-item__name">{{ item.name }}</span>
-            <label class="detected-item__qty">
-              <input type="number"
-                     [value]="item.quantityGrams"
-                     min="1"
-                     class="qty-input"
-                     aria-label="Quantity in grams"
-                     (change)="onQuantityChange(item.id, $event)">
-              <span class="qty-unit">g</span>
-            </label>
-            <span class="detected-item__kcal">{{ item.calories }} kcal</span>
-            <span class="detected-item__macros">{{ item.macroLabel }}</span>
-            <button class="detected-item__remove"
-                    aria-label="Remove item"
-                    (click)="onRemoveItem(item.id)">×</button>
-          </li>
-        }
-      </ul>
-
-      <!-- Totals -->
-      <div class="result-totals">
-        <span>Total estimated:</span>
-        <strong class="result-totals__kcal">{{ smartScanStore.totalEstimatedCalories() }} kcal</strong>
-      </div>
-
-      <!-- Meal type select -->
-      <mat-form-field appearance="outline" class="meal-type-field">
-        <mat-label>Select meal type</mat-label>
-        <mat-select [value]="selectedMealType" (valueChange)="selectedMealType = $event">
-          @for (opt of mealTypes; track opt.value) {
-            <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-
-      <p class="result-note">
-        <mat-icon class="result-note__icon">info_outline</mat-icon>
-        Quantities are estimated. Adjust if needed before confirming.
-      </p>
-
-      <button mat-flat-button
-              class="btn-teal btn-confirm"
-              [disabled]="!smartScanStore.hasScanItems() || smartScanStore.loading()"
-              (click)="onConfirmLog()">
-        @if (smartScanStore.loading()) {
-          <mat-spinner diameter="20"></mat-spinner>
-        } @else {
-          Confirm and log &nbsp;·&nbsp; MealRecorded →
-        }
-      </button>
-    </div>
-  }
-
-  <!-- ══════════════════════════════════════════════════════════════
-       PLATE INVALID — image not recognised (T28)
-  ════════════════════════════════════════════════════════════════ -->
-  @if (smartScanStore.view() === 'plate-invalid') {
-    <div class="invalid-state">
-      <span class="material-icons invalid-state__icon">error_outline</span>
-      <h2 class="invalid-state__title">No food items could be detected</h2>
-      <p class="invalid-state__desc">
-        The image may be blurry or doesn't contain recognizable food.
-        Please try again or log manually.
-      </p>
-      <div class="invalid-state__actions">
-        <button mat-flat-button class="btn-teal" (click)="onCancel()">Try again</button>
-        <a routerLink="/nutrition/log" mat-button class="btn-link">Log manually →</a>
-      </div>
-    </div>
-  }
-
-  <!-- ══════════════════════════════════════════════════════════════
-       ANALYZING — menu scan spinner
-  ════════════════════════════════════════════════════════════════ -->
-  @if (smartScanStore.view() === 'analyzing-menu') {
-    <div class="analyzing-state">
-      <div class="analyzing-state__overlay analyzing-state__overlay--solo">
-        <mat-spinner diameter="48" class="analyzing-spinner"></mat-spinner>
-        <p class="analyzing-state__label">Analyzing menu...</p>
-        <p class="analyzing-state__source">Google Cloud Vision API · Open Food Facts</p>
-      </div>
-      <button mat-stroked-button (click)="onCancel()">Cancel</button>
-    </div>
-  }
-
-  <!-- ══════════════════════════════════════════════════════════════
-       MENU RESULT — CompatibleDishesRanked (T29)
-  ════════════════════════════════════════════════════════════════ -->
-  @if (smartScanStore.view() === 'menu-result' && smartScanStore.menuAnalysis()) {
-    <div class="menu-result-panel">
-      <header class="result-panel__header">
-        <h2 class="result-panel__title">Menu analysis</h2>
-        <p class="result-panel__subtitle">
-          Filtered by your restrictions · Ranked by compatibility with your remaining macros
-        </p>
-      </header>
-
-      <!-- Best match card -->
-      @if (smartScanStore.menuAnalysis()!.bestDish; as best) {
-        <mat-card class="best-dish-card">
+        <!-- Card: Scan restaurant menu (Premium only) -->
+        <mat-card class="scan-card" [class.scan-card--locked]="!isPremium()">
           <mat-card-header>
-            <span class="best-badge">
-              <mat-icon class="best-badge__star">star</mat-icon>
-              Best match
-            </span>
-            <mat-card-title>{{ best.name }}</mat-card-title>
+            <mat-card-title>Scan restaurant menu</mat-card-title>
+            @if (!isPremium()) {
+              <span class="plan-badge">
+                <mat-icon class="plan-badge__star">star</mat-icon>
+                Plan Premium
+              </span>
+            }
           </mat-card-header>
           <mat-card-content>
-            <p class="best-dish__justification">{{ best.justification }}</p>
-            <div class="best-dish__macros">
-              <span class="macro-chip">{{ best.calories }} kcal</span>
-              <span class="macro-chip macro-chip--protein">P{{ best.protein }}g</span>
-              <span class="macro-chip macro-chip--carbs">C{{ best.carbs }}g</span>
-              <span class="macro-chip macro-chip--fat">G{{ best.fat }}g</span>
+            <p class="scan-card__desc">
+              This option allows you to scan the menu of any restaurant you choose.
+            </p>
+            <div class="drop-zone" aria-label="Drag and drop menu photo">
+              <span class="material-icons drop-zone__icon">description</span>
+              <span class="drop-zone__hint">Drag &amp; drop or use buttons below</span>
             </div>
           </mat-card-content>
           <mat-card-actions>
-            <button mat-flat-button class="btn-teal">Log this dish →</button>
+            @if (isPremium()) {
+              <button mat-flat-button class="btn-teal" (click)="onTakePhotoMenu()">
+                <mat-icon>photo_camera</mat-icon>
+                Take photo
+              </button>
+              <label class="btn-outline" role="button" tabindex="0">
+                <mat-icon>upload</mat-icon>
+                Upload image
+                <input type="file" accept="image/*" class="file-input" (change)="onUploadMenu($event)">
+              </label>
+            } @else {
+              <button mat-flat-button class="btn-teal btn--disabled" disabled>
+                <mat-icon>photo_camera</mat-icon>
+                Take photo
+              </button>
+              <button mat-stroked-button class="btn--disabled" disabled>
+                <mat-icon>upload</mat-icon>
+                Upload image
+              </button>
+            }
           </mat-card-actions>
         </mat-card>
-      }
 
-      <!-- Ranked alternatives -->
-      @if (smartScanStore.menuAnalysis()!.alternatives.length > 0) {
-        <ul class="alternatives-list" role="list">
-          @for (dish of smartScanStore.menuAnalysis()!.alternatives; track dish.rank) {
-            <li class="alternative-item">
-              <span class="alternative-item__rank">#{{ dish.rank }}</span>
-              <div class="alternative-item__info">
-                <span class="alternative-item__name">{{ dish.name }}</span>
-                <span class="alternative-item__meta">
-                  {{ dish.calories }} kcal · P{{ dish.protein }}g ·
-                  Compatibility: {{ smartScanStore.menuAnalysis()!.compatibilityLabel(dish) }}
-                </span>
-              </div>
-              <button mat-stroked-button class="alternative-item__log">Log</button>
+      </div>
+    }
+
+    <!-- ════════════════════════════════════════════════════════════
+         ANALYZING — plate scan spinner (T28)
+    ═══════════════════════════════════════════════════════════════ -->
+    @if (smartScanStore.view() === 'analyzing-plate') {
+      <div class="analyzing-state">
+        <div class="analyzing-state__preview">
+          @if (smartScanStore.uploadedImagePreview()) {
+            <img [src]="smartScanStore.uploadedImagePreview()!"
+                 alt="Uploaded meal photo"
+                 class="analyzing-state__img">
+          }
+          <div class="analyzing-state__overlay">
+            <mat-spinner diameter="48" class="analyzing-spinner"></mat-spinner>
+            <p class="analyzing-state__label">Analyzing your meal...</p>
+            <p class="analyzing-state__source">Google Cloud Vision API · Open Food Facts</p>
+          </div>
+        </div>
+        <button mat-stroked-button (click)="onCancel()">Cancel</button>
+      </div>
+    }
+
+    <!-- ════════════════════════════════════════════════════════════
+         PLATE RESULT — MealPhotoAnalyzed (T28)
+    ═══════════════════════════════════════════════════════════════ -->
+    @if (smartScanStore.view() === 'plate-result' && smartScanStore.scanResult()) {
+      <div class="result-panel">
+        <header class="result-panel__header">
+          <h2 class="result-panel__title">Scan result</h2>
+          <p class="result-panel__subtitle">Review and confirm items before logging</p>
+        </header>
+
+        <ul class="detected-items" role="list">
+          @for (item of smartScanStore.scanResult()!.detectedItems; track item.id) {
+            <li class="detected-item">
+              <span class="detected-item__name">{{ item.name }}</span>
+              <label class="detected-item__qty">
+                <input type="number"
+                       [value]="item.quantityGrams"
+                       min="1"
+                       class="qty-input"
+                       aria-label="Quantity in grams"
+                       (change)="onQuantityChange(item.id, $event)">
+                <span class="qty-unit">g</span>
+              </label>
+              <span class="detected-item__kcal">{{ item.calories }} kcal</span>
+              <span class="detected-item__macros">{{ item.macroLabel }}</span>
+              <button class="detected-item__remove"
+                      aria-label="Remove item"
+                      (click)="onRemoveItem(item.id)">×</button>
             </li>
           }
         </ul>
-      }
 
-      <!-- Restricted dishes — collapsible -->
-      @if (smartScanStore.menuAnalysis()!.hasRestrictedDishes) {
-        <mat-expansion-panel class="restricted-panel" hideToggle>
-          <mat-expansion-panel-header>
-            <mat-panel-title class="restricted-panel__title">
-              🚫 Restricted dishes ({{ smartScanStore.menuAnalysis()!.restrictedDishes.length }} items hidden)
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-          <ul class="restricted-list" role="list">
-            @for (dish of smartScanStore.menuAnalysis()!.restrictedDishes; track dish.name) {
-              <li class="restricted-item">
-                <span class="restricted-item__name">{{ dish.name }}</span>
-                <span class="restricted-item__reason">contains {{ dish.restriction }}</span>
+        <div class="result-totals">
+          <span>Total estimated:</span>
+          <strong class="result-totals__kcal">{{ smartScanStore.totalEstimatedCalories() }} kcal</strong>
+        </div>
+
+        <mat-form-field appearance="outline" class="meal-type-field">
+          <mat-label>Select meal type</mat-label>
+          <mat-select [value]="selectedMealType" (valueChange)="selectedMealType = $event">
+            @for (opt of mealTypes; track opt.value) {
+              <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <p class="result-note">
+          <mat-icon class="result-note__icon">info_outline</mat-icon>
+          Quantities are estimated. Adjust if needed before confirming.
+        </p>
+
+        <button mat-flat-button
+                class="btn-teal btn-confirm"
+                [disabled]="!smartScanStore.hasScanItems() || smartScanStore.loading()"
+                (click)="onConfirmLog()">
+          @if (smartScanStore.loading()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            Confirm and log &nbsp;·&nbsp; MealRecorded →
+          }
+        </button>
+      </div>
+    }
+
+    <!-- ════════════════════════════════════════════════════════════
+         PLATE INVALID — image not recognised (T28)
+    ═══════════════════════════════════════════════════════════════ -->
+    @if (smartScanStore.view() === 'plate-invalid') {
+      <div class="invalid-state">
+        <span class="material-icons invalid-state__icon">error_outline</span>
+        <h2 class="invalid-state__title">No food items could be detected</h2>
+        <p class="invalid-state__desc">
+          The image may be blurry or doesn't contain recognizable food.
+          Please try again or log manually.
+        </p>
+        <div class="invalid-state__actions">
+          <button mat-flat-button class="btn-teal" (click)="onCancel()">Try again</button>
+          <a routerLink="/nutrition/log" mat-button class="btn-link">Log manually →</a>
+        </div>
+      </div>
+    }
+
+    <!-- ════════════════════════════════════════════════════════════
+         ANALYZING — menu scan spinner
+    ═══════════════════════════════════════════════════════════════ -->
+    @if (smartScanStore.view() === 'analyzing-menu') {
+      <div class="analyzing-state">
+        <div class="analyzing-state__overlay analyzing-state__overlay--solo">
+          <mat-spinner diameter="48" class="analyzing-spinner"></mat-spinner>
+          <p class="analyzing-state__label">Analyzing menu...</p>
+          <p class="analyzing-state__source">Google Cloud Vision API · Open Food Facts</p>
+        </div>
+        <button mat-stroked-button (click)="onCancel()">Cancel</button>
+      </div>
+    }
+
+    <!-- ════════════════════════════════════════════════════════════
+         MENU RESULT — CompatibleDishesRanked (T29)
+    ═══════════════════════════════════════════════════════════════ -->
+    @if (smartScanStore.view() === 'menu-result' && smartScanStore.menuAnalysis()) {
+      <div class="menu-result-panel">
+        <header class="result-panel__header">
+          <h2 class="result-panel__title">Menu analysis</h2>
+          <p class="result-panel__subtitle">
+            Filtered by your restrictions · Ranked by compatibility with your remaining macros
+          </p>
+        </header>
+
+        @if (smartScanStore.menuAnalysis()!.bestDish; as best) {
+          <mat-card class="best-dish-card">
+            <mat-card-header>
+              <span class="best-badge">
+                <mat-icon class="best-badge__star">star</mat-icon>
+                Best match
+              </span>
+              <mat-card-title>{{ best.name }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="best-dish__justification">{{ best.justification }}</p>
+              <div class="best-dish__macros">
+                <span class="macro-chip">{{ best.calories }} kcal</span>
+                <span class="macro-chip macro-chip--protein">P{{ best.protein }}g</span>
+                <span class="macro-chip macro-chip--carbs">C{{ best.carbs }}g</span>
+                <span class="macro-chip macro-chip--fat">G{{ best.fat }}g</span>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-flat-button class="btn-teal">Log this dish →</button>
+            </mat-card-actions>
+          </mat-card>
+        }
+
+        @if (smartScanStore.menuAnalysis()!.alternatives.length > 0) {
+          <ul class="alternatives-list" role="list">
+            @for (dish of smartScanStore.menuAnalysis()!.alternatives; track dish.rank) {
+              <li class="alternative-item">
+                <span class="alternative-item__rank">#{{ dish.rank }}</span>
+                <div class="alternative-item__info">
+                  <span class="alternative-item__name">{{ dish.name }}</span>
+                  <span class="alternative-item__meta">
+                    {{ dish.calories }} kcal · P{{ dish.protein }}g ·
+                    Compatibility: {{ smartScanStore.menuAnalysis()!.compatibilityLabel(dish) }}
+                  </span>
+                </div>
+                <button mat-stroked-button class="alternative-item__log">Log</button>
               </li>
             }
           </ul>
-        </mat-expansion-panel>
-      }
+        }
 
-      <button mat-stroked-button class="btn-back" (click)="onCancel()">← Back to scan</button>
-    </div>
+        @if (smartScanStore.menuAnalysis()!.hasRestrictedDishes) {
+          <mat-expansion-panel class="restricted-panel" hideToggle>
+            <mat-expansion-panel-header>
+              <mat-panel-title class="restricted-panel__title">
+                🚫 Restricted dishes ({{ smartScanStore.menuAnalysis()!.restrictedDishes.length }} items hidden)
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <ul class="restricted-list" role="list">
+              @for (dish of smartScanStore.menuAnalysis()!.restrictedDishes; track dish.name) {
+                <li class="restricted-item">
+                  <span class="restricted-item__name">{{ dish.name }}</span>
+                  <span class="restricted-item__reason">contains {{ dish.restriction }}</span>
+                </li>
+              }
+            </ul>
+          </mat-expansion-panel>
+        }
+
+        <button mat-stroked-button class="btn-back" (click)="onCancel()">← Back to scan</button>
+      </div>
+    }
+
   }
 
 </div>
