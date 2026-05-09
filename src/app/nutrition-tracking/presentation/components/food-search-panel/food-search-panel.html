@@ -4,14 +4,14 @@
   <!-- First-meal hint banner -->
   @if (hasNoRecords()) {
     <div class="first-meal-banner" role="status" aria-live="polite">
-      <span class="first-meal-icon">🥗</span>
+      <span class="material-icons first-meal-icon">restaurant</span>
       <span>{{ 'nutrition.first_meal_hint' | translate }}</span>
     </div>
   }
 
   <!-- Search input -->
   <div class="search-input-wrap">
-    <span class="search-icon">🔍</span>
+    <span class="material-icons search-icon">search</span>
     <input
       type="text"
       class="search-input"
@@ -78,7 +78,7 @@
   <!-- No results (T18) -->
   @if (!nutritionStore.loading() && nutritionStore.searchQuery().length >= 2 && nutritionStore.foodItems().length === 0) {
     <div class="empty-state" role="status" aria-live="polite">
-      <span class="empty-icon">🔍</span>
+      <span class="material-icons empty-icon">search</span>
       <p class="empty-text">
         {{ 'nutrition.no_results' | translate: { query: nutritionStore.searchQuery() } }}
       </p>

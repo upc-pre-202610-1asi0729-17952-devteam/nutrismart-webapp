@@ -11,10 +11,12 @@
 
 .search-icon {
   position: absolute;
-  left: 12px; top: 50%;
+  left: 10px; top: 50%;
   transform: translateY(-50%);
-  font-size: 14px;
+  font-size: 18px;
+  color: #9ca3af;
   pointer-events: none;
+  user-select: none;
 }
 
 .search-input {
@@ -91,7 +93,7 @@
 
 /* Empty state */
 .empty-state { display: flex; flex-direction: column; align-items: center; padding: 20px 10px; gap: 8px; }
-.empty-icon  { font-size: 36px; }
+.empty-icon  { font-size: 40px; color: #d1d5db; }
 .empty-text  { font-size: 13px; color: #6b7280; text-align: center; margin: 0; }
 
 .add-manually-btn {
@@ -130,4 +132,4 @@
   font-weight: 500;
   color: #1a6b60;
 }
-.first-meal-icon { font-size: 20px; flex-shrink: 0; }
+.first-meal-icon { font-size: 22px; color: #2d9e8f; flex-shrink: 0; }
