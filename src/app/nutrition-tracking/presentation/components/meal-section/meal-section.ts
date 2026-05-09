@@ -33,9 +33,6 @@ export class MealSectionComponent {
   /** Emitted when the user clicks the remove button on an entry. */
   @Output() removeEntry = new EventEmitter<number>();
 
-  /** Emitted when the user clicks "+ Add food to [Meal]". */
-  @Output() addFood = new EventEmitter<MealType>();
-
   @Output() viewEntry = new EventEmitter<MealRecord>();
 
   private translate = inject(TranslateService);

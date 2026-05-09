@@ -190,15 +190,6 @@ export class DailyLog implements OnInit {
     await this.nutritionStore.deleteMealEntry(id);
   }
 
-  /** Opens the add food panel pre-selecting a meal type. */
-  onAddFoodToMeal(mealType: MealType): void {
-    this.targetMealType.set(mealType);
-    setTimeout(() => {
-      const input = document.querySelector('app-food-search-panel input') as HTMLInputElement;
-      input?.focus();
-    }, 100);
-  }
-
   /**
    * Called when the user selects a food from the search panel.
    * Opens the blocked dialog if restricted, otherwise the add dialog.

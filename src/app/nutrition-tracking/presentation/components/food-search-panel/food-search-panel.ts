@@ -33,6 +33,11 @@ export class FoodSearchPanelComponent {
     this.iamStore.currentUser()?.restrictions as DietaryRestriction[] ?? []
   );
 
+  /** True when no meal records exist for any meal window today. */
+  protected hasNoRecords = computed(() =>
+    Object.values(this.nutritionStore.recordsByMealType()).every(arr => arr.length === 0)
+  );
+
   /** Whether any search result conflicts with the user's restrictions. */
   protected hasAnyRestriction = computed(() =>
     this.nutritionStore.foodItems().some(f => f.isRestrictedFor(this.userRestrictions()))

@@ -271,6 +271,7 @@
     "restrictions_warning": "Algunos resultados contienen ingredientes que coinciden con tus restricciones activas: {{ restrictions }}",
     "restricted_items_note": "Los artículos restringidos están deshabilitados. Solo se pueden agregar artículos disponibles.",
     "add_food_to": "+ Agregar alimento a {{ meal }}",
+    "first_meal_hint": "¡Agrega tu primera comida usando el buscador de arriba!",
     "not_yet_logged": "Aún no registrado",
     "meal_skipped": "Ventana perdida · MealSkipped emitido",
     "meal_skipped_text": "No registrado · Evento MealSkipped emitido",

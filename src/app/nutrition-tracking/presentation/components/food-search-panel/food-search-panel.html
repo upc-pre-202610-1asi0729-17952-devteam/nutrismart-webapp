@@ -1,5 +1,13 @@
-<div class="search-panel">
+<div class="search-panel" [class.search-panel--highlight]="hasNoRecords()">
   <h3 class="panel-title">{{ 'nutrition.search_food' | translate }}</h3>
+
+  <!-- First-meal hint banner -->
+  @if (hasNoRecords()) {
+    <div class="first-meal-banner" role="status" aria-live="polite">
+      <span class="first-meal-icon">🥗</span>
+      <span>{{ 'nutrition.first_meal_hint' | translate }}</span>
+    </div>
+  }
 
   <!-- Search input -->
   <div class="search-input-wrap">

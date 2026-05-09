@@ -271,6 +271,7 @@
     "restrictions_warning": "Some results contain ingredients that match your active restrictions: {{ restrictions }}",
     "restricted_items_note": "Restricted items are disabled. Only available items can be added.",
     "add_food_to": "+ Add food to {{ meal }}",
+    "first_meal_hint": "Add your first meal using the search above!",
     "not_yet_logged": "Not yet logged",
     "meal_skipped": "Missed window · MealSkipped emitted",
     "meal_skipped_text": "Not logged · MealSkipped event emitted",

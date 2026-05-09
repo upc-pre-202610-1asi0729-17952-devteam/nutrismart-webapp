@@ -107,3 +107,27 @@
   transition: background .2s;
 }
 .add-manually-btn:hover { background: #d0eeeb; }
+
+/* First-meal highlight */
+.search-panel--highlight {
+  animation: panel-pulse 2.5s ease-in-out infinite;
+}
+@keyframes panel-pulse {
+  0%, 100% { box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  50%       { box-shadow: 0 0 0 4px rgba(45,158,143,.25), 0 1px 3px rgba(0,0,0,.08); }
+}
+
+.first-meal-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #e8f6f4 0%, #d0eeeb 100%);
+  border: 1.5px solid #2d9e8f;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a6b60;
+}
+.first-meal-icon { font-size: 20px; flex-shrink: 0; }
