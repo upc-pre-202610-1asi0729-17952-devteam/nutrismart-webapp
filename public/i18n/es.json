@@ -213,6 +213,16 @@
     "KIDNEY_DISEASE": "Enfermedad renal",
     "GOUT": "Gota"
   },
+  "allergens": {
+    "LACTOSE_FREE": "lactosa",
+    "GLUTEN_FREE": "gluten",
+    "VEGAN": "productos de origen animal",
+    "VEGETARIAN": "carne",
+    "NUT_FREE": "frutos secos",
+    "SEAFOOD_FREE": "mariscos",
+    "KOSHER": "ingredientes no kosher",
+    "HALAL": "ingredientes no halal"
+  },
   "restrictions": {
     "LACTOSE_FREE": "Sin lactosa",
     "GLUTEN_FREE": "Sin gluten",

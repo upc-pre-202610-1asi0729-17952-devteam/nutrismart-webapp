@@ -213,6 +213,16 @@
     "KIDNEY_DISEASE": "Kidney Disease",
     "GOUT": "Gout"
   },
+  "allergens": {
+    "LACTOSE_FREE": "lactose",
+    "GLUTEN_FREE": "gluten",
+    "VEGAN": "animal products",
+    "VEGETARIAN": "meat",
+    "NUT_FREE": "nuts",
+    "SEAFOOD_FREE": "seafood",
+    "KOSHER": "non-kosher ingredients",
+    "HALAL": "non-halal ingredients"
+  },
   "restrictions": {
     "LACTOSE_FREE": "Lactose-free",
     "GLUTEN_FREE": "Gluten-free",
