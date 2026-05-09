@@ -11,6 +11,20 @@ import { SmartScanApi } from '../infrastructure/smart-scan-api';
 /** Active view within the Smart Scan feature. */
 export type SmartScanView = 'landing' | 'analyzing-plate' | 'plate-result' | 'plate-invalid' | 'analyzing-menu' | 'menu-result';
 
+/** Macro dimension tracked in the nutritional impact projection. */
+export type MacroKey = 'calories' | 'protein' | 'carbs' | 'fat' | 'fiber';
+
+/** Result of projecting what happens to one macro after confirming the scan. */
+export interface MacroAlert {
+  macro:     MacroKey;
+  target:    number;
+  consumed:  number;
+  scanTotal: number;
+  projected: number;
+  percent:   number;
+  severity:  'warning' | 'danger';
+}
+
 /**
  * Central state store for the Restaurant Intelligence bounded context.
  *
@@ -21,6 +35,8 @@ export type SmartScanView = 'landing' | 'analyzing-plate' | 'plate-result' | 'pl
  */
 @Injectable({ providedIn: 'root' })
 export class SmartScanStore {
+  private static readonly WARNING_THRESHOLD = 0.8;
+  private static readonly DANGER_THRESHOLD  = 1.0;
   private smartScanApi   = inject(SmartScanApi);
   private iamStore       = inject(IamStore);
   private nutritionStore = inject(NutritionStore);
@@ -55,6 +71,55 @@ export class SmartScanStore {
   readonly hasScanItems = computed(() =>
     this._scanResult()?.hasItems ?? false,
   );
+
+  /**
+   * Projects the nutritional impact of confirming the current scan result
+   * against the user's daily targets and consumed totals.
+   *
+   * Returns one {@link MacroAlert} per macro that would reach ≥ 80 % of its
+   * daily target after adding the scanned items.
+   */
+  readonly macroAlerts = computed<MacroAlert[]>(() => {
+    const user   = this.iamStore.currentUser();
+    const result = this._scanResult();
+    const totals = this.nutritionStore.dailyTotals();
+    if (!user || !result) return [];
+
+    const scanTotals = result.detectedItems.reduce(
+      (acc, item) => ({
+        calories: acc.calories + item.calories,
+        protein:  acc.protein  + item.protein,
+        carbs:    acc.carbs    + item.carbs,
+        fat:      acc.fat      + item.fat,
+        fiber:    acc.fiber    + 0,
+      }),
+      { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 },
+    );
+
+    const macros: Array<{ key: MacroKey; consumed: number; scanTotal: number; target: number }> = [
+      { key: 'calories', consumed: totals.calories, scanTotal: scanTotals.calories, target: user.dailyCalorieTarget },
+      { key: 'protein',  consumed: totals.protein,  scanTotal: scanTotals.protein,  target: user.proteinTarget },
+      { key: 'carbs',    consumed: totals.carbs,    scanTotal: scanTotals.carbs,    target: user.carbsTarget },
+      { key: 'fat',      consumed: totals.fat,      scanTotal: scanTotals.fat,      target: user.fatTarget },
+      { key: 'fiber',    consumed: totals.fiber,    scanTotal: scanTotals.fiber,    target: user.fiberTarget },
+    ];
+
+    return macros
+      .filter(m => m.target > 0)
+      .map(m => ({ ...m, projected: m.consumed + m.scanTotal, ratio: (m.consumed + m.scanTotal) / m.target }))
+      .filter(m => m.ratio >= SmartScanStore.WARNING_THRESHOLD)
+      .map(m => ({
+        macro:     m.key,
+        target:    m.target,
+        consumed:  m.consumed,
+        scanTotal: m.scanTotal,
+        projected: m.projected,
+        percent:   Math.round(m.ratio * 100),
+        severity:  m.ratio >= SmartScanStore.DANGER_THRESHOLD ? 'danger' : 'warning',
+      } as MacroAlert));
+  });
+
+  readonly hasMacroAlerts = computed(() => this.macroAlerts().length > 0);
 
   // ─── Actions ──────────────────────────────────────────────────────────────
 

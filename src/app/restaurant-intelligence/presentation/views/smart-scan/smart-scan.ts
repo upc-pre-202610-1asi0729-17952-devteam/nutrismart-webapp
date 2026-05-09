@@ -15,7 +15,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { SubscriptionPlan } from '../../../../iam/domain/model/subscription-plan.enum';
 import { MealType } from '../../../../nutrition-tracking/domain/model/meal-type.enum';
-import { SmartScanStore } from '../../../application/smart-scan.store';
+import { MacroKey, SmartScanStore } from '../../../application/smart-scan.store';
 
 /**
  * Smart Scan view — route `/smart-scan`.
@@ -175,6 +175,17 @@ export class SmartScan implements OnInit {
 
   onCancel(): void {
     this.smartScanStore.reset();
+  }
+
+  protected macroI18nKey(macro: MacroKey): string {
+    const map: Record<MacroKey, string> = {
+      calories: 'nutrition.calories',
+      protein:  'nutrition.protein',
+      carbs:    'nutrition.carbohydrates',
+      fat:      'nutrition.fats',
+      fiber:    'nutrition.fiber',
+    };
+    return map[macro];
   }
 
   // ─── Private helpers ──────────────────────────────────────────────────────

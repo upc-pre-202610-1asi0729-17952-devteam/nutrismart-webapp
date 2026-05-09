@@ -170,6 +170,34 @@
           <strong class="result-totals__kcal">{{ smartScanStore.totalEstimatedCalories() }} kcal</strong>
         </div>
 
+        @if (smartScanStore.hasMacroAlerts()) {
+          <div class="impact-panel">
+            <div class="impact-panel__header">
+              <mat-icon class="impact-panel__icon">info_outline</mat-icon>
+              <span class="impact-panel__title">{{ 'smart_scan.impact_title' | translate }}</span>
+            </div>
+            <ul class="impact-list" role="list">
+              @for (alert of smartScanStore.macroAlerts(); track alert.macro) {
+                <li class="impact-item"
+                    [class.impact-item--warning]="alert.severity === 'warning'"
+                    [class.impact-item--danger]="alert.severity === 'danger'">
+                  <mat-icon class="impact-item__icon">
+                    {{ alert.severity === 'danger' ? 'error' : 'warning' }}
+                  </mat-icon>
+                  <span class="impact-item__macro">{{ macroI18nKey(alert.macro) | translate }}</span>
+                  <span class="impact-item__msg">
+                    @if (alert.severity === 'warning') {
+                      {{ 'smart_scan.impact_approaching' | translate: { percent: alert.percent } }}
+                    } @else {
+                      {{ 'smart_scan.impact_exceeded' | translate: { percent: alert.percent } }}
+                    }
+                  </span>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+
         <mat-form-field appearance="outline" class="meal-type-field">
           <mat-label>{{ 'smart_scan.select_meal_type' | translate }}</mat-label>
           <mat-select [value]="selectedMealType" (valueChange)="selectedMealType = $event">

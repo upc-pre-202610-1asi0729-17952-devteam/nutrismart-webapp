@@ -328,7 +328,10 @@
     "compatibility": "Compatibilidad:",
     "restricted_dishes": "🚫 Platos restringidos ({{ count }} ocultos)",
     "contains": "contiene",
-    "back_to_scan": "← Volver al escaneo"
+    "back_to_scan": "← Volver al escaneo",
+    "impact_title": "Impacto nutricional",
+    "impact_approaching": "Alcanzará el {{ percent }}% de tu objetivo diario",
+    "impact_exceeded": "Superará tu objetivo diario ({{ percent }}%)"
   },
   "food_items": {
     "grilled_chicken_breast": "Pechuga de pollo a la plancha",

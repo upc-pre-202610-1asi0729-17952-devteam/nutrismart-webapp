@@ -328,7 +328,10 @@
     "compatibility": "Compatibility:",
     "restricted_dishes": "🚫 Restricted dishes ({{ count }} items hidden)",
     "contains": "contains",
-    "back_to_scan": "← Back to scan"
+    "back_to_scan": "← Back to scan",
+    "impact_title": "Nutritional impact",
+    "impact_approaching": "Will reach {{ percent }}% of your daily target",
+    "impact_exceeded": "Will exceed your daily target ({{ percent }}%)"
   },
   "food_items": {
     "grilled_chicken_breast": "Grilled chicken breast",
