@@ -1,0 +1,41 @@
+<div class="plans-grid">
+  @for (plan of planDefs; track plan.key) {
+    <div class="plan-card"
+         [class.plan-card--current]="currentPlan() === plan.key">
+
+      <div class="plan-header">
+        <span class="plan-name">{{ plan.name }}</span>
+        <div class="plan-price">
+          ${{ plan.price }}<span class="plan-period">/month</span>
+        </div>
+        <p class="plan-tagline">{{ plan.tagline }}</p>
+      </div>
+
+      <ul class="feature-list">
+        @for (feature of plan.features; track feature) {
+          <li class="feature-item">
+            <span class="feature-dot"></span>
+            {{ feature }}
+          </li>
+        }
+      </ul>
+
+      <div class="plan-action">
+        @if (currentPlan() === plan.key) {
+          <button class="btn-plan btn-plan--current" disabled>Current plan</button>
+        } @else if (isUpgrade(plan.key)) {
+          <button class="btn-plan btn-plan--upgrade"
+                  (click)="upgrade.emit(plan.key)">
+            Upgrade to {{ plan.name }}
+          </button>
+        } @else {
+          <button class="btn-plan btn-plan--downgrade"
+                  (click)="downgrade.emit(plan.key)">
+            Change to {{ plan.name }}
+          </button>
+        }
+      </div>
+
+    </div>
+  }
+</div>

@@ -1,0 +1,131 @@
+.dialog-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.dialog {
+  background: #fff; border-radius: 16px; padding: 28px;
+  width: 520px; max-width: 95vw;
+  box-shadow: 0 20px 60px rgba(0,0,0,.2);
+}
+.dialog-title    { font-size: 22px; font-weight: 700; color: #1a1a1a; margin: 0 0 4px; }
+.dialog-subtitle { font-size: 14px; color: #6b7280; margin: 0 0 20px; }
+
+.charge-detail {
+  background: #f5f5f0; border-radius: 8px; padding: 14px;
+  margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px;
+}
+.charge-row { display: flex; justify-content: space-between; font-size: 14px; color: #374151; }
+.charge-amount { font-weight: 600; }
+
+.new-features { margin-bottom: 16px; }
+.features-label { font-size: 13px; font-weight: 600; color: #374151; margin: 0 0 8px; }
+.feature-row { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #374151; margin-bottom: 6px; }
+.feature-badge {
+  background: #d1fae5; color: #065f46; border-radius: 4px;
+  padding: 2px 6px; font-size: 11px; font-weight: 700;
+}
+
+.card-placeholder { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+.card-icons { display: flex; gap: 8px; }
+.card-icon {
+  background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 4px;
+  padding: 4px 8px; font-size: 12px; font-weight: 700; color: #374151;
+}
+.card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.card-input {
+  padding: 10px 14px; border: 1.5px solid #e5e7eb; border-radius: 8px;
+  font-family: 'Poppins', system-ui, sans-serif; font-size: 14px; outline: none;
+}
+.card-input:focus { border-color: #2d9e8f; }
+
+.dialog-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.btn { padding: 10px 20px; border-radius: 8px; font-family: 'Poppins', system-ui, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .2s; }
+.btn--outline { background: #fff; border: 1.5px solid #e5e7eb; color: #374151; }
+.btn--primary { background: #2d9e8f; border: none; color: #fff; }
+.btn--primary:hover:not(:disabled) { background: #248a7c; }
+.btn--primary:disabled, .btn--outline:disabled { opacity: .6; cursor: not-allowed; }
+
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 24px;
+}
+
+.payment-form { display: flex; flex-direction: column; gap: 8px; }
+.form-title   { font-size: 16px; font-weight: 600; color: #1a1a1a; margin: 0 0 8px; }
+.card-input--error { border-color: #ef4444 !important; }
+
+.error-box {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #7f1d1d;
+}
+
+.btn-pay {
+  width: 100%;
+  padding: 12px;
+  background: #2d9e8f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-pay:hover { background: #248a7c; }
+
+.order-summary {
+  background: #f5f5f0;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.summary-next  { font-size: 13px; color: #6b7280; margin: 0; }
+.summary-total { display: flex; justify-content: space-between; font-weight: 600; font-size: 15px; }
+.declined-text { color: #ef4444; font-weight: 700; }
+
+.dialog--success {
+  text-align: center;
+  border: 2px solid #2d9e8f;
+  max-width: 500px;
+}
+
+.success-icon {
+  width: 60px;
+  height: 60px;
+  background: #e8f6f4;
+  border: 2px solid #2d9e8f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #2d9e8f;
+  margin: 0 auto 16px;
+}
+
+.success-title { font-size: 20px; font-weight: 700; color: #1a1a1a; margin: 0 0 12px; }
+.success-desc  { font-size: 14px; color: #6b7280; line-height: 1.6; margin: 0 0 20px; }
+
+.btn-dashboard {
+  padding: 12px 24px;
+  background: #2d9e8f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-dashboard:hover { background: #248a7c; }
+
+.btn-pay:disabled { background: #9ca3af; cursor: not-allowed; opacity: 1; }

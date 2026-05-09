@@ -1,0 +1,107 @@
+<div class="my-plan-page">
+
+  <!-- ── Page header ───────────────────────────────────────── -->
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Subscription and billing</h1>
+      <p class="page-subtitle">Manage your plan and view your payment history</p>
+    </div>
+  </header>
+
+  @if (subsStore.loading()) {
+    <div class="loading-wrap" aria-label="Loading">
+      <div class="spinner"></div>
+    </div>
+  } @else {
+
+    <!-- ── Active plan banner ─────────────────────────────── -->
+    <div class="active-plan-banner">
+      <div class="banner-left">
+        <span class="banner-plan-name">{{ subsStore.subscription()?.planLabel ?? 'Basic' }} plan</span>
+        <span class="banner-renewal">
+          Active · Next renewal: {{ subsStore.subscription()?.formattedRenewal ?? '14 May 2026' }}
+        </span>
+      </div>
+      <div class="banner-right">
+        <button class="btn-cancel" (click)="onCancelPlan()">Cancel plan</button>
+        <span class="banner-price">
+          ${{ planPrice(subsStore.currentPlan()) }}
+          <span class="price-period">/ month</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- ── Choose your plan section ──────────────────────── -->
+    <section class="plans-section">
+      <h2 class="section-title">Choose your plan</h2>
+      <div class="plans-grid">
+        <app-plan-cards
+          [currentPlan]="subsStore.currentPlan()"
+          (upgrade)="onUpgrade($event)"
+          (downgrade)="onDowngrade($event)">
+        </app-plan-cards>
+      </div>
+    </section>
+
+    <!-- ── Payment history ───────────────────────────────── -->
+    <section class="billing-section">
+      <h2 class="section-title">Payment history</h2>
+      <div class="billing-table-wrap">
+        <table class="billing-table" aria-label="Payment history">
+          <thead>
+            <tr>
+              <th>FECHA</th>
+              <th>PLAN</th>
+              <th>MONTO</th>
+              <th>ESTADO</th>
+              <th>RECIBO</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (record of subsStore.billingHistory(); track record.id) {
+              <tr>
+                <td>{{ record.formattedDate }}</td>
+                <td>{{ record.planLabel }}</td>
+                <td>{{ record.formattedAmount }}</td>
+                <td>
+                  <span class="status-badge"
+                        [class.status-badge--paid]="record.status === 'PAID'"
+                        [class.status-badge--trial]="record.status === 'TRIAL'">
+                    {{ record.status === 'PAID' ? 'Pagado' : 'Trial' }}
+                  </span>
+                </td>
+                <td>
+                  <button class="pdf-btn" (click)="onDownloadReceipt(record.id)">PDF</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  }
+
+  <!-- ── Upgrade Dialog (T25) ──────────────────────────────── -->
+  @if (upgradingTo()) {
+    <app-upgrade-dialog
+      [targetPlan]="upgradingTo()!"
+      [loading]="subsStore.loading()"
+      (confirm)="onConfirmUpgrade($event)"
+      (cancel)="upgradingTo.set(null)">
+    </app-upgrade-dialog>
+  }
+
+  <!-- ── Downgrade Dialog (T25) ─────────────────────────────── -->
+  @if (downgradingTo()) {
+    <app-downgrade-dialog
+      [currentPlan]="subsStore.currentPlan()"
+      [targetPlan]="downgradingTo()!"
+      [renewalDate]="subsStore.subscription()?.formattedRenewal ?? '14 May 2026'"
+      [loading]="subsStore.loading()"
+      (confirm)="onConfirmDowngrade()"
+      (cancel)="downgradingTo.set(null)">
+    </app-downgrade-dialog>
+  }
+
+</div>

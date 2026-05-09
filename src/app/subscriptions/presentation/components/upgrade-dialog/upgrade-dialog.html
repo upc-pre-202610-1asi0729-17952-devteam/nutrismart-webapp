@@ -1,0 +1,104 @@
+<!-- ── Payment Declined state ─────────────────────────────────── -->
+@if (paymentDeclined()) {
+  <div class="dialog-backdrop">
+    <div class="dialog" role="alertdialog" aria-modal="true">
+
+      <h2 class="dialog-title">Upgrade to {{ planName }}</h2>
+
+      <div class="card-placeholder">
+        <div class="card-icons">
+          <span class="card-icon">VISA</span>
+          <span class="card-icon">MC</span>
+        </div>
+        <input class="card-input"
+               [class.card-input--error]="isCardInvalid()"
+               type="text" placeholder="Card number" [(ngModel)]="cardNumber" />
+        <div class="card-row">
+          <input class="card-input"
+                 [class.card-input--error]="isCardInvalid()"
+                 type="text" placeholder="MM / YY" [(ngModel)]="cardExpiry" />
+          <input class="card-input"
+                 [class.card-input--error]="isCardInvalid()"
+                 type="text" placeholder="CVV" [(ngModel)]="cardCvc" />
+        </div>
+      </div>
+
+      <button class="btn-pay"
+              [disabled]="isCardInvalid()"
+              (click)="onPay()">
+        Pay
+      </button>
+
+      @if (isCardInvalid()) {
+        <div class="error-box" style="margin-top: 12px;">
+          <strong>Payment not processed.</strong> Your subscription has not been activated.
+          Please check your card details or try a different payment method.
+        </div>
+      }
+
+    </div>
+  </div>
+}
+@else if (upgradeSuccess()) {
+  <div class="dialog-backdrop">
+    <div class="dialog dialog--success" role="dialog" aria-modal="true" aria-labelledby="success-title">
+      <div class="success-icon">✓</div>
+      <h2 id="success-title" class="success-title">Welcome to the {{ planName }} Plan, {{ userName }}!</h2>
+      <p class="success-desc">
+        Welcome to the {{ planName }} plan, {{ userName }}! Enjoy the benefits of your plan.
+        If you decide to cancel or switch plans, feel free to do so in the 'Subscription' section.
+      </p>
+      <button class="btn-dashboard" (click)="onGoToDashboard()">Go to Dashboard</button>
+    </div>
+  </div>
+}
+@else {
+  <div class="dialog-backdrop" (click)="onBackdropClick($event)">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="upgrade-title">
+
+      <h2 id="upgrade-title" class="dialog-title">Upgrade to {{ planName }}</h2>
+      <p class="dialog-subtitle">Your new plan activates immediately.</p>
+
+      <div class="charge-detail">
+        <div class="charge-row">
+          <span>Prorated charge for remaining cycle:</span>
+          <span class="charge-amount">$7.50</span>
+        </div>
+        <div class="charge-row">
+          <span>Full charge from next cycle:</span>
+          <span class="charge-amount">${{ planPrice }}/month</span>
+        </div>
+      </div>
+
+      <div class="new-features">
+        <p class="features-label">Features you unlock:</p>
+        @for (feature of newFeatures; track feature) {
+          <div class="feature-row">
+            <span class="feature-badge">NEW</span>
+            <span>{{ feature }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="card-placeholder">
+        <div class="card-icons">
+          <span class="card-icon">VISA</span>
+          <span class="card-icon">MC</span>
+        </div>
+        <input class="card-input" type="text" placeholder="Card number" [(ngModel)]="cardNumber" />
+        <div class="card-row">
+          <input class="card-input" type="text" placeholder="MM / YY" [(ngModel)]="cardExpiry" />
+          <input class="card-input" type="text" placeholder="CVV" [(ngModel)]="cardCvc" />
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="btn btn--outline" (click)="cancel.emit()" [disabled]="loading()">Cancel</button>
+        <button class="btn btn--primary" (click)="onPay()" [disabled]="loading()">
+          {{ loading() ? 'Processing...' : 'Confirm upgrade · SubscriptionActivated →' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

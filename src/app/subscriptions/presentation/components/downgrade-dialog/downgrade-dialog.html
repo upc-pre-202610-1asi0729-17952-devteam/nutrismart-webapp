@@ -1,0 +1,35 @@
+<div class="dialog-backdrop" (click)="onBackdropClick($event)">
+  <div class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="downgrade-title">
+
+    <h2 id="downgrade-title" class="dialog-title">Downgrade to {{ targetPlanName }}</h2>
+
+    <!-- Features lost warning -->
+    <div class="warning-box">
+      <p class="warning-label">
+        You will lose access to the following features at the end of your billing cycle
+        ({{ renewalDate() }}):
+      </p>
+      @for (feature of featuresLost; track feature) {
+        <div class="lost-feature">
+          <span class="lost-x">×</span>
+          <span>{{ feature }}</span>
+        </div>
+      }
+    </div>
+
+    <p class="effective-date">
+      Effective: {{ renewalDate() }}
+    </p>
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <button class="btn btn--cancel-outline" [disabled]="loading()" (click)="cancel.emit()">
+        Cancel
+      </button>
+      <button class="btn btn--danger" [disabled]="loading()" (click)="confirm.emit()">
+        {{ loading() ? 'Processing...' : 'Confirm downgrade' }}
+      </button>
+    </div>
+
+  </div>
+</div>
