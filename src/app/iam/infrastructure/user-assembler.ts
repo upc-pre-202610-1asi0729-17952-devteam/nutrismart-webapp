@@ -44,6 +44,7 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
       consecutiveMisses: resource.consecutiveMisses,
       birthday: resource.birthday ?? '',
       biologicalSex: resource.biologicalSex ?? '',
+      createdAt: resource.createdAt ?? '',
     });
   }
 
@@ -76,6 +77,7 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
       consecutiveMisses: entity.consecutiveMisses,
       birthday: entity.birthday,
       biologicalSex: entity.biologicalSex,
+      createdAt: entity.createdAt,
     };
   }
 

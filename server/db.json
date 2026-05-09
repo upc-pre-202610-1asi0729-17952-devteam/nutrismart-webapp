@@ -23,32 +23,47 @@
       "streak": 5,
       "consecutiveMisses": 0,
       "birthday": "1998-03-15",
-      "biologicalSex": "female"
+      "biologicalSex": "female",
+      "createdAt": "2026-04-01"
     },
     {
       "id": "Mv9paKyK60k",
       "firstName": "Antonio",
       "lastName": "Villarreal",
       "email": "a@gmail.com",
-      "goal": "MUSCLE_GAIN",
-      "weight": 50,
-      "height": 160,
-      "activityLevel": "ACTIVE",
+      "goal": "WEIGHT_LOSS",
+      "weight": 70,
+      "height": 165,
+      "activityLevel": "SEDENTARY",
       "plan": "PREMIUM",
       "restrictions": [
         "LACTOSE_FREE",
-        "GLUTEN_FREE"
+        "GLUTEN_FREE",
+        "VEGAN",
+        "VEGETARIAN",
+        "NUT_FREE",
+        "SEAFOOD_FREE",
+        "KOSHER",
+        "HALAL"
       ],
-      "medicalConditions": [],
-      "dailyCalorieTarget": 2375,
-      "proteinTarget": 100,
-      "carbsTarget": 345,
-      "fatTarget": 66,
+      "medicalConditions": [
+        "TYPE_2_DIABETES",
+        "HIGH_BLOOD_PRESSURE",
+        "HYPOTHYROIDISM",
+        "COELIAC_DISEASE",
+        "KIDNEY_DISEASE",
+        "GOUT"
+      ],
+      "dailyCalorieTarget": 1584,
+      "proteinTarget": 112,
+      "carbsTarget": 185,
+      "fatTarget": 44,
       "fiberTarget": 25,
       "streak": 0,
       "consecutiveMisses": 0,
-      "birthday": "2005-03-02",
-      "biologicalSex": "male"
+      "birthday": "2005-02-19",
+      "biologicalSex": "female",
+      "createdAt": "2026-04-15"
     },
     {
       "id": "81P8BYgebrM",
@@ -70,7 +85,8 @@
       "streak": 0,
       "consecutiveMisses": 0,
       "birthday": "2005-02-19",
-      "biologicalSex": "male"
+      "biologicalSex": "male",
+      "createdAt": "2026-05-01"
     }
   ],
   "nutrition-log": [
@@ -201,22 +217,6 @@
       "sugar": 0.4,
       "loggedAt": "2026-05-09T15:11:21.219Z",
       "userId": "81P8BYgebrM"
-    },
-    {
-      "id": "5UQC5ym5QxI",
-      "foodItemId": "1",
-      "foodItemName": "Cooked oatmeal",
-      "mealType": "LUNCH",
-      "quantity": 80,
-      "unit": "g",
-      "calories": 120,
-      "protein": 5,
-      "carbs": 21.6,
-      "fat": 2,
-      "fiber": 1.4,
-      "sugar": 0.4,
-      "loggedAt": "2026-05-09T17:22:34.120Z",
-      "userId": "Mv9paKyK60k"
     }
   ],
   "foods": [

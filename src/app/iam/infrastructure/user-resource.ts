@@ -48,6 +48,8 @@ export interface UserResource extends BaseResource {
   birthday?: string;
   /** Biological sex string ('male' | 'female' | 'other'). */
   biologicalSex?: string;
+  /** Account creation date in ISO format (YYYY-MM-DD). */
+  createdAt?: string;
 }
 
 /**
