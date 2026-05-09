@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -40,7 +40,7 @@ import { SmartScanStore } from '../../../application/smart-scan.store';
   templateUrl: './smart-scan.html',
   styleUrl: './smart-scan.css',
 })
-export class SmartScan {
+export class SmartScan implements OnInit {
   protected iamStore       = inject(IamStore);
   protected smartScanStore = inject(SmartScanStore);
 
@@ -67,6 +67,10 @@ export class SmartScan {
     { value: MealType.DINNER,    label: 'Dinner' },
     { value: MealType.SNACK,     label: 'Snack' },
   ];
+
+  ngOnInit(): void {
+    this.smartScanStore.reset();
+  }
 
   // ─── Image Upload / Demo Triggers ────────────────────────────────────────
 
