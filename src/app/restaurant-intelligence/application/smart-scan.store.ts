@@ -96,65 +96,32 @@ export class SmartScanStore {
       { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 },
     );
 
-    const macros: Array<{ key: MacroKey; consumed: number; scanTotal: number; target: number }> = [
-      { key: 'calories', consumed: totals.calories, scanTotal: scanTotals.calories, target: user.dailyCalorieTarget },
-      { key: 'protein',  consumed: totals.protein,  scanTotal: scanTotals.protein,  target: user.proteinTarget },
-      { key: 'carbs',    consumed: totals.carbs,    scanTotal: scanTotals.carbs,    target: user.carbsTarget },
-      { key: 'fat',      consumed: totals.fat,      scanTotal: scanTotals.fat,      target: user.fatTarget },
-      { key: 'fiber',    consumed: totals.fiber,    scanTotal: scanTotals.fiber,    target: user.fiberTarget },
-    ];
-
-    return macros
-      .filter(m => m.target > 0)
-      .map(m => ({ ...m, projected: m.consumed + m.scanTotal, ratio: (m.consumed + m.scanTotal) / m.target }))
-      .filter(m => m.ratio >= SmartScanStore.WARNING_THRESHOLD)
-      .map(m => ({
-        macro:     m.key,
-        target:    m.target,
-        consumed:  m.consumed,
-        scanTotal: m.scanTotal,
-        projected: m.projected,
-        percent:   Math.round(m.ratio * 100),
-        severity:  m.ratio >= SmartScanStore.DANGER_THRESHOLD ? 'danger' : 'warning',
-      } as MacroAlert));
+    return this._alertsForMacros(scanTotals, totals, user);
   });
 
   readonly hasMacroAlerts = computed(() => this.macroAlerts().length > 0);
 
   /**
-   * Projects the nutritional impact of logging the best-ranked dish from the
-   * current menu analysis against the user's daily targets.
+   * Projects the nutritional impact of logging each ranked dish from the
+   * current menu analysis, keyed by dish rank.
    */
-  readonly menuDishAlerts = computed<MacroAlert[]>(() => {
+  readonly menuDishAlertsByRank = computed<Record<number, MacroAlert[]>>(() => {
     const user   = this.iamStore.currentUser();
     const totals = this.nutritionStore.dailyTotals();
-    const dish   = this._menuAnalysis()?.bestDish ?? null;
-    if (!user || !dish) return [];
+    const dishes = this._menuAnalysis()?.rankedDishes ?? [];
+    if (!user || dishes.length === 0) return {};
 
-    const macros: Array<{ key: MacroKey; consumed: number; scanTotal: number; target: number }> = [
-      { key: 'calories', consumed: totals.calories, scanTotal: dish.calories, target: user.dailyCalorieTarget },
-      { key: 'protein',  consumed: totals.protein,  scanTotal: dish.protein,  target: user.proteinTarget },
-      { key: 'carbs',    consumed: totals.carbs,    scanTotal: dish.carbs,    target: user.carbsTarget },
-      { key: 'fat',      consumed: totals.fat,      scanTotal: dish.fat,      target: user.fatTarget },
-      { key: 'fiber',    consumed: totals.fiber,    scanTotal: 0,             target: user.fiberTarget },
-    ];
-
-    return macros
-      .filter(m => m.target > 0)
-      .map(m => ({ ...m, projected: m.consumed + m.scanTotal, ratio: (m.consumed + m.scanTotal) / m.target }))
-      .filter(m => m.ratio >= SmartScanStore.WARNING_THRESHOLD)
-      .map(m => ({
-        macro:     m.key,
-        target:    m.target,
-        consumed:  m.consumed,
-        scanTotal: m.scanTotal,
-        projected: m.projected,
-        percent:   Math.round(m.ratio * 100),
-        severity:  m.ratio >= SmartScanStore.DANGER_THRESHOLD ? 'danger' : 'warning',
-      } as MacroAlert));
+    const result: Record<number, MacroAlert[]> = {};
+    for (const dish of dishes) {
+      const alerts = this._alertsForMacros(
+        { calories: dish.calories, protein: dish.protein, carbs: dish.carbs, fat: dish.fat, fiber: 0 },
+        totals,
+        user,
+      );
+      if (alerts.length > 0) result[dish.rank] = alerts;
+    }
+    return result;
   });
-
-  readonly hasMenuDishAlerts = computed(() => this.menuDishAlerts().length > 0);
 
   // ─── Actions ──────────────────────────────────────────────────────────────
 
@@ -348,6 +315,39 @@ export class SmartScanStore {
    * Creates a new ScanResult from an existing one so that Angular signal
    * equality check (===) detects a change and triggers re-render.
    */
+  /**
+   * Core projection: given a set of macro totals to add and the user's current
+   * daily totals + targets, returns one {@link MacroAlert} per macro that would
+   * reach or exceed the warning threshold.
+   */
+  private _alertsForMacros(
+    adding: { calories: number; protein: number; carbs: number; fat: number; fiber: number },
+    consumed: { calories: number; protein: number; carbs: number; fat: number; fiber: number },
+    user: { dailyCalorieTarget: number; proteinTarget: number; carbsTarget: number; fatTarget: number; fiberTarget: number },
+  ): MacroAlert[] {
+    const macros: Array<{ key: MacroKey; consumed: number; scanTotal: number; target: number }> = [
+      { key: 'calories', consumed: consumed.calories, scanTotal: adding.calories, target: user.dailyCalorieTarget },
+      { key: 'protein',  consumed: consumed.protein,  scanTotal: adding.protein,  target: user.proteinTarget },
+      { key: 'carbs',    consumed: consumed.carbs,    scanTotal: adding.carbs,    target: user.carbsTarget },
+      { key: 'fat',      consumed: consumed.fat,      scanTotal: adding.fat,      target: user.fatTarget },
+      { key: 'fiber',    consumed: consumed.fiber,    scanTotal: adding.fiber,    target: user.fiberTarget },
+    ];
+
+    return macros
+      .filter(m => m.target > 0)
+      .map(m => ({ ...m, projected: m.consumed + m.scanTotal, ratio: (m.consumed + m.scanTotal) / m.target }))
+      .filter(m => m.ratio >= SmartScanStore.WARNING_THRESHOLD)
+      .map(m => ({
+        macro:     m.key,
+        target:    m.target,
+        consumed:  m.consumed,
+        scanTotal: m.scanTotal,
+        projected: m.projected,
+        percent:   Math.round(m.ratio * 100),
+        severity:  m.ratio >= SmartScanStore.DANGER_THRESHOLD ? 'danger' : 'warning',
+      } as MacroAlert));
+  }
+
   private _cloneScanResult(source: ScanResult): ScanResult {
     return new ScanResult({
       id:            source.id,

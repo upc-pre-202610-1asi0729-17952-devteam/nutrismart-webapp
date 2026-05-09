@@ -415,6 +415,20 @@ mat-card-header {
   margin-left: 0.25rem;
 }
 
+.impact-panel--inline {
+  margin-top: 0.75rem;
+  border-radius: 6px;
+}
+
+.impact-list--compact { border-top: none; }
+
+.impact-item--compact {
+  padding: 0.35rem 0;
+  font-size: 0.78rem;
+  border-bottom: none;
+  background: transparent !important;
+}
+
 .impact-list {
   list-style: none;
   margin: 0;
