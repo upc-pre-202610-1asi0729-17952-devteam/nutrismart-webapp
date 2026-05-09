@@ -1,5 +1,5 @@
 import { Component, computed, EventEmitter, inject, Output } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { DietaryRestriction } from '../../../../iam/domain/model/dietary-restriction.enum';
 import { NutritionStore } from '../../../application/nutrition.store';
@@ -24,6 +24,9 @@ export class FoodSearchPanelComponent {
 
   protected nutritionStore = inject(NutritionStore);
   private   iamStore       = inject(IamStore);
+  private   translate      = inject(TranslateService);
+
+  protected get currentLang(): string { return this.translate.currentLang ?? 'en'; }
 
   /** Emitted when the user clicks a non-restricted food result. */
   @Output() foodSelected = new EventEmitter<FoodItem>();

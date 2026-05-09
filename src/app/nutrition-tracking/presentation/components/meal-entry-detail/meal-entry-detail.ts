@@ -1,5 +1,5 @@
-import { Component, computed, EventEmitter, input, Output } from '@angular/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MealRecord } from '../../../domain/model/meal-record.entity';
 
 /**
@@ -22,6 +22,9 @@ export class MealEntryDetailComponent {
 
   /** Emitted when the user closes the dialog. */
   @Output() close = new EventEmitter<void>();
+
+  private translate = inject(TranslateService);
+  protected get currentLang(): string { return this.translate.currentLang ?? 'en'; }
 
   /** Formatted time string from the loggedAt timestamp. */
   protected loggedTime = computed(() =>

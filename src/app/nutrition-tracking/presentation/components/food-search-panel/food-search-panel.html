@@ -51,7 +51,7 @@
              (click)="onSelectFood(food)">
 
           <div class="result-info">
-            <span class="result-name">{{ food.name }}</span>
+            <span class="result-name">{{ food.getLocalizedName(currentLang) }}</span>
 
             <!-- Restriction chips (T18) -->
             @for (tag of getConflictTags(food); track tag) {

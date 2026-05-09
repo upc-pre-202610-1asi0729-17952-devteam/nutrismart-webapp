@@ -8,6 +8,7 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
 export interface FoodItemResource extends BaseResource {
   id: number;
   name: string;
+  name_es?: string;
   source: string;
   serving_size: number;
   serving_unit: string;
@@ -34,6 +35,7 @@ export interface MealRecordResource extends BaseResource {
   id: number;
   foodItemId: number;
   foodItemName: string;
+  foodItemNameEs?: string;
   mealType: string;
   quantity: number;
   unit: string;

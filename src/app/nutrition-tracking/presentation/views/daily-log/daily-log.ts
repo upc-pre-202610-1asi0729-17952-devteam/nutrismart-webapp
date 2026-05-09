@@ -213,6 +213,7 @@ export class DailyLog implements OnInit {
       id: 0,
       foodItemId: payload.food.id,
       foodItemName: payload.food.name,
+      foodItemNameEs: payload.food.nameEs,
       mealType: payload.mealType,
       quantity: payload.quantity,
       unit: payload.food.servingUnit,

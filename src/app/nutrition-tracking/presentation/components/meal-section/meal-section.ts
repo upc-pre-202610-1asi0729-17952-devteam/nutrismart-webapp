@@ -42,6 +42,11 @@ export class MealSectionComponent {
     return this.translate.instant('nutrition.' + this.mealType().toLowerCase());
   }
 
+  /** Returns the localized food name for a meal record. */
+  protected getRecordName(record: MealRecord): string {
+    return record.getLocalizedFoodName(this.translate.currentLang ?? 'en');
+  }
+
   /** Total kilocalories for this meal section. */
   protected totalCalories = computed(() => this.records().reduce((sum, r) => sum + r.calories, 0));
 

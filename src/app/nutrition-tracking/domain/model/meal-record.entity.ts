@@ -13,6 +13,8 @@ export interface MealRecordProps {
   foodItemId: number;
   /** Display name of the food item (denormalised for quick rendering). */
   foodItemName: string;
+  /** Spanish display name of the food item. */
+  foodItemNameEs?: string;
   /** Meal window this record belongs to. */
   mealType: MealType;
   /** Quantity consumed in {@link unit}. */
@@ -49,6 +51,7 @@ export class MealRecord implements BaseEntity {
   private _id: number;
   private _foodItemId: number;
   private _foodItemName: string;
+  private _foodItemNameEs: string;
   private _mealType: MealType;
   private _quantity: number;
   private _unit: string;
@@ -62,10 +65,11 @@ export class MealRecord implements BaseEntity {
   private _userId: number;
 
   constructor(props: MealRecordProps) {
-    this._id           = props.id;
-    this._foodItemId   = props.foodItemId;
-    this._foodItemName = props.foodItemName;
-    this._mealType     = props.mealType;
+    this._id              = props.id;
+    this._foodItemId      = props.foodItemId;
+    this._foodItemName    = props.foodItemName;
+    this._foodItemNameEs  = props.foodItemNameEs ?? '';
+    this._mealType        = props.mealType;
     this._quantity     = props.quantity;
     this._unit         = props.unit;
     this._calories     = props.calories;
@@ -88,6 +92,14 @@ export class MealRecord implements BaseEntity {
 
   get foodItemName(): string { return this._foodItemName; }
   set foodItemName(v: string) { this._foodItemName = v; }
+
+  get foodItemNameEs(): string { return this._foodItemNameEs; }
+  set foodItemNameEs(v: string) { this._foodItemNameEs = v; }
+
+  /** Returns the food name in the given language, falling back to English. */
+  getLocalizedFoodName(lang: string): string {
+    return (lang === 'es' && this._foodItemNameEs) ? this._foodItemNameEs : this._foodItemName;
+  }
 
   get mealType(): MealType { return this._mealType; }
   set mealType(v: MealType) { this._mealType = v; }

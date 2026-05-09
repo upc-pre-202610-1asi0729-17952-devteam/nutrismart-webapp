@@ -43,6 +43,8 @@ export class AddFoodDialogComponent {
 
   private translate = inject(TranslateService);
 
+  protected get currentLang(): string { return this.translate.currentLang ?? 'en'; }
+
   protected mealTypes        = Object.values(MealType);
   protected selectedMealType: MealType = MealType.LUNCH;
   protected quantity = signal(100);

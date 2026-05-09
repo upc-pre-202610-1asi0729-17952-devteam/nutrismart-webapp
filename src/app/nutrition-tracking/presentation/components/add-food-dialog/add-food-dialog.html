@@ -8,7 +8,7 @@
 
     <!-- Selected food info -->
     <div class="food-info">
-      <span class="food-name">{{ food().name }}</span>
+      <span class="food-name">{{ food().getLocalizedName(currentLang) }}</span>
       <span class="food-base">
         {{ 'nutrition.base_info' | translate: {
           size:     food().servingSize,

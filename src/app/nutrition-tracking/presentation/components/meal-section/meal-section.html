@@ -20,7 +20,7 @@
         <div class="record-row" role="listitem" style="cursor:pointer"
              (click)="viewEntry.emit(record)">
           <div class="record-info">
-            <span class="record-name">{{ record.foodItemName }}</span>
+            <span class="record-name">{{ getRecordName(record) }}</span>
             <span class="record-qty">{{ record.quantity }}{{ record.unit }}</span>
           </div>
           <div class="record-macros">

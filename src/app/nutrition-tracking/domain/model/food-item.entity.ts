@@ -11,6 +11,8 @@ export interface FoodItemProps {
   id: number;
   /** Human-readable food name (e.g. "Grilled chicken breast"). */
   name: string;
+  /** Spanish translation of the food name. */
+  nameEs?: string;
   /** Data source or brand (e.g. "USDA FoodData", "Open Food Facts"). */
   source: string;
   /** Serving size in the unit expressed by {@link servingUnit}. */
@@ -44,6 +46,7 @@ export interface FoodItemProps {
 export class FoodItem implements BaseEntity {
   private _id: number;
   private _name: string;
+  private _nameEs: string;
   private _source: string;
   private _servingSize: number;
   private _servingUnit: string;
@@ -58,6 +61,7 @@ export class FoodItem implements BaseEntity {
   constructor(props: FoodItemProps) {
     this._id             = props.id;
     this._name           = props.name;
+    this._nameEs         = props.nameEs ?? '';
     this._source         = props.source;
     this._servingSize    = props.servingSize;
     this._servingUnit    = props.servingUnit;
@@ -79,6 +83,10 @@ export class FoodItem implements BaseEntity {
   /** Human-readable food name. */
   get name(): string { return this._name; }
   set name(v: string) { this._name = v; }
+
+  /** Spanish translation of the food name. */
+  get nameEs(): string { return this._nameEs; }
+  set nameEs(v: string) { this._nameEs = v; }
 
   /** Data source or brand. */
   get source(): string { return this._source; }
@@ -131,6 +139,11 @@ export class FoodItem implements BaseEntity {
    * @returns Object containing calories, protein, carbs, fat, fiber and sugar
    *          for the requested quantity.
    */
+  /** Returns the food name in the given language, falling back to English. */
+  getLocalizedName(lang: string): string {
+    return (lang === 'es' && this._nameEs) ? this._nameEs : this._name;
+  }
+
   getNutrientsForQuantity(quantity: number): {
     calories: number; protein: number; carbs: number;
     fat: number; fiber: number; sugar: number;

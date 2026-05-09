@@ -23,6 +23,7 @@ export class FoodItemAssembler
     return new FoodItem({
       id:              r.id,
       name:            r.name,
+      nameEs:          r.name_es,
       source:          r.source,
       servingSize:     r.serving_size,
       servingUnit:     r.serving_unit,
@@ -69,10 +70,11 @@ export class MealRecordAssembler
 
   toEntityFromResource(r: MealRecordResource): MealRecord {
     return new MealRecord({
-      id:           r.id,
-      foodItemId:   r.foodItemId,
-      foodItemName: r.foodItemName,
-      mealType:     r.mealType as MealType,
+      id:              r.id,
+      foodItemId:      r.foodItemId,
+      foodItemName:    r.foodItemName,
+      foodItemNameEs:  r.foodItemNameEs,
+      mealType:        r.mealType as MealType,
       quantity:     r.quantity,
       unit:         r.unit,
       calories:     r.calories,
@@ -88,10 +90,11 @@ export class MealRecordAssembler
 
   toResourceFromEntity(e: MealRecord): MealRecordResource {
     return {
-      id:           e.id,
-      foodItemId:   e.foodItemId,
-      foodItemName: e.foodItemName,
-      mealType:     e.mealType,
+      id:              e.id,
+      foodItemId:      e.foodItemId,
+      foodItemName:    e.foodItemName,
+      foodItemNameEs:  e.foodItemNameEs,
+      mealType:        e.mealType,
       quantity:     e.quantity,
       unit:         e.unit,
       calories:     e.calories,
