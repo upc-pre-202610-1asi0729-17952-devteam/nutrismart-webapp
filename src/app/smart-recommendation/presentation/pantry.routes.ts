@@ -1,7 +1,13 @@
 /**
  * Pantry routes (smart-recommendation context).
  *
- * Register pantry list and ingredient management views here.
+ * @author Del Aguila Del Aguila, Olenka Priscilla
  */
 import { Routes } from '@angular/router';
-export const pantryRoutes: Routes = [];
+
+const pantryView = () =>
+  import('./views/pantry/pantry').then(m => m.Pantry);
+
+export const pantryRoutes: Routes = [
+  { path: '', loadComponent: pantryView, title: 'NutriSmart - Pantry' },
+];

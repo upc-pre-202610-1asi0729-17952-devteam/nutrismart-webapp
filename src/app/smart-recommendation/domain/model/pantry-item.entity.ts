@@ -1,4 +1,4 @@
-import { BaseEntity } from '../../../../shared/infrastructure/base-entity';
+import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 
 /**
  * Categories an ingredient can belong to.

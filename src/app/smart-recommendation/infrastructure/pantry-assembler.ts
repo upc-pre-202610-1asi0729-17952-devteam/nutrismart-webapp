@@ -1,5 +1,5 @@
-import { BaseAssembler } from '../../../shared/infrastructure/base-assembler';
-import { UserGoal } from '../../../iam/domain/model/user-goal.enum';
+import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
+import { UserGoal } from '../../iam/domain/model/user-goal.enum';
 import { PantryItem, IngredientCategory } from '../domain/model/pantry-item.entity';
 import { RecipeSuggestion } from '../domain/model/recipe-suggestion.entity';
 import {

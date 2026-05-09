@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { IamStore } from '../../../iam/application/iam.store';
-import { UserGoal } from '../../../iam/domain/model/user-goal.enum';
+import { IamStore } from '../../iam/application/iam.store';
+import { UserGoal } from '../../iam/domain/model/user-goal.enum';
 import { PantryItem, IngredientCategory } from '../domain/model/pantry-item.entity';
 import { RecipeSuggestion } from '../domain/model/recipe-suggestion.entity';
 import { PantryApi } from '../infrastructure/pantry-api';

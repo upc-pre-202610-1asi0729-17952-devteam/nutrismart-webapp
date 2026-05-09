@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { BaseApi } from '../../../shared/infrastructure/base-api';
-import { UserGoal } from '../../../iam/domain/model/user-goal.enum';
+import { BaseApi } from '../../shared/infrastructure/base-api';
+import { UserGoal } from '../../iam/domain/model/user-goal.enum';
 import { PantryItem } from '../domain/model/pantry-item.entity';
 import { RecipeSuggestion } from '../domain/model/recipe-suggestion.entity';
 

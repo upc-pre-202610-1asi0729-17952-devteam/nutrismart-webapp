@@ -1,4 +1,4 @@
-import { BaseResource, BaseResponse } from '../../../shared/infrastructure/base-response';
+import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-response';
 
 /**
  * API resource DTO for a single pantry ingredient.

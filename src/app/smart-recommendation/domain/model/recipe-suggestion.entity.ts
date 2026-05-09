@@ -1,5 +1,5 @@
-import { BaseEntity } from '../../../../shared/infrastructure/base-entity';
-import { UserGoal } from '../../../../iam/domain/model/user-goal.enum';
+import { BaseEntity } from '../../../shared/infrastructure/base-entity';
+import { UserGoal } from '../../../iam/domain/model/user-goal.enum';
 
 /**
  * Constructor DTO for creating a {@link RecipeSuggestion} instance.

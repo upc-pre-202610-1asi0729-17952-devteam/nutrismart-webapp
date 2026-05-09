@@ -6,8 +6,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { IamStore } from '../../../../../iam/application/iam.store';
-import { UserGoal } from '../../../../../iam/domain/model/user-goal.enum';
+import { IamStore } from '../../../../iam/application/iam.store';
+import { UserGoal } from '../../../../iam/domain/model/user-goal.enum';
 import { PantryStore } from '../../../application/pantry.store';
 
 /**
