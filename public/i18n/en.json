@@ -410,5 +410,10 @@
     "effective_date": "Effective: {{ date }}",
     "confirm_downgrade": "Confirm downgrade",
     "processing": "Processing..."
+  },
+  "units": {
+    "g": "g",
+    "ml": "ml",
+    "serving": "serving"
   }
 }

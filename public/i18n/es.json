@@ -410,5 +410,10 @@
     "effective_date": "Efectivo: {{ date }}",
     "confirm_downgrade": "Confirmar degradación",
     "processing": "Procesando..."
+  },
+  "units": {
+    "g": "g",
+    "ml": "ml",
+    "serving": "porción"
   }
 }
