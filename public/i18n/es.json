@@ -330,8 +330,19 @@
     "contains": "contiene",
     "back_to_scan": "← Volver al escaneo",
     "impact_title": "Impacto nutricional",
+    "impact_best_dish_note": "Impacto calculado para el plato recomendado",
     "impact_approaching": "Alcanzará el {{ percent }}% de tu objetivo diario",
     "impact_exceeded": "Superará tu objetivo diario ({{ percent }}%)"
+  },
+  "menu_dishes": {
+    "hake_ceviche": "Ceviche de merluza",
+    "hake_ceviche_justification": "Cubre 38g de tu objetivo proteico restante · Dentro de tu presupuesto calórico · Sin ingredientes restringidos",
+    "chicken_cucumber_salad": "Ensalada de pollo y pepino",
+    "chicken_cucumber_salad_justification": "Alto contenido proteico, dentro del presupuesto",
+    "gazpacho_wholemeal_toast": "Gazpacho con tostadas integrales",
+    "gazpacho_wholemeal_toast_justification": "Opción ligera dentro del presupuesto calórico",
+    "cheese_pizza": "Pizza de queso",
+    "seafood_paella": "Paella de mariscos"
   },
   "food_items": {
     "grilled_chicken_breast": "Pechuga de pollo a la plancha",

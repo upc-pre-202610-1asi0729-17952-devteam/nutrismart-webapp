@@ -5,7 +5,7 @@ import { MealType } from '../../nutrition-tracking/domain/model/meal-type.enum';
 import { MealRecord, MealRecordProps } from '../../nutrition-tracking/domain/model/meal-record.entity';
 import { NutritionStore } from '../../nutrition-tracking/application/nutrition.store';
 import { ScanResult } from '../domain/model/scan-result.entity';
-import { MenuAnalysis } from '../domain/model/menu-analysis.entity';
+import { MenuAnalysis, RankedDish } from '../domain/model/menu-analysis.entity';
 import { SmartScanApi } from '../infrastructure/smart-scan-api';
 
 /** Active view within the Smart Scan feature. */
@@ -121,6 +121,41 @@ export class SmartScanStore {
 
   readonly hasMacroAlerts = computed(() => this.macroAlerts().length > 0);
 
+  /**
+   * Projects the nutritional impact of logging the best-ranked dish from the
+   * current menu analysis against the user's daily targets.
+   */
+  readonly menuDishAlerts = computed<MacroAlert[]>(() => {
+    const user   = this.iamStore.currentUser();
+    const totals = this.nutritionStore.dailyTotals();
+    const dish   = this._menuAnalysis()?.bestDish ?? null;
+    if (!user || !dish) return [];
+
+    const macros: Array<{ key: MacroKey; consumed: number; scanTotal: number; target: number }> = [
+      { key: 'calories', consumed: totals.calories, scanTotal: dish.calories, target: user.dailyCalorieTarget },
+      { key: 'protein',  consumed: totals.protein,  scanTotal: dish.protein,  target: user.proteinTarget },
+      { key: 'carbs',    consumed: totals.carbs,    scanTotal: dish.carbs,    target: user.carbsTarget },
+      { key: 'fat',      consumed: totals.fat,      scanTotal: dish.fat,      target: user.fatTarget },
+      { key: 'fiber',    consumed: totals.fiber,    scanTotal: 0,             target: user.fiberTarget },
+    ];
+
+    return macros
+      .filter(m => m.target > 0)
+      .map(m => ({ ...m, projected: m.consumed + m.scanTotal, ratio: (m.consumed + m.scanTotal) / m.target }))
+      .filter(m => m.ratio >= SmartScanStore.WARNING_THRESHOLD)
+      .map(m => ({
+        macro:     m.key,
+        target:    m.target,
+        consumed:  m.consumed,
+        scanTotal: m.scanTotal,
+        projected: m.projected,
+        percent:   Math.round(m.ratio * 100),
+        severity:  m.ratio >= SmartScanStore.DANGER_THRESHOLD ? 'danger' : 'warning',
+      } as MacroAlert));
+  });
+
+  readonly hasMenuDishAlerts = computed(() => this.menuDishAlerts().length > 0);
+
   // ─── Actions ──────────────────────────────────────────────────────────────
 
   reset(): void {
@@ -221,6 +256,46 @@ export class SmartScanStore {
       this.reset();
     } catch {
       this._error.set('Failed to log meal from scan.');
+      this._loading.set(false);
+    }
+  }
+
+  /**
+   * Logs a single menu dish as a meal record (ConfirmMenuDish command → MealRecorded event).
+   *
+   * @param dish     - The {@link RankedDish} the user chose to log.
+   * @param mealType - Meal slot to assign the record to.
+   */
+  async confirmMenuDish(dish: RankedDish, mealType: MealType): Promise<void> {
+    const user = this.iamStore.currentUser();
+    if (!user) return;
+
+    this._loading.set(true);
+    this._error.set(null);
+
+    const props: MealRecordProps = {
+      id:           0,
+      foodItemId:   0,
+      foodItemName: dish.name,
+      mealType,
+      quantity:     1,
+      unit:         'serving',
+      calories:     dish.calories,
+      protein:      dish.protein,
+      carbs:        dish.carbs,
+      fat:          dish.fat,
+      fiber:        0,
+      sugar:        0,
+      loggedAt:     new Date().toISOString(),
+      userId:       user.id,
+    };
+
+    try {
+      await this.nutritionStore.addMealEntry(new MealRecord(props));
+      this._loading.set(false);
+      this.reset();
+    } catch {
+      this._error.set('Failed to log menu dish.');
       this._loading.set(false);
     }
   }

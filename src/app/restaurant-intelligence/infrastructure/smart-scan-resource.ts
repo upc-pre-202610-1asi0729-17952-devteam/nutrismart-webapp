@@ -39,12 +39,14 @@ export interface ScanResultResource extends BaseResource {
 export interface RankedDishResource {
   rank: number;
   name: string;
+  name_key: string | null;
   calories: number;
   protein: number;
   carbs: number;
   fat: number;
   compatibility_score: number;
   justification: string;
+  justification_key: string | null;
 }
 
 /**
@@ -54,6 +56,7 @@ export interface RankedDishResource {
  */
 export interface RestrictedDishResource {
   name: string;
+  name_key: string | null;
   restriction: string;
 }
 

@@ -100,24 +100,27 @@ export class SmartScanApi extends BaseApi {
       scannedAt:      new Date().toISOString(),
       rankedDishes: [
         {
-          rank: 1, name: 'Hake ceviche', calories: 280,
+          rank: 1, name: 'Hake ceviche', nameKey: 'hake_ceviche', calories: 280,
           protein: 38, carbs: 12, fat: 8, compatibilityScore: 100,
           justification: 'Covers 38g of your remaining protein target · Within your caloric budget · No restricted ingredients',
+          justificationKey: 'hake_ceviche_justification',
         },
         {
-          rank: 2, name: 'Chicken and cucumber salad', calories: 320,
+          rank: 2, name: 'Chicken and cucumber salad', nameKey: 'chicken_cucumber_salad', calories: 320,
           protein: 32, carbs: 14, fat: 10, compatibilityScore: 87,
           justification: 'High protein content, within budget',
+          justificationKey: 'chicken_cucumber_salad_justification',
         },
         {
-          rank: 3, name: 'Gazpacho with wholemeal toast', calories: 210,
+          rank: 3, name: 'Gazpacho with wholemeal toast', nameKey: 'gazpacho_wholemeal_toast', calories: 210,
           protein: 6, carbs: 38, fat: 5, compatibilityScore: 74,
           justification: 'Light option within caloric budget',
+          justificationKey: 'gazpacho_wholemeal_toast_justification',
         },
       ],
       restrictedDishes: [
-        { name: 'Cheese pizza',   restriction: DietaryRestriction.LACTOSE_FREE },
-        { name: 'Seafood paella', restriction: DietaryRestriction.SEAFOOD_FREE },
+        { name: 'Cheese pizza',   nameKey: 'cheese_pizza',   restriction: DietaryRestriction.LACTOSE_FREE },
+        { name: 'Seafood paella', nameKey: 'seafood_paella', restriction: DietaryRestriction.SEAFOOD_FREE },
       ],
     });
   }

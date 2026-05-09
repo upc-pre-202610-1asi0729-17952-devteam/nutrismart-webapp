@@ -11,12 +11,14 @@ import { DietaryRestriction } from '../../../iam/domain/model/dietary-restrictio
 export interface RankedDish {
   readonly rank: number;
   readonly name: string;
+  readonly nameKey: string | null;
   readonly calories: number;
   readonly protein: number;
   readonly carbs: number;
   readonly fat: number;
   readonly compatibilityScore: number;
   readonly justification: string;
+  readonly justificationKey: string | null;
 }
 
 /**
@@ -28,6 +30,7 @@ export interface RankedDish {
  */
 export interface RestrictedDish {
   readonly name: string;
+  readonly nameKey: string | null;
   readonly restriction: DietaryRestriction;
 }
 

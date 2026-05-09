@@ -16,6 +16,7 @@ import { IamStore } from '../../../../iam/application/iam.store';
 import { SubscriptionPlan } from '../../../../iam/domain/model/subscription-plan.enum';
 import { MealType } from '../../../../nutrition-tracking/domain/model/meal-type.enum';
 import { MacroKey, SmartScanStore } from '../../../application/smart-scan.store';
+import { RankedDish } from '../../../domain/model/menu-analysis.entity';
 
 /**
  * Smart Scan view — route `/smart-scan`.
@@ -51,9 +52,10 @@ export class SmartScan implements OnInit {
 
   protected readonly MealType = MealType;
 
-  protected selectedMealType = MealType.LUNCH;
-  protected plateDragActive  = signal(false);
-  protected menuDragActive   = signal(false);
+  protected selectedMealType     = MealType.LUNCH;
+  protected selectedMenuMealType = MealType.LUNCH;
+  protected plateDragActive      = signal(false);
+  protected menuDragActive       = signal(false);
 
   protected isBasic = computed(() => {
     const user = this.iamStore.currentUser();
@@ -179,6 +181,10 @@ export class SmartScan implements OnInit {
 
   onCancel(): void {
     this.smartScanStore.reset();
+  }
+
+  async onLogMenuDish(dish: RankedDish): Promise<void> {
+    await this.smartScanStore.confirmMenuDish(dish, this.selectedMenuMealType);
   }
 
   protected macroI18nKey(macro: MacroKey): string {

@@ -84,17 +84,20 @@ export class MenuAnalysisAssembler
 {
   toEntityFromResource(r: MenuAnalysisResource): MenuAnalysis {
     const ranked: RankedDish[] = r.ranked_dishes.map(d => ({
-      rank:               d.rank,
-      name:               d.name,
-      calories:           d.calories,
-      protein:            d.protein,
-      carbs:              d.carbs,
-      fat:                d.fat,
+      rank:             d.rank,
+      name:             d.name,
+      nameKey:          d.name_key ?? null,
+      calories:         d.calories,
+      protein:          d.protein,
+      carbs:            d.carbs,
+      fat:              d.fat,
       compatibilityScore: d.compatibility_score,
-      justification:      d.justification,
+      justification:    d.justification,
+      justificationKey: d.justification_key ?? null,
     }));
     const restricted: RestrictedDish[] = r.restricted_dishes.map(d => ({
       name:        d.name,
+      nameKey:     d.name_key ?? null,
       restriction: d.restriction as DietaryRestriction,
     }));
     return new MenuAnalysis({
@@ -112,15 +115,18 @@ export class MenuAnalysisAssembler
       ranked_dishes:   e.rankedDishes.map(d => ({
         rank:                d.rank,
         name:                d.name,
+        name_key:            d.nameKey,
         calories:            d.calories,
         protein:             d.protein,
         carbs:               d.carbs,
         fat:                 d.fat,
         compatibility_score: d.compatibilityScore,
         justification:       d.justification,
+        justification_key:   d.justificationKey,
       })),
       restricted_dishes: e.restrictedDishes.map(d => ({
         name:        d.name,
+        name_key:    d.nameKey,
         restriction: d.restriction,
       })),
       scanned_at:      e.scannedAt,

@@ -330,8 +330,19 @@
     "contains": "contains",
     "back_to_scan": "← Back to scan",
     "impact_title": "Nutritional impact",
+    "impact_best_dish_note": "Impact calculated for the recommended dish",
     "impact_approaching": "Will reach {{ percent }}% of your daily target",
     "impact_exceeded": "Will exceed your daily target ({{ percent }}%)"
+  },
+  "menu_dishes": {
+    "hake_ceviche": "Hake ceviche",
+    "hake_ceviche_justification": "Covers 38g of your remaining protein target · Within your caloric budget · No restricted ingredients",
+    "chicken_cucumber_salad": "Chicken and cucumber salad",
+    "chicken_cucumber_salad_justification": "High protein content, within budget",
+    "gazpacho_wholemeal_toast": "Gazpacho with wholemeal toast",
+    "gazpacho_wholemeal_toast_justification": "Light option within caloric budget",
+    "cheese_pizza": "Cheese pizza",
+    "seafood_paella": "Seafood paella"
   },
   "food_items": {
     "grilled_chicken_breast": "Grilled chicken breast",
