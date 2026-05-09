@@ -11,4 +11,5 @@ export const environment = {
   subscriptionsEndpointPath: '/subscriptions',
   billingHistoryEndpointPath: '/billing-history',
   behavioralProgressEndpointPath: '/behavioral-progress',
+  dailyBalanceEndpointPath: '/daily-balance',
 };

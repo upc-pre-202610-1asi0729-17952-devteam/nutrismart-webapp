@@ -88,7 +88,7 @@ export class DailyBalanceEndpoint extends BaseApiEndpoint<
   constructor(http: HttpClient) {
     super(
       http,
-      environment.apiBaseUrl + '/daily-balance',
+      environment.apiBaseUrl + environment.dailyBalanceEndpointPath,
       new DailyIntakeAssembler()
     );
   }
