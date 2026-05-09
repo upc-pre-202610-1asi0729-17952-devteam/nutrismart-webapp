@@ -134,9 +134,14 @@ mat-card-header {
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
+.scan-card--teal .drop-zone {
+  border-color: #5bbcb0;
+  background: #e8f8f6;
+}
+
 .drop-zone--active {
-  border-color: #2d9e8f;
-  background: #f0fdf9;
+  border-color: #2d9e8f !important;
+  background: #ccf0eb !important;
 }
 
 .drop-zone__icon {
