@@ -263,7 +263,6 @@
     "entry_deleted": "Registro eliminado",
     "daily_goal": "Meta Diaria",
     "consumed": "Consumido",
-    "active_google_fit": "Activo (Google Fit)",
     "remaining": "Restante",
     "exceeded": "Excedido",
     "percent_consumed": "{{ percent }}% de tu meta consumida",

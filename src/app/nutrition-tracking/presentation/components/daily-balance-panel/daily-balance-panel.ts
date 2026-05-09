@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { NutritionStore } from '../../../application/nutrition.store';
 
 /**
@@ -12,7 +13,7 @@ import { NutritionStore } from '../../../application/nutrition.store';
  */
 @Component({
   selector: 'app-daily-balance-panel',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, TranslatePipe],
   templateUrl: './daily-balance-panel.html',
   styleUrl: './daily-balance-panel.css',
 })

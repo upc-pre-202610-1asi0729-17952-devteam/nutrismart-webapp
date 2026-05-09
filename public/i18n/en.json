@@ -263,7 +263,6 @@
     "entry_deleted": "Entry deleted",
     "daily_goal": "Daily Goal",
     "consumed": "Consumed",
-    "active_google_fit": "Active (Google Fit)",
     "remaining": "Remaining",
     "exceeded": "Exceeded",
     "percent_consumed": "{{ percent }}% of your goal consumed",

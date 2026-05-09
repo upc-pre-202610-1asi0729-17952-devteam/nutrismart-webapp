@@ -1,22 +1,22 @@
 <div class="balance-panel" [class.balance-panel--exceeded]="exceeded()" aria-live="polite">
 
   <h3 class="panel-title" [class.title--danger]="exceeded()">
-    {{ exceeded() ? 'Calorie limit exceeded' : 'Search food' }}
+    {{ (exceeded() ? 'nutrition.calorie_limit_exceeded' : 'nutrition.search_food') | translate }}
   </h3>
 
   <div class="balance-rows">
     <div class="balance-row">
-      <span class="balance-label">Daily Goal</span>
+      <span class="balance-label">{{ 'nutrition.daily_goal' | translate }}</span>
       <span class="balance-value">{{ dailyGoal() | number }} kcal</span>
     </div>
     <div class="balance-row">
-      <span class="balance-label">Consumed</span>
+      <span class="balance-label">{{ 'nutrition.consumed' | translate }}</span>
       <span class="balance-value" [class.val--danger]="exceeded()">
         {{ consumed() | number }} kcal
       </span>
     </div>
     <div class="balance-row balance-row--total">
-      <span class="balance-label">{{ exceeded() ? 'Exceeded' : 'Remaining' }}</span>
+      <span class="balance-label">{{ (exceeded() ? 'nutrition.exceeded' : 'nutrition.remaining') | translate }}</span>
       <span class="balance-value" [class.val--danger]="exceeded()" [class.val--remaining]="!exceeded()">
         {{ exceeded() ? '+' : '' }}{{ netCalories() }} kcal
       </span>
@@ -34,7 +34,9 @@
   </div>
 
   <p class="balance-footer">
-    {{ exceeded() ? 'You have exceeded your goal. Consider a lighter dinner.' : percentConsumed() + '% of your goal consumed' }}
+    {{ exceeded()
+       ? ('nutrition.exceeded_warning' | translate)
+       : ('nutrition.percent_consumed' | translate: { percent: percentConsumed() }) }}
   </p>
 
 </div>
