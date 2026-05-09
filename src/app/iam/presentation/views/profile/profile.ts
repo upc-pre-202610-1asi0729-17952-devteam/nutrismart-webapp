@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { LanguageSwitcher } from '../../../../shared/presentation/components/language-switcher/language-switcher';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { ActivityLevel } from '../../../../iam/domain/model/activity-level.enum';
 import { DietaryRestriction } from '../../../../iam/domain/model/dietary-restriction.enum';
@@ -41,7 +42,7 @@ interface PanelNavItem {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, LanguageSwitcher],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
@@ -137,11 +138,6 @@ export class Profile {
   notif3 = signal(false);
   notif4 = signal(true);
   notif5 = signal(false);
-
-  // ─── Panel 4 — Language ───────────────────────────────────────────────────
-
-  /** Currently selected language code. */
-  selectedLang = signal<'en' | 'es'>('en');
 
   // ─── Panel 5 — Security ───────────────────────────────────────────────────
 
@@ -283,13 +279,6 @@ export class Profile {
    */
   isConditionSelected(condition: MedicalCondition): boolean {
     return (this.iamStore.currentUser()?.medicalConditions ?? []).includes(condition as string);
-  }
-
-  /**
-   * Saves the selected language and applies it via ngx-translate.
-   */
-  applyLanguage(): void {
-    this.translate.use(this.selectedLang());
   }
 
   /**

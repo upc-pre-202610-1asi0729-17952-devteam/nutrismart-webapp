@@ -231,23 +231,7 @@
       @case ('language') {
         <section class="panel-section">
           <h2 class="panel-title">{{ 'profile.language_title' | translate }}</h2>
-
-          <div class="lang-options">
-            <label class="lang-option">
-              <input type="radio" name="lang" value="en"
-                     [checked]="selectedLang() === 'en'"
-                     (change)="selectedLang.set('en')" />
-              <span>English</span>
-            </label>
-            <label class="lang-option">
-              <input type="radio" name="lang" value="es"
-                     [checked]="selectedLang() === 'es'"
-                     (change)="selectedLang.set('es')" />
-              <span>Español</span>
-            </label>
-          </div>
-
-          <button type="button" class="btn-save" (click)="applyLanguage()">{{ 'profile.apply_language' | translate }}</button>
+          <app-language-switcher></app-language-switcher>
         </section>
       }
 
