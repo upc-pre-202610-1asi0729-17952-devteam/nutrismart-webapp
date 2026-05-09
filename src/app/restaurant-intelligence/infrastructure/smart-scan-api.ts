@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { MealType } from '../../nutrition-tracking/domain/model/meal-type.enum';
@@ -18,11 +19,16 @@ import { ScannedFoodItem } from '../domain/model/scanned-food-item.entity';
  */
 @Injectable({ providedIn: 'root' })
 export class SmartScanApi extends BaseApi {
-  private _http: HttpClient;
+  private _http      = inject(HttpClient);
+  private _translate = inject(TranslateService);
 
-  constructor() {
-    super();
-    this._http = inject(HttpClient);
+  constructor() { super(); }
+
+  /** Resolves a localised name from an i18n key, falling back to the raw value. */
+  private _t(namespace: string, key: string | null, fallback: string): string {
+    if (!key) return fallback;
+    const resolved = this._translate.instant(`${namespace}.${key}`);
+    return resolved !== `${namespace}.${key}` ? resolved : fallback;
   }
 
   /**
@@ -37,9 +43,9 @@ export class SmartScanApi extends BaseApi {
       status: 'success',
       imageBase64,
       detectedItems: [
-        new ScannedFoodItem({ id: 1, name: 'Grilled chicken breast', nameKey: 'grilled_chicken_breast', quantityGrams: 150, calories: 248, protein: 47, carbs: 0, fat: 5, restrictions: [], isEdited: false }),
-        new ScannedFoodItem({ id: 2, name: 'White rice',             nameKey: 'white_rice',             quantityGrams: 180, calories: 234, protein: 4,  carbs: 52, fat: 0, restrictions: [], isEdited: false }),
-        new ScannedFoodItem({ id: 3, name: 'Mixed salad',            nameKey: 'mixed_salad',            quantityGrams: 80,  calories: 45,  protein: 2,  carbs: 8,  fat: 0, restrictions: [], isEdited: false }),
+        new ScannedFoodItem({ id: 1, name: this._t('food_items', 'grilled_chicken_breast', 'Grilled chicken breast'), nameKey: 'grilled_chicken_breast', quantityGrams: 150, calories: 248, protein: 47, carbs: 0, fat: 5, restrictions: [], isEdited: false }),
+        new ScannedFoodItem({ id: 2, name: this._t('food_items', 'white_rice',             'White rice'),             nameKey: 'white_rice',             quantityGrams: 180, calories: 234, protein: 4,  carbs: 52, fat: 0, restrictions: [], isEdited: false }),
+        new ScannedFoodItem({ id: 3, name: this._t('food_items', 'mixed_salad',            'Mixed salad'),            nameKey: 'mixed_salad',            quantityGrams: 80,  calories: 45,  protein: 2,  carbs: 8,  fat: 0, restrictions: [], isEdited: false }),
       ],
       mealType:  MealType.LUNCH,
       source:    'Google Cloud Vision API · Open Food Facts',
@@ -100,27 +106,27 @@ export class SmartScanApi extends BaseApi {
       scannedAt:      new Date().toISOString(),
       rankedDishes: [
         {
-          rank: 1, name: 'Hake ceviche', nameKey: 'hake_ceviche', calories: 280,
+          rank: 1, name: this._t('menu_dishes', 'hake_ceviche', 'Hake ceviche'), nameKey: 'hake_ceviche', calories: 280,
           protein: 38, carbs: 12, fat: 8, compatibilityScore: 100,
-          justification: 'Covers 38g of your remaining protein target · Within your caloric budget · No restricted ingredients',
+          justification: this._t('menu_dishes', 'hake_ceviche_justification', 'Covers 38g of your remaining protein target · Within your caloric budget · No restricted ingredients'),
           justificationKey: 'hake_ceviche_justification',
         },
         {
-          rank: 2, name: 'Chicken and cucumber salad', nameKey: 'chicken_cucumber_salad', calories: 320,
+          rank: 2, name: this._t('menu_dishes', 'chicken_cucumber_salad', 'Chicken and cucumber salad'), nameKey: 'chicken_cucumber_salad', calories: 320,
           protein: 32, carbs: 14, fat: 10, compatibilityScore: 87,
-          justification: 'High protein content, within budget',
+          justification: this._t('menu_dishes', 'chicken_cucumber_salad_justification', 'High protein content, within budget'),
           justificationKey: 'chicken_cucumber_salad_justification',
         },
         {
-          rank: 3, name: 'Gazpacho with wholemeal toast', nameKey: 'gazpacho_wholemeal_toast', calories: 210,
+          rank: 3, name: this._t('menu_dishes', 'gazpacho_wholemeal_toast', 'Gazpacho with wholemeal toast'), nameKey: 'gazpacho_wholemeal_toast', calories: 210,
           protein: 6, carbs: 38, fat: 5, compatibilityScore: 74,
-          justification: 'Light option within caloric budget',
+          justification: this._t('menu_dishes', 'gazpacho_wholemeal_toast_justification', 'Light option within caloric budget'),
           justificationKey: 'gazpacho_wholemeal_toast_justification',
         },
       ],
       restrictedDishes: [
-        { name: 'Cheese pizza',   nameKey: 'cheese_pizza',   restriction: DietaryRestriction.LACTOSE_FREE },
-        { name: 'Seafood paella', nameKey: 'seafood_paella', restriction: DietaryRestriction.SEAFOOD_FREE },
+        { name: this._t('menu_dishes', 'cheese_pizza',   'Cheese pizza'),   nameKey: 'cheese_pizza',   restriction: DietaryRestriction.LACTOSE_FREE },
+        { name: this._t('menu_dishes', 'seafood_paella', 'Seafood paella'), nameKey: 'seafood_paella', restriction: DietaryRestriction.SEAFOOD_FREE },
       ],
     });
   }
