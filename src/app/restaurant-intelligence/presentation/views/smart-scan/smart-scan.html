@@ -144,7 +144,9 @@
         <ul class="detected-items" role="list">
           @for (item of smartScanStore.scanResult()!.detectedItems; track item.id) {
             <li class="detected-item">
-              <span class="detected-item__name">{{ item.name }}</span>
+              <span class="detected-item__name">
+                {{ item.nameKey ? ('food_items.' + item.nameKey | translate) : item.name }}
+              </span>
               <label class="detected-item__qty">
                 <input type="number"
                        [value]="item.quantityGrams"

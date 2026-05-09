@@ -9,6 +9,7 @@ import { DietaryRestriction } from '../../../iam/domain/model/dietary-restrictio
 export interface ScannedFoodItemProps {
   id: number;
   name: string;
+  nameKey: string | null;
   quantityGrams: number;
   calories: number;
   protein: number;
@@ -29,6 +30,7 @@ export interface ScannedFoodItemProps {
 export class ScannedFoodItem implements BaseEntity {
   private _id: number;
   private _name: string;
+  private _nameKey: string | null;
   private _quantityGrams: number;
   private _calories: number;
   private _protein: number;
@@ -40,6 +42,7 @@ export class ScannedFoodItem implements BaseEntity {
   constructor(props: ScannedFoodItemProps) {
     this._id            = props.id;
     this._name          = props.name;
+    this._nameKey       = props.nameKey ?? null;
     this._quantityGrams = props.quantityGrams;
     this._calories      = props.calories;
     this._protein       = props.protein;
@@ -56,6 +59,8 @@ export class ScannedFoodItem implements BaseEntity {
 
   get name(): string { return this._name; }
   set name(v: string) { this._name = v; }
+
+  get nameKey(): string | null { return this._nameKey; }
 
   get quantityGrams(): number { return this._quantityGrams; }
   set quantityGrams(v: number) { this._quantityGrams = v; }

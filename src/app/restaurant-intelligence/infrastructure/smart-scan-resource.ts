@@ -7,6 +7,7 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
  */
 export interface ScannedFoodItemResource extends BaseResource {
   name: string;
+  name_key: string | null;
   quantity_grams: number;
   calories: number;
   protein: number;

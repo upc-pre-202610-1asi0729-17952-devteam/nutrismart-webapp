@@ -330,6 +330,11 @@
     "contains": "contains",
     "back_to_scan": "← Back to scan"
   },
+  "food_items": {
+    "grilled_chicken_breast": "Grilled chicken breast",
+    "white_rice": "White rice",
+    "mixed_salad": "Mixed salad"
+  },
   "pantry": {
     "page_title": "Pantry",
     "page_subtitle": "Manage your ingredients and get personalised recipe suggestions",

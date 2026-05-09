@@ -37,9 +37,9 @@ export class SmartScanApi extends BaseApi {
       status: 'success',
       imageBase64,
       detectedItems: [
-        new ScannedFoodItem({ id: 1, name: 'Grilled chicken breast', quantityGrams: 150, calories: 248, protein: 47, carbs: 0, fat: 5, restrictions: [], isEdited: false }),
-        new ScannedFoodItem({ id: 2, name: 'White rice',             quantityGrams: 180, calories: 234, protein: 4,  carbs: 52, fat: 0, restrictions: [], isEdited: false }),
-        new ScannedFoodItem({ id: 3, name: 'Mixed salad',            quantityGrams: 80,  calories: 45,  protein: 2,  carbs: 8,  fat: 0, restrictions: [], isEdited: false }),
+        new ScannedFoodItem({ id: 1, name: 'Grilled chicken breast', nameKey: 'grilled_chicken_breast', quantityGrams: 150, calories: 248, protein: 47, carbs: 0, fat: 5, restrictions: [], isEdited: false }),
+        new ScannedFoodItem({ id: 2, name: 'White rice',             nameKey: 'white_rice',             quantityGrams: 180, calories: 234, protein: 4,  carbs: 52, fat: 0, restrictions: [], isEdited: false }),
+        new ScannedFoodItem({ id: 3, name: 'Mixed salad',            nameKey: 'mixed_salad',            quantityGrams: 80,  calories: 45,  protein: 2,  carbs: 8,  fat: 0, restrictions: [], isEdited: false }),
       ],
       mealType:  MealType.LUNCH,
       source:    'Google Cloud Vision API · Open Food Facts',

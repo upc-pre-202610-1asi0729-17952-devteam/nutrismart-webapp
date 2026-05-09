@@ -330,6 +330,11 @@
     "contains": "contiene",
     "back_to_scan": "← Volver al escaneo"
   },
+  "food_items": {
+    "grilled_chicken_breast": "Pechuga de pollo a la plancha",
+    "white_rice": "Arroz blanco",
+    "mixed_salad": "Ensalada mixta"
+  },
   "pantry": {
     "page_title": "Despensa",
     "page_subtitle": "Administra tus ingredientes y obtén sugerencias de recetas personalizadas",

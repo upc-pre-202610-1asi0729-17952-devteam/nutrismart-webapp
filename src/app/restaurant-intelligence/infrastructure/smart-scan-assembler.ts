@@ -31,6 +31,7 @@ export class ScanResultAssembler
       detectedItems: r.detected_items.map((item, idx) => new ScannedFoodItem({
         id:            item.id ?? idx + 1,
         name:          item.name,
+        nameKey:       item.name_key ?? null,
         quantityGrams: item.quantity_grams,
         calories:      item.calories,
         protein:       item.protein,
@@ -53,6 +54,7 @@ export class ScanResultAssembler
       detected_items: e.detectedItems.map(item => ({
         id:             item.id,
         name:           item.name,
+        name_key:       item.nameKey,
         quantity_grams: item.quantityGrams,
         calories:       item.calories,
         protein:        item.protein,
