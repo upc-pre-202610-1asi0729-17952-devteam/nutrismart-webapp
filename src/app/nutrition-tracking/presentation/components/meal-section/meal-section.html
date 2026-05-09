@@ -1,0 +1,46 @@
+<div class="meal-section" [attr.aria-label]="mealType() + ' section'">
+
+  <div class="meal-header">
+    <div class="meal-dot" [style.backgroundColor]="color()"></div>
+    <span class="meal-name">{{ mealType() }}</span>
+    @if (isSkipped()) {
+      <span class="badge badge--skipped" role="status">Missed window · MealSkipped emitted</span>
+    } @else {
+      <span class="meal-kcal">{{ totalCalories() }} kcal</span>
+    }
+  </div>
+
+  @if (isSkipped()) {
+    <p class="skipped-text" aria-live="polite">Not logged · MealSkipped event emitted</p>
+  } @else if (records().length === 0) {
+    <p class="empty-text">Not yet logged</p>
+  } @else {
+    <div class="records-list" role="list">
+      @for (record of records(); track record.id) {
+        <div class="record-row" role="listitem" style="cursor:pointer"
+             (click)="viewEntry.emit(record)">
+          <div class="record-info">
+            <span class="record-name">{{ record.foodItemName }}</span>
+            <span class="record-qty">{{ record.quantity }}{{ record.unit }}</span>
+          </div>
+          <div class="record-macros">
+            <span class="record-kcal">{{ record.calories }} kcal</span>
+            <span class="record-detail">{{ record.macroSummary }}</span>
+          </div>
+          <button class="remove-btn"
+                  [attr.aria-label]="'Remove ' + record.foodItemName"
+                  (click)="$event.stopPropagation(); onRemove(record.id)">
+            ⊗
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  <button class="add-food-btn"
+          [attr.aria-label]="'Add food to ' + mealType()"
+          (click)="addFood.emit(mealType())">
+    + Add food to {{ mealType() }}
+  </button>
+
+</div>

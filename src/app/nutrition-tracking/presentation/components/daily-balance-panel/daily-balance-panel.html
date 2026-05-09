@@ -1,0 +1,44 @@
+<div class="balance-panel" [class.balance-panel--exceeded]="exceeded()" aria-live="polite">
+
+  <h3 class="panel-title" [class.title--danger]="exceeded()">
+    {{ exceeded() ? 'Calorie limit exceeded' : 'Search food' }}
+  </h3>
+
+  <div class="balance-rows">
+    <div class="balance-row">
+      <span class="balance-label">Daily Goal</span>
+      <span class="balance-value">{{ dailyGoal() | number }} kcal</span>
+    </div>
+    <div class="balance-row">
+      <span class="balance-label">Consumed</span>
+      <span class="balance-value" [class.val--danger]="exceeded()">
+        {{ consumed() | number }} kcal
+      </span>
+    </div>
+    <div class="balance-row">
+      <span class="balance-label">Active (Google Fit)</span>
+      <span class="balance-value val--active">-{{ active() }} kcal</span>
+    </div>
+    <div class="balance-row balance-row--total">
+      <span class="balance-label">{{ exceeded() ? 'Exceeded' : 'Remaining' }}</span>
+      <span class="balance-value" [class.val--danger]="exceeded()" [class.val--remaining]="!exceeded()">
+        {{ exceeded() ? '+' : '' }}{{ netCalories() }} kcal
+      </span>
+    </div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill"
+         [style.width.%]="percentConsumed()"
+         [style.backgroundColor]="exceeded() ? '#ef4444' : '#2d9e8f'"
+         role="progressbar"
+         [attr.aria-valuenow]="consumed()"
+         [attr.aria-valuemax]="dailyGoal()">
+    </div>
+  </div>
+
+  <p class="balance-footer">
+    {{ exceeded() ? 'You have exceeded your goal. Consider a lighter dinner.' : percentConsumed() + '% of your goal consumed' }}
+  </p>
+
+</div>

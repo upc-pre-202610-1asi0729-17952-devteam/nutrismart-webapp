@@ -1,0 +1,63 @@
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  width: 420px;
+  max-width: 95vw;
+  box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  text-align: center;
+}
+
+.dialog--restricted { border-top: 4px solid #ef4444; }
+
+.blocked-icon { font-size: 48px; margin-bottom: 12px; }
+
+.blocked-food-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ef4444;
+  margin: 0 0 12px;
+}
+
+.blocked-description {
+  font-size: 14px;
+  color: #374151;
+  margin: 0 0 16px;
+  line-height: 1.6;
+}
+
+.restriction-info-box {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #7f1d1d;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.btn-understood {
+  width: 100%;
+  padding: 12px;
+  background: #2d9e8f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+}
+.btn-understood:hover { background: #248a7c; }

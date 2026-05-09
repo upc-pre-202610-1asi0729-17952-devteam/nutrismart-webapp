@@ -1,0 +1,77 @@
+<div class="dialog-backdrop" (click)="onBackdropClick($event)">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+
+    <h2 id="dialog-title" class="dialog-title">Add to Daily Log</h2>
+    <p class="dialog-subtitle">Adding to: {{ targetMealType() }}</p>
+
+    <!-- Selected food info -->
+    <div class="food-info">
+      <span class="food-name">{{ food().name }}</span>
+      <span class="food-base">
+        Base: {{ food().servingSize }}{{ food().servingUnit }} ·
+        {{ food().caloriesPer100g }} kcal ·
+        P {{ food().proteinPer100g }}g · C {{ food().carbsPer100g }}g · G {{ food().fatPer100g }}g
+      </span>
+    </div>
+
+    <!-- Quantity input -->
+    <div class="quantity-section">
+      <label class="field-label" for="quantity-input">Quantity ({{ food().servingUnit }})</label>
+      <input
+        id="quantity-input"
+        type="number"
+        class="quantity-input"
+        [value]="quantity()"
+        min="1"
+        max="9999"
+        (input)="onQuantityChange($event)"
+        aria-required="true" />
+    </div>
+
+    <!-- Meal type selector -->
+    <div class="meal-type-section">
+      <label class="field-label">Meal type</label>
+      <div class="meal-type-buttons" role="group" aria-label="Select meal type">
+        @for (mt of mealTypes; track mt) {
+          <button class="meal-btn"
+                  [class.meal-btn--active]="selectedMealType === mt"
+                  [attr.aria-pressed]="selectedMealType === mt"
+                  (click)="selectedMealType = mt">
+            {{ mt }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Macro preview grid - T20 -->
+    <div class="macro-grid" aria-live="polite" aria-label="Nutritional preview">
+      <div class="macro-chip">
+        <span class="chip-value">{{ nutrients().calories }}</span>
+        <span class="chip-label">Calories</span>
+      </div>
+      <div class="macro-chip">
+        <span class="chip-value">{{ nutrients().protein }}g</span>
+        <span class="chip-label">Protein</span>
+      </div>
+      <div class="macro-chip">
+        <span class="chip-value">{{ nutrients().carbs }}g</span>
+        <span class="chip-label">Carbs</span>
+      </div>
+      <div class="macro-chip">
+        <span class="chip-value">{{ nutrients().fat }}g</span>
+        <span class="chip-label">Fat</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <button class="btn btn--outline" (click)="cancel.emit()">Cancel</button>
+      <button class="btn btn--primary"
+              [disabled]="quantity() <= 0"
+              (click)="onConfirm()">
+        Confirm · MealRecorded →
+      </button>
+    </div>
+
+  </div>
+</div>
