@@ -1,5 +1,13 @@
 <div class="my-plan-page">
 
+  <!-- ── Toast notification ───────────────────────────────── -->
+  @if (cancelMessage()) {
+    <div class="toast-notification" role="alert" aria-live="polite">
+      <span class="toast-icon">✓</span>
+      <span>{{ cancelMessage() }}</span>
+    </div>
+  }
+
   <!-- ── Page header ───────────────────────────────────────── -->
   <header class="page-header">
     <div>
@@ -49,13 +57,13 @@
       <div class="billing-table-wrap">
         <table class="billing-table" aria-label="Payment history">
           <thead>
-            <tr>
-              <th>FECHA</th>
-              <th>PLAN</th>
-              <th>MONTO</th>
-              <th>ESTADO</th>
-              <th>RECIBO</th>
-            </tr>
+          <tr>
+            <th>FECHA</th>
+            <th>PLAN</th>
+            <th>MONTO</th>
+            <th>ESTADO</th>
+            <th>RECIBO</th>
+          </tr>
           </thead>
           <tbody>
             @for (record of subsStore.billingHistory(); track record.id) {

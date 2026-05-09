@@ -16,30 +16,27 @@ import { DowngradeDialogComponent } from '../../components/downgrade-dialog/down
  */
 @Component({
   selector: 'app-my-plan',
-  imports: [
-    PlanCardsComponent,
-    UpgradeDialogComponent,
-    DowngradeDialogComponent,
-  ],
+  imports: [PlanCardsComponent, UpgradeDialogComponent, DowngradeDialogComponent],
   templateUrl: './my-plan.html',
   styleUrl: './my-plan.css',
 })
 export class MyPlan implements OnInit {
-
-  protected subsStore   = inject(SubscriptionsStore);
-  private   subsApi     = inject(SubscriptionsApi);
+  protected subsStore = inject(SubscriptionsStore);
+  private subsApi = inject(SubscriptionsApi);
 
   /** Target plan for the upgrade dialog — null when closed. */
-  protected upgradingTo   = signal<SubscriptionPlan | null>(null);
+  protected upgradingTo = signal<SubscriptionPlan | null>(null);
 
   /** Target plan for the downgrade dialog — null when closed. */
   protected downgradingTo = signal<SubscriptionPlan | null>(null);
 
+  protected cancelMessage = signal<string | null>(null);
+
   /** Plan prices per tier. */
   protected planPrice(plan: SubscriptionPlan): string {
     const prices: Record<SubscriptionPlan, string> = {
-      [SubscriptionPlan.BASIC]:   '9.99',
-      [SubscriptionPlan.PRO]:     '14.99',
+      [SubscriptionPlan.BASIC]: '9.99',
+      [SubscriptionPlan.PRO]: '14.99',
       [SubscriptionPlan.PREMIUM]: '19.99',
     };
     return prices[plan];
@@ -77,6 +74,8 @@ export class MyPlan implements OnInit {
   /** Cancels the active subscription. */
   async onCancelPlan(): Promise<void> {
     await this.subsStore.cancelPlan();
+    this.cancelMessage.set('Your plan has been cancelled successfully.');
+    setTimeout(() => this.cancelMessage.set(null), 4000);
   }
 
   /** Opens a mock PDF receipt. */
