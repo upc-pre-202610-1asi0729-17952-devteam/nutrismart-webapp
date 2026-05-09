@@ -1,5 +1,13 @@
 <div class="daily-log-page">
 
+  <!-- ── Toast notification ───────────────────────────────── -->
+  @if (toastMessage()) {
+    <div class="toast-notification" [class.toast--danger]="toastMessage()!.type === 'danger'" role="alert" aria-live="polite">
+      <span class="toast-icon">{{ toastMessage()!.type === 'success' ? '✓' : '✕' }}</span>
+      <span>{{ toastMessage()!.text }}</span>
+    </div>
+  }
+
   <!-- ── Page header ───────────────────────────────────────── -->
   <header class="page-header">
     <div>

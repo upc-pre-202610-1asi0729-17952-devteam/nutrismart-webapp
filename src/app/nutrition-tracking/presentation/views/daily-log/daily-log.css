@@ -119,3 +119,30 @@
   position: sticky;
   top: 20px;
 }
+
+/* ── Toast notification ─────────────────────────────────────── */
+.toast-notification {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #2d9e8f;
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(0,0,0,.15);
+  z-index: 2000;
+  animation: slideIn .3s ease;
+}
+
+.toast--danger { background: #ef4444; }
+.toast-icon { font-size: 16px; }
+
+@keyframes slideIn {
+  from { transform: translateX(100px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}

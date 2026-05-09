@@ -67,6 +67,8 @@ export class DailyLog implements OnInit {
   /** Meal record selected for detail view. */
   protected selectedEntry = signal<MealRecord | null>(null);
 
+  protected toastMessage = signal<{ text: string; type: string } | null>(null);
+
   // ─── Computed ─────────────────────────────────────────────────────────────
 
   /** Whether the daily goal has been exceeded (T22). */
@@ -176,6 +178,11 @@ export class DailyLog implements OnInit {
     this.selectedEntry.set(record);
   }
 
+  showToast(text: string, type: string): void {
+    this.toastMessage.set({ text, type });
+    setTimeout(() => this.toastMessage.set(null), 3000);
+  }
+
   async ngOnInit(): Promise<void> {
     await this.nutritionStore.fetchMealEntries();
     await this.nutritionStore.fetchDailyBalance();
@@ -187,6 +194,7 @@ export class DailyLog implements OnInit {
   /** Removes a meal record and refreshes the balance. */
   async onRemoveEntry(id: number): Promise<void> {
     await this.nutritionStore.deleteMealEntry(id);
+    this.showToast('Entry removed from daily log.', 'danger');
   }
 
   /** Opens the add food panel pre-selecting a meal type. */
@@ -237,6 +245,7 @@ export class DailyLog implements OnInit {
     await this.nutritionStore.addMealEntry(new MealRecord(props));
     this.selectedFood.set(null);
     this.nutritionStore.clearSearch();
+    this.showToast('Food added to your daily log.', 'success');
   }
 
   /** Cancels the add food dialog. */
