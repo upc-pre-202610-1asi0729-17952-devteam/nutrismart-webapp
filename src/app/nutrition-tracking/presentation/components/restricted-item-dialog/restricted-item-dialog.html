@@ -6,17 +6,15 @@
     <h2 id="blocked-title" class="blocked-food-name">{{ food().name }}</h2>
 
     <p class="blocked-description">
-      This food contains {{ conflictNames() }}, which conflicts with your active
-      dietary restriction. RestrictedItemBlocked event emitted · Log entry not saved.
+      {{ 'nutrition.restricted_description' | translate: { conflicts: conflictNames() } }}
     </p>
 
     <div class="restriction-info-box">
-      Active restriction: {{ food().restrictions.join(', ').toLowerCase().replace(/_free/g, '-free').replace(/_/g, ' ') }}
-      · Configured during onboarding. To modify, go to Profile → Dietary Restrictions.
+      {{ 'nutrition.restricted_info_box' | translate: { restrictions: restrictionNames() } }}
     </div>
 
     <button class="btn-understood" (click)="close.emit()">
-      Understood · Search another food
+      {{ 'nutrition.restricted_understood' | translate }}
     </button>
 
   </div>
