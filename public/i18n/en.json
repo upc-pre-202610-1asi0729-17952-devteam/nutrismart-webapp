@@ -315,7 +315,7 @@
     "total_estimated": "Total estimated:",
     "select_meal_type": "Select meal type",
     "quantities_note": "Quantities are estimated. Adjust if needed before confirming.",
-    "confirm_log": "Confirm and log · MealRecorded →",
+    "confirm_log": "Confirm and log",
     "cancel_result": "← Cancel",
     "invalid_title": "No food items could be detected",
     "invalid_desc": "The image may be blurry or doesn't contain recognizable food. Please try again or log manually.",

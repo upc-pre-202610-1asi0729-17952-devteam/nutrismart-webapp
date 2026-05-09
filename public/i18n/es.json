@@ -315,7 +315,7 @@
     "total_estimated": "Total estimado:",
     "select_meal_type": "Selecciona tipo de comida",
     "quantities_note": "Las cantidades son estimadas. Ajusta si es necesario antes de confirmar.",
-    "confirm_log": "Confirmar y registrar · MealRecorded →",
+    "confirm_log": "Confirmar y registrar",
     "cancel_result": "← Cancelar",
     "invalid_title": "No se detectaron alimentos",
     "invalid_desc": "La imagen puede estar borrosa o no contiene alimentos reconocibles. Intenta de nuevo o regístralo manualmente.",
