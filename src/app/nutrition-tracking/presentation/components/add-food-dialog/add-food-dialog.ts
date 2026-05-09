@@ -1,4 +1,5 @@
 import { Component, computed, EventEmitter, input, Output, signal } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { FoodItem } from '../../../domain/model/food-item.entity';
 import { MealType } from '../../../domain/model/meal-type.enum';
 
@@ -22,6 +23,7 @@ export interface AddFoodPayload {
  */
 @Component({
   selector: 'app-add-food-dialog',
+  imports: [TranslatePipe],
   templateUrl: './add-food-dialog.html',
   styleUrl: './add-food-dialog.css',
 })

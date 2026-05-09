@@ -1,4 +1,5 @@
 import { Component, computed, EventEmitter, input, Output } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { MealRecord } from '../../../domain/model/meal-record.entity';
 
 /**
@@ -11,6 +12,7 @@ import { MealRecord } from '../../../domain/model/meal-record.entity';
  */
 @Component({
   selector: 'app-meal-entry-detail',
+  imports: [TranslatePipe],
   templateUrl: './meal-entry-detail.html',
   styleUrl: './meal-entry-detail.css',
 })

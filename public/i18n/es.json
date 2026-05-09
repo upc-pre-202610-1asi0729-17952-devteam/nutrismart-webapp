@@ -279,7 +279,13 @@
     "base_info": "Base: {{ size }}{{ unit }} · {{ calories }} kcal · P {{ protein }}g · C {{ carbs }}g · G {{ fat }}g",
     "macro_preview": "Vista previa nutricional",
     "restricted_blocked_title": "Alimento restringido",
-    "restricted_understood": "Entendido · Buscar otro alimento"
+    "restricted_understood": "Entendido · Buscar otro alimento",
+    "quantity_logged": "Cantidad registrada",
+    "logged_at": "Registrado a las {{ time }}",
+    "add_to_daily_log": "Agregar al Registro Diario",
+    "adding_to": "Agregando a: {{ meal }}",
+    "quantity_unit": "Cantidad ({{ unit }})",
+    "meal_type": "Tipo de comida"
   },
   "my_plan": {
     "page_title": "Suscripción y facturación",

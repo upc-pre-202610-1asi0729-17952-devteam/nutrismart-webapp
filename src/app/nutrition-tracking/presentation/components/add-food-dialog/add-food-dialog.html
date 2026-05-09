@@ -1,22 +1,31 @@
 <div class="dialog-backdrop" (click)="onBackdropClick($event)">
   <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
 
-    <h2 id="dialog-title" class="dialog-title">Add to Daily Log</h2>
-    <p class="dialog-subtitle">Adding to: {{ targetMealType() }}</p>
+    <h2 id="dialog-title" class="dialog-title">{{ 'nutrition.add_to_daily_log' | translate }}</h2>
+    <p class="dialog-subtitle">
+      {{ 'nutrition.adding_to' | translate: { meal: ('nutrition.' + targetMealType().toLowerCase()) | translate } }}
+    </p>
 
     <!-- Selected food info -->
     <div class="food-info">
       <span class="food-name">{{ food().name }}</span>
       <span class="food-base">
-        Base: {{ food().servingSize }}{{ food().servingUnit }} ·
-        {{ food().caloriesPer100g }} kcal ·
-        P {{ food().proteinPer100g }}g · C {{ food().carbsPer100g }}g · G {{ food().fatPer100g }}g
+        {{ 'nutrition.base_info' | translate: {
+          size:    food().servingSize,
+          unit:    food().servingUnit,
+          calories: food().caloriesPer100g,
+          protein: food().proteinPer100g,
+          carbs:   food().carbsPer100g,
+          fat:     food().fatPer100g
+        } }}
       </span>
     </div>
 
     <!-- Quantity input -->
     <div class="quantity-section">
-      <label class="field-label" for="quantity-input">Quantity ({{ food().servingUnit }})</label>
+      <label class="field-label" for="quantity-input">
+        {{ 'nutrition.quantity_unit' | translate: { unit: food().servingUnit } }}
+      </label>
       <input
         id="quantity-input"
         type="number"
@@ -30,46 +39,46 @@
 
     <!-- Meal type selector -->
     <div class="meal-type-section">
-      <label class="field-label">Meal type</label>
-      <div class="meal-type-buttons" role="group" aria-label="Select meal type">
+      <label class="field-label">{{ 'nutrition.meal_type' | translate }}</label>
+      <div class="meal-type-buttons" role="group" [attr.aria-label]="'nutrition.meal_type' | translate">
         @for (mt of mealTypes; track mt) {
           <button class="meal-btn"
                   [class.meal-btn--active]="selectedMealType === mt"
                   [attr.aria-pressed]="selectedMealType === mt"
                   (click)="selectedMealType = mt">
-            {{ mt }}
+            {{ ('nutrition.' + mt.toLowerCase()) | translate }}
           </button>
         }
       </div>
     </div>
 
     <!-- Macro preview grid - T20 -->
-    <div class="macro-grid" aria-live="polite" aria-label="Nutritional preview">
+    <div class="macro-grid" aria-live="polite" [attr.aria-label]="'nutrition.macro_preview' | translate">
       <div class="macro-chip">
         <span class="chip-value">{{ nutrients().calories }}</span>
-        <span class="chip-label">Calories</span>
+        <span class="chip-label">{{ 'nutrition.calories' | translate }}</span>
       </div>
       <div class="macro-chip">
         <span class="chip-value">{{ nutrients().protein }}g</span>
-        <span class="chip-label">Protein</span>
+        <span class="chip-label">{{ 'nutrition.protein' | translate }}</span>
       </div>
       <div class="macro-chip">
         <span class="chip-value">{{ nutrients().carbs }}g</span>
-        <span class="chip-label">Carbs</span>
+        <span class="chip-label">{{ 'nutrition.carbs' | translate }}</span>
       </div>
       <div class="macro-chip">
         <span class="chip-value">{{ nutrients().fat }}g</span>
-        <span class="chip-label">Fat</span>
+        <span class="chip-label">{{ 'nutrition.fat' | translate }}</span>
       </div>
     </div>
 
     <!-- Actions -->
     <div class="dialog-actions">
-      <button class="btn btn--outline" (click)="cancel.emit()">Cancel</button>
+      <button class="btn btn--outline" (click)="cancel.emit()">{{ 'common.cancel' | translate }}</button>
       <button class="btn btn--primary"
               [disabled]="quantity() <= 0"
               (click)="onConfirm()">
-        Confirm · MealRecorded →
+        {{ 'nutrition.confirm_and_save' | translate }}
       </button>
     </div>
 
