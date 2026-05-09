@@ -59,7 +59,9 @@
         </mat-card>
 
         <!-- Card: Scan restaurant menu (Premium only) -->
-        <mat-card class="scan-card" [class.scan-card--locked]="!isPremium()">
+        <mat-card class="scan-card"
+                  [class.scan-card--purple]="isPremium()"
+                  [class.scan-card--locked]="!isPremium()">
           <mat-card-header>
             <mat-card-title>{{ 'smart_scan.menu_card_title' | translate }}</mat-card-title>
             @if (!isPremium()) {

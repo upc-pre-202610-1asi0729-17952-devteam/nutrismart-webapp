@@ -1,5 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -45,25 +47,19 @@ import { SmartScanStore } from '../../../application/smart-scan.store';
 export class SmartScan implements OnInit {
   protected iamStore       = inject(IamStore);
   protected smartScanStore = inject(SmartScanStore);
+  private   router         = inject(Router);
 
   protected readonly MealType = MealType;
 
-  /** Meal type selected by the user before confirming scan log. */
   protected selectedMealType = MealType.LUNCH;
+  protected plateDragActive  = signal(false);
+  protected menuDragActive   = signal(false);
 
-  /** Whether a file is being dragged over the plate drop zone. */
-  protected plateDragActive = signal(false);
-
-  /** Whether a file is being dragged over the menu drop zone. */
-  protected menuDragActive = signal(false);
-
-  /** Computed: current user is Basic plan (shows paywall). */
   protected isBasic = computed(() => {
     const user = this.iamStore.currentUser();
     return user !== null && !user.isPro();
   });
 
-  /** Computed: current user is Premium. */
   protected isPremium = computed(() => {
     const user = this.iamStore.currentUser();
     return user?.plan === SubscriptionPlan.PREMIUM;
@@ -76,11 +72,23 @@ export class SmartScan implements OnInit {
     { value: MealType.SNACK,     labelKey: 'nutrition.snack' },
   ];
 
+  constructor() {
+    // Reset when navigating to /smart-scan — handles same-URL sidebar clicks
+    // (requires onSameUrlNavigation: 'reload' in router config).
+    this.router.events
+      .pipe(
+        filter(e => e instanceof NavigationEnd),
+        filter(e => (e as NavigationEnd).urlAfterRedirects.startsWith('/smart-scan')),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.smartScanStore.reset());
+  }
+
   ngOnInit(): void {
     this.smartScanStore.reset();
   }
 
-  // ─── Plate drop zone drag events ─────────────────────────────────────────
+  // ─── Plate drop zone ──────────────────────────────────────────────────────
 
   onPlateDragOver(event: DragEvent): void {
     event.preventDefault();
@@ -102,10 +110,11 @@ export class SmartScan implements OnInit {
     await this._readAndScanPlate(file);
   }
 
-  // ─── Menu drop zone drag events ───────────────────────────────────────────
+  // ─── Menu drop zone (Premium only) ───────────────────────────────────────
 
   onMenuDragOver(event: DragEvent): void {
     event.preventDefault();
+    if (!this.isPremium()) return;
     event.stopPropagation();
     this.menuDragActive.set(true);
   }
@@ -119,12 +128,13 @@ export class SmartScan implements OnInit {
     event.preventDefault();
     event.stopPropagation();
     this.menuDragActive.set(false);
+    if (!this.isPremium()) return;
     const file = event.dataTransfer?.files?.[0];
     if (!file || !file.type.startsWith('image/')) return;
     await this._readAndScanMenu(file);
   }
 
-  // ─── Image Upload / Demo Triggers ─────────────────────────────────────────
+  // ─── Upload / demo triggers ───────────────────────────────────────────────
 
   async onUploadPlate(event: Event): Promise<void> {
     const file = (event.target as HTMLInputElement)?.files?.[0];
@@ -146,7 +156,7 @@ export class SmartScan implements OnInit {
     await this.smartScanStore.scanMenuPhoto('demo-menu-base64');
   }
 
-  // ─── Plate Result Actions ─────────────────────────────────────────────────
+  // ─── Plate result actions ─────────────────────────────────────────────────
 
   onQuantityChange(itemId: number, event: Event): void {
     const value = parseFloat((event.target as HTMLInputElement).value);
