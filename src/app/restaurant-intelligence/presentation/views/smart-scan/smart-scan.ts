@@ -12,7 +12,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { SubscriptionPlan } from '../../../../iam/domain/model/subscription-plan.enum';
 import { MealType } from '../../../../nutrition-tracking/domain/model/meal-type.enum';
-import { SmartScanStore } from '../../application/smart-scan.store';
+import { SmartScanStore } from '../../../application/smart-scan.store';
 
 /**
  * Smart Scan view — route `/smart-scan`.
