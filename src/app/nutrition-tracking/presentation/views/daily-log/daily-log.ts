@@ -179,7 +179,6 @@ export class DailyLog implements OnInit {
   async ngOnInit(): Promise<void> {
     await this.nutritionStore.fetchMealEntries();
     await this.nutritionStore.fetchDailyBalance();
-    setTimeout(() => this.showGoalMetAlert.set(false), 4000);
   }
 
   // ─── Event Handlers ───────────────────────────────────────────────────────
