@@ -9,6 +9,7 @@ import { UserGoal } from '../../../iam/domain/model/user-goal.enum';
 export interface RecipeSuggestionProps {
   id: number;
   name: string;
+  nameKey?: string;
   calories: number;
   protein: number;
   carbs: number;
@@ -30,6 +31,7 @@ export interface RecipeSuggestionProps {
 export class RecipeSuggestion implements BaseEntity {
   private _id: number;
   private _name: string;
+  private _nameKey: string | undefined;
   private _calories: number;
   private _protein: number;
   private _carbs: number;
@@ -43,6 +45,7 @@ export class RecipeSuggestion implements BaseEntity {
   constructor(props: RecipeSuggestionProps) {
     this._id              = props.id;
     this._name            = props.name;
+    this._nameKey         = props.nameKey;
     this._calories        = props.calories;
     this._protein         = props.protein;
     this._carbs           = props.carbs;
@@ -60,6 +63,9 @@ export class RecipeSuggestion implements BaseEntity {
 
   get name(): string { return this._name; }
   set name(v: string) { this._name = v; }
+
+  get nameKey(): string | undefined { return this._nameKey; }
+  set nameKey(v: string | undefined) { this._nameKey = v; }
 
   get calories(): number { return this._calories; }
   set calories(v: number) { this._calories = v; }

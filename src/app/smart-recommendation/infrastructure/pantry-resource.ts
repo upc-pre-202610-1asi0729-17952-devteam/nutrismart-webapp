@@ -7,6 +7,7 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
  */
 export interface PantryItemResource extends BaseResource {
   name: string;
+  name_key?: string;
   category: string;
   quantity_grams: number;
   calories_per_100g: number;
@@ -21,6 +22,7 @@ export interface PantryItemResource extends BaseResource {
  */
 export interface RecipeSuggestionResource extends BaseResource {
   name: string;
+  name_key?: string;
   calories: number;
   protein: number;
   carbs: number;

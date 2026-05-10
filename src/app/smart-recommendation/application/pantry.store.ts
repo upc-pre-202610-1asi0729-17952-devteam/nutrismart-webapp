@@ -183,8 +183,21 @@ export class PantryStore {
       this._recipeSuggestions.set([]);
       return;
     }
-    this.pantryApi.getRecipeSuggestions(user.id, user.goal).subscribe({
-      next: (suggestions) => this._recipeSuggestions.set(suggestions),
+
+    const pantryKeys = new Set(
+      this._pantryItems()
+        .map(i => i.nameKey)
+        .filter((k): k is string => !!k),
+    );
+
+    this.pantryApi.getRecipeSuggestions(user.goal).subscribe({
+      next: (all) => {
+        const matched = all.filter(recipe => {
+          const hits = recipe.ingredients.filter(ing => pantryKeys.has(ing)).length;
+          return hits > 0 && hits / recipe.ingredients.length >= 0.5;
+        });
+        this._recipeSuggestions.set(matched);
+      },
       error: () => this._error.set('Failed to load recipe suggestions.'),
     });
   }

@@ -23,6 +23,7 @@ export type IngredientCategory =
 export interface PantryItemProps {
   id: number;
   name: string;
+  nameKey?: string;
   category: IngredientCategory;
   quantityGrams: number;
   caloriesPer100g: number;
@@ -41,6 +42,7 @@ export interface PantryItemProps {
 export class PantryItem implements BaseEntity {
   private _id: number;
   private _name: string;
+  private _nameKey: string | undefined;
   private _category: IngredientCategory;
   private _quantityGrams: number;
   private _caloriesPer100g: number;
@@ -50,6 +52,7 @@ export class PantryItem implements BaseEntity {
   constructor(props: PantryItemProps) {
     this._id              = props.id;
     this._name            = props.name;
+    this._nameKey         = props.nameKey;
     this._category        = props.category;
     this._quantityGrams   = props.quantityGrams;
     this._caloriesPer100g = props.caloriesPer100g;
@@ -64,6 +67,9 @@ export class PantryItem implements BaseEntity {
 
   get name(): string { return this._name; }
   set name(v: string) { this._name = v; }
+
+  get nameKey(): string | undefined { return this._nameKey; }
+  set nameKey(v: string | undefined) { this._nameKey = v; }
 
   get category(): IngredientCategory { return this._category; }
   set category(v: IngredientCategory) { this._category = v; }

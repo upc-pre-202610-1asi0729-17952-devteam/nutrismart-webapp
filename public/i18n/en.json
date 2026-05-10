@@ -361,6 +361,20 @@
     "white_rice": "White rice",
     "mixed_salad": "Mixed salad"
   },
+  "pantry_items": {
+    "white_rice":      "White rice",
+    "chicken_breast":  "Chicken breast",
+    "lemon":           "Lemon",
+    "onion":           "Onion",
+    "garlic":          "Garlic",
+    "quinoa":          "Quinoa"
+  },
+  "recipes": {
+    "chicken_quinoa":    "Chicken breast with quinoa",
+    "rice_chicken_bowl": "Rice and chicken bowl",
+    "chicken_salad":     "Chicken and salad",
+    "lemon_garlic_rice": "Lemon garlic rice"
+  },
   "pantry": {
     "page_title": "Pantry",
     "page_subtitle": "Manage your ingredients and get personalised recipe suggestions",

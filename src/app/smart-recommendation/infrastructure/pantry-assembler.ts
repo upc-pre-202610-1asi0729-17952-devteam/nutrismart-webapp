@@ -21,6 +21,7 @@ export class PantryItemAssembler
     return new PantryItem({
       id:              r.id,
       name:            r.name,
+      nameKey:         r.name_key,
       category:        r.category as IngredientCategory,
       quantityGrams:   r.quantity_grams,
       caloriesPer100g: r.calories_per_100g,
@@ -33,6 +34,7 @@ export class PantryItemAssembler
     return {
       id:                e.id,
       name:              e.name,
+      name_key:          e.nameKey,
       category:          e.category,
       quantity_grams:    e.quantityGrams,
       calories_per_100g: e.caloriesPer100g,
@@ -58,6 +60,7 @@ export class RecipeSuggestionAssembler
     return new RecipeSuggestion({
       id:              r.id,
       name:            r.name,
+      nameKey:         r.name_key,
       calories:        r.calories,
       protein:         r.protein,
       carbs:           r.carbs,
@@ -73,6 +76,7 @@ export class RecipeSuggestionAssembler
     return {
       id:                e.id,
       name:              e.name,
+      name_key:          e.nameKey,
       calories:          e.calories,
       protein:           e.protein,
       carbs:             e.carbs,

@@ -35,7 +35,9 @@
           @for (item of pantryStore.pantryItems(); track item.id) {
             <li class="ingredient-item">
               <div class="ingredient-item__info">
-                <span class="ingredient-item__name">{{ item.name }}</span>
+                <span class="ingredient-item__name">
+                  {{ item.nameKey ? ('pantry_items.' + item.nameKey | translate) : item.name }}
+                </span>
                 <span class="ingredient-item__category">· {{ item.category }}</span>
               </div>
               <div class="ingredient-item__actions">
@@ -114,10 +116,12 @@
           @for (recipe of pantryStore.recipeSuggestions(); track recipe.id) {
             <li class="recipe-card">
               <div class="recipe-card__header">
-                <span class="recipe-card__name">{{ recipe.name }}</span>
+                <span class="recipe-card__name">
+                  {{ recipe.nameKey ? ('recipes.' + recipe.nameKey | translate) : recipe.name }}
+                </span>
                 <span class="recipe-card__kcal">{{ recipe.calories }} kcal</span>
               </div>
-              <p class="recipe-card__ingredients">{{ recipe.ingredientList }}</p>
+              <p class="recipe-card__ingredients">{{ resolvedIngredients(recipe) }}</p>
               <div class="recipe-card__badges">
                 <span class="macro-badge macro-badge--protein">P {{ recipe.protein }}g</span>
                 <span class="macro-badge macro-badge--fat">G {{ recipe.fat }}g</span>

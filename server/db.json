@@ -217,6 +217,74 @@
       "sugar": 0.4,
       "loggedAt": "2026-05-09T15:11:21.219Z",
       "userId": "81P8BYgebrM"
+    },
+    {
+      "id": "gWKarJMDUak",
+      "foodItemId": 0,
+      "foodItemName": "Grilled chicken breast",
+      "foodItemNameEs": "Pechuga de pollo a la plancha",
+      "mealType": "LUNCH",
+      "quantity": 2,
+      "unit": "g",
+      "calories": 3.4,
+      "protein": 0.6,
+      "carbs": 0,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-10T22:54:19.085Z",
+      "userId": "Mv9paKyK60k"
+    },
+    {
+      "id": "TPWbWJACgdA",
+      "foodItemId": 0,
+      "foodItemName": "White rice",
+      "foodItemNameEs": "Arroz blanco",
+      "mealType": "LUNCH",
+      "quantity": 180,
+      "unit": "g",
+      "calories": 234,
+      "protein": 4,
+      "carbs": 52,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-10T22:54:19.085Z",
+      "userId": "Mv9paKyK60k"
+    },
+    {
+      "id": "OBt_7nqrEw4",
+      "foodItemId": 0,
+      "foodItemName": "Mixed salad",
+      "foodItemNameEs": "Ensalada mixta",
+      "mealType": "LUNCH",
+      "quantity": 80,
+      "unit": "g",
+      "calories": 45,
+      "protein": 2,
+      "carbs": 8,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-10T22:54:19.085Z",
+      "userId": "Mv9paKyK60k"
+    },
+    {
+      "id": "ngy2XKH2Dlk",
+      "foodItemId": 0,
+      "foodItemName": "Hake ceviche",
+      "foodItemNameEs": "Ceviche de merluza",
+      "mealType": "LUNCH",
+      "quantity": 1,
+      "unit": "serving",
+      "calories": 280,
+      "protein": 38,
+      "carbs": 12,
+      "fat": 8,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-10T22:54:40.459Z",
+      "userId": "Mv9paKyK60k"
     }
   ],
   "foods": [
@@ -531,36 +599,17 @@
     }
   ],
   "pantry": [
-    {
-      "id": "1",
-      "userId": 1,
-      "ingredientName": "White rice",
-      "category": "Grain"
-    },
-    {
-      "id": "2",
-      "userId": 1,
-      "ingredientName": "Chicken breast",
-      "category": "Animal protein"
-    },
-    {
-      "id": "3",
-      "userId": 1,
-      "ingredientName": "Lemon",
-      "category": "Fruit"
-    },
-    {
-      "id": "4",
-      "userId": 1,
-      "ingredientName": "Onion",
-      "category": "Vegetable"
-    },
-    {
-      "id": "5",
-      "userId": 1,
-      "ingredientName": "Garlic",
-      "category": "Seasoning"
-    }
+    { "id": 1, "name": "White rice",     "name_key": "white_rice",     "category": "Grain",          "quantity_grams": 500, "calories_per_100g": 130, "user_id": 1, "added_at": "2026-05-01T08:00:00.000Z" },
+    { "id": 2, "name": "Chicken breast", "name_key": "chicken_breast", "category": "Animal protein", "quantity_grams": 400, "calories_per_100g": 165, "user_id": 1, "added_at": "2026-05-01T08:00:00.000Z" },
+    { "id": 3, "name": "Lemon",          "name_key": "lemon",          "category": "Fruit",          "quantity_grams": 100, "calories_per_100g": 29,  "user_id": 1, "added_at": "2026-05-01T08:00:00.000Z" },
+    { "id": 4, "name": "Onion",          "name_key": "onion",          "category": "Vegetable",      "quantity_grams": 200, "calories_per_100g": 40,  "user_id": 1, "added_at": "2026-05-01T08:00:00.000Z" },
+    { "id": 5, "name": "Garlic",         "name_key": "garlic",         "category": "Seasoning",      "quantity_grams": 50,  "calories_per_100g": 149, "user_id": 1, "added_at": "2026-05-01T08:00:00.000Z" }
+  ],
+  "recipes": [
+    { "id": 1, "name": "Chicken breast with quinoa", "name_key": "chicken_quinoa",    "calories": 540, "protein": 52, "carbs": 38, "fat": 12, "ingredients": ["chicken_breast", "quinoa",      "garlic", "lemon"],  "goal_type": "MUSCLE_GAIN",  "prep_time_minutes": 30, "covers_macro_pct": 43 },
+    { "id": 2, "name": "Rice and chicken bowl",      "name_key": "rice_chicken_bowl", "calories": 480, "protein": 38, "carbs": 52, "fat": 8,  "ingredients": ["white_rice",     "chicken_breast","onion", "garlic"], "goal_type": "MUSCLE_GAIN",  "prep_time_minutes": 25, "covers_macro_pct": 32 },
+    { "id": 3, "name": "Chicken and salad",          "name_key": "chicken_salad",     "calories": 480, "protein": 18, "carbs": 22, "fat": 8,  "ingredients": ["chicken_breast", "onion",        "garlic", "lemon"],  "goal_type": "WEIGHT_LOSS",  "prep_time_minutes": 15, "covers_macro_pct": 25 },
+    { "id": 4, "name": "Lemon garlic rice",          "name_key": "lemon_garlic_rice", "calories": 340, "protein": 6,  "carbs": 64, "fat": 4,  "ingredients": ["white_rice",     "lemon",         "garlic", "onion"],  "goal_type": "WEIGHT_LOSS",  "prep_time_minutes": 20, "covers_macro_pct": 20 }
   ],
   "subscriptions": [
     {

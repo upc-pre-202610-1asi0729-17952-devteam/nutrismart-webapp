@@ -356,6 +356,20 @@
     "cheese_pizza": "Pizza de queso",
     "seafood_paella": "Paella de mariscos"
   },
+  "pantry_items": {
+    "white_rice":      "Arroz blanco",
+    "chicken_breast":  "Pechuga de pollo",
+    "lemon":           "Limón",
+    "onion":           "Cebolla",
+    "garlic":          "Ajo",
+    "quinoa":          "Quinoa"
+  },
+  "recipes": {
+    "chicken_quinoa":    "Pechuga de pollo con quinoa",
+    "rice_chicken_bowl": "Bowl de arroz con pollo",
+    "chicken_salad":     "Pollo con ensalada",
+    "lemon_garlic_rice": "Arroz al limón con ajo"
+  },
   "food_items": {
     "grilled_chicken_breast": "Pechuga de pollo a la plancha",
     "white_rice": "Arroz blanco",

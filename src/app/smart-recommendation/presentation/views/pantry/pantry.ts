@@ -10,6 +10,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { UserGoal } from '../../../../iam/domain/model/user-goal.enum';
 import { PantryStore } from '../../../application/pantry.store';
+import { RecipeSuggestion } from '../../../domain/model/recipe-suggestion.entity';
 
 /**
  * Pantry view — route `/pantry`.
@@ -94,5 +95,14 @@ export class Pantry implements OnInit {
 
   onAddToLog(recipeId: number): void {
     // Navigates to /nutrition/log — wired when NutritionStore integration is complete.
+  }
+
+  resolvedIngredients(recipe: RecipeSuggestion): string {
+    return recipe.ingredients
+      .map(key => {
+        const translated = this.translate.instant(`pantry_items.${key}`);
+        return translated !== `pantry_items.${key}` ? translated : key;
+      })
+      .join(', ');
   }
 }
