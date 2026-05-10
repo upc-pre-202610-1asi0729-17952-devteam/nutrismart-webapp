@@ -8,10 +8,12 @@ import { firstValueFrom } from 'rxjs';
 import { routes } from './app.routes';
 
 function initLanguage(translate: TranslateService) {
-  return () => {
+  return async () => {
     const saved = localStorage.getItem('lang') ?? 'en';
     translate.setDefaultLang('en');
-    return firstValueFrom(translate.use(saved));
+    await firstValueFrom(translate.use(saved));
+    const other = saved === 'es' ? 'en' : 'es';
+    await firstValueFrom(translate.getTranslation(other));
   };
 }
 
