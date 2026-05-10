@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { UserGoal } from '../../../../iam/domain/model/user-goal.enum';
-import { MetabolicStore } from '../../application/metabolic.store';
+import { MetabolicStore } from '../../../application/metabolic.store';
 
 /**
  * Goal Selection screen — first view shown when the user navigates to /body-progress.

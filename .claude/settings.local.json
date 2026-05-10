@@ -3,7 +3,8 @@
     "allow": [
       "Bash(Get-Content *)",
       "mcp__ide__getDiagnostics",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(npx ng *)"
     ]
   }
 }
