@@ -9,6 +9,7 @@ export const environment = {
   recommendationsEndpointPath: '/recommendations',
   pantryEndpointPath: '/pantry',
   recipesEndpointPath: '/recipes',
+  ingredientCatalogEndpointPath: '/ingredient-catalog',
   subscriptionsEndpointPath: '/subscriptions',
   billingHistoryEndpointPath: '/billing-history',
   behavioralProgressEndpointPath: '/behavioral-progress',

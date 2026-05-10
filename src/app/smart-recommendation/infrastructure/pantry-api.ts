@@ -7,16 +7,19 @@ import { BaseApi } from '../../shared/infrastructure/base-api';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
 import { PantryItem } from '../domain/model/pantry-item.entity';
 import { RecipeSuggestion } from '../domain/model/recipe-suggestion.entity';
-import { PantryItemAssembler, RecipeSuggestionAssembler } from './pantry-assembler';
-import { PantryItemResource, RecipeSuggestionResource } from './pantry-resource';
+import { IngredientCatalogAssembler, PantryItemAssembler, RecipeSuggestionAssembler } from './pantry-assembler';
+import { IngredientCatalogResource, PantryItemResource, RecipeSuggestionResource } from './pantry-resource';
+import { IngredientCatalogItem } from '../domain/model/ingredient-catalog-item.entity';
 
 @Injectable({ providedIn: 'root' })
 export class PantryApi extends BaseApi {
   private readonly _http              = inject(HttpClient);
   private readonly _pantryAssembler   = new PantryItemAssembler();
   private readonly _recipeAssembler   = new RecipeSuggestionAssembler();
+  private readonly _catalogAssembler  = new IngredientCatalogAssembler();
   private readonly _pantryUrl         = `${environment.apiBaseUrl}${environment.pantryEndpointPath}`;
   private readonly _recipesUrl        = `${environment.apiBaseUrl}${environment.recipesEndpointPath}`;
+  private readonly _catalogUrl        = `${environment.apiBaseUrl}${environment.ingredientCatalogEndpointPath}`;
 
   getPantryItems(userId: number): Observable<PantryItem[]> {
     return this._http.get<PantryItemResource[]>(`${this._pantryUrl}?user_id=${userId}`).pipe(
@@ -45,6 +48,13 @@ export class PantryApi extends BaseApi {
     return this._http.get<RecipeSuggestionResource[]>(`${this._recipesUrl}?goal_type=${goalType}`).pipe(
       map(rs => rs.map(r => this._recipeAssembler.toEntityFromResource(r))),
       catchError(this._handleError('getRecipeSuggestions')),
+    );
+  }
+
+  getIngredientCatalog(): Observable<IngredientCatalogItem[]> {
+    return this._http.get<IngredientCatalogResource[]>(this._catalogUrl).pipe(
+      map(rs => rs.map(r => this._catalogAssembler.toEntityFromResource(r))),
+      catchError(this._handleError('getIngredientCatalog')),
     );
   }
 

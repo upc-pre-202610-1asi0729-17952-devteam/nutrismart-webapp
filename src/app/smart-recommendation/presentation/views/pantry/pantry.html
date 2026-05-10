@@ -13,17 +13,36 @@
     <section class="panel panel--left" [attr.aria-label]="'pantry.my_ingredients' | translate">
       <h2 class="panel__title">{{ 'pantry.my_ingredients' | translate }}</h2>
 
-      <!-- Search / Add input -->
+      <!-- Search / Add input (autocomplete) -->
       <div class="add-ingredient-row">
-        <input class="ingredient-input"
-               type="text"
-               [placeholder]="'pantry.add_placeholder' | translate"
-               [(ngModel)]="searchText"
-               (keyup.enter)="onAddIngredient()"
-               [attr.aria-label]="'pantry.add_placeholder' | translate">
+        <div class="autocomplete-wrapper">
+          <input class="ingredient-input"
+                 type="text"
+                 [placeholder]="'pantry.add_placeholder' | translate"
+                 [value]="searchText()"
+                 (input)="onSearchInput($event)"
+                 (focus)="onInputFocus()"
+                 (blur)="onInputBlur()"
+                 [attr.aria-label]="'pantry.add_placeholder' | translate"
+                 autocomplete="off"
+                 role="combobox"
+                 [attr.aria-expanded]="showDropdown()"
+                 aria-haspopup="listbox">
+          @if (showDropdown() && filteredCatalog().length > 0) {
+            <ul class="autocomplete-dropdown" role="listbox">
+              @for (item of filteredCatalog(); track item.id) {
+                <li class="autocomplete-option"
+                    role="option"
+                    (mousedown)="onOptionMousedown($event, item)">
+                  {{ 'pantry_items.' + item.nameKey | translate }}
+                </li>
+              }
+            </ul>
+          }
+        </div>
         <button mat-flat-button
                 class="btn-go"
-                [disabled]="!searchText.trim() || pantryStore.loading()"
+                [disabled]="!selectedItem() || pantryStore.loading()"
                 (click)="onAddIngredient()">
           {{ 'pantry.go_btn' | translate }}
         </button>

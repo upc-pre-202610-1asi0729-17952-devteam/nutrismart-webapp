@@ -42,3 +42,8 @@ export interface PantryItemsResponse extends BaseResponse {
 export interface RecipeSuggestionsResponse extends BaseResponse {
   suggestions: RecipeSuggestionResource[];
 }
+
+export interface IngredientCatalogResource extends BaseResource {
+  name_key: string;
+  category: string;
+}

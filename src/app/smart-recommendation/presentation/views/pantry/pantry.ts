@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,14 +10,14 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { UserGoal } from '../../../../iam/domain/model/user-goal.enum';
 import { PantryStore } from '../../../application/pantry.store';
+import { IngredientCatalogItem } from '../../../domain/model/ingredient-catalog-item.entity';
 import { RecipeSuggestion } from '../../../domain/model/recipe-suggestion.entity';
 
 /**
  * Pantry view — route `/pantry`.
  *
- * Left panel: ingredient list + search input with daily balance footer (T31).
+ * Left panel: ingredient autocomplete selector + list + daily balance footer (T31).
  * Right panel: recipe suggestions with goal-type badges (T31).
- * Handles empty-pantry state with instructional message.
  *
  * @author Del Aguila Del Aguila, Olenka Priscilla
  */
@@ -43,10 +43,23 @@ export class Pantry implements OnInit {
 
   protected readonly UserGoal = UserGoal;
 
-  /** Text typed into the search input. */
-  protected searchText = '';
+  // ─── Autocomplete signals ─────────────────────────────────────────────────
 
-  /** Progress bar value: consumed / goal as percentage (0-100). */
+  protected searchText    = signal<string>('');
+  protected showDropdown  = signal<boolean>(false);
+  protected selectedItem  = signal<IngredientCatalogItem | null>(null);
+
+  protected filteredCatalog = computed(() => {
+    const query = this.searchText().toLowerCase().trim();
+    if (!query) return [];
+    return this.pantryStore.catalog().filter(item => {
+      const translated = this.translate.instant('pantry_items.' + item.nameKey).toLowerCase();
+      return translated.includes(query);
+    });
+  });
+
+  // ─── Computed signals ─────────────────────────────────────────────────────
+
   protected dailyProgressPct = computed(() => {
     const goal     = this.pantryStore.dailyGoal();
     const consumed = this.pantryStore.dailyConsumed();
@@ -54,7 +67,6 @@ export class Pantry implements OnInit {
     return Math.min(Math.round((consumed / goal) * 100), 100);
   });
 
-  /** Subtitle text for the recipe panel, depending on goal type. */
   protected recipeSubtitle = computed(() => {
     const goal = this.pantryStore.userGoal();
     if (goal === UserGoal.MUSCLE_GAIN) {
@@ -76,17 +88,49 @@ export class Pantry implements OnInit {
     return parts.join(' · ');
   });
 
+  // ─── Lifecycle ────────────────────────────────────────────────────────────
+
   async ngOnInit(): Promise<void> {
+    this.pantryStore.fetchCatalog();
     await this.pantryStore.fetchPantryItems();
   }
 
-  // ─── Event Handlers ───────────────────────────────────────────────────────
+  // ─── Autocomplete handlers ────────────────────────────────────────────────
+
+  onSearchInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchText.set(value);
+    this.selectedItem.set(null);
+    this.showDropdown.set(value.trim().length > 0);
+  }
+
+  onInputFocus(): void {
+    if (this.searchText().trim().length > 0) {
+      this.showDropdown.set(true);
+    }
+  }
+
+  onInputBlur(): void {
+    this.showDropdown.set(false);
+  }
+
+  onOptionMousedown(event: MouseEvent, item: IngredientCatalogItem): void {
+    event.preventDefault();
+    this.selectedItem.set(item);
+    this.searchText.set(this.translate.instant('pantry_items.' + item.nameKey));
+    this.showDropdown.set(false);
+  }
+
+  // ─── Event handlers ───────────────────────────────────────────────────────
 
   async onAddIngredient(): Promise<void> {
-    const text = this.searchText.trim();
-    if (!text) return;
-    await this.pantryStore.addPantryItem(text, 'Other', 100, 100);
-    this.searchText = '';
+    const item = this.selectedItem();
+    if (!item) return;
+    const displayName = this.translate.instant('pantry_items.' + item.nameKey);
+    await this.pantryStore.addPantryItem(displayName, item.category, 100, 100, item.nameKey);
+    this.searchText.set('');
+    this.selectedItem.set(null);
+    this.showDropdown.set(false);
   }
 
   async onRemoveItem(itemId: number): Promise<void> {

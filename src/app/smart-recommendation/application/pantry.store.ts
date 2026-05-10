@@ -3,6 +3,7 @@ import { IamStore } from '../../iam/application/iam.store';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
 import { PantryItem, IngredientCategory } from '../domain/model/pantry-item.entity';
 import { RecipeSuggestion } from '../domain/model/recipe-suggestion.entity';
+import { IngredientCatalogItem } from '../domain/model/ingredient-catalog-item.entity';
 import { PantryApi } from '../infrastructure/pantry-api';
 
 /**
@@ -22,6 +23,7 @@ export class PantryStore {
 
   private _pantryItems       = signal<PantryItem[]>([]);
   private _recipeSuggestions = signal<RecipeSuggestion[]>([]);
+  private _catalog           = signal<IngredientCatalogItem[]>([]);
   private _loading           = signal<boolean>(false);
   private _error             = signal<string | null>(null);
   private _searchQuery       = signal<string>('');
@@ -30,6 +32,7 @@ export class PantryStore {
 
   readonly pantryItems       = this._pantryItems.asReadonly();
   readonly recipeSuggestions = this._recipeSuggestions.asReadonly();
+  readonly catalog           = this._catalog.asReadonly();
   readonly loading           = this._loading.asReadonly();
   readonly error             = this._error.asReadonly();
   readonly searchQuery       = this._searchQuery.asReadonly();
@@ -70,6 +73,14 @@ export class PantryStore {
 
   // ─── Actions ──────────────────────────────────────────────────────────────
 
+  /** Loads the ingredient catalog from the API. */
+  fetchCatalog(): void {
+    this.pantryApi.getIngredientCatalog().subscribe({
+      next:  (items) => this._catalog.set(items),
+      error: () => this._error.set('Failed to load ingredient catalog.'),
+    });
+  }
+
   /** Loads the pantry items and initial recipe suggestions for the current user. */
   async fetchPantryItems(): Promise<void> {
     const user = this.iamStore.currentUser();
@@ -108,6 +119,7 @@ export class PantryStore {
     category: IngredientCategory,
     quantityGrams: number,
     caloriesPer100g: number,
+    nameKey?: string,
   ): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
@@ -115,6 +127,7 @@ export class PantryStore {
     const item = new PantryItem({
       id:              0,
       name,
+      nameKey,
       category,
       quantityGrams,
       caloriesPer100g,
