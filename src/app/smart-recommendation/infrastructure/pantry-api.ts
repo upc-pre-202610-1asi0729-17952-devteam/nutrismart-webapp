@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, retry } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../environments/environment.development';
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
 import { PantryItem } from '../domain/model/pantry-item.entity';
