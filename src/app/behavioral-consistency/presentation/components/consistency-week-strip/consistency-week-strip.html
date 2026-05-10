@@ -1,0 +1,17 @@
+<div class="week-strip-container" [attr.aria-label]="ariaLabel()">
+  <div class="strip-header">
+    <span class="strip-title">Actividad Semanal</span>
+    <span class="count-badge">{{ completedCount() }}/7</span>
+  </div>
+
+  <div class="dots-row">
+    @for (completed of weekDots(); track $index) {
+      <div class="day-col">
+        <span class="day-label">{{ dayLabels()[$index] }}</span>
+        <div class="dot" [class.is-completed]="completed"
+             [class.is-pending]="!completed">
+        </div>
+      </div>
+    }
+  </div>
+</div>

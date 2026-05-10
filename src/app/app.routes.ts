@@ -69,7 +69,7 @@ const wearableRoutes = () =>
 /** Lazy-loads the analytics child routes. */
 const analyticsRoutes = () =>
   import('./analytics/presentation/analytics.routes').then(
-    m => m.analyticsRoutes
+    m => m.ANALYTICS_ROUTES
   );
 
 /** Lazy-loads the subscriptions child routes (post-onboarding gate). */
@@ -97,17 +97,17 @@ export const routes: Routes = [
   { path: 'auth',            loadChildren: iamRoutes },
   { path: 'onboarding',      loadChildren: onboardingRoutes,      canActivate: [onboardingGuard] },
   { path: 'profile',         loadChildren: profileRoutes,         canActivate: [authGuard, subscriptionGuard] },
-  { path: 'dashboard',       loadChildren: dashboardRoutes,       canActivate: [authGuard, subscriptionGuard] },
+  { path: 'dashboard',       loadChildren: dashboardRoutes },
   { path: 'nutrition',       loadChildren: nutritionRoutes,       canActivate: [authGuard, subscriptionGuard] },
   { path: 'smart-scan',      loadChildren: smartScanRoutes,       canActivate: [authGuard, subscriptionGuard] },
   { path: 'recommendations', loadChildren: recommendationsRoutes, canActivate: [authGuard, subscriptionGuard] },
   { path: 'body-progress',   loadChildren: bodyProgressRoutes,    canActivate: [authGuard, subscriptionGuard] },
   { path: 'pantry',          loadChildren: pantryRoutes,          canActivate: [authGuard, subscriptionGuard] },
   { path: 'wearable',        loadChildren: wearableRoutes,        canActivate: [authGuard, subscriptionGuard] },
-  { path: 'analytics',       loadChildren: analyticsRoutes,       canActivate: [authGuard, subscriptionGuard] },
+  { path: 'analytics',       loadChildren: analyticsRoutes },
   { path: 'subscription',    loadChildren: subscriptionsRoutes,   canActivate: [authGuard] },
   { path: 'my-plan',         loadChildren: myPlanRoutes,          canActivate: [authGuard, subscriptionGuard] },
-  { path: '',                redirectTo: '/auth/login', pathMatch: 'full' },
+  { path: '',                redirectTo: '/analytics', pathMatch: 'full' },
   {
     path: '**',
     loadComponent: pageNotFound,

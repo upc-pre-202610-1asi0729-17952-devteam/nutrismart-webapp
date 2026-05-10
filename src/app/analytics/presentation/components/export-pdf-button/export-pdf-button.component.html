@@ -1,0 +1,12 @@
+<button
+  type="button"
+  class="export-pdf-button"
+  [disabled]="!isPremiumUser || isLoading"
+  (click)="onClick()"
+  [title]="tooltipText">
+  <mat-icon>picture_as_pdf</mat-icon>
+  <span>Export to PDF</span>
+  @if (isLoading) {
+    <span class="spinner"></span> <!-- Simple spinner placeholder -->
+  }
+</button>

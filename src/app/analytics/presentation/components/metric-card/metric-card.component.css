@@ -1,0 +1,50 @@
+.metric-card {
+  border: 1px solid #b9b9b9;
+  border-radius: 12px;
+  background: #ffffff;
+  min-height: 118px;
+  padding: 17px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.metric-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #8e8e8e;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.metric-card strong {
+  display: block;
+  font-size: 36px;
+  line-height: 1;
+  font-weight: 800;
+  color: #1f1f1f; /* Default value color */
+}
+
+.metric-card p {
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+
+/* Status classes for description text */
+.status-on-track {
+  color: #0f7a67; /* Green */
+}
+
+.status-at-risk {
+  color: #d97800; /* Orange */
+}
+
+.status-neutral {
+  color: #8d8d8d; /* Grey */
+}
+
+/* Add other status classes as needed, e.g., for negative changes */
+.status-negative {
+  color: #c65353; /* Red */
+}

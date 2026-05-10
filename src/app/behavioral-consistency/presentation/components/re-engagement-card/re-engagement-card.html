@@ -1,0 +1,14 @@
+@if (content(); as data) {
+  <div class="re-engagement-banner" [class.is-at-risk]="status() === 'AT_RISK'">
+    <div class="banner-icon">{{ data.icon }}</div>
+
+    <div class="banner-body">
+      <h4 class="banner-title">{{ data.title }}</h4>
+      <p class="banner-desc">{{ data.desc }}</p>
+    </div>
+
+    <button class="banner-action" (click)="acceptAction()">
+      {{ data.btnText }}
+    </button>
+  </div>
+}

@@ -1,0 +1,19 @@
+<div class="action-panel-container">
+  <h3 class="panel-title">Acciones de Hoy</h3>
+  <div class="actions-grid">
+    <button (click)="markGoalMet()" class="action-btn btn-success" title="Registrar cumplimiento">
+      <span class="icon">✓</span>
+      <span class="label">Meta Cumplida</span>
+    </button>
+
+    <button (click)="markGoalMissed()" class="action-btn btn-warning" title="Marcar como no cumplido">
+      <span class="icon">✕</span>
+      <span class="label">Saltar Registro</span>
+    </button>
+
+    <button (click)="refresh()" class="action-btn btn-sync" title="Sincronizar dispositivos">
+      <span class="icon">🔄</span>
+      <span class="label">Sincronizar Fit</span>
+    </button>
+  </div>
+</div>

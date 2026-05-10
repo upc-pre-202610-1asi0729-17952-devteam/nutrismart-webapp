@@ -1,0 +1,106 @@
+:host {
+  display: block;
+  min-height: 100%;
+  background: #fafafa;
+  color: #1f1f1f;
+  font-family: inherit;
+}
+
+.analytics-dashboard-container {
+  padding: 22px 32px 28px; /* Moved padding here from .analytics-shell */
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between; /* Puts title left, actions right */
+  align-items: center; /* Vertically centers items */
+  margin-bottom: 20px; /* Space below the header */
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  gap: 16px; /* Space between title and actions if they wrap */
+}
+
+.dashboard-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center; /* Vertically centers period toggle and export button */
+  gap: 12px; /* Space between period toggle and export button */
+}
+
+.loading-indicator,
+.error-message,
+.no-data-message {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #8b8b8b;
+}
+
+.error-message {
+  color: #c65353;
+  font-weight: 600;
+}
+
+.metric-cards-grid {
+  display: grid; /* Use grid for responsive horizontal layout */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* 4 cards, responsive */
+  gap: 16px; /* Spacing between cards */
+  margin-bottom: 28px; /* Space below the cards */
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1.65fr 1fr; /* Similar to behavioral dashboard */
+  gap: 18px;
+  margin-bottom: 10px;
+}
+
+.chart-panel {
+  border: 1px solid #b9b9b9;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 18px 20px;
+  min-height: 200px; /* Base height for panels */
+}
+
+.chart-panel.full-width {
+  grid-column: 1 / -1; /* Span full width for specific charts */
+}
+
+/* Responsive adjustments */
+@media (max-width: 960px) {
+  .dashboard-header { /* Targeting the new header class */
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-header .header-actions { /* Targeting the new actions container */
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr; /* Stack charts vertically on small screens */
+  }
+}
+
+@media (max-width: 600px) {
+  .analytics-dashboard-container { /* Targeting the new main container */
+    padding: 16px;
+  }
+
+  .dashboard-title { /* Targeting the new title class */
+    font-size: 24px;
+  }
+
+  .dashboard-header .header-actions { /* Targeting the new actions container */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

@@ -1,0 +1,78 @@
+:host {
+  display: block;
+}
+
+.week-strip-container {
+  padding: 12px 16px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid var(--nutrismart-border, #e0eaea);
+}
+
+.strip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.strip-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--nutrismart-text-light, #8aa8a8);
+  text-transform: uppercase;
+}
+
+.count-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--nutrismart-primary, #508B89);
+  background: #e6f2f1;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.dots-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.day-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.day-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-mid, #4a6060);
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+/* Estado Completado - Estilo NutriSmart */
+.dot.is-completed {
+  background-color: var(--nutrismart-primary, #508B89);
+  box-shadow: 0 0 8px rgba(80, 139, 137, 0.3);
+}
+
+/* Estado Pendiente/Faltante */
+.dot.is-pending {
+  background-color: #e0eaea;
+  border: 1px solid #cedada;
+}
+
+/* Efecto hover sutil */
+.day-col:hover .dot.is-completed {
+  transform: scale(1.2);
+}

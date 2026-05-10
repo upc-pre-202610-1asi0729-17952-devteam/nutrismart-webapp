@@ -1,0 +1,77 @@
+:host {
+  display: block;
+  margin-bottom: 20px;
+}
+
+.re-engagement-banner {
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #fff1f2; /* Soft red for Off-track */
+  border: 1px solid #fda4af;
+  border-radius: 12px;
+  gap: 16px;
+  animation: slideIn 0.3s ease-out;
+}
+
+.re-engagement-banner.is-at-risk {
+  background-color: #fffbeb; /* Soft yellow for At-risk */
+  border-color: #fde68a;
+}
+
+.banner-icon {
+  font-size: 1.5rem;
+}
+
+.banner-body {
+  flex: 1;
+}
+
+.banner-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #9f1239; /* Deep red */
+}
+
+.is-at-risk .banner-title {
+  color: #92400e; /* Deep amber */
+}
+
+.banner-desc {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: #be123c;
+  line-height: 1.4;
+}
+
+.is-at-risk .banner-desc {
+  color: #b45309;
+}
+
+.banner-action {
+  background: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #9f1239;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.2s;
+}
+
+.is-at-risk .banner-action {
+  color: #92400e;
+}
+
+.banner-action:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
