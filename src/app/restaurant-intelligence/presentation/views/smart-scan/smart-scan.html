@@ -151,10 +151,19 @@
                 <input type="number"
                        [value]="item.quantityGrams"
                        min="1"
+                       max="2000"
+                       step="1"
                        class="qty-input"
+                       [class.qty-input--invalid]="quantityError(item.id)"
+                       [attr.aria-describedby]="quantityError(item.id) ? 'qty-err-' + item.id : null"
                        aria-label="Quantity in grams"
                        (change)="onQuantityChange(item.id, $event)">
                 <span class="qty-unit">g</span>
+                @if (quantityError(item.id)) {
+                  <span class="qty-error" [id]="'qty-err-' + item.id" role="alert">
+                    {{ quantityError(item.id)! | translate }}
+                  </span>
+                }
               </label>
               <span class="detected-item__kcal">{{ item.calories }} kcal</span>
               <span class="detected-item__macros">{{ item.macroLabel }}</span>

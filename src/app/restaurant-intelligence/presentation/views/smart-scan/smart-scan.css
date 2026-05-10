@@ -322,6 +322,7 @@ mat-card-header {
 
 .detected-item__qty {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.25rem;
 }
@@ -338,6 +339,23 @@ mat-card-header {
 .qty-unit {
   font-size: 0.8rem;
   color: #6b7280;
+}
+
+.qty-input--invalid {
+  border-color: #ef4444;
+  outline: none;
+}
+
+.qty-input--invalid:focus {
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.qty-error {
+  display: block;
+  font-size: 0.72rem;
+  color: #ef4444;
+  margin-top: 2px;
+  white-space: nowrap;
 }
 
 .detected-item__kcal {

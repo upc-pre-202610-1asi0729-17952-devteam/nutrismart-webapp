@@ -342,7 +342,9 @@
     "impact_title": "Impacto nutricional",
     "impact_best_dish_note": "Impacto calculado para el plato recomendado",
     "impact_approaching": "Alcanzará el {{ percent }}% de tu objetivo diario",
-    "impact_exceeded": "Superará tu objetivo diario ({{ percent }}%)"
+    "impact_exceeded": "Superará tu objetivo diario ({{ percent }}%)",
+    "qty_error_min": "La cantidad mínima es 1 g",
+    "qty_error_max": "La cantidad máxima es 2000 g"
   },
   "menu_dishes": {
     "hake_ceviche": "Ceviche de merluza",

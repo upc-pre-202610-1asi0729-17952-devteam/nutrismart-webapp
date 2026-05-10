@@ -56,6 +56,7 @@ export class SmartScan implements OnInit {
   protected selectedMenuMealType = MealType.LUNCH;
   protected plateDragActive      = signal(false);
   protected menuDragActive       = signal(false);
+  protected quantityErrors       = signal<Map<number, string>>(new Map());
 
   protected isBasic = computed(() => {
     const user = this.iamStore.currentUser();
@@ -164,11 +165,33 @@ export class SmartScan implements OnInit {
 
   // ─── Plate result actions ─────────────────────────────────────────────────
 
+  private static readonly MIN_QUANTITY = 1;
+  private static readonly MAX_QUANTITY = 2000;
+
   onQuantityChange(itemId: number, event: Event): void {
-    const value = parseFloat((event.target as HTMLInputElement).value);
-    if (!isNaN(value) && value > 0) {
-      this.smartScanStore.updateScannedItemQuantity(itemId, value);
+    const raw   = (event.target as HTMLInputElement).value;
+    const value = parseFloat(raw);
+    const errors = new Map(this.quantityErrors());
+
+    if (isNaN(value) || value < SmartScan.MIN_QUANTITY) {
+      errors.set(itemId, 'smart_scan.qty_error_min');
+      this.quantityErrors.set(errors);
+      return;
     }
+
+    if (value > SmartScan.MAX_QUANTITY) {
+      errors.set(itemId, 'smart_scan.qty_error_max');
+      this.quantityErrors.set(errors);
+      return;
+    }
+
+    errors.delete(itemId);
+    this.quantityErrors.set(errors);
+    this.smartScanStore.updateScannedItemQuantity(itemId, value);
+  }
+
+  quantityError(itemId: number): string | null {
+    return this.quantityErrors().get(itemId) ?? null;
   }
 
   onRemoveItem(itemId: number): void {

@@ -342,7 +342,9 @@
     "impact_title": "Nutritional impact",
     "impact_best_dish_note": "Impact calculated for the recommended dish",
     "impact_approaching": "Will reach {{ percent }}% of your daily target",
-    "impact_exceeded": "Will exceed your daily target ({{ percent }}%)"
+    "impact_exceeded": "Will exceed your daily target ({{ percent }}%)",
+    "qty_error_min": "Minimum quantity is 1 g",
+    "qty_error_max": "Maximum quantity is 2000 g"
   },
   "menu_dishes": {
     "hake_ceviche": "Hake ceviche",
