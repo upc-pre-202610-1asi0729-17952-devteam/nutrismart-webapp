@@ -35,7 +35,7 @@ const smartScanRoutes = () =>
 
 /** Lazy-loads the recommendations child routes (smart-recommendation context). */
 const recommendationsRoutes = () =>
-  import('./smart-recommendation/recommendations/presentation/recommendations.routes').then(
+  import('./smart-recommendation/presentation/recommendations.routes').then(
     (m) => m.recommendationsRoutes,
   );
 

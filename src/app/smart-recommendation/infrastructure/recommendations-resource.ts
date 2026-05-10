@@ -1,12 +1,7 @@
-import { BaseResource, BaseResponse } from '../../../shared/infrastructure/base-response';
+import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-response';
 import { AdherenceStatus } from '../domain/model/adherence-status.enum';
 import { WeatherType } from '../domain/model/weather-type.enum';
 
-/**
- * API resource DTO for {@link WeatherContext}.
- *
- * @author Espinoza Cruz, Angela Milagros
- */
 export interface WeatherContextResource extends BaseResource {
   city: string;
   country: string;
@@ -16,11 +11,6 @@ export interface WeatherContextResource extends BaseResource {
   updated_at: string;
 }
 
-/**
- * API resource DTO for {@link TravelContext}.
- *
- * @author Espinoza Cruz, Angela Milagros
- */
 export interface TravelContextResource extends BaseResource {
   city: string;
   country: string;
@@ -29,11 +19,6 @@ export interface TravelContextResource extends BaseResource {
   activated_at: string;
 }
 
-/**
- * API resource DTO for {@link RecommendationSession}.
- *
- * @author Espinoza Cruz, Angela Milagros
- */
 export interface RecommendationSessionResource extends BaseResource {
   user_id: number;
   adherence_status: string;
@@ -43,17 +28,14 @@ export interface RecommendationSessionResource extends BaseResource {
   is_active: boolean;
 }
 
-/** Response envelope for weather context. */
 export interface WeatherContextResponse extends BaseResponse {
   weather: WeatherContextResource;
 }
 
-/** Response envelope for travel context. */
 export interface TravelContextResponse extends BaseResponse {
   travel: TravelContextResource;
 }
 
-/** Response envelope for recommendation sessions. */
 export interface RecommendationSessionResponse extends BaseResponse {
   session: RecommendationSessionResource;
 }

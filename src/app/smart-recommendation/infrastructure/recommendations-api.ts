@@ -1,50 +1,24 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { BaseApi } from '../../../shared/infrastructure/base-api';
+import { BaseApi } from '../../shared/infrastructure/base-api';
 import { WeatherContext } from '../domain/model/weather-context.entity';
 import { TravelContext } from '../domain/model/travel-context.entity';
 import { RecommendationSession } from '../domain/model/recommendation-session.entity';
 import { WeatherType } from '../domain/model/weather-type.enum';
 import { AdherenceStatus } from '../domain/model/adherence-status.enum';
 
-/**
- * DTO returned by weather recommendation endpoints.
- *
- * @author Espinoza Cruz, Angela Milagros
- */
 export interface RecommendationCard {
-  /** Unique identifier. */
   id: number;
-  /** Food or dish name. */
   name: string;
-  /** Comma-separated descriptor tags (e.g. "Refreshing · High in protein"). */
   description: string;
-  /** Kilocalories. */
   kcal: number;
-  /** Protein grams label (e.g. "P 32g"). */
   protein: string;
-  /** Weather or cuisine badge label (e.g. "Light", "Local"). */
   badge: string;
 }
 
-/**
- * Application-facing API façade for the Smart Recommendation bounded context.
- *
- * All methods return mock data — a real implementation would replace the
- * `of(...)` calls with HTTP endpoint calls. Provided in root so a single
- * instance is shared across the application.
- *
- * @author Espinoza Cruz, Angela Milagros
- */
 @Injectable({ providedIn: 'root' })
 export class RecommendationsApi extends BaseApi {
 
-  /**
-   * Returns weather-based meal recommendations for the current context.
-   *
-   * @param weatherType - Current classified weather type.
-   * @returns Observable emitting a list of recommendation cards.
-   */
   getWeatherRecommendations(weatherType: WeatherType): Observable<RecommendationCard[]> {
     if (weatherType === WeatherType.HOT) {
       return of([
@@ -60,13 +34,6 @@ export class RecommendationsApi extends BaseApi {
     ]);
   }
 
-  /**
-   * Activates travel mode for the specified city.
-   *
-   * @param city    - The city to activate travel mode for.
-   * @param country - The country of the city.
-   * @returns Observable emitting the updated {@link TravelContext}.
-   */
   activateTravelMode(city: string, country: string): Observable<TravelContext> {
     const ctx = new TravelContext({
       id: 1, city, country,
@@ -76,11 +43,6 @@ export class RecommendationsApi extends BaseApi {
     return of(ctx);
   }
 
-  /**
-   * Deactivates travel mode, returning the user to their home location context.
-   *
-   * @returns Observable emitting the deactivated {@link TravelContext}.
-   */
   deactivateTravelMode(): Observable<TravelContext> {
     const ctx = new TravelContext({
       id: 1, city: '', country: '',
@@ -90,12 +52,6 @@ export class RecommendationsApi extends BaseApi {
     return of(ctx);
   }
 
-  /**
-   * Returns local dish recommendations for the travel city.
-   *
-   * @param city - The travel city to fetch local dishes for.
-   * @returns Observable emitting local dish recommendation cards.
-   */
   getTravelRecommendations(city: string): Observable<RecommendationCard[]> {
     const lower = city.toLowerCase();
     if (lower.includes('cusco')) {
@@ -112,15 +68,9 @@ export class RecommendationsApi extends BaseApi {
         { id: 18, name: 'Adobo arequipeño', description: 'Marinated pork · Local specialty', kcal: 420, protein: 'P 32g', badge: 'Local' },
       ]);
     }
-    // Unrecognized city — return empty to trigger fallback in the store
     return of([]);
   }
 
-  /**
-   * Returns a preventive recommendation for an AT_RISK user.
-   *
-   * @returns Observable emitting a single preventive recommendation card.
-   */
   getPreventiveRecommendation(): Observable<RecommendationCard> {
     return of({
       id: 20,
@@ -132,11 +82,6 @@ export class RecommendationsApi extends BaseApi {
     });
   }
 
-  /**
-   * Returns an intervention plan recommendation for a DROPPED user.
-   *
-   * @returns Observable emitting a single intervention recommendation card.
-   */
   getInterventionRecommendation(): Observable<RecommendationCard> {
     return of({
       id: 21,
@@ -148,12 +93,6 @@ export class RecommendationsApi extends BaseApi {
     });
   }
 
-  /**
-   * Returns an adjusted recommendation strategy for a changed adherence state.
-   *
-   * @param status - The new adherence status to adjust for.
-   * @returns Observable emitting the updated {@link RecommendationSession}.
-   */
   getStrategyAdjustment(status: AdherenceStatus): Observable<RecommendationSession> {
     return of(new RecommendationSession({
       id: 1,
@@ -166,11 +105,6 @@ export class RecommendationsApi extends BaseApi {
     }));
   }
 
-  /**
-   * Returns the current weather context for the user's location.
-   *
-   * @returns Observable emitting the current {@link WeatherContext}.
-   */
   getCurrentWeather(): Observable<WeatherContext> {
     return of(new WeatherContext({
       id: 1,

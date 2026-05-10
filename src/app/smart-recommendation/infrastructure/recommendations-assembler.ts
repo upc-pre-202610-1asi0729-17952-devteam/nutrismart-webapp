@@ -1,4 +1,4 @@
-import { BaseAssembler } from '../../../shared/infrastructure/base-assembler';
+import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { WeatherContext } from '../domain/model/weather-context.entity';
 import { TravelContext } from '../domain/model/travel-context.entity';
 import { RecommendationSession } from '../domain/model/recommendation-session.entity';
@@ -10,12 +10,6 @@ import {
   RecommendationSessionResource, RecommendationSessionResponse,
 } from './recommendations-resource';
 
-/**
- * Assembler for {@link WeatherContext} — maps between the weather API DTO
- * and the domain entity.
- *
- * @author Espinoza Cruz, Angela Milagros
- */
 export class WeatherContextAssembler
   implements BaseAssembler<WeatherContext, WeatherContextResource, WeatherContextResponse> {
 
@@ -48,12 +42,6 @@ export class WeatherContextAssembler
   }
 }
 
-/**
- * Assembler for {@link TravelContext} — maps between the travel API DTO
- * and the domain entity.
- *
- * @author Espinoza Cruz, Angela Milagros
- */
 export class TravelContextAssembler
   implements BaseAssembler<TravelContext, TravelContextResource, TravelContextResponse> {
 
@@ -84,12 +72,6 @@ export class TravelContextAssembler
   }
 }
 
-/**
- * Assembler for {@link RecommendationSession} — maps between the session
- * API DTO and the domain entity.
- *
- * @author Espinoza Cruz, Angela Milagros
- */
 export class RecommendationSessionAssembler
   implements BaseAssembler<RecommendationSession, RecommendationSessionResource, RecommendationSessionResponse> {
 
