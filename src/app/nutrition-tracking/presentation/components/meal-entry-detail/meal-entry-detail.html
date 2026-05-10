@@ -2,7 +2,7 @@
   <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="detail-title">
 
     <div class="dialog-header">
-      <h2 id="detail-title" class="dialog-title">{{ entry().getLocalizedFoodName(currentLang) }}</h2>
+      <h2 id="detail-title" class="dialog-title">{{ entry().getLocalizedFoodName(currentLang()) }}</h2>
       <button class="close-btn" aria-label="Close" (click)="close.emit()">✕</button>
     </div>
 

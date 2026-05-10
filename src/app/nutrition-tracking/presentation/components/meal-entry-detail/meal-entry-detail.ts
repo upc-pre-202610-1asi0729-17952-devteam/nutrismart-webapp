@@ -1,6 +1,8 @@
 import { Component, computed, EventEmitter, inject, input, Output, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { map, startWith } from 'rxjs';
 import { MealRecord } from '../../../domain/model/meal-record.entity';
 
 /**
@@ -32,7 +34,14 @@ export class MealEntryDetailComponent {
   @Output() editConfirm = new EventEmitter<{ id: number; quantity: number }>();
 
   private translate = inject(TranslateService);
-  protected get currentLang(): string { return this.translate.currentLang ?? 'en'; }
+
+  protected readonly currentLang = toSignal(
+    this.translate.onLangChange.pipe(
+      map(e => e.lang),
+      startWith(this.translate.currentLang ?? 'en'),
+    ),
+    { initialValue: this.translate.currentLang ?? 'en' },
+  );
 
   /** Whether the dialog is in edit mode. */
   protected editMode = signal(false);

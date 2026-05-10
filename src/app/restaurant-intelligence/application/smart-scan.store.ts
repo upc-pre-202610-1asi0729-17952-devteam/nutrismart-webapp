@@ -1,4 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../iam/application/iam.store';
 import { DietaryRestriction } from '../../iam/domain/model/dietary-restriction.enum';
 import { MealType } from '../../nutrition-tracking/domain/model/meal-type.enum';
@@ -40,6 +41,7 @@ export class SmartScanStore {
   private smartScanApi   = inject(SmartScanApi);
   private iamStore       = inject(IamStore);
   private nutritionStore = inject(NutritionStore);
+  private translate      = inject(TranslateService);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
@@ -201,10 +203,14 @@ export class SmartScanStore {
 
     try {
       for (const item of result.detectedItems) {
+        const { foodItemName, foodItemNameEs } = this._resolveLocalizedNames(
+          item.nameKey, 'food_items', item.name,
+        );
         const props: MealRecordProps = {
           id:              0,
           foodItemId:      0,
-          foodItemName:    item.name,
+          foodItemName,
+          foodItemNameEs,
           mealType,
           quantity:        item.quantityGrams,
           unit:            'g',
@@ -240,10 +246,14 @@ export class SmartScanStore {
     this._loading.set(true);
     this._error.set(null);
 
+    const { foodItemName, foodItemNameEs } = this._resolveLocalizedNames(
+      dish.nameKey, 'menu_dishes', dish.name,
+    );
     const props: MealRecordProps = {
       id:           0,
       foodItemId:   0,
-      foodItemName: dish.name,
+      foodItemName,
+      foodItemNameEs,
       mealType,
       quantity:     1,
       unit:         'serving',
@@ -346,6 +356,18 @@ export class SmartScanStore {
         percent:   Math.round(m.ratio * 100),
         severity:  m.ratio >= SmartScanStore.DANGER_THRESHOLD ? 'danger' : 'warning',
       } as MacroAlert));
+  }
+
+  private _resolveLocalizedNames(
+    nameKey: string | null,
+    namespace: string,
+    fallback: string,
+  ): { foodItemName: string; foodItemNameEs: string } {
+    if (!nameKey) return { foodItemName: fallback, foodItemNameEs: fallback };
+    const all = this.translate.translations as Record<string, Record<string, Record<string, string>>>;
+    const enName = all['en']?.[namespace]?.[nameKey] ?? fallback;
+    const esName = all['es']?.[namespace]?.[nameKey] ?? fallback;
+    return { foodItemName: enName, foodItemNameEs: esName };
   }
 
   private _cloneScanResult(source: ScanResult): ScanResult {
