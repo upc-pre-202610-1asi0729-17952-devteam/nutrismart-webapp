@@ -141,6 +141,10 @@ export class Pantry implements OnInit {
     // Navigates to /nutrition/log — wired when NutritionStore integration is complete.
   }
 
+  categoryI18nKey(category: string): string {
+    return 'ingredient_categories.' + category.toLowerCase().replaceAll(' ', '_');
+  }
+
   recipeCalorieImpact(recipe: RecipeSuggestion): { severity: 'warning' | 'danger'; percent: number } | null {
     const goal = this.pantryStore.dailyGoal();
     if (goal === 0) return null;

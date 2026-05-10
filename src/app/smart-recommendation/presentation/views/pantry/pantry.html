@@ -57,7 +57,7 @@
                 <span class="ingredient-item__name">
                   {{ item.nameKey ? ('pantry_items.' + item.nameKey | translate) : item.name }}
                 </span>
-                <span class="ingredient-item__category">· {{ item.category }}</span>
+                <span class="ingredient-item__category">· {{ categoryI18nKey(item.category) | translate }}</span>
               </div>
               <div class="ingredient-item__actions">
                 <button class="btn-remove"

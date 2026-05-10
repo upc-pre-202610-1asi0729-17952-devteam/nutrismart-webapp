@@ -356,6 +356,16 @@
     "cheese_pizza": "Pizza de queso",
     "seafood_paella": "Paella de mariscos"
   },
+  "ingredient_categories": {
+    "grain":          "Cereal",
+    "animal_protein": "Proteína animal",
+    "vegetable":      "Verdura",
+    "fruit":          "Fruta",
+    "dairy":          "Lácteo",
+    "legume":         "Legumbre",
+    "seasoning":      "Condimento",
+    "other":          "Otro"
+  },
   "pantry_items": {
     "white_rice":      "Arroz blanco",
     "chicken_breast":  "Pechuga de pollo",

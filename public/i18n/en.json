@@ -361,6 +361,16 @@
     "white_rice": "White rice",
     "mixed_salad": "Mixed salad"
   },
+  "ingredient_categories": {
+    "grain":          "Grain",
+    "animal_protein": "Animal protein",
+    "vegetable":      "Vegetable",
+    "fruit":          "Fruit",
+    "dairy":          "Dairy",
+    "legume":         "Legume",
+    "seasoning":      "Seasoning",
+    "other":          "Other"
+  },
   "pantry_items": {
     "white_rice":      "White rice",
     "chicken_breast":  "Chicken breast",
