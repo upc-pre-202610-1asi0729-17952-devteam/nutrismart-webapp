@@ -394,7 +394,9 @@
     "recipes_ranked_protein": "Ranked by protein content · Covers your protein deficit",
     "empty_recipes": "Add at least one ingredient to see recipe suggestions.",
     "goal_weight_loss": "Weight-loss",
-    "goal_muscle_gain": "Muscle-gain"
+    "goal_muscle_gain": "Muscle-gain",
+    "recipe_impact_warning": "Adding this reaches {{ percent }}% of your daily goal",
+    "recipe_impact_danger": "Adding this exceeds your daily goal ({{ percent }}%)"
   },
   "my_plan": {
     "page_title": "Subscription and billing",

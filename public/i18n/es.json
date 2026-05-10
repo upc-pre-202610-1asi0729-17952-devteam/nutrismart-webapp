@@ -394,7 +394,9 @@
     "recipes_ranked_protein": "Ordenado por contenido proteico · Cubre tu déficit de proteína",
     "empty_recipes": "Agrega al menos un ingrediente para ver sugerencias de recetas.",
     "goal_weight_loss": "Pérdida de peso",
-    "goal_muscle_gain": "Ganancia muscular"
+    "goal_muscle_gain": "Ganancia muscular",
+    "recipe_impact_warning": "Añadir esto llegaría al {{ percent }}% de tu meta diaria",
+    "recipe_impact_danger": "Añadir esto superaría tu meta diaria ({{ percent }}%)"
   },
   "my_plan": {
     "page_title": "Suscripción y facturación",

@@ -141,6 +141,15 @@ export class Pantry implements OnInit {
     // Navigates to /nutrition/log — wired when NutritionStore integration is complete.
   }
 
+  recipeCalorieImpact(recipe: RecipeSuggestion): { severity: 'warning' | 'danger'; percent: number } | null {
+    const goal = this.pantryStore.dailyGoal();
+    if (goal === 0) return null;
+    const percent = Math.round(((this.pantryStore.dailyConsumed() + recipe.calories) / goal) * 100);
+    if (percent >= 100) return { severity: 'danger', percent };
+    if (percent >= 80)  return { severity: 'warning', percent };
+    return null;
+  }
+
   resolvedIngredients(recipe: RecipeSuggestion): string {
     return recipe.ingredients
       .map(key => {

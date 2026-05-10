@@ -150,6 +150,20 @@
                       : 'pantry.goal_muscle_gain') | translate }}
                 </span>
               </div>
+              @if (recipeCalorieImpact(recipe); as impact) {
+                <div class="recipe-impact"
+                     [class.recipe-impact--warning]="impact.severity === 'warning'"
+                     [class.recipe-impact--danger]="impact.severity === 'danger'">
+                  <mat-icon class="recipe-impact__icon">
+                    {{ impact.severity === 'danger' ? 'error' : 'warning' }}
+                  </mat-icon>
+                  <span class="recipe-impact__msg">
+                    {{ (impact.severity === 'danger'
+                        ? 'pantry.recipe_impact_danger'
+                        : 'pantry.recipe_impact_warning') | translate: { percent: impact.percent } }}
+                  </span>
+                </div>
+              }
               <button mat-flat-button
                       class="btn-add-log"
                       (click)="onAddToLog(recipe.id)">
