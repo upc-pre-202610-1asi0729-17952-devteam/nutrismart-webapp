@@ -1,0 +1,406 @@
+<div class="bp-page">
+
+  <!-- ── Page header ─────────────────────────────────────────── -->
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Body Progress</h1>
+      <p class="page-subtitle">Weight, metrics, and body composition tracking</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn--outline" (click)="onOpenUpdateHeight()">Update height</button>
+      <button class="btn btn--primary" (click)="onOpenLogWeight()">+ Log weight</button>
+    </div>
+  </header>
+
+  <!-- ── 14-day staleness banner (T38) ──────────────────────── -->
+  @if (store.isStale()) {
+    <div class="stale-banner" role="alert">
+      <span class="stale-banner-icon">⚠</span>
+      <span class="stale-banner-text">
+        Your last weight entry was {{ store.currentMetric()?.updatedLabel() }}.
+        For accurate metrics, we recommend logging your current weight.
+      </span>
+      <button class="btn btn--primary btn--sm" (click)="onOpenLogWeight()">Log now</button>
+    </div>
+  }
+
+  <!-- ── Metric cards (T38) ─────────────────────────────────── -->
+  <div class="metric-cards">
+
+    <!-- Current Weight -->
+    <div class="metric-card" [class.metric-card--stale]="store.isStale()">
+      <div class="metric-card-label">CURRENT WEIGHT</div>
+      <div class="metric-card-value">
+        {{ store.currentMetric()?.weightKg | number:'1.1-1' }}
+        <span class="metric-card-unit">kg</span>
+      </div>
+      <div class="metric-card-sub" [class.metric-card-sub--warn]="store.isStale()">
+        {{ store.currentMetric()?.updatedLabel() }}
+      </div>
+    </div>
+
+    <!-- BMI -->
+    <div class="metric-card" [class.metric-card--stale]="bmiOutdated()">
+      <div class="metric-card-label">IMC</div>
+      <div class="metric-card-header-row">
+        @if (store.currentMetric()) {
+          <span class="metric-badge" [ngClass]="bmiCategoryClass()">
+            {{ bmiOutdated() ? 'Outdated' : store.currentMetric()!.bmiCategory() }}
+          </span>
+        }
+      </div>
+      <div class="metric-card-value">{{ store.currentMetric()?.bmi() | number:'1.1-1' }}</div>
+      <div class="metric-card-sub" [class.metric-card-sub--warn]="bmiOutdated()">
+        {{ bmiOutdated() ? 'May be inaccurate' : store.currentMetric()?.bmiCategory() }}
+      </div>
+    </div>
+
+    <!-- Card 3: BMR (WA_BP_LOSS) · % BODY FAT (WA_BP_GAIN) -->
+    @if (store.isMuscleGain()) {
+      <div class="metric-card">
+        <div class="metric-card-label">% BODY FAT</div>
+        <div class="metric-card-value">
+          {{ store.composition()?.bodyFatPercent() | number:'1.1-1' }}
+          <span class="metric-card-unit">%</span>
+        </div>
+        <div class="metric-card-sub">US Navy Estimate</div>
+      </div>
+    } @else {
+      <div class="metric-card">
+        <div class="metric-card-label">BMR</div>
+        <div class="metric-card-value">
+          {{ store.currentMetric()?.bmr() | number:'1.0-0' }}
+          <span class="metric-card-unit">kcal/day</span>
+        </div>
+        <div class="metric-card-sub">Basal metabolic rate</div>
+      </div>
+    }
+
+    <!-- Card 4: TDEE (WA_BP_LOSS) · LEAN MASS (WA_BP_GAIN) -->
+    @if (store.isMuscleGain()) {
+      <div class="metric-card">
+        <div class="metric-card-label">LEAN MASS</div>
+        <div class="metric-card-value">
+          {{ store.composition()?.leanMassKg() | number:'1.1-1' }}
+          <span class="metric-card-unit">kg</span>
+        </div>
+        <div class="metric-card-sub">Muscle + bone + water</div>
+      </div>
+    } @else {
+      <div class="metric-card">
+        <div class="metric-card-label">TDEE</div>
+        <div class="metric-card-value">
+          {{ store.currentMetric()?.tdee() | number:'1.0-0' }}
+          <span class="metric-card-unit">kcal/day</span>
+        </div>
+        <div class="metric-card-sub">With moderate activity</div>
+      </div>
+    }
+
+  </div>
+
+  <!-- ── Two-column layout ───────────────────────────────────── -->
+  <div class="bp-grid">
+
+    <!-- ── LEFT: Chart + History + Composition ─────────────── -->
+    <main class="main-col">
+
+      <!-- Weight Evolution chart (T39) -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h2 class="chart-title">Weight Evolution</h2>
+
+          <!-- MatButtonToggleGroup — 3-period toggle (T39) -->
+          <mat-button-toggle-group
+            [value]="store.selectedDays()"
+            (change)="selectDays($any($event.value))"
+            class="day-toggle-mat">
+            <mat-button-toggle [value]="7">7 days</mat-button-toggle>
+            <mat-button-toggle [value]="30">30 days</mat-button-toggle>
+            <mat-button-toggle [value]="90">90 days</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+
+        <!-- SVG chart -->
+        @if (store.metricsHistory().length >= 2) {
+          <div class="chart-wrap">
+            <svg viewBox="0 0 600 140" class="chart-svg" preserveAspectRatio="none">
+              <!-- Dashed pink goal reference line (T39) -->
+              @if (store.currentMetric()?.targetWeightKg) {
+                <line
+                  x1="0" [attr.y1]="store.chartPoints().targetY + 10"
+                  x2="600" [attr.y2]="store.chartPoints().targetY + 10"
+                  stroke="#f9a8d4" stroke-width="1.5" stroke-dasharray="6,4" />
+              }
+              <!-- Fill area -->
+              <polygon
+                [attr.points]="'0,130 ' + store.chartPoints().points + ' 560,130'"
+                fill="rgba(45,158,143,0.08)" />
+              <!-- Line -->
+              <polyline
+                [attr.points]="store.chartPoints().points"
+                fill="none"
+                stroke="#2d9e8f"
+                stroke-width="2"
+                stroke-linejoin="round" />
+              <!-- Dots -->
+              @for (pt of store.chartPoints().points.split(' '); track $index) {
+                @if (pt) {
+                  <circle
+                    [attr.cx]="pt.split(',')[0]"
+                    [attr.cy]="pt.split(',')[1]"
+                    r="4" fill="white" stroke="#2d9e8f" stroke-width="2" />
+                }
+              }
+            </svg>
+            <!-- Y-axis labels -->
+            <div class="chart-y-labels">
+              <span>{{ (store.chartPoints().maxW | number:'1.0-0') }}</span>
+              <span>{{ (((store.chartPoints().maxW + store.chartPoints().minW) / 2) | number:'1.0-0') }}</span>
+              <span>{{ (store.chartPoints().minW | number:'1.0-0') }}</span>
+            </div>
+            <!-- X-axis labels -->
+            <div class="chart-x-labels">
+              @for (label of store.chartPoints().dates; track $index) {
+                <span>{{ label }}</span>
+              }
+            </div>
+          </div>
+        } @else {
+          <div class="chart-empty">
+            <p>Not enough data. Log at least 2 weight entries to see the chart.</p>
+          </div>
+        }
+
+        <!-- Stale note -->
+        @if (store.isStale()) {
+          <div class="chart-stale-note">
+            Chart based on the last recorded data. Update your weight to see the correct trend.
+          </div>
+        }
+
+        <!-- Goal info row + Edit goal link — WEIGHT_LOSS only (WA_BP_LOSS) -->
+        @if (!store.isMuscleGain()) {
+        <div class="chart-goal-row">
+          <div class="chart-goal-left">
+            <span class="chart-goal-label">Goal weight</span>
+            <span class="chart-goal-value">
+              {{ store.currentMetric()?.targetWeightKg
+                  ? (store.currentMetric()!.targetWeightKg | number:'1.1-1') + ' kg'
+                  : 'Not set' }}
+            </span>
+          </div>
+          <div class="chart-goal-right">
+            <span class="chart-goal-label">Estimated achievement date</span>
+            <strong class="chart-goal-date">~{{ formattedProjectedDate() }}</strong>
+            <!-- Clicking "Edit goal →" opens the Set goal weight right panel (T40 / WA_BP_Error) -->
+            <button class="link-btn" (click)="onOpenGoalPanel()">Edit goal →</button>
+          </div>
+        </div>
+        } <!-- end @if (!store.isMuscleGain()) -->
+      </div>
+
+      <!-- Log History table (T40) — WEIGHT_LOSS only (WA_BP_LOSS) -->
+      @if (!store.isMuscleGain()) {
+      <div class="history-card">
+        <div class="history-header">
+          <h2 class="history-title">Log History</h2>
+          <button class="link-btn">View all →</button>
+        </div>
+        <table class="history-table">
+          <tbody>
+            @for (row of store.recentHistory(); track row.metric.id) {
+              <tr>
+                <td class="history-date">{{ formatHistoryDate(row.metric.loggedAt) }}</td>
+                <td class="history-weight">{{ row.metric.weightKg | number:'1.1-1' }} kg</td>
+                <td class="history-delta"
+                    [class.history-delta--pos]="isDeltaPositive(row.delta)"
+                    [class.history-delta--neg]="!isDeltaPositive(row.delta) && row.delta !== 0">
+                  {{ formatDelta(row.delta) }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      } <!-- end @if (!store.isMuscleGain()) -->
+
+
+      <!-- Body Composition section — MUSCLE_GAIN only (WA_BP_GAIN) -->
+      @if (store.isMuscleGain()) {
+        @if (store.composition()?.hasFatIncreaseAlert()) {
+          <div class="fat-alert-banner" role="alert">
+            <span class="fat-alert-icon">⚠</span>
+            <span>
+              Body fat has increased by more than 1.5% over the last two weeks.
+              Consider reducing your caloric surplus to avoid excessive fat gain.
+            </span>
+          </div>
+        }
+        <div class="composition-card">
+          <div class="composition-header">
+            <h2 class="composition-title">Body Composition</h2>
+            <button class="link-btn">Update measurements →</button>
+          </div>
+          <div class="composition-grid">
+            <div class="composition-item">
+              <span class="composition-item-label">Lean mass</span>
+              <strong class="composition-item-value">{{ store.composition()?.leanMassKg() | number:'1.1-1' }} kg</strong>
+              <span class="composition-item-sub">+1.2 kg vs. start</span>
+            </div>
+            <div class="composition-item">
+              <span class="composition-item-label">Fat mass</span>
+              <strong class="composition-item-value">{{ store.composition()?.fatMassKg() | number:'1.1-1' }} kg</strong>
+              <span class="composition-item-sub">+0.3 kg vs. start</span>
+            </div>
+            <div class="composition-item">
+              <span class="composition-item-label">Fat %</span>
+              <strong class="composition-item-value">{{ store.composition()?.bodyFatPercent() | number:'1.1-1' }}%</strong>
+              <span class="composition-item-sub">Healthy range</span>
+            </div>
+            <div class="composition-item">
+              <span class="composition-item-label">Lean bulk</span>
+              <strong class="composition-item-value">{{ store.composition()?.leanBulkStatus() }}</strong>
+              <span class="composition-item-sub"
+                    [class.composition-item-sub--good]="!store.composition()?.hasFatIncreaseAlert()">
+                {{ store.composition()?.leanBulkDescription() }}
+              </span>
+            </div>
+          </div>
+        </div>
+      }
+
+    </main>
+
+    <!-- ── RIGHT column ────────────────────────────────────── -->
+    <aside class="right-col">
+
+      <!-- ── Log weight panel (always visible) ─────────────── -->
+      <!--
+        WA_BP_Registrar_peso: shows preview banner + Cancel when typing.
+        WA_BP_Error: shows red border + inline error when value is invalid.
+      -->
+      <div class="panel" [class.panel--error]="weightError()">
+        <h3 class="panel-title">Log weight</h3>
+        <label class="panel-label">Current weight (kg)</label>
+
+        <input class="panel-input"
+               [class.panel-input--error]="weightError()"
+               type="number"
+               [placeholder]="'E.g.: ' + (store.currentMetric()?.weightKg | number:'1.1-1')"
+               [value]="weightInput()"
+               (input)="onWeightInputChange($any($event.target).value)"
+               min="0.1" max="500" step="0.1" />
+
+        <!-- Inline error (WA_BP_Error) -->
+        @if (weightError()) {
+          <p class="input-error">{{ weightError() }}</p>
+        }
+
+        <!-- Live BMI / TDEE preview (WA_BP_Registrar_peso) -->
+        @if (isWeightTyping() && weightPreview() && !weightError()) {
+          <div class="weight-preview">
+            Preview: BMI → {{ weightPreview()!.bmi | number:'1.1-1' }} · TDEE → {{ weightPreview()!.tdee | number:'1.0-0' }} kcal/day
+          </div>
+        }
+
+        <button class="btn btn--primary btn--full"
+                [disabled]="weightInputInvalid()"
+                (click)="onSaveWeight()">
+          Save entry
+        </button>
+
+        <!-- Cancel button — only shown while typing (WA_BP_Registrar_peso) -->
+        @if (isWeightTyping()) {
+          <button class="btn btn--outline btn--full" (click)="onCancelWeight()">
+            Cancel
+          </button>
+        }
+      </div>
+
+      <!-- ── MUSCLE_GAIN: Update body composition (WA_BP_GAIN right panel) ── -->
+      @if (store.isMuscleGain()) {
+        <div class="panel">
+          <h3 class="panel-title">Update body composition</h3>
+
+          <label class="panel-label">Waist (cm)</label>
+          <input class="panel-input"
+                 type="number"
+                 placeholder="E.g.: 82"
+                 [(ngModel)]="waistInputModel"
+                 min="30" max="200" step="0.5" />
+
+          <label class="panel-label">Neck (cm)</label>
+          <input class="panel-input"
+                 type="number"
+                 placeholder="E.g.: 37"
+                 [(ngModel)]="neckInputModel"
+                 min="20" max="80" step="0.5" />
+
+          <p class="panel-hint">
+            The system will estimate your body fat % using the US Navy method
+          </p>
+
+          <button class="btn btn--primary btn--full" (click)="onCalculateComposition()">
+            Calculate composition
+          </button>
+        </div>
+      }
+
+      <!-- ── WEIGHT_LOSS: Update height (default) or Set goal weight ──────── -->
+      @if (!store.isMuscleGain()) {
+
+        @if (activeSecondaryPanel() === 'height') {
+          <div class="panel">
+            <h3 class="panel-title">Update height</h3>
+            <label class="panel-label">Current height (cm)</label>
+            <input class="panel-input"
+                   type="number"
+                   [placeholder]="'E.g.: ' + store.currentMetric()?.heightCm"
+                   [value]="heightInput()"
+                   (input)="heightInput.set($any($event.target).value)"
+                   min="50" max="300" step="1" />
+            <p class="panel-hint">
+              Current height: {{ store.currentMetric()?.heightCm }} cm · BMI is automatically recalculated
+            </p>
+            <button class="btn btn--outline btn--full" (click)="onUpdateHeight()">Update height</button>
+          </div>
+        }
+
+        @if (activeSecondaryPanel() === 'goal') {
+          <div class="panel" [class.panel--error]="goalWeightError()">
+            <h3 class="panel-title">Set goal weight</h3>
+            <label class="panel-label">Goal weight (kg)</label>
+
+            <input class="panel-input"
+                   [class.panel-input--error]="goalWeightError()"
+                   type="number"
+                   placeholder="E.g.: 65"
+                   [(ngModel)]="goalWeightInputModel"
+                   (ngModelChange)="onGoalModelChange()"
+                   min="0.1" max="500" step="0.1" />
+
+            @if (goalWeightError()) {
+              <p class="input-error">{{ goalWeightError() }}</p>
+            }
+
+            @if (goalWeightInputModel && !goalWeightError()) {
+              <p class="panel-hint">~{{ formattedProjectedDate() }}</p>
+            }
+
+            <button class="btn btn--primary btn--full"
+                    [disabled]="goalInputInvalid || !goalWeightInputModel.trim()"
+                    (click)="onSaveGoal()">
+              Save goal
+            </button>
+
+            <button class="btn btn--outline btn--full" (click)="onCancelGoal()">Cancel</button>
+          </div>
+        }
+
+      }
+
+    </aside>
+  </div>
+
+</div>

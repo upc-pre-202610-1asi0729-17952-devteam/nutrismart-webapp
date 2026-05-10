@@ -159,7 +159,7 @@ export class IamStore {
     this._error.set(null);
 
     const newUser = new User({
-      id: Date.now(),
+      id: 0,
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
@@ -177,6 +177,7 @@ export class IamStore {
       fiberTarget: 25,
       streak: 0,
       consecutiveMisses: 0,
+      createdAt: new Date().toISOString().slice(0, 10),
     });
 
     return this.iamApi.createUser(newUser).pipe(

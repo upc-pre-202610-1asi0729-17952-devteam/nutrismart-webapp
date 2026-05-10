@@ -1,0 +1,305 @@
+<div class="rec-page">
+
+  <!-- ── Page header ─────────────────────────────────────────── -->
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">Recommendations</h1>
+      <p class="page-subtitle">
+        @if (store.isTravelMode()) {
+          Your current location is different from your usual area.
+        } @else if (!isPro()) {
+          Upgrade your plan to access context-sensitive recommendations
+        } @else {
+          Personalised recommendations based on your current location and weather
+        }
+      </p>
+    </div>
+    <div class="header-badge" [class.badge--travel]="store.isTravelMode()">
+      <span class="badge-icon">{{ headerBadgeIcon() }}</span>
+      <span class="badge-text">{{ headerBadgeLabel() }}</span>
+    </div>
+  </header>
+
+  <!-- ── Plan Basic gate ─────────────────────────────────────── -->
+  @if (!isPro()) {
+    <div class="plan-gate">
+      <div class="plan-gate-icon">📍</div>
+      <h2 class="plan-gate-title">Contextual recommendations — Pro or Premium plan</h2>
+      <p class="plan-gate-desc">
+        Weather-based suggestions, Automatic Travel Mode and the personalised recommendation engine
+        are available from the Pro plan onwards.
+      </p>
+      <a routerLink="/subscription" class="btn btn--primary">Check subscription</a>
+    </div>
+  }
+
+  @if (isPro()) {
+
+    <!-- ── Demo bar ─────────────────────────────────────────── -->
+    <div class="demo-bar">
+      <span class="demo-label">Demo:</span>
+
+      <div class="demo-group">
+        <span class="demo-group-label">Weather</span>
+        <button class="demo-btn" [class.demo-btn--active]="demoWeather() === 'hot'"
+                (click)="setDemoWeather('hot')">☀ Hot</button>
+        <button class="demo-btn" [class.demo-btn--active]="demoWeather() === 'cold'"
+                (click)="setDemoWeather('cold')">❄ Cold</button>
+      </div>
+
+      <div class="demo-group">
+        <span class="demo-group-label">Adherence</span>
+        <button class="demo-btn" [class.demo-btn--active]="demoAdherence() === 'on_track'"
+                (click)="setDemoAdherence('on_track')">On track</button>
+        <button class="demo-btn demo-btn--warn" [class.demo-btn--active]="demoAdherence() === 'at_risk'"
+                (click)="setDemoAdherence('at_risk')">AT_RISK</button>
+        <button class="demo-btn demo-btn--danger" [class.demo-btn--active]="demoAdherence() === 'dropped'"
+                (click)="setDemoAdherence('dropped')">DROPPED</button>
+      </div>
+
+      <div class="demo-group">
+        <span class="demo-group-label">Travel</span>
+        <button class="demo-btn" [class.demo-btn--active]="demoTravel()"
+                (click)="toggleDemoTravel()">
+          {{ demoTravel() ? '✓ Travel ON' : 'Travel OFF' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Location denied banner ──────────────────────────────── -->
+    @if (store.locationDenied() && !store.isTravelMode()) {
+      <div class="location-banner">
+        <span class="location-banner-icon">📍</span>
+        <span class="location-banner-text">
+          We don't have access to your location. Enable it to get weather-based recommendations and
+          Travel Mode, or enter your city manually in the side panel.
+        </span>
+        <button class="btn btn--primary btn--sm" (click)="store.allowLocation()">Enable location</button>
+      </div>
+    }
+
+    <!-- ── Weather / Travel context banner ────────────────────── -->
+    @if (!store.locationDenied() || store.isTravelMode()) {
+      <div class="context-banner" [ngClass]="weatherBannerClass()">
+        <div class="banner-icon-wrap">
+          <span class="banner-icon">{{ store.isTravelMode() ? '📍' : weatherIcon() }}</span>
+        </div>
+        <div class="banner-body">
+          @if (store.isTravelMode()) {
+            <strong>Travel mode active — {{ store.travelContext()?.locationLabel() }}, {{ store.weatherContext()?.temperatureCelsius }}°C</strong>
+            <p>Your current location is different from your usual area. We're showing you typical dishes from {{ travelCity() }} that match your profile and dietary restrictions.</p>
+          } @else {
+            <strong>
+              {{ store.weatherContext()?.isHot() ? 'It\'s hot' : 'It\'s cold' }} in
+              {{ store.weatherContext()?.city }} —
+              {{ store.weatherContext()?.temperatureCelsius }}°C ·
+              {{ store.weatherContext()?.condition }}
+            </strong>
+            <p>
+              @if (store.weatherContext()?.isHot()) {
+                Location detected automatically. We've suggested light, refreshing and hydrating options that match your profile.
+              } @else {
+                Your location has been detected automatically. We've suggested some warming and comforting options that match your profile.
+              }
+            </p>
+          }
+        </div>
+        <div class="banner-updated">
+          @if (store.isTravelMode()) {
+            Detected automatically
+          } @else {
+            {{ store.weatherContext()?.updatedAgo() }}
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ── Main two-column layout ──────────────────────────────── -->
+    <div class="rec-grid">
+
+      <!-- ── LEFT: Cards column ───────────────────────────────── -->
+      <main class="cards-col">
+
+        <!-- ── DROPPED intervention card (T35) ──────────────── -->
+        @if (store.showInterventionCard() && store.interventionCard()) {
+          <div class="alert-card alert-card--red">
+            <div class="alert-card-header">
+              <span class="alert-badge alert-badge--red">❤ Reactivation plan</span>
+            </div>
+            <h3 class="alert-card-title">Start small — day 1 of your return</h3>
+            <p class="alert-card-desc">
+              We noticed you haven't been following your plan for {{ session()?.consecutiveMisses ?? 5 }} days.
+              For days 1–3, we're reducing your target to
+              <strong>{{ session()?.simplifiedKcalTarget ?? 1400 }} kcal</strong> to make it easier to return.
+            </p>
+            <div class="alert-card-meal">
+              <span class="meal-name">{{ store.interventionCard()!.name }}</span>
+              <span class="meal-desc">{{ store.interventionCard()!.description }}</span>
+              <span class="meal-kcal">{{ store.interventionCard()!.kcal }} kcal</span>
+              <span class="meal-protein tag">{{ store.interventionCard()!.protein }}</span>
+            </div>
+            <p class="event-label">{{ session()?.interventionEventLabel() }}</p>
+            <button class="btn btn--red btn--full" (click)="onAcceptSimplifiedPlan()">
+              Accept simplified plan
+            </button>
+          </div>
+        }
+
+        <!-- ── AT_RISK preventive card (T34) ─────────────────── -->
+        @if (store.showPreventiveCard() && store.preventiveCard()) {
+          <div class="alert-card alert-card--orange">
+            <div class="alert-card-header">
+              <span class="alert-badge alert-badge--orange">⚠ Adherence alert</span>
+            </div>
+            <h3 class="alert-card-title">A simple option for today</h3>
+            <p class="alert-card-desc">
+              Your last {{ session()?.consecutiveMisses ?? 2 }} day(s) were below your caloric target.
+              Here's a simple suggestion to help you get back on track today.
+            </p>
+            <div class="alert-card-meal">
+              <span class="meal-name">{{ store.preventiveCard()!.name }}</span>
+              <span class="meal-desc">{{ store.preventiveCard()!.description }}</span>
+              <span class="meal-kcal">{{ store.preventiveCard()!.kcal }} kcal</span>
+              <span class="meal-protein tag">{{ store.preventiveCard()!.protein }}</span>
+            </div>
+            <p class="event-label">{{ session()?.preventiveEventLabel() }}</p>
+            <button class="btn btn--orange btn--full" (click)="onLogPreventiveNow()">
+              Log this now
+            </button>
+          </div>
+        }
+
+        <!-- ── Section title ─────────────────────────────────── -->
+        <div class="section-header">
+          <h2 class="section-title">{{ sectionTitle() }}</h2>
+          <p class="section-subtitle">{{ sectionSubtitle() }}</p>
+        </div>
+
+        <!-- ── Recommendation cards ───────────────────────────── -->
+        @for (card of store.activeCards(); track card.id) {
+          <div class="rec-card">
+            <div class="rec-card-icon">
+              <span>{{ store.isTravelMode() ? '🍲' : '↗' }}</span>
+            </div>
+            <div class="rec-card-body">
+              <h3 class="rec-card-name">{{ card.name }}</h3>
+              <p class="rec-card-desc">{{ card.description }}</p>
+              <div class="rec-card-tags">
+                <span class="tag tag--kcal">{{ card.kcal }} kcal</span>
+                <span class="tag tag--protein">{{ card.protein }}</span>
+                <span class="tag">{{ card.badge }}</span>
+              </div>
+            </div>
+            <button class="btn btn--primary btn--add" (click)="onAddToLog(card.id)">
+              + Add to log
+            </button>
+          </div>
+        }
+
+        @if (store.activeCards().length === 0 && !store.loading()) {
+          <div class="empty-state">
+            <p>No recommendations available. Adjust your filters or try a different location.</p>
+          </div>
+        }
+
+      </main>
+
+      <!-- ── RIGHT: Filters + Balance + Travel panel ───────────── -->
+      <aside class="right-col">
+
+        <!-- Active filters -->
+        <div class="panel">
+          <h3 class="panel-title">Active filters</h3>
+          <p class="panel-subtitle">Applied to all suggestions</p>
+          @if (store.activeFilters().length > 0) {
+            <div class="filter-tags">
+              @for (f of store.activeFilters(); track f) {
+                <span class="filter-tag">× {{ f }}</span>
+              }
+            </div>
+          } @else {
+            <p class="panel-empty">No active dietary restrictions.</p>
+          }
+        </div>
+
+        <!-- Daily balance -->
+        <div class="panel">
+          <h3 class="panel-title">Daily balance</h3>
+          <div class="balance-row">
+            <span class="balance-label">Target</span>
+            <span class="balance-value">{{ dailyTarget() }} kcal</span>
+          </div>
+          <div class="balance-row">
+            <span class="balance-label">Consumed</span>
+            <span class="balance-value">{{ dailyConsumed() }} kcal</span>
+          </div>
+          <div class="balance-row">
+            <span class="balance-label">Remaining</span>
+            <span class="balance-value balance-value--accent">{{ dailyRemaining() }} kcal</span>
+          </div>
+        </div>
+
+        <!-- Travel mode panel (T36) -->
+        <div class="panel">
+          <div class="travel-toggle-row">
+            <h3 class="panel-title" style="margin:0">Travel Mode</h3>
+            <mat-slide-toggle
+              color="primary"
+              [checked]="store.isTravelMode()"
+              (change)="onTravelToggleChange($event)">
+            </mat-slide-toggle>
+          </div>
+
+          @if (store.isTravelMode()) {
+            <p class="panel-subtitle">Your current location has been detected outside your usual area.</p>
+
+            <!-- Detected city badge -->
+            @if (store.travelContext()?.city) {
+              <div class="travel-active-row">
+                <div class="travel-city-info">
+                  <span class="travel-city-name">{{ store.travelContext()?.city }}{{ store.travelContext()?.country ? ', ' + store.travelContext()?.country : '' }}</span>
+                  <span class="travel-city-sub">{{ store.travelContext()?.isManual ? 'Entered manually' : 'Detected automatically' }}</span>
+                </div>
+              </div>
+            }
+
+            <!-- Unrecognized city fallback (T36) -->
+            @if (store.unrecognizedCity()) {
+              <div class="unrecognized-city-msg">
+                <span>⚠ City not recognized. Try a nearby major city like</span>
+                <button class="link-btn" (click)="manualCity.set('Cusco'); onConfirmManualCity()">Cusco</button>
+                or
+                <button class="link-btn" (click)="manualCity.set('Arequipa'); onConfirmManualCity()">Arequipa</button>.
+              </div>
+            }
+
+            <!-- Manual city input (always visible in travel mode) -->
+            <div class="travel-input-row" style="margin-top:10px;">
+              <input class="travel-input"
+                     type="text"
+                     placeholder="E.g.: Cusco, Arequipa..."
+                     [value]="manualCity()"
+                     (input)="manualCity.set($any($event.target).value)"
+                     (keyup.enter)="onConfirmManualCity()" />
+              <button class="btn btn--primary btn--sm" (click)="onConfirmManualCity()">Go</button>
+            </div>
+
+          } @else {
+            <p class="panel-subtitle">No location access. Enter your city to receive local recommendations.</p>
+            <div class="travel-input-row">
+              <input class="travel-input"
+                     type="text"
+                     placeholder="E.g.: Cusco, Arequipa..."
+                     [value]="manualCity()"
+                     (input)="manualCity.set($any($event.target).value)"
+                     (keyup.enter)="onConfirmManualCity()" />
+              <button class="btn btn--primary btn--sm" (click)="onConfirmManualCity()">Go</button>
+            </div>
+          }
+        </div>
+
+      </aside>
+    </div>
+  }
+
+</div>

@@ -1,0 +1,85 @@
+<div class="goal-page">
+
+  <!-- ── Header ─────────────────────────────────────────────────── -->
+  <header class="goal-header">
+    <h1 class="goal-title">What is your main goal?</h1>
+    <p class="goal-subtitle">
+      This determines your caloric strategy and macro distribution.
+      You can change it later from your profile.
+    </p>
+  </header>
+
+  <!-- ── Goal cards ─────────────────────────────────────────────── -->
+  <div class="goal-cards">
+
+    <!-- Lose weight -->
+    <button
+      type="button"
+      class="goal-card"
+      [ngClass]="{ 'goal-card--selected': isSelected(UserGoal.WEIGHT_LOSS) }"
+      (click)="selectGoal(UserGoal.WEIGHT_LOSS)"
+      [attr.aria-pressed]="isSelected(UserGoal.WEIGHT_LOSS)">
+
+      <div class="goal-card-check"
+           [ngClass]="{ 'goal-card-check--visible': isSelected(UserGoal.WEIGHT_LOSS) }">
+        ✓
+      </div>
+
+      <div class="goal-card-icon goal-card-icon--loss">
+        <span>⚖</span>
+      </div>
+
+      <div class="goal-card-body">
+        <h2 class="goal-card-title">Lose weight</h2>
+        <div class="goal-card-tags">
+          <span class="goal-tag">Caloric deficit</span>
+          <span class="goal-tag">Fat loss</span>
+          <span class="goal-tag">Sustainable progress</span>
+        </div>
+      </div>
+
+    </button>
+
+    <!-- Gain muscle -->
+    <button
+      type="button"
+      class="goal-card"
+      [ngClass]="{ 'goal-card--selected': isSelected(UserGoal.MUSCLE_GAIN) }"
+      (click)="selectGoal(UserGoal.MUSCLE_GAIN)"
+      [attr.aria-pressed]="isSelected(UserGoal.MUSCLE_GAIN)">
+
+      <div class="goal-card-check"
+           [ngClass]="{ 'goal-card-check--visible': isSelected(UserGoal.MUSCLE_GAIN) }">
+        ✓
+      </div>
+
+      <div class="goal-card-icon goal-card-icon--gain">
+        <span>💪</span>
+      </div>
+
+      <div class="goal-card-body">
+        <h2 class="goal-card-title">Gain muscle</h2>
+        <div class="goal-card-tags">
+          <span class="goal-tag">Caloric surplus</span>
+          <span class="goal-tag">High protein</span>
+          <span class="goal-tag">Hypertrophy</span>
+        </div>
+      </div>
+
+    </button>
+
+  </div>
+
+  <!-- ── Continue ───────────────────────────────────────────────── -->
+  <div class="goal-actions">
+    <button
+      type="button"
+      class="btn-continue"
+      [class.btn-continue--active]="hasSelection()"
+      [disabled]="!hasSelection()"
+      (click)="onContinue()">
+      Continue
+    </button>
+  </div>
+
+</div>

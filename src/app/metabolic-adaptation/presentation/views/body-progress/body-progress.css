@@ -1,0 +1,471 @@
+.bp-page {
+  padding: 28px 32px;
+  min-height: 100vh;
+  background: var(--nutrismart-bg);
+}
+
+/* ── Header ── */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+  margin: 0 0 4px;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: var(--nutrismart-text-light);
+  margin: 0;
+}
+
+.header-actions { display: flex; gap: 10px; align-items: center; }
+
+/* ── Staleness banner ── */
+.stale-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fffbeb;
+  border: 1.5px solid #fde68a;
+  border-radius: 10px;
+  padding: 12px 18px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  color: #92400e;
+}
+
+.stale-banner-icon { font-size: 18px; flex-shrink: 0; }
+.stale-banner-text { flex: 1; }
+
+/* ── Metric cards ── */
+.metric-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.metric-card {
+  background: var(--nutrismart-white);
+  border: 1px solid var(--nutrismart-border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  min-height: 100px;
+}
+
+.metric-card--stale {
+  border-color: #fde68a;
+}
+
+.metric-card-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--nutrismart-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 6px;
+}
+
+.metric-card-header-row {
+  min-height: 22px;
+  margin-bottom: 2px;
+}
+
+.metric-card-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+  line-height: 1.1;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.metric-card-unit {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--nutrismart-text-mid);
+}
+
+.metric-card-sub {
+  font-size: 11px;
+  color: var(--nutrismart-text-light);
+  margin-top: 4px;
+}
+
+.metric-card-sub--warn { color: #d97706; }
+
+/* ── Badges ── */
+.metric-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.badge--green  { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+.badge--orange { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.badge--red    { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.badge--blue   { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+
+/* ── Two-column grid ── */
+.bp-grid {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 20px;
+  align-items: start;
+}
+
+/* ── Chart card ── */
+.chart-card {
+  background: var(--nutrismart-white);
+  border: 1px solid var(--nutrismart-border);
+  border-radius: 10px;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.chart-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--nutrismart-text-dark); }
+
+.day-toggle-mat {
+  border-radius: 20px !important;
+  overflow: hidden;
+}
+
+.day-toggle-mat .mat-button-toggle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+}
+
+.day-toggle-mat .mat-button-toggle-checked {
+  background: var(--nutrismart-primary) !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+/* ── SVG Chart ── */
+.chart-wrap {
+  position: relative;
+  padding: 10px 0 30px 36px;
+  margin-bottom: 10px;
+}
+
+.chart-svg {
+  width: 100%;
+  height: 140px;
+  display: block;
+  overflow: visible;
+}
+
+.chart-y-labels {
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--nutrismart-text-light);
+}
+
+.chart-x-labels {
+  position: absolute;
+  bottom: 0;
+  left: 36px;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--nutrismart-text-light);
+}
+
+.chart-empty {
+  padding: 30px;
+  text-align: center;
+  color: var(--nutrismart-text-light);
+  font-size: 13px;
+}
+
+.chart-stale-note {
+  font-size: 12px;
+  color: var(--nutrismart-text-light);
+  background: var(--nutrismart-bg);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.chart-goal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding-top: 12px;
+  border-top: 1px solid var(--nutrismart-border);
+}
+
+.chart-goal-left, .chart-goal-right {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chart-goal-right { align-items: flex-end; }
+
+.chart-goal-label { font-size: 11px; color: var(--nutrismart-text-light); }
+.chart-goal-value { font-size: 15px; font-weight: 700; color: var(--nutrismart-primary); }
+.chart-goal-date  { font-size: 15px; font-weight: 700; color: var(--nutrismart-text-dark); }
+
+/* ── Log History table ── */
+.history-card {
+  background: var(--nutrismart-white);
+  border: 1px solid var(--nutrismart-border);
+  border-radius: 10px;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.history-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--nutrismart-text-dark); }
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.history-table tr { border-bottom: 1px solid var(--nutrismart-border); }
+.history-table tr:last-child { border-bottom: none; }
+
+.history-date   { padding: 10px 0; color: var(--nutrismart-text-mid); }
+.history-weight { padding: 10px 0; font-weight: 700; color: var(--nutrismart-text-dark); text-align: center; }
+.history-delta  { padding: 10px 0; font-weight: 600; text-align: right; color: var(--nutrismart-text-mid); }
+.history-delta--neg { color: var(--nutrismart-primary); }
+.history-delta--pos { color: #ef4444; }
+
+/* ── Body composition card ── */
+.fat-alert-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fee2e2;
+  border: 1.5px solid #fca5a5;
+  border-radius: 10px;
+  padding: 12px 18px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: #991b1b;
+}
+
+.fat-alert-icon { font-size: 18px; flex-shrink: 0; }
+
+.composition-card {
+  background: var(--nutrismart-white);
+  border: 1px solid var(--nutrismart-border);
+  border-radius: 10px;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+
+.composition-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.composition-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--nutrismart-text-dark); }
+
+.composition-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.composition-item {
+  background: var(--nutrismart-bg);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.composition-item-label { font-size: 11px; color: var(--nutrismart-text-light); }
+.composition-item-value { font-size: 18px; font-weight: 700; color: var(--nutrismart-text-dark); }
+.composition-item-sub   { font-size: 11px; color: var(--nutrismart-text-light); }
+.composition-item-sub--good { color: var(--nutrismart-primary); }
+
+/* ── Right column panels ── */
+.right-col { display: flex; flex-direction: column; gap: 14px; }
+
+.panel {
+  background: var(--nutrismart-white);
+  border: 1px solid var(--nutrismart-border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Error state — red border on the whole panel (WA_BP_Error) */
+.panel--error { border-color: #ef4444 !important; }
+
+.panel-title { font-size: 15px; font-weight: 700; margin: 0; color: var(--nutrismart-text-dark); }
+.panel-label { font-size: 12px; color: var(--nutrismart-text-mid); margin: 0; }
+.panel-hint  { font-size: 11px; color: var(--nutrismart-text-light); margin: 0; }
+
+.panel-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--nutrismart-border);
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
+  color: var(--nutrismart-text-dark);
+  background: var(--nutrismart-bg);
+  outline: none;
+}
+
+.panel-input:focus { border-color: var(--nutrismart-primary); }
+
+/* Red border on the input itself when invalid (WA_BP_Error) */
+.panel-input--error {
+  border-color: #ef4444 !important;
+  background: #fff5f5;
+}
+
+.panel-input--error:focus { border-color: #ef4444 !important; }
+
+/* Inline validation error text (WA_BP_Error) */
+.input-error {
+  font-size: 12px;
+  color: #ef4444;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Live BMI/TDEE preview banner (WA_BP_Registrar_peso) */
+.weight-preview {
+  background: var(--nutrismart-primary);
+  color: white;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  font-family: 'Poppins', sans-serif;
+  text-decoration: none;
+}
+
+.btn--primary {
+  background: var(--nutrismart-primary);
+  color: white;
+}
+
+.btn--primary:hover { background: var(--nutrismart-primary-dark); }
+
+.btn--outline {
+  background: white;
+  color: var(--nutrismart-text-dark);
+  border: 1.5px solid var(--nutrismart-border);
+}
+
+.btn--outline:hover { border-color: var(--nutrismart-primary); color: var(--nutrismart-primary); }
+
+.btn--full { width: 100%; }
+.btn--sm   { padding: 6px 14px; font-size: 12px; }
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--nutrismart-primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.link-btn:hover { text-decoration: underline; }
+
+/* Disabled button state (WA_BP_Error: Save entry / Save goal grayed out when invalid) */
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn--primary:disabled { background: var(--nutrismart-primary) !important; }
+.btn--outline:disabled { border-color: var(--nutrismart-border) !important; color: var(--nutrismart-text-light) !important; }
+
+/* ── Dialog (kept for backward compatibility) ── */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog {
+  background: white;
+  border-radius: 14px;
+  padding: 28px 32px;
+  width: 380px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.dialog-title { font-size: 18px; font-weight: 700; margin: 0; color: var(--nutrismart-text-dark); }
+.dialog-error { font-size: 12px; color: #ef4444; margin: 0; }
+.dialog-preview { font-size: 12px; color: var(--nutrismart-text-light); margin: 0; }
+
+.dialog-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}

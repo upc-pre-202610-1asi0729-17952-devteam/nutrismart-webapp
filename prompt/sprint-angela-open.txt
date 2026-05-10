@@ -1,0 +1,177 @@
+================================================================================
+OPEN USER STORIES
+================================================================================
+
+------------------------------------------------------------------------
+US35 | T32 | Story: Receive Meal Suggestions That Match the Weather So My Body Gets What It Needs in Each Climate
+------------------------------------------------------------------------
+Tarea: Define DDD layer files for Smart Recommendation bounded context
+
+Descripción:
+Create the RecommendationSession, WeatherContext, and TravelContext domain entities.
+Create the RecommendationsApi infrastructure class extending BaseApi with
+getWeatherRecommendations(), activateTravelMode(), deactivateTravelMode(),
+getPreventiveRecommendation(), getInterventionRecommendation(), and
+getStrategyAdjustment() methods. Create the RecommendationsAssembler and the
+RecommendationsStore Angular service using Signals.
+
+Story Points: 3
+Asignado a: Espinoza Cruz, Angela Milagros
+Estado: To-do
+
+------------------------------------------------------------------------
+US35 | T33 | Story: Receive Meal Suggestions That Match the Weather So My Body Gets What It Needs in Each Climate
+------------------------------------------------------------------------
+Tarea: Build Recommendations view with weather context banner and recommendation cards
+
+Descripción:
+Implement the /recommendations view with a weather context banner (sun/rain icon,
+city, temperature, description, timestamp), a recommendations section title with
+subtitle showing active filters and location, and 3 recommendation Angular Material
+Cards each showing food name, description tags, kcal, protein badge, weather badge,
+and + Add to log button. Right panel shows Active filters tags and Daily balance
+summary. Implement cold weather state (blue banner, warm and dense suggestions) and
+hot weather state (orange banner, light and hydrating suggestions) toggled via demo bar.
+
+Story Points: 5
+Asignado a: Espinoza Cruz, Angela Milagros
+Estado: To-do
+
+------------------------------------------------------------------------
+US31 | T34 | Story: Receive a Simple Meal Suggestion That Makes Returning to Consistency Easy After a Drop
+------------------------------------------------------------------------
+Tarea: Build AT_RISK preventive recommendation card in Recommendations view
+
+Descripción:
+Extend the /recommendations view to prepend an orange-bordered Angular Material Card
+when AdherenceStatus is AT_RISK, showing: triangle Adherence alert badge, a simple
+option for today title, drop context description, suggested meal with kcal and macros,
+PreventiveRecommendationGenerated event label, and an orange Log this now button.
+Card appears above weather recommendations and is toggled via the AT_RISK demo state.
+
+Story Points: 3
+Asignado a: Espinoza Cruz, Angela Milagros
+Estado: To-do
+
+------------------------------------------------------------------------
+US32 | T35 | Story: Get a Graduated Return Plan After Abandonment That Does Not Overwhelm Me With the Full Routine Immediately
+------------------------------------------------------------------------
+Tarea: Build DROPPED intervention recommendation card in Recommendations view
+
+Descripción:
+Extend the /recommendations view to prepend a red-bordered Angular Material Card
+when AdherenceStatus is DROPPED, showing: heart Reactivation plan badge, Start small
+- day 1 of your return title, simplified target description with reduced kcal for
+days 1 to 3, InterventionRecommendationGenerated event label, and a red
+Accept simplified plan button. Toggled via the DROPPED demo state.
+
+Story Points: 2
+Asignado a: Espinoza Cruz, Angela Milagros
+Estado: To-do
+
+------------------------------------------------------------------------
+US36 | T36 | Story: Stay on Track Nutritionally When Traveling Without Knowing the Local Cuisine
+------------------------------------------------------------------------
+Tarea: Build Travel Mode panel and local dish recommendations in Recommendations view
+
+Descripción:
+Extend the /recommendations view with a Travel Mode toggle section showing an Angular
+Material Slide Toggle, a detected city badge, and a manual city input with confirm
+button. When active, replace weather recommendations with local dish cards showing
+dish name, local cuisine tags, kcal, protein badge, Local badge, and + Add to log button.
+On activate/deactivate, call RecommendationsStore mock methods. Implement unrecognized
+city state with fallback message suggesting a nearby major city.
+
+Story Points: 4
+Asignado a: Espinoza Cruz, Angela Milagros
+Estado: To-do
+
+------------------------------------------------------------------------
+US20 | T37 | Story: Update Body Metrics So the Nutritional Plan Does Not Become Outdated as My Body Changes
+------------------------------------------------------------------------
+Tarea: Define DDD layer files for Metabolic Adaptation bounded context
+
+Descripción:
+Create the NutritionPlan, BodyMetric, and BodyComposition domain entities. Create the
+MetabolicApi infrastructure class extending BaseApi with logWeight(), updateHeight(),
+getMetricsHistory(), setTargetWeight(), getMetabolicTargets(), and
+updateBodyComposition() methods. Create the MetabolicAssembler and the MetabolicStore
+Angular service using Signals.
+
+Story Points: 3
+Asignado a: Espinoza Cruz, Angela Milagros
+Estado: To-do
+
+------------------------------------------------------------------------
+US22 | T38 | Story: Understand the Metabolic Basis of My Nutritional Targets So I Can Make Informed Adjustments
+------------------------------------------------------------------------
+Tarea: Build Body Progress view with metric cards, weight log form, and height update form
+
+Descripción:
+Implement the /body-progress view with a header containing Update height outline button
+and + Log weight teal button. Display 4 metric cards (current weight with update
+timestamp, BMI with WHO category badge, BMR in kcal/day, TDEE in kcal/day). Log weight
+right panel: current weight label, kg input, Save entry button. Update height right panel:
+current height label, cm input, BMI recalculation note, Update height button. On save,
+call MetabolicStore mock methods and update metric cards reactively via Signals. Display
+a 14-day staleness Angular Material Banner warning when the last weight entry is older
+than 14 days.
+
+Story Points: 5
+Asignado a: Espinoza Cruz, Angela Milagros
+Estado: To-do
+
+------------------------------------------------------------------------
+US20 | T39 | Story: Update Body Metrics So the Nutritional Plan Does Not Become Outdated as My Body Changes
+------------------------------------------------------------------------
+Tarea: Build Weight Evolution chart with date range toggle and goal reference line
+
+Descripción:
+Implement the weight evolution chart within /body-progress displaying a line chart of
+historical weight entries with a 3-period Angular Material Button Toggle (7 days / 30
+days / 90 days). Include a dashed pink goal weight reference line at the target weight
+value. Display goal weight label and estimated achievement date below the chart. Display
+Edit goal link calling MetabolicStore.setTargetWeight() mock.
+
+Story Points: 3
+Asignado a: Espinoza Cruz, Angela Milagros
+Estado: To-do
+
+------------------------------------------------------------------------
+US26 | T40 | Story: Set a Target Weight to Make Progress Measurable and Give the System a Reference for Projection
+------------------------------------------------------------------------
+Tarea: Build Log History table and target weight configuration in Body Progress view
+
+Descripción:
+Implement the Log History Angular Material Table within /body-progress showing date,
+weight in kg, and change from previous entry (positive or negative) for the last 3
+entries with a View all link. Implement the target weight Angular Material Dialog
+triggered by Edit goal, containing a kg input with validation that rejects values equal
+to or above current weight for WEIGHT_LOSS goal, a projected achievement date preview,
+and Save/Cancel buttons.
+
+Story Points: 3
+Asignado a: Espinoza Cruz, Angela Milagros
+Estado: To-do
+
+------------------------------------------------------------------------
+US27 | T41 | Story: Verify That Weight Gain Is Muscle and Not Fat to Protect the Quality of the Bulk
+------------------------------------------------------------------------
+Tarea: Build Body Composition section for MUSCLE_GAIN users in Body Progress view
+
+Descripción:
+Extend /body-progress to show a Body Composition section below the Log History table,
+visible only to users with a MUSCLE_GAIN goal. Display estimated body fat percentage,
+lean mass in kg, and fat mass in kg calculated from mock circumference data. Provide
+waist and neck Angular Material Input fields. On save, call
+MetabolicStore.updateBodyComposition() mock. Display a red Angular Material Banner
+warning when body fat increase exceeds 1.5% over the last two weeks with a surplus
+reduction suggestion.
+
+Story Points: 4
+Asignado a: Espinoza Cruz, Angela Milagros
+Estado: To-do
+
+================================================================================
+FIN DEL DOCUMENTO
+================================================================================
