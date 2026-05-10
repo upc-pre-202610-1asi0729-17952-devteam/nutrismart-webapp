@@ -1,5 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { IamStore } from '../../iam/application/iam.store';
+import { NutritionStore } from '../../nutrition-tracking/application/nutrition.store';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
 import { PantryItem, IngredientCategory } from '../domain/model/pantry-item.entity';
 import { RecipeSuggestion } from '../domain/model/recipe-suggestion.entity';
@@ -16,8 +17,9 @@ import { PantryApi } from '../infrastructure/pantry-api';
  */
 @Injectable({ providedIn: 'root' })
 export class PantryStore {
-  private pantryApi = inject(PantryApi);
-  private iamStore  = inject(IamStore);
+  private pantryApi       = inject(PantryApi);
+  private iamStore        = inject(IamStore);
+  private nutritionStore  = inject(NutritionStore);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
@@ -42,11 +44,14 @@ export class PantryStore {
   /** True when the pantry contains no ingredients. */
   readonly isEmpty = computed(() => this._pantryItems().length === 0);
 
-  /** Daily caloric intake consumed so far (from NutritionStore — stub value). */
-  readonly dailyConsumed = computed(() => {
-    const user = this.iamStore.currentUser();
-    return user ? 1340 : 0;
-  });
+  /** Daily caloric intake consumed so far, summed from today's meal records. */
+  readonly dailyConsumed = computed(() =>
+    Math.round(
+      this.nutritionStore.mealRecords()
+        .filter(r => r.isFromToday)
+        .reduce((sum, r) => sum + r.calories, 0) * 10,
+    ) / 10,
+  );
 
   /** User's daily calorie goal. */
   readonly dailyGoal = computed(() => {
@@ -59,10 +64,15 @@ export class PantryStore {
     Math.max(0, this.dailyGoal() - this.dailyConsumed()),
   );
 
-  /** Remaining protein grams (stub: remaining 38g of 120g target). */
+  /** Remaining protein grams for today. */
   readonly remainingProtein = computed(() => {
     const user = this.iamStore.currentUser();
-    return Math.max(0, (user?.proteinTarget ?? 120) - 82);
+    const consumedProtein = Math.round(
+      this.nutritionStore.mealRecords()
+        .filter(r => r.isFromToday)
+        .reduce((sum, r) => sum + r.protein, 0) * 10,
+    ) / 10;
+    return Math.max(0, (user?.proteinTarget ?? 120) - consumedProtein);
   });
 
   /** The user's current fitness goal. */

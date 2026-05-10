@@ -9,6 +9,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { UserGoal } from '../../../../iam/domain/model/user-goal.enum';
+import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
 import { PantryStore } from '../../../application/pantry.store';
 import { IngredientCatalogItem } from '../../../domain/model/ingredient-catalog-item.entity';
 import { RecipeSuggestion } from '../../../domain/model/recipe-suggestion.entity';
@@ -37,9 +38,10 @@ import { RecipeSuggestion } from '../../../domain/model/recipe-suggestion.entity
   styleUrl: './pantry.css',
 })
 export class Pantry implements OnInit {
-  protected iamStore    = inject(IamStore);
-  protected pantryStore = inject(PantryStore);
-  private   translate   = inject(TranslateService);
+  protected iamStore        = inject(IamStore);
+  protected pantryStore     = inject(PantryStore);
+  private   nutritionStore  = inject(NutritionStore);
+  private   translate       = inject(TranslateService);
 
   protected readonly UserGoal = UserGoal;
 
@@ -92,7 +94,10 @@ export class Pantry implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.pantryStore.fetchCatalog();
-    await this.pantryStore.fetchPantryItems();
+    await Promise.all([
+      this.nutritionStore.fetchMealEntries(),
+      this.pantryStore.fetchPantryItems(),
+    ]);
   }
 
   // ─── Autocomplete handlers ────────────────────────────────────────────────
