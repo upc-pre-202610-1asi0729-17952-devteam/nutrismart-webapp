@@ -13,7 +13,8 @@ function initLanguage(translate: TranslateService) {
     translate.setDefaultLang('en');
     await firstValueFrom(translate.use(saved));
     const other = saved === 'es' ? 'en' : 'es';
-    await firstValueFrom(translate.getTranslation(other));
+    const otherTranslations = await firstValueFrom(translate.currentLoader.getTranslation(other));
+    translate.setTranslation(other, otherTranslations);
   };
 }
 

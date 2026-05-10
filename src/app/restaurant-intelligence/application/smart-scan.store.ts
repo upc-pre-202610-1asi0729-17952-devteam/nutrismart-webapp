@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateStore } from '@ngx-translate/core';
 import { IamStore } from '../../iam/application/iam.store';
 import { DietaryRestriction } from '../../iam/domain/model/dietary-restriction.enum';
 import { MealType } from '../../nutrition-tracking/domain/model/meal-type.enum';
@@ -42,6 +42,7 @@ export class SmartScanStore {
   private iamStore       = inject(IamStore);
   private nutritionStore = inject(NutritionStore);
   private translate      = inject(TranslateService);
+  private translateStore = inject(TranslateStore);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
@@ -364,9 +365,10 @@ export class SmartScanStore {
     fallback: string,
   ): { foodItemName: string; foodItemNameEs: string } {
     if (!nameKey) return { foodItemName: fallback, foodItemNameEs: fallback };
-    const all = this.translate.translations as Record<string, Record<string, Record<string, string>>>;
-    const enName = all['en']?.[namespace]?.[nameKey] ?? fallback;
-    const esName = all['es']?.[namespace]?.[nameKey] ?? fallback;
+    const enMap = this.translateStore.getTranslations('en') as Record<string, Record<string, string>>;
+    const esMap = this.translateStore.getTranslations('es') as Record<string, Record<string, string>>;
+    const enName = enMap?.[namespace]?.[nameKey] ?? fallback;
+    const esName = esMap?.[namespace]?.[nameKey] ?? fallback;
     return { foodItemName: enName, foodItemNameEs: esName };
   }
 
