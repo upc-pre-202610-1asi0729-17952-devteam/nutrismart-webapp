@@ -45,7 +45,7 @@
       <div class="metric-card-header-row">
         @if (store.currentMetric()) {
           <span class="metric-badge" [ngClass]="bmiCategoryClass()">
-            {{ bmiOutdated() ? 'Outdated' : store.currentMetric()!.bmiCategory() }}
+            {{ bmiBadgeLabel() }}
           </span>
         }
       </div>
@@ -326,14 +326,14 @@
           <label class="panel-label">Waist (cm)</label>
           <input class="panel-input"
                  type="number"
-                 placeholder="E.g.: 82"
+                 placeholder="E.g.: 163"
                  [(ngModel)]="waistInputModel"
                  min="30" max="200" step="0.5" />
 
           <label class="panel-label">Neck (cm)</label>
           <input class="panel-input"
                  type="number"
-                 placeholder="E.g.: 37"
+                 placeholder="E.g.: 163"
                  [(ngModel)]="neckInputModel"
                  min="20" max="80" step="0.5" />
 

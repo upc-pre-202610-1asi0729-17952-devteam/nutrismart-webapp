@@ -139,6 +139,14 @@ export class BodyProgressView implements OnInit {
     });
   });
 
+  /** Short label shown inside the BMI badge pill (e.g. "Normal", not "Normal weight"). */
+  protected bmiBadgeLabel = computed(() => {
+    if (this.bmiOutdated()) return 'Outdated';
+    const cat = this.store.currentMetric()?.bmiCategory();
+    if (!cat) return '';
+    return cat === BmiCategory.NORMAL ? 'Normal' : cat;
+  });
+
   /** CSS class for the BMI WHO-category badge. */
   protected bmiCategoryClass = computed(() => {
     const cat = this.store.currentMetric()?.bmiCategory();
@@ -212,7 +220,7 @@ export class BodyProgressView implements OnInit {
   /** Switches secondary panel to "Update height". */
   onOpenUpdateHeight(): void {
     this.activeSecondaryPanel.set('height');
-    this.goalWeightInput.set('');
+    this.goalWeightInputModel = '';
     this.goalWeightError.set('');
   }
 
