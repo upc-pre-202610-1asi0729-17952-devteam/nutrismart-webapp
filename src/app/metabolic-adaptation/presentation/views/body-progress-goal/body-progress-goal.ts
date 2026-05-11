@@ -66,22 +66,15 @@ export class GoalSelectionScreen {
 
   /**
    * Applies the selected goal and navigates to the body-progress dashboard.
-   *
-   * {@link IamStore.changeGoal} recalculates macros and updates the goal signal
-   * synchronously so that `MetabolicStore.isMuscleGain()` reflects the new value
-   * before the destination route initialises.
+   * changeGoal() creates a new User instance, so signal equality detects the
+   * change and MetabolicStore.isMuscleGain() re-evaluates correctly on load.
    */
   async onContinue(): Promise<void> {
     const goal = this.selectedGoal();
     if (!goal || this.submitting()) return;
     this.submitting.set(true);
     try {
-      // IamStore.changeGoal() mutates the User in place — same object reference —
-      // so Angular's signal equality check (Object.is) never notifies MetabolicStore
-      // subscribers. setSessionGoal() writes a new primitive value to a separate
-      // signal, guaranteeing that isMuscleGain() is correct when the view mounts.
       this.iamStore.changeGoal(goal);
-      this.metabolicStore.setSessionGoal(goal);
       await this.metabolicStore.applyInitialTarget(goal);
       this.router.navigate(['/body-progress', 'progress']);
     } finally {

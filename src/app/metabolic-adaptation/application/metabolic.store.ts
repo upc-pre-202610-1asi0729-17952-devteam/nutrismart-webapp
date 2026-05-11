@@ -6,7 +6,9 @@ import { BodyComposition } from '../domain/model/body-composition.entity';
 import { IamStore } from '../../iam/application/iam.store';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
 
-const STALE_DAYS_THRESHOLD = 14;
+const STALE_DAYS_THRESHOLD     = 14;
+const STAGNATION_WINDOW_DAYS   = 14;
+const MIN_GOAL_COMMITMENT_DAYS = 28;
 
 /**
  * Central state store for the Metabolic Adaptation bounded context.
@@ -27,25 +29,13 @@ export class MetabolicStore {
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
-  private _currentMetric  = signal<BodyMetric | null>(null);
-  private _metricsHistory = signal<BodyMetric[]>([]);
-  private _composition    = signal<BodyComposition | null>(null);
-  private _selectedDays   = signal<7 | 30 | 90>(7);
-  private _loading        = signal<boolean>(false);
-  private _error          = signal<string | null>(null);
-
-  /**
-   * Session goal set directly by {@link GoalSelectionScreen} before navigation.
-   *
-   * IamStore.changeGoal() mutates the User object in place and then calls
-   * signal.set() with the SAME reference. Angular signals use Object.is()
-   * equality, so same-reference sets do NOT notify computed subscribers —
-   * isMuscleGain() would always return the stale cached value.
-   *
-   * This signal holds a fresh primitive value (UserGoal string) so Angular
-   * always detects the change and re-evaluates isMuscleGain() correctly.
-   */
-  private _sessionGoal = signal<UserGoal | null>(null);
+  private _currentMetric     = signal<BodyMetric | null>(null);
+  private _metricsHistory    = signal<BodyMetric[]>([]);
+  private _stagnationHistory = signal<BodyMetric[]>([]);
+  private _composition       = signal<BodyComposition | null>(null);
+  private _selectedDays      = signal<7 | 30 | 90>(7);
+  private _loading           = signal<boolean>(false);
+  private _error             = signal<string | null>(null);
 
   // ─── Public Read-only Signals ─────────────────────────────────────────────
 
@@ -67,38 +57,53 @@ export class MetabolicStore {
   /** Last error message, or null. */
   readonly error          = this._error.asReadonly();
 
+  // ─── Goal Lock Computeds ──────────────────────────────────────────────────
+
+  /** Days elapsed since the user started the current goal. */
+  readonly daysInCurrentGoal = computed(() => {
+    const started = this.iamStore.currentUser()?.goalStartedAt;
+    if (!started) return MIN_GOAL_COMMITMENT_DAYS;
+    const diffMs = Date.now() - new Date(started).getTime();
+    return Math.floor(diffMs / 86_400_000);
+  });
+
+  /** Days remaining until the commitment lock expires. */
+  readonly daysUntilUnlock = computed(() =>
+    Math.max(0, MIN_GOAL_COMMITMENT_DAYS - this.daysInCurrentGoal())
+  );
+
+  /** True while the user is still inside the 28-day commitment window. */
+  readonly isGoalLocked = computed(() => this.daysUntilUnlock() > 0);
+
+  /** ISO date (YYYY-MM-DD) when the current goal commitment expires. */
+  readonly unlockDate = computed(() => {
+    const started = this.iamStore.currentUser()?.goalStartedAt;
+    if (!started) return '';
+    const d = new Date(started);
+    d.setDate(d.getDate() + MIN_GOAL_COMMITMENT_DAYS);
+    return d.toISOString().slice(0, 10);
+  });
+
   // ─── Computed Signals ─────────────────────────────────────────────────────
 
   readonly isStale = computed(() => this._currentMetric()?.isStale(STALE_DAYS_THRESHOLD) ?? false);
 
+  /** True when the user targets MUSCLE_GAIN. */
+  readonly isMuscleGain = computed(() =>
+    this.iamStore.currentUser()?.goal === UserGoal.MUSCLE_GAIN
+  );
+
   /**
-   * True when the user has logged weight in the current history window but the
-   * trend shows no progress toward their goal (StagnationDetected domain event).
-   *
+   * True when the user has logged weight consistently over the last
+   * {@link STAGNATION_WINDOW_DAYS} days but shows no progress toward their goal.
    * Requires ≥ 3 entries so a single outlier doesn't trigger a false alarm.
-   * Only active when isStale() is false (user IS logging but not progressing).
    */
   readonly hasStagnated = computed(() => {
-    const history = this._metricsHistory();
+    const history = this._stagnationHistory();
     if (history.length < 3) return false;
     const first = history[0].weightKg;
     const last  = history[history.length - 1].weightKg;
     return this.isMuscleGain() ? last <= first : last >= first;
-  });
-
-  /**
-   * Whether the current session targets MUSCLE_GAIN.
-   *
-   * Reads _sessionGoal first (set by GoalSelectionScreen via a fresh primitive
-   * signal), falling back to iamStore when no session override is active.
-   * This two-tier approach is required because IamStore.changeGoal() mutates
-   * its User object in place, preventing Angular's same-reference signal
-   * equality check from ever notifying this computed.
-   */
-  readonly isMuscleGain = computed(() => {
-    const session = this._sessionGoal();
-    if (session !== null) return session === UserGoal.MUSCLE_GAIN;
-    return this.iamStore.currentUser()?.goal === UserGoal.MUSCLE_GAIN;
   });
 
   /** Last 3 entries from metricsHistory for the Log History table. */
@@ -162,8 +167,12 @@ export class MetabolicStore {
     try {
       const metric = await firstValueFrom(this.api.getMetabolicTargets(user.id));
       this._currentMetric.set(metric);
-      const history = await firstValueFrom(this.api.getMetricsHistory(user.id, 7));
+      const [history, stagnationHistory] = await Promise.all([
+        firstValueFrom(this.api.getMetricsHistory(user.id, 7)),
+        firstValueFrom(this.api.getMetricsHistory(user.id, STAGNATION_WINDOW_DAYS)),
+      ]);
       this._metricsHistory.set(history);
+      this._stagnationHistory.set(stagnationHistory);
       if (this.isMuscleGain()) {
         const comp = await firstValueFrom(this.api.getComposition(user.id));
         this._composition.set(comp);
@@ -301,17 +310,4 @@ export class MetabolicStore {
     await this.setTargetWeight(target);
   }
 
-  /**
-   * Stores the goal chosen on {@link GoalSelectionScreen} so that
-   * {@link isMuscleGain} reacts immediately, bypassing the IamStore
-   * same-reference signal issue.
-   *
-   * Call this BEFORE navigating to /body-progress/progress so that
-   * {@link initialise} sees the correct goal when the view mounts.
-   *
-   * @param goal - The goal the user selected.
-   */
-  setSessionGoal(goal: UserGoal): void {
-    this._sessionGoal.set(goal);
-  }
 }
