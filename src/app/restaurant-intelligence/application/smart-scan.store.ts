@@ -8,7 +8,7 @@ import { MealType } from '../../nutrition-tracking/domain/model/meal-type.enum';
 import { MealRecord, MealRecordProps } from '../../nutrition-tracking/domain/model/meal-record.entity';
 import { NutritionStore } from '../../nutrition-tracking/application/nutrition.store';
 import { ScanResult } from '../domain/model/scan-result.entity';
-import { MenuAnalysis, RankedDish, RankedDishProps } from '../domain/model/menu-analysis.entity';
+import { MenuAnalysis, RankedDish } from '../domain/model/menu-analysis.entity';
 import { RawMenuScan, SmartScanApi } from '../infrastructure/smart-scan-api';
 
 /** Active view within the Smart Scan feature. */
@@ -191,7 +191,13 @@ export class SmartScanStore {
             id:               raw.id,
             scannedAt:        raw.scannedAt,
             restaurantName:   raw.restaurantName,
-            rankedDishes:     raw.allDishes.map((d, i) => new RankedDish({ ...d as RankedDishProps, rank: i + 1 })),
+            rankedDishes: raw.allDishes.map((d, i) => new RankedDish({
+              rank: i + 1, name: d.name, nameKey: d.nameKey,
+              calories: d.calories, protein: d.protein, carbs: d.carbs, fat: d.fat,
+              compatibilityScore: d.compatibilityScore,
+              justification: d.justification, justificationKey: d.justificationKey,
+              conflictingRestrictions: d.conflictingRestrictions,
+            })),
             restrictedDishes: [],
           }));
           this._view.set('menu-result');
@@ -326,9 +332,6 @@ export class SmartScanStore {
     this._scanResult.set(this._cloneScanResult(result));
   }
 
-  async rankAndFilterMenuDishes(_menuAnalysisId: number): Promise<void> {
-    // Filtering is now handled reactively in the menuAnalysis computed signal.
-  }
 
   // ─── Private helpers ──────────────────────────────────────────────────────
 
