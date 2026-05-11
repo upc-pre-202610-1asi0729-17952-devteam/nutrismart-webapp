@@ -110,7 +110,7 @@ export class SmartScanStore {
       { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 },
     );
 
-    return this._alertsForMacros(scanTotals, totals, user);
+    return this.projectNutritionalImpact(scanTotals, totals, user);
   });
 
   readonly hasMacroAlerts = computed(() => this.macroAlerts().length > 0);
@@ -127,7 +127,7 @@ export class SmartScanStore {
 
     const result: Record<number, MacroAlert[]> = {};
     for (const dish of dishes) {
-      const alerts = this._alertsForMacros(
+      const alerts = this.projectNutritionalImpact(
         { calories: dish.calories, protein: dish.protein, carbs: dish.carbs, fat: dish.fat, fiber: 0 },
         totals,
         user,
@@ -152,7 +152,7 @@ export class SmartScanStore {
     await this.nutritionStore.loadMealHistory();
   }
 
-  async scanFoodPlate(imageBase64: string): Promise<void> {
+  async analyzePlatePhoto(imageBase64: string): Promise<void> {
     this._uploadedImagePreview.set(imageBase64);
     this._view.set('analyzing-plate');
     this._loading.set(true);
@@ -176,7 +176,7 @@ export class SmartScanStore {
     });
   }
 
-  async scanMenuPhoto(imageBase64: string): Promise<void> {
+  async analyzeMenuPhoto(imageBase64: string): Promise<void> {
     this._view.set('analyzing-menu');
     this._loading.set(true);
     this._error.set(null);
@@ -209,7 +209,7 @@ export class SmartScanStore {
    * Confirms the scan and creates one MealRecord per detected item via
    * NutritionStore (ConfirmScanResult command → MealRecorded event).
    */
-  async confirmPlateScan(mealType: MealType): Promise<void> {
+  async logScannedPlate(mealType: MealType): Promise<void> {
     const result = this._scanResult();
     const user   = this.iamStore.currentUser();
     if (!result || !user) return;
@@ -257,7 +257,7 @@ export class SmartScanStore {
    * @param dish     - The {@link RankedDish} the user chose to log.
    * @param mealType - Meal slot to assign the record to.
    */
-  async confirmMenuDish(dish: RankedDish, mealType: MealType): Promise<void> {
+  async logSelectedDish(dish: RankedDish, mealType: MealType): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
 
@@ -332,7 +332,7 @@ export class SmartScanStore {
    * daily totals + targets, returns one {@link MacroAlert} per macro that would
    * reach or exceed the warning threshold.
    */
-  private _alertsForMacros(
+  private projectNutritionalImpact(
     adding: { calories: number; protein: number; carbs: number; fat: number; fiber: number },
     consumed: { calories: number; protein: number; carbs: number; fat: number; fiber: number },
     user: { dailyCalorieTarget: number; proteinTarget: number; carbsTarget: number; fatTarget: number; fiberTarget: number },

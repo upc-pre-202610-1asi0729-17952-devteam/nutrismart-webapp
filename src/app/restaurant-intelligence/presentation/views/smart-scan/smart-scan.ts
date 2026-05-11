@@ -150,7 +150,7 @@ export class SmartScan implements OnInit {
   }
 
   async onTakePhotoPlate(): Promise<void> {
-    await this.smartScanStore.scanFoodPlate('demo-plate-base64');
+    await this.smartScanStore.analyzePlatePhoto('demo-plate-base64');
   }
 
   async onUploadMenu(event: Event): Promise<void> {
@@ -160,7 +160,7 @@ export class SmartScan implements OnInit {
   }
 
   async onTakePhotoMenu(): Promise<void> {
-    await this.smartScanStore.scanMenuPhoto('demo-menu-base64');
+    await this.smartScanStore.analyzeMenuPhoto('demo-menu-base64');
   }
 
   // ─── Plate result actions ─────────────────────────────────────────────────
@@ -199,7 +199,7 @@ export class SmartScan implements OnInit {
   }
 
   async onConfirmLog(): Promise<void> {
-    await this.smartScanStore.confirmPlateScan(this.selectedMealType);
+    await this.smartScanStore.logScannedPlate(this.selectedMealType);
   }
 
   onCancel(): void {
@@ -207,7 +207,7 @@ export class SmartScan implements OnInit {
   }
 
   async onLogMenuDish(dish: RankedDish): Promise<void> {
-    await this.smartScanStore.confirmMenuDish(dish, this.selectedMenuMealType);
+    await this.smartScanStore.logSelectedDish(dish, this.selectedMenuMealType);
   }
 
   protected macroI18nKey(macro: MacroKey): string {
@@ -227,7 +227,7 @@ export class SmartScan implements OnInit {
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onload = async () => {
-        await this.smartScanStore.scanFoodPlate(reader.result as string);
+        await this.smartScanStore.analyzePlatePhoto(reader.result as string);
         resolve();
       };
       reader.readAsDataURL(file);
@@ -238,7 +238,7 @@ export class SmartScan implements OnInit {
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onload = async () => {
-        await this.smartScanStore.scanMenuPhoto(reader.result as string);
+        await this.smartScanStore.analyzeMenuPhoto(reader.result as string);
         resolve();
       };
       reader.readAsDataURL(file);
