@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, retry } from 'rxjs/operators';
 import { environment } from '../../../environments/environment.development';
@@ -14,8 +15,9 @@ import { IngredientCatalogItem } from '../domain/model/ingredient-catalog-item.e
 @Injectable({ providedIn: 'root' })
 export class PantryApi extends BaseApi {
   private readonly _http              = inject(HttpClient);
+  private readonly _translate         = inject(TranslateService);
   private readonly _pantryAssembler   = new PantryItemAssembler();
-  private readonly _recipeAssembler   = new RecipeSuggestionAssembler();
+  private readonly _recipeAssembler   = new RecipeSuggestionAssembler(this._translate);
   private readonly _catalogAssembler  = new IngredientCatalogAssembler();
   private readonly _pantryUrl         = `${environment.apiBaseUrl}${environment.pantryEndpointPath}`;
   private readonly _recipesUrl        = `${environment.apiBaseUrl}${environment.recipesEndpointPath}`;

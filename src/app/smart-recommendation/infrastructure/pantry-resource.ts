@@ -22,6 +22,7 @@ export interface PantryItemResource extends BaseResource {
  */
 export interface RecipeSuggestionResource extends BaseResource {
   name: string;
+  name_es?: string;
   name_key?: string;
   calories: number;
   protein: number;
@@ -31,6 +32,7 @@ export interface RecipeSuggestionResource extends BaseResource {
   goal_type: string;
   prep_time_minutes: number;
   covers_macro_pct: number;
+  restrictions_conflict: string[];
 }
 
 /** Response envelope for pantry-item list endpoints. */
@@ -46,4 +48,5 @@ export interface RecipeSuggestionsResponse extends BaseResponse {
 export interface IngredientCatalogResource extends BaseResource {
   name_key: string;
   category: string;
+  calories_per_100g: number;
 }

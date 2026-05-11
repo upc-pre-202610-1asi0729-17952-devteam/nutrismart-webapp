@@ -1178,38 +1178,74 @@
       "calories_per_100g": 149,
       "user_id": 1,
       "added_at": "2026-05-01T08:00:00.000Z"
+    },
+    {
+      "id": "Q8v9kCpAd7c",
+      "name": "Quinoa",
+      "name_key": "quinoa",
+      "category": "Grain",
+      "quantity_grams": 100,
+      "calories_per_100g": 100,
+      "user_id": "2aux86td0",
+      "added_at": "2026-05-11T21:28:32.087Z"
+    },
+    {
+      "id": "BRkyOFxwCqk",
+      "name": "Arroz blanco",
+      "name_key": "white_rice",
+      "category": "Grain",
+      "quantity_grams": 100,
+      "calories_per_100g": 100,
+      "user_id": "2aux86td0",
+      "added_at": "2026-05-11T21:28:34.686Z"
+    },
+    {
+      "id": "uG2uuF-b2QY",
+      "name": "Ajo",
+      "name_key": "garlic",
+      "category": "Seasoning",
+      "quantity_grams": 100,
+      "calories_per_100g": 100,
+      "user_id": "2aux86td0",
+      "added_at": "2026-05-11T21:28:37.169Z"
     }
   ],
   "ingredient-catalog": [
     {
       "id": "1",
       "name_key": "white_rice",
-      "category": "Grain"
+      "category": "Grain",
+      "calories_per_100g": 130
     },
     {
       "id": "2",
       "name_key": "chicken_breast",
-      "category": "Animal protein"
+      "category": "Animal protein",
+      "calories_per_100g": 165
     },
     {
       "id": "3",
       "name_key": "lemon",
-      "category": "Fruit"
+      "category": "Fruit",
+      "calories_per_100g": 29
     },
     {
       "id": "4",
       "name_key": "onion",
-      "category": "Vegetable"
+      "category": "Vegetable",
+      "calories_per_100g": 40
     },
     {
       "id": "5",
       "name_key": "garlic",
-      "category": "Seasoning"
+      "category": "Seasoning",
+      "calories_per_100g": 149
     },
     {
       "id": "6",
       "name_key": "quinoa",
-      "category": "Grain"
+      "category": "Grain",
+      "calories_per_100g": 368
     }
   ],
   "recipes": [
@@ -1229,7 +1265,9 @@
       ],
       "goal_type": "MUSCLE_GAIN",
       "prep_time_minutes": 30,
-      "covers_macro_pct": 43
+      "covers_macro_pct": 43,
+      "name_es": "Pechuga de pollo con quinoa",
+      "restrictions_conflict": []
     },
     {
       "id": "2",
@@ -1247,7 +1285,9 @@
       ],
       "goal_type": "MUSCLE_GAIN",
       "prep_time_minutes": 25,
-      "covers_macro_pct": 32
+      "covers_macro_pct": 32,
+      "name_es": "Bowl de arroz con pollo",
+      "restrictions_conflict": []
     },
     {
       "id": "3",
@@ -1265,7 +1305,9 @@
       ],
       "goal_type": "WEIGHT_LOSS",
       "prep_time_minutes": 15,
-      "covers_macro_pct": 25
+      "covers_macro_pct": 25,
+      "name_es": "Pollo con ensalada",
+      "restrictions_conflict": []
     },
     {
       "id": "4",
@@ -1283,7 +1325,9 @@
       ],
       "goal_type": "WEIGHT_LOSS",
       "prep_time_minutes": 20,
-      "covers_macro_pct": 20
+      "covers_macro_pct": 20,
+      "name_es": "Arroz al limón con ajo",
+      "restrictions_conflict": []
     }
   ],
   "subscriptions": [
@@ -3045,6 +3089,261 @@
         false
       ],
       "id": "hpctG3nQD2g"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "nPh-PIjoHu4"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "RtWPMtkbFv0"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "9OS49gLNCDQ"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "-ZxApqalp40"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "JxzcbOfS-hY"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "fKCFPg4-P4Q"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "gA3vW1B7NW0"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "AgTwuA80M6A"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "DRiyVxwZOyI"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "WZDiIlQrqn0"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "Ad1qeJZx17Y"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "Xb37pyu0R_U"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "VCd_W9LQXBA"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "hbnpHnTJ20E"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "dSDwtcu2f74"
     }
   ],
   "daily-balance": [

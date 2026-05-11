@@ -18,6 +18,7 @@ export interface RecipeSuggestionProps {
   goalType: UserGoal;
   prepTimeMinutes: number;
   coversMacroPct: number;
+  restrictionsConflict: string[];
 }
 
 /**
@@ -39,21 +40,22 @@ export class RecipeSuggestion implements BaseEntity {
   private _ingredients: string[];
   private _goalType: UserGoal;
   private _prepTimeMinutes: number;
-  /** Percentage of the user's most-deficient macro this recipe covers. */
   private _coversMacroPct: number;
+  private _restrictionsConflict: string[];
 
   constructor(props: RecipeSuggestionProps) {
-    this._id              = props.id;
-    this._name            = props.name;
-    this._nameKey         = props.nameKey;
-    this._calories        = props.calories;
-    this._protein         = props.protein;
-    this._carbs           = props.carbs;
-    this._fat             = props.fat;
-    this._ingredients     = [...props.ingredients];
-    this._goalType        = props.goalType;
-    this._prepTimeMinutes = props.prepTimeMinutes;
-    this._coversMacroPct  = props.coversMacroPct;
+    this._id                   = props.id;
+    this._name                 = props.name;
+    this._nameKey              = props.nameKey;
+    this._calories             = props.calories;
+    this._protein              = props.protein;
+    this._carbs                = props.carbs;
+    this._fat                  = props.fat;
+    this._ingredients          = [...props.ingredients];
+    this._goalType             = props.goalType;
+    this._prepTimeMinutes      = props.prepTimeMinutes;
+    this._coversMacroPct       = props.coversMacroPct;
+    this._restrictionsConflict = [...(props.restrictionsConflict ?? [])];
   }
 
   // ─── Getters & Setters ────────────────────────────────────────────────────
@@ -91,6 +93,8 @@ export class RecipeSuggestion implements BaseEntity {
   get coversMacroPct(): number { return this._coversMacroPct; }
   set coversMacroPct(v: number) { this._coversMacroPct = v; }
 
+  get restrictionsConflict(): string[] { return [...this._restrictionsConflict]; }
+
   // ─── Domain Behaviour ─────────────────────────────────────────────────────
 
   /**
@@ -117,7 +121,7 @@ export class RecipeSuggestion implements BaseEntity {
    * @returns e.g. "P 18g · G 8g"
    */
   get macroSummary(): string {
-    return `P ${this._protein}g · G ${this._fat}g`;
+    return `P ${this._protein}g · C ${this._carbs}g · F ${this._fat}g`;
   }
 
   /**
@@ -137,5 +141,14 @@ export class RecipeSuggestion implements BaseEntity {
    */
   isGoalAligned(): boolean {
     return this._coversMacroPct >= 20;
+  }
+
+  isCompatibleWith(pantryKeys: Set<string>): boolean {
+    const hits = this._ingredients.filter(ing => pantryKeys.has(ing)).length;
+    return hits > 0 && hits / this._ingredients.length >= 0.5;
+  }
+
+  hasConflictWith(userRestrictions: string[]): boolean {
+    return this._restrictionsConflict.some(r => userRestrictions.includes(r));
   }
 }

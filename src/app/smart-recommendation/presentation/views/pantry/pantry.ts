@@ -134,7 +134,7 @@ export class Pantry implements OnInit {
     const item = this.selectedItem();
     if (!item) return;
     const displayName = this.translate.instant('pantry_items.' + item.nameKey);
-    await this.pantryStore.addPantryItem(displayName, item.category, 100, 100, item.nameKey);
+    await this.pantryStore.addPantryItem(displayName, item.category, 100, item.caloriesPer100g, item.nameKey);
     this.searchText.set('');
     this.selectedItem.set(null);
     this.showDropdown.set(false);
@@ -144,8 +144,19 @@ export class Pantry implements OnInit {
     await this.pantryStore.deletePantryItem(itemId);
   }
 
-  onAddToLog(recipeId: number): void {
-    this.router.navigate(['/nutrition/log']);
+  onAddToLog(recipe: RecipeSuggestion): void {
+    this.router.navigate(['/nutrition/log'], {
+      state: {
+        fromRecipe: {
+          id:       recipe.id,
+          name:     recipe.name,
+          calories: recipe.calories,
+          protein:  recipe.protein,
+          carbs:    recipe.carbs,
+          fat:      recipe.fat,
+        },
+      },
+    });
   }
 
   categoryI18nKey(category: string): string {

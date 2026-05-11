@@ -6,7 +6,7 @@ import { IamStore } from '../../../../iam/application/iam.store';
 import { DietaryRestriction } from '../../../../iam/domain/model/dietary-restriction.enum';
 import { NutritionStore } from '../../../application/nutrition.store';
 import { MealType } from '../../../domain/model/meal-type.enum';
-import { FoodItem } from '../../../domain/model/food-item.entity';
+import { FoodItem, FoodItemProps } from '../../../domain/model/food-item.entity';
 import { MealRecord, MealRecordProps } from '../../../domain/model/meal-record.entity';
 import { MacronutrientDistribution } from '../../../domain/model/macronutrient-distribution.value-object';
 import { DailyIntake } from '../../../domain/model/daily-intake.entity';
@@ -333,6 +333,28 @@ export class DailyLog implements OnInit {
   async ngOnInit(): Promise<void> {
     await this.nutritionStore.loadMealHistory();
     await this.nutritionStore.loadDailyBalance();
+    this._preloadRecipeFromState();
+  }
+
+  private _preloadRecipeFromState(): void {
+    const state = history.state as { fromRecipe?: { id: number; name: string; calories: number; protein: number; carbs: number; fat: number } };
+    if (!state?.fromRecipe) return;
+    const r = state.fromRecipe;
+    const props: FoodItemProps = {
+      id:               r.id,
+      name:             r.name,
+      source:           'pantry',
+      servingSize:      100,
+      servingUnit:      'g',
+      caloriesPer100g:  r.calories,
+      proteinPer100g:   r.protein,
+      carbsPer100g:     r.carbs,
+      fatPer100g:       r.fat,
+      fiberPer100g:     0,
+      sugarPer100g:     0,
+      restrictions:     [],
+    };
+    this.onFoodSelected(new FoodItem(props));
   }
 
   // ─── Date Navigation ──────────────────────────────────────────────────────
