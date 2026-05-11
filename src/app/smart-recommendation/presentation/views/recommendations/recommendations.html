@@ -32,6 +32,13 @@
 
   @if (isPro()) {
 
+    <!-- ── Error banner ───────────────────────────────────────── -->
+    @if (store.error()) {
+      <div class="error-banner" role="alert">
+        <span>{{ store.error()! | translate }}</span>
+      </div>
+    }
+
     <!-- ── Demo bar ─────────────────────────────────────────── -->
     <div class="demo-bar">
       <span class="demo-label">{{ 'recommendations.demo_label' | translate }}</span>
@@ -66,7 +73,7 @@
         </div>
         <div class="banner-body">
           @if (store.isTravelMode()) {
-            <strong>Travel mode active — {{ store.travelContext()?.locationLabel() }}, {{ store.weatherContext()?.temperatureCelsius }}°C</strong>
+            <strong>{{ 'recommendations.banner_travel_active' | translate:{ location: store.travelContext()?.locationLabel(), temp: store.weatherContext()?.temperatureCelsius } }}</strong>
             <p>{{ 'recommendations.banner_travel_desc' | translate:{ city: travelCity() } }}</p>
           } @else {
             <strong>
@@ -99,6 +106,19 @@
 
       <!-- ── LEFT: Cards column ───────────────────────────────── -->
       <main class="cards-col">
+
+        <!-- ── Loading skeleton ──────────────────────────────── -->
+        @if (store.loading()) {
+          @for (_ of [1, 2, 3]; track $index) {
+            <div class="rec-card rec-card--skeleton">
+              <div class="skeleton skeleton--icon"></div>
+              <div class="skeleton-body">
+                <div class="skeleton skeleton--title"></div>
+                <div class="skeleton skeleton--desc"></div>
+              </div>
+            </div>
+          }
+        }
 
         <!-- ── DROPPED intervention card (T35) ──────────────── -->
         @if (store.showInterventionCard() && store.interventionCard()) {

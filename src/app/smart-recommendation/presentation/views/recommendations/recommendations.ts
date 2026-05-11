@@ -121,6 +121,7 @@ export class RecommendationsView implements OnInit {
     this.store.deactivateTravelMode();
   }
 
+  // TODO: wire to NutritionStore once cross-BC integration is ready
   onAddToLog(_cardId: number | string): void {}
 
   onAcceptSimplifiedPlan(): void {

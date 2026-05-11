@@ -380,7 +380,9 @@
     "location_search_placeholder": "Ej.: Cusco, Arequipa...",
     "location_search_confirm": "Confirmar",
     "location_search_back": "Volver",
-    "location_search_quick": "Selección rápida"
+    "location_search_quick": "Selección rápida",
+    "error_load_failed": "No se pudieron cargar las recomendaciones. Inténtalo de nuevo.",
+    "banner_travel_active": "Modo viaje activo — {{ location }}, {{ temp }}°C"
   },
   "body_progress": {
     "page_title": "Progreso Corporal",

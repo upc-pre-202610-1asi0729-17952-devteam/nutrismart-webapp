@@ -380,7 +380,9 @@
     "location_search_placeholder": "E.g.: Cusco, Arequipa...",
     "location_search_confirm": "Confirm",
     "location_search_back": "Back",
-    "location_search_quick": "Quick select"
+    "location_search_quick": "Quick select",
+    "error_load_failed": "Could not load recommendations. Please try again.",
+    "banner_travel_active": "Travel mode active — {{ location }}, {{ temp }}°C"
   },
   "body_progress": {
     "page_title": "Body Progress",
