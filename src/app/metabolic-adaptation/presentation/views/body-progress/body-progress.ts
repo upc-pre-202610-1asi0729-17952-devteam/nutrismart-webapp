@@ -38,18 +38,45 @@ export class BodyProgressView implements OnInit {
   protected goalInputModel = '';
   protected goalInputError = signal<string>('');
 
-  // ─── Body composition inputs ──────────────────────────────────────────────
+  // ─── Composition update modal ─────────────────────────────────────────────
 
-  /**
-   * Plain properties bound via [(ngModel)]: number inputs with [value]+signal
-   * cause Angular to reset the DOM value mid-keystroke, making the field unresponsive.
-   */
-  protected waistInputModel = '';
-  protected neckInputModel  = '';
+  protected showCompositionModal  = signal<boolean>(false);
+  protected compositionMode       = signal<'A' | 'B' | 'C'>('A');
+  protected compositionWaistCm    = signal<string>('');
+  protected compositionPantSize   = signal<number | null>(null);
+  protected compositionVisualLevel = signal<number | null>(null);
+
+  protected readonly pantSizes = [
+    { size: 26, waistCm: 66 },
+    { size: 28, waistCm: 71 },
+    { size: 30, waistCm: 76 },
+    { size: 32, waistCm: 81 },
+    { size: 34, waistCm: 87 },
+    { size: 36, waistCm: 92 },
+    { size: 38, waistCm: 97 },
+  ];
+
+  protected readonly visualLevels = [
+    { key: 'onboarding.visual_very_lean',  rangeKey: 'onboarding.visual_range_very_lean',  override: 10.5 },
+    { key: 'onboarding.visual_lean',       rangeKey: 'onboarding.visual_range_lean',       override: 15.5 },
+    { key: 'onboarding.visual_average',    rangeKey: 'onboarding.visual_range_average',    override: 20.5 },
+    { key: 'onboarding.visual_overweight', rangeKey: 'onboarding.visual_range_overweight', override: 25.5 },
+    { key: 'onboarding.visual_obese',      rangeKey: 'onboarding.visual_range_obese',      override: 32.0 },
+  ];
+
+  protected get compositionValid(): boolean {
+    const mode = this.compositionMode();
+    if (mode === 'A') {
+      const v = parseFloat(this.compositionWaistCm());
+      return !isNaN(v) && v >= 30 && v <= 200;
+    }
+    if (mode === 'B') return this.compositionPantSize() !== null;
+    return this.compositionVisualLevel() !== null;
+  }
 
   // ─── Tooltip state ────────────────────────────────────────────────────────
 
-  protected activeTooltip = signal<'bmi' | 'bmr' | 'tdee' | 'body_fat' | 'lean_mass' | null>(null);
+  protected activeTooltip = signal<'bmi' | 'bmr' | 'tdee' | 'body_fat' | 'lean_mass' | 'lean_bulk' | null>(null);
 
   // ─── Computed ─────────────────────────────────────────────────────────────
 
@@ -164,8 +191,9 @@ export class BodyProgressView implements OnInit {
 
   @HostListener('document:keydown.escape')
   onEscapeKey(): void {
-    if (this.showLogModal())   this.onCloseLogModal();
-    if (this.isEditingGoal())  this.onCancelGoalInline();
+    if (this.showLogModal())         this.onCloseLogModal();
+    if (this.isEditingGoal())        this.onCancelGoalInline();
+    if (this.showCompositionModal()) this.onCloseCompositionModal();
   }
 
   // ─── Date range toggle ────────────────────────────────────────────────────
@@ -254,19 +282,57 @@ export class BodyProgressView implements OnInit {
     this.goalInputError.set('');
   }
 
-  // ─── Body composition ─────────────────────────────────────────────────────
+  // ─── Composition update modal ─────────────────────────────────────────────
 
-  async onCalculateComposition(): Promise<void> {
-    const waist = parseFloat(this.waistInputModel);
-    if (!waist || waist <= 0) return;
-    await this.store.setComposition(waist);
-    this.waistInputModel = '';
-    this.neckInputModel  = '';
+  onOpenCompositionModal(): void {
+    this.compositionMode.set('A');
+    this.compositionWaistCm.set('');
+    this.compositionPantSize.set(null);
+    this.compositionVisualLevel.set(null);
+    this.showCompositionModal.set(true);
+  }
+
+  onCloseCompositionModal(): void {
+    this.showCompositionModal.set(false);
+  }
+
+  selectCompositionMode(mode: 'A' | 'B' | 'C'): void {
+    this.compositionMode.set(mode);
+  }
+
+  onCompositionWaistInput(event: Event): void {
+    this.compositionWaistCm.set((event.target as HTMLInputElement).value);
+  }
+
+  selectCompositionPantSize(size: number): void {
+    this.compositionPantSize.set(size);
+  }
+
+  selectCompositionVisualLevel(index: number): void {
+    this.compositionVisualLevel.set(index);
+  }
+
+  async onSaveComposition(): Promise<void> {
+    const { waistCm, override } = this.getCompositionArgs();
+    await this.store.setComposition(waistCm, override);
+    this.showCompositionModal.set(false);
+  }
+
+  private getCompositionArgs(): { waistCm: number | undefined; override: number | undefined } {
+    const mode = this.compositionMode();
+    if (mode === 'A') return { waistCm: parseFloat(this.compositionWaistCm()), override: undefined };
+    if (mode === 'B') {
+      const entry = this.pantSizes.find(s => s.size === this.compositionPantSize());
+      return { waistCm: entry?.waistCm, override: undefined };
+    }
+    const idx   = this.compositionVisualLevel();
+    const level = idx !== null ? this.visualLevels[idx] : undefined;
+    return { waistCm: undefined, override: level?.override };
   }
 
   // ─── Tooltips ─────────────────────────────────────────────────────────────
 
-  toggleTooltip(card: 'bmi' | 'bmr' | 'tdee' | 'body_fat' | 'lean_mass'): void {
+  toggleTooltip(card: 'bmi' | 'bmr' | 'tdee' | 'body_fat' | 'lean_mass' | 'lean_bulk'): void {
     this.activeTooltip.update(current => (current === card ? null : card));
   }
 

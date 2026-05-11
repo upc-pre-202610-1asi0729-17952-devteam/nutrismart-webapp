@@ -161,14 +161,6 @@
 .badge--red    { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
 .badge--blue   { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
 
-/* ── Two-column grid ── */
-.bp-grid {
-  display: grid;
-  grid-template-columns: 1fr 280px;
-  gap: 20px;
-  align-items: start;
-}
-
 /* ── Chart card ── */
 .chart-card {
   background: var(--nutrismart-white);
@@ -362,9 +354,6 @@
 .composition-item-value { font-size: 18px; font-weight: 700; color: var(--nutrismart-text-dark); }
 .composition-item-sub   { font-size: 11px; color: var(--nutrismart-text-light); }
 .composition-item-sub--good { color: var(--nutrismart-primary); }
-
-/* ── Right column panels ── */
-.right-col { display: flex; flex-direction: column; gap: 14px; }
 
 .panel {
   background: var(--nutrismart-white);
@@ -580,6 +569,124 @@
   gap: 10px;
   justify-content: flex-end;
   margin-top: 4px;
+}
+
+/* ── Composition subtitle ── */
+.composition-subtitle {
+  font-size: 11px;
+  color: var(--nutrismart-text-light);
+  margin: 2px 0 0;
+}
+
+/* ── Wider modal for composition ── */
+.modal-dialog--wide {
+  width: 440px;
+}
+
+/* ── Mode tabs (composition modal) ── */
+.mode-tabs {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--nutrismart-border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.mode-tab {
+  flex: 1;
+  padding: 9px 8px;
+  background: white;
+  border: none;
+  border-right: 1px solid var(--nutrismart-border);
+  color: var(--nutrismart-text-mid);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.mode-tab:last-child { border-right: none; }
+
+.mode-tab.active {
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  color: var(--nutrismart-primary);
+  font-weight: 600;
+}
+
+.mode-panel { min-height: 120px; }
+
+/* Mode B: pant size grid */
+.pant-size-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.pant-size-btn {
+  width: 50px;
+  height: 50px;
+  border: 1.5px solid var(--nutrismart-border);
+  border-radius: 8px;
+  background: white;
+  color: var(--nutrismart-text-dark);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.pant-size-btn.selected {
+  border-color: var(--nutrismart-primary);
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  color: var(--nutrismart-primary);
+}
+
+/* Mode C: visual level grid */
+.visual-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.visual-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border: 1.5px solid var(--nutrismart-border);
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.visual-card.selected {
+  border-color: var(--nutrismart-primary);
+  background: var(--nutrismart-primary-light, #e8f2f2);
+}
+
+.visual-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nutrismart-text-dark);
+}
+
+.visual-range {
+  font-size: 12px;
+  color: var(--nutrismart-text-mid);
+}
+
+.mode-disclaimer {
+  font-size: 11px;
+  color: var(--nutrismart-text-light);
+  margin: 2px 0 0;
+  line-height: 1.4;
 }
 
 /* ── Dialog (kept for backward compatibility) ── */

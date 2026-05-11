@@ -149,8 +149,8 @@
 
   </div>
 
-  <!-- ── Layout: single column (WEIGHT_LOSS) / two columns (MUSCLE_GAIN) ── -->
-  <div [class]="store.isMuscleGain() ? 'bp-grid' : 'bp-grid--single'">
+  <!-- ── Layout: single column ──────────────────────────────── -->
+  <div class="bp-grid--single">
 
     <main class="main-col">
 
@@ -298,32 +298,55 @@
         }
         <div class="composition-card">
           <div class="composition-header">
-            <h2 class="composition-title">{{ 'body_progress.composition_title' | translate }}</h2>
-            <button class="link-btn">{{ 'body_progress.update_measurements' | translate }}</button>
+            <div>
+              <h2 class="composition-title">{{ 'body_progress.composition_title' | translate }}</h2>
+              <p class="composition-subtitle">{{ 'body_progress.composition_subtitle' | translate }}</p>
+            </div>
+            <button class="link-btn" (click)="onOpenCompositionModal()">
+              {{ 'body_progress.update_measurements' | translate }}
+            </button>
           </div>
           <div class="composition-grid">
             <div class="composition-item">
               <span class="composition-item-label">{{ 'body_progress.lean_mass' | translate }}</span>
-              <strong class="composition-item-value">{{ store.composition()?.leanMassKg() | number:'1.1-1' }} kg</strong>
+              <strong class="composition-item-value">
+                {{ store.composition() ? (store.composition()!.leanMassKg() | number:'1.1-1') + ' kg' : '--' }}
+              </strong>
             </div>
             <div class="composition-item">
               <span class="composition-item-label">{{ 'body_progress.fat_mass' | translate }}</span>
-              <strong class="composition-item-value">{{ store.composition()?.fatMassKg() | number:'1.1-1' }} kg</strong>
+              <strong class="composition-item-value">
+                {{ store.composition() ? (store.composition()!.fatMassKg() | number:'1.1-1') + ' kg' : '--' }}
+              </strong>
             </div>
             <div class="composition-item">
               <span class="composition-item-label">{{ 'body_progress.fat_percent' | translate }}</span>
-              <strong class="composition-item-value">{{ store.composition()?.bodyFatPercent() | number:'1.1-1' }}%</strong>
+              <strong class="composition-item-value">
+                {{ store.composition() ? (store.composition()!.bodyFatPercent() | number:'1.1-1') + '%' : '--' }}
+              </strong>
               <span class="composition-item-sub">{{ 'body_progress.healthy_range' | translate }}</span>
             </div>
             <div class="composition-item">
-              <span class="composition-item-label">{{ 'body_progress.lean_bulk' | translate }}</span>
-              <strong class="composition-item-value">
-                {{ (store.composition()?.hasFatIncreaseAlert() ? 'body_progress.lean_bulk_excessive' : 'body_progress.lean_bulk_in_range') | translate }}
-              </strong>
-              <span class="composition-item-sub"
-                    [class.composition-item-sub--good]="!store.composition()?.hasFatIncreaseAlert()">
-                {{ (store.composition()?.hasFatIncreaseAlert() ? 'body_progress.lean_bulk_reducing_surplus' : 'body_progress.lean_bulk_optimal') | translate }}
-              </span>
+              <div class="tooltip-trigger">
+                <span class="composition-item-label">{{ 'body_progress.lean_bulk' | translate }}</span>
+                <button class="icon-btn" type="button" (click)="toggleTooltip('lean_bulk')">
+                  <span class="material-icons">info_outline</span>
+                </button>
+              </div>
+              @if (activeTooltip() === 'lean_bulk') {
+                <p class="metric-tooltip">{{ 'body_progress.tooltip_lean_bulk' | translate }}</p>
+              }
+              @if (store.composition()) {
+                <strong class="composition-item-value">
+                  {{ (store.composition()!.hasFatIncreaseAlert() ? 'body_progress.lean_bulk_excessive' : 'body_progress.lean_bulk_in_range') | translate }}
+                </strong>
+                <span class="composition-item-sub"
+                      [class.composition-item-sub--good]="!store.composition()!.hasFatIncreaseAlert()">
+                  {{ (store.composition()!.hasFatIncreaseAlert() ? 'body_progress.lean_bulk_reducing_surplus' : 'body_progress.lean_bulk_optimal') | translate }}
+                </span>
+              } @else {
+                <strong class="composition-item-value">--</strong>
+              }
             </div>
           </div>
         </div>
@@ -331,38 +354,100 @@
 
     </main>
 
-    <!-- Right column — MUSCLE_GAIN only (composition input panel) -->
-    @if (store.isMuscleGain()) {
-      <aside class="right-col">
-        <div class="panel">
-          <h3 class="panel-title">{{ 'body_progress.composition_panel' | translate }}</h3>
-
-          <label class="panel-label">{{ 'body_progress.waist_label' | translate }}</label>
-          <input class="panel-input"
-                 type="number"
-                 [placeholder]="'body_progress.placeholder_waist' | translate"
-                 [(ngModel)]="waistInputModel"
-                 min="30" max="200" step="0.5" />
-
-          <label class="panel-label">{{ 'body_progress.neck_label' | translate }}</label>
-          <input class="panel-input"
-                 type="number"
-                 [placeholder]="'body_progress.placeholder_neck' | translate"
-                 [(ngModel)]="neckInputModel"
-                 min="20" max="80" step="0.5" />
-
-          <p class="panel-hint">{{ 'body_progress.composition_hint' | translate }}</p>
-
-          <button class="btn btn--primary btn--full" (click)="onCalculateComposition()">
-            {{ 'body_progress.calculate_btn' | translate }}
-          </button>
-        </div>
-      </aside>
-    }
-
   </div>
 
 </div>
+
+<!-- ── Composition update modal ──────────────────────────────── -->
+@if (showCompositionModal()) {
+  <div class="modal-backdrop" (click)="onCloseCompositionModal()">
+    <div class="modal-dialog modal-dialog--wide" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h3 class="modal-title">{{ 'body_progress.update_measurements' | translate }}</h3>
+        <button class="icon-btn" type="button" (click)="onCloseCompositionModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <div class="mode-tabs" role="tablist">
+        <button type="button" role="tab" class="mode-tab"
+                [class.active]="compositionMode() === 'A'"
+                [attr.aria-selected]="compositionMode() === 'A'"
+                (click)="selectCompositionMode('A')">
+          {{ 'onboarding.mode_cm' | translate }}
+        </button>
+        <button type="button" role="tab" class="mode-tab"
+                [class.active]="compositionMode() === 'B'"
+                [attr.aria-selected]="compositionMode() === 'B'"
+                (click)="selectCompositionMode('B')">
+          {{ 'onboarding.mode_pant_size' | translate }}
+        </button>
+        <button type="button" role="tab" class="mode-tab"
+                [class.active]="compositionMode() === 'C'"
+                [attr.aria-selected]="compositionMode() === 'C'"
+                (click)="selectCompositionMode('C')">
+          {{ 'onboarding.mode_visual' | translate }}
+        </button>
+      </div>
+
+      <div class="mode-panel">
+        @switch (compositionMode()) {
+
+          @case ('A') {
+            <div>
+              <label class="panel-label">{{ 'onboarding.waist_cm_label' | translate }}</label>
+              <input class="panel-input"
+                     type="number"
+                     [value]="compositionWaistCm()"
+                     (input)="onCompositionWaistInput($event)"
+                     [placeholder]="'onboarding.waist_cm_placeholder' | translate"
+                     min="30" max="200" step="0.5" />
+            </div>
+          }
+
+          @case ('B') {
+            <div class="pant-size-grid">
+              @for (entry of pantSizes; track entry.size) {
+                <button type="button" class="pant-size-btn"
+                        [class.selected]="compositionPantSize() === entry.size"
+                        (click)="selectCompositionPantSize(entry.size)">
+                  {{ entry.size }}
+                </button>
+              }
+            </div>
+            <p class="mode-disclaimer">{{ 'onboarding.pant_size_disclaimer' | translate }}</p>
+          }
+
+          @case ('C') {
+            <div class="visual-grid">
+              @for (level of visualLevels; track level.key; let i = $index) {
+                <button type="button" class="visual-card"
+                        [class.selected]="compositionVisualLevel() === i"
+                        (click)="selectCompositionVisualLevel(i)">
+                  <span class="visual-label">{{ level.key | translate }}</span>
+                  <span class="visual-range">{{ level.rangeKey | translate }}</span>
+                </button>
+              }
+            </div>
+            <p class="mode-disclaimer">{{ 'onboarding.visual_disclaimer' | translate }}</p>
+          }
+
+        }
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn--outline" (click)="onCloseCompositionModal()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button class="btn btn--primary" [disabled]="!compositionValid" (click)="onSaveComposition()">
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
 
 <!-- ── Log weight modal ───────────────────────────────────────── -->
 @if (showLogModal()) {
