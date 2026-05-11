@@ -138,20 +138,4 @@ export class BodyComposition implements BaseEntity {
     return this.bodyFatPercent() - this.#previousBodyFatPercent > 1.5;
   }
 
-  /**
-   * Returns a lean bulk status label based on body fat delta.
-   *
-   * - "Optimal progress" when fat gain ≤ 1.5%
-   * - "Excessive fat gain" when fat gain > 1.5%
-   */
-  leanBulkStatus(): string {
-    return this.hasFatIncreaseAlert() ? 'Excessive fat gain' : 'In range';
-  }
-
-  /**
-   * Returns an additional description for the lean bulk status.
-   */
-  leanBulkDescription(): string {
-    return this.hasFatIncreaseAlert() ? 'Consider reducing surplus' : 'Optimal progress';
-  }
 }

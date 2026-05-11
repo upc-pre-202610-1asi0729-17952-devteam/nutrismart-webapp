@@ -150,17 +150,13 @@ export class BodyMetric implements BaseEntity {
   }
 
   /**
-   * Returns a human-readable "Updated X" label for the metric card
-   * (e.g. "Updated today", "Updated 3 days ago").
+   * Returns the number of whole days since this metric was logged.
    *
    * @param now - Reference date (defaults to `new Date()`).
    */
-  updatedLabel(now: Date = new Date()): string {
+  daysSinceLogged(now: Date = new Date()): number {
     const logged = new Date(this.#loggedAt);
-    const days   = Math.floor((now.getTime() - logged.getTime()) / (24 * 60 * 60 * 1000));
-    if (days === 0) return 'Updated today';
-    if (days === 1) return 'Updated yesterday';
-    return `Outdated · ${logged.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+    return Math.floor((now.getTime() - logged.getTime()) / (24 * 60 * 60 * 1000));
   }
 
   /**

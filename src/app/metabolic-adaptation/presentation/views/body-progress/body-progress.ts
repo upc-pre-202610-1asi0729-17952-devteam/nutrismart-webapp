@@ -6,7 +6,7 @@ import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MetabolicStore } from '../../../application/metabolic.store';
 import { IamStore } from '../../../../iam/application/iam.store';
-import { BmiCategory } from '../../../domain/model/body-metric.entity';
+import { BodyMetric, BmiCategory } from '../../../domain/model/body-metric.entity';
 
 /**
  * Main Body Progress view — route `/body-progress/progress`.
@@ -93,20 +93,18 @@ export class BodyProgressView implements OnInit {
 
   /**
    * Live BMI and TDEE preview computed from the typed weight value.
-   * Null when the input is empty or invalid.
+   * Null when the input is empty, invalid, or height is not yet loaded.
    *
-   * Shown as: "Preview: BMI → {bmi} · TDEE → {tdee} kcal/day"
-   * Uses current metric's height for BMI and Mifflin-St Jeor × 1.55 for TDEE.
+   * Delegates to {@link BodyMetric} entity methods to avoid duplicating
+   * the Mifflin-St Jeor formula and TDEE multiplier.
    */
   protected weightPreview = computed<{ bmi: number; tdee: number } | null>(() => {
-    const raw = parseFloat(this.weightInput());
+    const raw      = parseFloat(this.weightInput());
     if (!raw || raw <= 0 || raw > 500) return null;
-    const heightCm = this.store.currentMetric()?.heightCm ?? 163;
-    const h    = heightCm / 100;
-    const bmi  = Math.round((raw / (h * h)) * 10) / 10;
-    const bmr  = Math.round(10 * raw + 6.25 * heightCm - 161);
-    const tdee = Math.round(bmr * 1.55);
-    return { bmi, tdee };
+    const heightCm = this.store.currentMetric()?.heightCm;
+    if (!heightCm) return null;
+    const temp = new BodyMetric({ id: 0, userId: 0, weightKg: raw, heightCm, loggedAt: new Date().toISOString() });
+    return { bmi: temp.bmi(), tdee: temp.tdee() };
   });
 
   /**
@@ -168,6 +166,45 @@ export class BodyProgressView implements OnInit {
 
   /** Whether BMI may be inaccurate due to stale data. */
   protected bmiOutdated = computed(() => this.store.isStale());
+
+  /** Translated BMI category label for the metric card sub-line. */
+  protected bmiCategoryLabel = computed(() => {
+    if (this.bmiOutdated()) return this.translate.instant('body_progress.bmi_may_inaccurate');
+    const cat = this.store.currentMetric()?.bmiCategory();
+    if (!cat) return '';
+    switch (cat) {
+      case BmiCategory.UNDERWEIGHT: return this.translate.instant('body_progress.bmi_category_underweight');
+      case BmiCategory.NORMAL:      return this.translate.instant('body_progress.bmi_category_normal');
+      case BmiCategory.OVERWEIGHT:  return this.translate.instant('body_progress.bmi_category_overweight');
+      case BmiCategory.OBESE:       return this.translate.instant('body_progress.bmi_category_obese');
+      default:                      return cat;
+    }
+  });
+
+  /** Translated "Updated today / yesterday / outdated" label for metric cards and the stale banner. */
+  protected formattedUpdatedLabel = computed(() => {
+    const metric = this.store.currentMetric();
+    if (!metric) return '';
+    const days = metric.daysSinceLogged();
+    if (days === 0) return this.translate.instant('body_progress.updated_today');
+    if (days === 1) return this.translate.instant('body_progress.updated_yesterday');
+    const lang   = this.translate.currentLang ?? 'en';
+    const locale = lang === 'es' ? 'es-ES' : 'en-US';
+    const date   = new Date(metric.loggedAt).toLocaleDateString(locale, { month: 'short', day: 'numeric' });
+    return this.translate.instant('body_progress.updated_outdated', { date });
+  });
+
+  /** Placeholder for the Log weight input showing the current stored weight. */
+  protected weightPlaceholder = computed(() => {
+    const val = this.store.currentMetric()?.weightKg;
+    return this.translate.instant('body_progress.placeholder_eg', { value: val?.toFixed(1) ?? '70.0' });
+  });
+
+  /** Placeholder for the Update height input showing the current stored height. */
+  protected heightPlaceholder = computed(() => {
+    const val = this.store.currentMetric()?.heightCm;
+    return this.translate.instant('body_progress.placeholder_eg', { value: val ?? '165' });
+  });
 
   onChangeGoal(): void {
     this.router.navigate(['/body-progress', 'change-goal']);

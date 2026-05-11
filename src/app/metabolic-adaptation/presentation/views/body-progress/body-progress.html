@@ -18,7 +18,7 @@
     <div class="stale-banner" role="alert">
       <span class="stale-banner-icon">⚠</span>
       <span class="stale-banner-text">
-        {{ 'body_progress.stale_banner' | translate:{ date: store.currentMetric()?.updatedLabel() } }}
+        {{ 'body_progress.stale_banner' | translate:{ date: formattedUpdatedLabel() } }}
       </span>
       <button class="btn btn--primary btn--sm" (click)="onOpenLogWeight()">{{ 'body_progress.log_now' | translate }}</button>
     </div>
@@ -35,7 +35,7 @@
         <span class="metric-card-unit">kg</span>
       </div>
       <div class="metric-card-sub" [class.metric-card-sub--warn]="store.isStale()">
-        {{ store.currentMetric()?.updatedLabel() }}
+        {{ formattedUpdatedLabel() }}
       </div>
     </div>
 
@@ -51,7 +51,7 @@
       </div>
       <div class="metric-card-value">{{ store.currentMetric()?.bmi() | number:'1.1-1' }}</div>
       <div class="metric-card-sub" [class.metric-card-sub--warn]="bmiOutdated()">
-        {{ bmiOutdated() ? ('body_progress.bmi_may_inaccurate' | translate) : store.currentMetric()?.bmiCategory() }}
+        {{ bmiCategoryLabel() }}
       </div>
     </div>
 
@@ -70,7 +70,7 @@
         <div class="metric-card-label">{{ 'body_progress.metric_bmr' | translate }}</div>
         <div class="metric-card-value">
           {{ store.currentMetric()?.bmr() | number:'1.0-0' }}
-          <span class="metric-card-unit">kcal/day</span>
+          <span class="metric-card-unit">{{ 'body_progress.kcal_day' | translate }}</span>
         </div>
         <div class="metric-card-sub">{{ 'body_progress.basal_metabolic_rate' | translate }}</div>
       </div>
@@ -91,7 +91,7 @@
         <div class="metric-card-label">{{ 'body_progress.metric_tdee' | translate }}</div>
         <div class="metric-card-value">
           {{ store.currentMetric()?.tdee() | number:'1.0-0' }}
-          <span class="metric-card-unit">kcal/day</span>
+          <span class="metric-card-unit">{{ 'body_progress.kcal_day' | translate }}</span>
         </div>
         <div class="metric-card-sub">{{ 'body_progress.tdee_desc' | translate }}</div>
       </div>
@@ -242,24 +242,24 @@
             <div class="composition-item">
               <span class="composition-item-label">{{ 'body_progress.lean_mass' | translate }}</span>
               <strong class="composition-item-value">{{ store.composition()?.leanMassKg() | number:'1.1-1' }} kg</strong>
-              <span class="composition-item-sub">+1.2 kg vs. start</span>
             </div>
             <div class="composition-item">
               <span class="composition-item-label">{{ 'body_progress.fat_mass' | translate }}</span>
               <strong class="composition-item-value">{{ store.composition()?.fatMassKg() | number:'1.1-1' }} kg</strong>
-              <span class="composition-item-sub">+0.3 kg vs. start</span>
             </div>
             <div class="composition-item">
               <span class="composition-item-label">{{ 'body_progress.fat_percent' | translate }}</span>
               <strong class="composition-item-value">{{ store.composition()?.bodyFatPercent() | number:'1.1-1' }}%</strong>
-              <span class="composition-item-sub">Healthy range</span>
+              <span class="composition-item-sub">{{ 'body_progress.healthy_range' | translate }}</span>
             </div>
             <div class="composition-item">
               <span class="composition-item-label">{{ 'body_progress.lean_bulk' | translate }}</span>
-              <strong class="composition-item-value">{{ store.composition()?.leanBulkStatus() }}</strong>
+              <strong class="composition-item-value">
+                {{ (store.composition()?.hasFatIncreaseAlert() ? 'body_progress.lean_bulk_excessive' : 'body_progress.lean_bulk_in_range') | translate }}
+              </strong>
               <span class="composition-item-sub"
                     [class.composition-item-sub--good]="!store.composition()?.hasFatIncreaseAlert()">
-                {{ store.composition()?.leanBulkDescription() }}
+                {{ (store.composition()?.hasFatIncreaseAlert() ? 'body_progress.lean_bulk_reducing_surplus' : 'body_progress.lean_bulk_optimal') | translate }}
               </span>
             </div>
           </div>
@@ -279,7 +279,7 @@
         <input class="panel-input"
                [class.panel-input--error]="weightError()"
                type="number"
-               [placeholder]="'E.g.: ' + (store.currentMetric()?.weightKg | number:'1.1-1')"
+               [placeholder]="weightPlaceholder()"
                [value]="weightInput()"
                (input)="onWeightInputChange($any($event.target).value)"
                min="0.1" max="500" step="0.1" />
@@ -318,14 +318,14 @@
           <label class="panel-label">{{ 'body_progress.waist_label' | translate }}</label>
           <input class="panel-input"
                  type="number"
-                 [placeholder]="'E.g.: 163'"
+                 [placeholder]="'body_progress.placeholder_waist' | translate"
                  [(ngModel)]="waistInputModel"
                  min="30" max="200" step="0.5" />
 
           <label class="panel-label">{{ 'body_progress.neck_label' | translate }}</label>
           <input class="panel-input"
                  type="number"
-                 [placeholder]="'E.g.: 163'"
+                 [placeholder]="'body_progress.placeholder_neck' | translate"
                  [(ngModel)]="neckInputModel"
                  min="20" max="80" step="0.5" />
 
@@ -346,7 +346,7 @@
             <label class="panel-label">{{ 'body_progress.height_label' | translate }}</label>
             <input class="panel-input"
                    type="number"
-                   [placeholder]="'E.g.: ' + store.currentMetric()?.heightCm"
+                   [placeholder]="heightPlaceholder()"
                    [value]="heightInput()"
                    (input)="heightInput.set($any($event.target).value)"
                    min="50" max="300" step="1" />
@@ -365,7 +365,7 @@
             <input class="panel-input"
                    [class.panel-input--error]="goalWeightError()"
                    type="number"
-                   [placeholder]="'E.g.: 65'"
+                   [placeholder]="'body_progress.placeholder_goal' | translate"
                    [(ngModel)]="goalWeightInputModel"
                    (ngModelChange)="onGoalModelChange()"
                    min="0.1" max="500" step="0.1" />
