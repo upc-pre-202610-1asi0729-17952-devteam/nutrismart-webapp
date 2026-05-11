@@ -232,6 +232,16 @@
     "KIDNEY_DISEASE": "Kidney Disease",
     "GOUT": "Gout"
   },
+  "allergens": {
+    "LACTOSE_FREE": "lactose",
+    "GLUTEN_FREE": "gluten",
+    "VEGAN": "animal products",
+    "VEGETARIAN": "meat",
+    "NUT_FREE": "nuts",
+    "SEAFOOD_FREE": "seafood",
+    "KOSHER": "non-kosher ingredients",
+    "HALAL": "non-halal ingredients"
+  },
   "restrictions": {
     "LACTOSE_FREE": "Lactose-free",
     "GLUTEN_FREE": "Gluten-free",
@@ -466,6 +476,110 @@
     "tooltip_lean_bulk": "Lean bulk means gaining muscle while keeping fat gain minimal (typically below 1.5% per cycle). It requires a moderate caloric surplus with high protein intake.",
     "stagnation_banner_loss": "You've been logging consistently but your weight hasn't trended downward in this period. Consider reviewing your caloric deficit or nutrition quality.",
     "stagnation_banner_gain": "You've been logging consistently but your weight hasn't trended upward in this period. Consider reviewing your caloric surplus or training load."
+  "smart_scan": {
+    "page_title": "Smart Scan",
+    "page_subtitle": "Photograph a meal or restaurant menu to log instantly",
+    "paywall_title": "Smart Scan requires Pro or Premium",
+    "paywall_desc": "Analyze photos of food plates to log meals instantly. Available from $14.99/month.",
+    "paywall_cta": "Upgrade to Pro",
+    "plate_card_title": "Scan food dish",
+    "plate_card_desc": "Take or upload a photo of your dish to get an estimated nutritional breakdown",
+    "menu_card_title": "Scan restaurant menu",
+    "menu_card_desc": "This option allows you to scan the menu of any restaurant you choose.",
+    "drop_hint": "Drag & drop or use buttons below",
+    "plan_premium_badge": "Plan Premium",
+    "analyzing_plate": "Analyzing your meal...",
+    "analyzing_menu": "Analyzing menu...",
+    "api_source": "Google Cloud Vision API · Open Food Facts",
+    "result_title": "Scan result",
+    "result_subtitle": "Review and confirm items before logging",
+    "total_estimated": "Total estimated:",
+    "select_meal_type": "Select meal type",
+    "quantities_note": "Quantities are estimated. Adjust if needed before confirming.",
+    "confirm_log": "Confirm and log",
+    "cancel_result": "← Cancel",
+    "invalid_title": "No food items could be detected",
+    "invalid_desc": "The image may be blurry or doesn't contain recognizable food. Please try again or log manually.",
+    "try_again": "Try again",
+    "log_manually": "Log manually →",
+    "menu_title": "Menu analysis",
+    "menu_subtitle": "Filtered by your restrictions · Ranked by compatibility with your remaining macros",
+    "best_match": "Best match",
+    "log_dish": "Log this dish →",
+    "compatibility": "Compatibility:",
+    "restricted_dishes": "🚫 Restricted dishes ({{ count }} items hidden)",
+    "contains": "contains",
+    "back_to_scan": "← Back to scan",
+    "impact_title": "Nutritional impact",
+    "impact_best_dish_note": "Impact calculated for the recommended dish",
+    "impact_approaching": "Will reach {{ percent }}% of your daily target",
+    "impact_exceeded": "Will exceed your daily target ({{ percent }}%)",
+    "qty_error_min": "Minimum quantity is 1 g",
+    "qty_error_max": "Maximum quantity is 2000 g"
+  },
+  "menu_dishes": {
+    "hake_ceviche": "Hake ceviche",
+    "hake_ceviche_justification": "Covers 38g of your remaining protein target · Within your caloric budget · No restricted ingredients",
+    "chicken_cucumber_salad": "Chicken and cucumber salad",
+    "chicken_cucumber_salad_justification": "High protein content, within budget",
+    "gazpacho_wholemeal_toast": "Gazpacho with wholemeal toast",
+    "gazpacho_wholemeal_toast_justification": "Light option within caloric budget",
+    "cheese_pizza": "Cheese pizza",
+    "seafood_paella": "Seafood paella"
+  },
+  "food_items": {
+    "grilled_chicken_breast": "Grilled chicken breast",
+    "white_rice": "White rice",
+    "mixed_salad": "Mixed salad"
+  },
+  "ingredient_categories": {
+    "grain":          "Grain",
+    "animal_protein": "Animal protein",
+    "vegetable":      "Vegetable",
+    "fruit":          "Fruit",
+    "dairy":          "Dairy",
+    "legume":         "Legume",
+    "seasoning":      "Seasoning",
+    "other":          "Other"
+  },
+  "pantry_items": {
+    "white_rice":      "White rice",
+    "chicken_breast":  "Chicken breast",
+    "lemon":           "Lemon",
+    "onion":           "Onion",
+    "garlic":          "Garlic",
+    "quinoa":          "Quinoa"
+  },
+  "recipes": {
+    "chicken_quinoa":    "Chicken breast with quinoa",
+    "rice_chicken_bowl": "Rice and chicken bowl",
+    "chicken_salad":     "Chicken and salad",
+    "lemon_garlic_rice": "Lemon garlic rice"
+  },
+  "pantry": {
+    "page_title": "Pantry",
+    "page_subtitle": "Manage your ingredients and get personalised recipe suggestions",
+    "my_ingredients": "My ingredients",
+    "add_placeholder": "Add ingredient...",
+    "go_btn": "Go",
+    "empty_title": "Your pantry is empty",
+    "empty_desc": "Add ingredients to get personalised recipe suggestions based on what you have at home.",
+    "daily_goal": "Daily Goal:",
+    "consumed": "Consumed:",
+    "remaining_label": "Remaining:",
+    "deficit_hint": "Suggested recipes respect your remaining deficit",
+    "protein_hint": "Remaining protein: {{ remaining }}g of {{ total }}g · Recipes ranked by protein content",
+    "recipes_title": "Suggested recipes using what's in your cupboard",
+    "recipes_based_on": "Based on your ingredients",
+    "recipes_filtered_deficit": "Filtered by your remaining calorie deficit of {{ kcal }} kcal",
+    "recipes_ranked_protein": "Ranked by protein content · Covers your protein deficit",
+    "empty_recipes": "Add at least one ingredient to see recipe suggestions.",
+    "goal_weight_loss": "Weight-loss",
+    "goal_muscle_gain": "Muscle-gain",
+    "no_results": "No ingredients found",
+    "no_matching_recipes": "No recipes match your current ingredients. Try adding more.",
+    "recipe_impact_warning": "Adding this reaches {{ percent }}% of your daily goal",
+    "recipe_impact_danger": "Adding this exceeds your daily goal ({{ percent }}%)"
   },
   "my_plan": {
     "page_title": "Subscription and billing",
@@ -497,5 +611,10 @@
     "effective_date": "Effective: {{ date }}",
     "confirm_downgrade": "Confirm downgrade",
     "processing": "Processing..."
+  },
+  "units": {
+    "g": "g",
+    "ml": "ml",
+    "serving": "serving"
   }
 }

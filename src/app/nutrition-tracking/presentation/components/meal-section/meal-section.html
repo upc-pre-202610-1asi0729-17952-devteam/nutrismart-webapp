@@ -21,7 +21,7 @@
              (click)="viewEntry.emit(record)">
           <div class="record-info">
             <span class="record-name">{{ getRecordName(record) }}</span>
-            <span class="record-qty">{{ record.quantity }}{{ record.unit }}</span>
+            <span class="record-qty">{{ record.quantity }} {{ 'units.' + record.unit | translate }}</span>
           </div>
           <div class="record-macros">
             <span class="record-kcal">{{ record.calories }} {{ 'nutrition.kcal' | translate }}</span>

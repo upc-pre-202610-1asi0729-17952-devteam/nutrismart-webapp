@@ -63,7 +63,7 @@
       "consecutiveMisses": 0,
       "birthday": "2005-02-19",
       "biologicalSex": "female",
-      "createdAt": ""
+      "createdAt": "2026-05-01"
     },
     {
       "id": "81P8BYgebrM",
@@ -727,36 +727,12 @@
     }
   ],
   "ingredient-catalog": [
-    {
-      "id": "1",
-      "name_key": "white_rice",
-      "category": "Grain"
-    },
-    {
-      "id": "2",
-      "name_key": "chicken_breast",
-      "category": "Animal protein"
-    },
-    {
-      "id": "3",
-      "name_key": "lemon",
-      "category": "Fruit"
-    },
-    {
-      "id": "4",
-      "name_key": "onion",
-      "category": "Vegetable"
-    },
-    {
-      "id": "5",
-      "name_key": "garlic",
-      "category": "Seasoning"
-    },
-    {
-      "id": "6",
-      "name_key": "quinoa",
-      "category": "Grain"
-    }
+    { "id": 1, "name_key": "white_rice",     "category": "Grain" },
+    { "id": 2, "name_key": "chicken_breast", "category": "Animal protein" },
+    { "id": 3, "name_key": "lemon",          "category": "Fruit" },
+    { "id": 4, "name_key": "onion",          "category": "Vegetable" },
+    { "id": 5, "name_key": "garlic",         "category": "Seasoning" },
+    { "id": 6, "name_key": "quinoa",         "category": "Grain" }
   ],
   "recipes": [
     {

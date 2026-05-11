@@ -1,7 +1,13 @@
 /**
  * Smart Scan routes (restaurant-intelligence context).
  *
- * Register the plate-scan and restaurant-menu views here.
+ * @author Del Aguila Del Aguila, Olenka Priscilla
  */
 import { Routes } from '@angular/router';
-export const smartScanRoutes: Routes = [];
+
+const smartScanView = () =>
+  import('./views/smart-scan/smart-scan').then(m => m.SmartScan);
+
+export const smartScanRoutes: Routes = [
+  { path: '', loadComponent: smartScanView, title: 'NutriSmart - Smart Scan' },
+];
