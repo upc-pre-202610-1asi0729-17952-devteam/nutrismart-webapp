@@ -132,6 +132,21 @@
   color: #2d9e8f;
 }
 
+.autocomplete-no-results {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.825rem;
+  color: #9ca3af;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
 /* ── Ingredient list ────────────────────────────────────────────────────── */
 
 .ingredient-list {

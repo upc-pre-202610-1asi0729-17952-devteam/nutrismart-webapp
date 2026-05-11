@@ -28,16 +28,22 @@
                  role="combobox"
                  [attr.aria-expanded]="showDropdown()"
                  aria-haspopup="listbox">
-          @if (showDropdown() && filteredCatalog().length > 0) {
-            <ul class="autocomplete-dropdown" role="listbox">
-              @for (item of filteredCatalog(); track item.id) {
-                <li class="autocomplete-option"
-                    role="option"
-                    (mousedown)="onOptionMousedown($event, item)">
-                  {{ 'pantry_items.' + item.nameKey | translate }}
-                </li>
-              }
-            </ul>
+          @if (showDropdown()) {
+            @if (filteredCatalog().length > 0) {
+              <ul class="autocomplete-dropdown" role="listbox">
+                @for (item of filteredCatalog(); track item.id) {
+                  <li class="autocomplete-option"
+                      role="option"
+                      (mousedown)="onOptionMousedown($event, item)">
+                    {{ 'pantry_items.' + item.nameKey | translate }}
+                  </li>
+                }
+              </ul>
+            } @else {
+              <div class="autocomplete-no-results">
+                {{ 'pantry.no_results' | translate }}
+              </div>
+            }
           }
         </div>
         <button mat-flat-button
@@ -129,6 +135,11 @@
       } @else if (pantryStore.loading() && pantryStore.recipeSuggestions().length === 0) {
         <div class="loading-state">
           <mat-spinner diameter="36"></mat-spinner>
+        </div>
+      } @else if (pantryStore.recipeSuggestions().length === 0) {
+        <div class="empty-recipes">
+          <mat-icon class="empty-recipes__icon">search_off</mat-icon>
+          <p class="empty-recipes__text">{{ 'pantry.no_matching_recipes' | translate }}</p>
         </div>
       } @else {
         <ul class="recipe-list" role="list">

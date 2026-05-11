@@ -1,4 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -42,6 +43,7 @@ export class Pantry implements OnInit {
   protected pantryStore     = inject(PantryStore);
   private   nutritionStore  = inject(NutritionStore);
   private   translate       = inject(TranslateService);
+  private   router          = inject(Router);
 
   protected readonly UserGoal = UserGoal;
 
@@ -143,7 +145,7 @@ export class Pantry implements OnInit {
   }
 
   onAddToLog(recipeId: number): void {
-    // Navigates to /nutrition/log — wired when NutritionStore integration is complete.
+    this.router.navigate(['/nutrition/log']);
   }
 
   categoryI18nKey(category: string): string {

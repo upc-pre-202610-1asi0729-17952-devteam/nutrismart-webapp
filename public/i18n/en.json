@@ -405,6 +405,8 @@
     "empty_recipes": "Add at least one ingredient to see recipe suggestions.",
     "goal_weight_loss": "Weight-loss",
     "goal_muscle_gain": "Muscle-gain",
+    "no_results": "No ingredients found",
+    "no_matching_recipes": "No recipes match your current ingredients. Try adding more.",
     "recipe_impact_warning": "Adding this reaches {{ percent }}% of your daily goal",
     "recipe_impact_danger": "Adding this exceeds your daily goal ({{ percent }}%)"
   },
