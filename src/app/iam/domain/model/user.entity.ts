@@ -50,6 +50,8 @@ export interface UserProps {
   biologicalSex?: string;
   /** Account creation date in ISO format (YYYY-MM-DD). */
   createdAt?: string;
+  /** City the user considers home, used for travel detection. */
+  homeCity?: string;
 }
 
 /**
@@ -102,6 +104,8 @@ export class User implements BaseEntity {
   private _biologicalSex: string;
   /** @see UserProps.createdAt */
   private _createdAt: string;
+  /** @see UserProps.homeCity */
+  private _homeCity: string;
 
   /**
    * Creates a new User domain entity.
@@ -130,6 +134,7 @@ export class User implements BaseEntity {
     this._birthday = props.birthday ?? '';
     this._biologicalSex = props.biologicalSex ?? '';
     this._createdAt = props.createdAt ?? '';
+    this._homeCity = props.homeCity ?? '';
   }
 
   // ─── Getters & Setters ────────────────────────────────────────────────────
@@ -321,6 +326,15 @@ export class User implements BaseEntity {
   /** @param value - New createdAt value. */
   set createdAt(value: string) {
     this._createdAt = value;
+  }
+
+  /** City the user considers home, used for travel detection. */
+  get homeCity(): string {
+    return this._homeCity;
+  }
+  /** @param value - New homeCity value. */
+  set homeCity(value: string) {
+    this._homeCity = value;
   }
 
   // ─── Computed / Behaviour Methods ─────────────────────────────────────────
