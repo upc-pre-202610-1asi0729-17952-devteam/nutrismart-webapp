@@ -192,6 +192,72 @@
   color: #dc2626;
 }
 
+/* ─── Weight label tooltip ───────────────────────────────────────────────── */
+
+.weight-label-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.weight-label-row .form-label {
+  margin-bottom: 0;
+}
+
+.weight-tooltip-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.weight-info-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--nutrismart-text-light, #8aa8a8);
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.weight-info-btn:hover,
+.weight-info-btn:focus-visible {
+  color: var(--nutrismart-primary, #508B89);
+  outline: none;
+}
+
+.weight-info-btn .material-icons {
+  font-size: 1rem;
+}
+
+.weight-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(100% + 6px);
+  background: var(--nutrismart-text-dark, #1a2e2e);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 400;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 20;
+}
+
+.weight-tooltip-wrap:hover .weight-tooltip,
+.weight-tooltip-wrap:focus-within .weight-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
 .plan-info-card {
   display: flex;
   align-items: center;

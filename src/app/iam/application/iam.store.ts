@@ -266,11 +266,33 @@ export class IamStore {
   updatePhysicalDetails(w: number, h: number, level: ActivityLevel): void {
     const user = this._currentUser();
     if (!user) return;
-    user.weight = w;
-    user.height = h;
-    user.activityLevel = level;
-    user.recalculateMacros();
-    this._currentUser.set(user);
+    const updated = new User({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      goal: user.goal,
+      weight: w,
+      height: h,
+      activityLevel: level,
+      plan: user.plan,
+      restrictions: user.restrictions,
+      medicalConditions: user.medicalConditions,
+      dailyCalorieTarget: user.dailyCalorieTarget,
+      proteinTarget: user.proteinTarget,
+      carbsTarget: user.carbsTarget,
+      fatTarget: user.fatTarget,
+      fiberTarget: user.fiberTarget,
+      streak: user.streak,
+      consecutiveMisses: user.consecutiveMisses,
+      birthday: user.birthday,
+      biologicalSex: user.biologicalSex,
+      createdAt: user.createdAt,
+      homeCity: user.homeCity,
+      goalStartedAt: user.goalStartedAt,
+    });
+    updated.recalculateMacros();
+    this._currentUser.set(updated);
     this.persist();
   }
 

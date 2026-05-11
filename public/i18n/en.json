@@ -225,7 +225,9 @@
     "password_changed": "Password updated successfully.",
     "logout_all_btn": "Log out of all sessions",
     "delete_account": "Delete account",
-    "apply_language": "Apply"
+    "apply_language": "Apply",
+    "weight_tooltip": "Log your weight in Body Progress to keep this updated.",
+    "weight_tooltip_aria": "How to update weight"
   },
   "medical": {
     "TYPE_2_DIABETES": "Type 2 Diabetes",
@@ -465,6 +467,7 @@
     "page_subtitle": "Weight, metrics, and body composition tracking",
     "update_height_btn": "Update height",
     "log_weight_btn": "+ Log weight",
+    "update_weight_btn": "↺ Update today's weight",
     "stale_banner": "Your last weight entry was {{ date }}. For accurate metrics, we recommend logging your current weight.",
     "log_now": "Log now",
     "metric_weight": "CURRENT WEIGHT",
