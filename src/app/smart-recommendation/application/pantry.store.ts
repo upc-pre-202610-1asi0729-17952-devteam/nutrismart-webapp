@@ -1,4 +1,4 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { IamStore } from '../../iam/application/iam.store';
 import { NutritionStore } from '../../nutrition-tracking/application/nutrition.store';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
@@ -80,6 +80,17 @@ export class PantryStore {
     const user = this.iamStore.currentUser();
     return user?.goal ?? UserGoal.WEIGHT_LOSS;
   });
+
+  constructor() {
+    effect(() => {
+      const goal = this.iamStore.currentUser()?.goal;
+      untracked(() => {
+        if (goal !== undefined && this._pantryItems().length > 0) {
+          this._refreshSuggestions();
+        }
+      });
+    });
+  }
 
   // ─── Actions ──────────────────────────────────────────────────────────────
 
