@@ -309,7 +309,10 @@
     "streak_dropped_desc": "{{days}} días inactivo",
     "streak_dropped_footer": "Tu plan te espera cuando estés listo",
     "streak_recovered_desc": "Racha de recuperación iniciada — ¡sigue así!",
-    "streak_recovered_footer": "Estás de vuelta en camino"
+    "streak_recovered_footer": "Estás de vuelta en camino",
+    "loading_progress": "Cargando tu panel…",
+    "load_error": "No se pudieron cargar tus datos. Inténtalo de nuevo.",
+    "retry": "Reintentar"
   },
   "nutrition": {
     "page_title": "Registro Diario",
@@ -613,27 +616,27 @@
     "seafood_paella": "Paella de mariscos"
   },
   "ingredient_categories": {
-    "grain":          "Cereal",
+    "grain": "Cereal",
     "animal_protein": "Proteína animal",
-    "vegetable":      "Verdura",
-    "fruit":          "Fruta",
-    "dairy":          "Lácteo",
-    "legume":         "Legumbre",
-    "seasoning":      "Condimento",
-    "other":          "Otro"
+    "vegetable": "Verdura",
+    "fruit": "Fruta",
+    "dairy": "Lácteo",
+    "legume": "Legumbre",
+    "seasoning": "Condimento",
+    "other": "Otro"
   },
   "pantry_items": {
-    "white_rice":      "Arroz blanco",
-    "chicken_breast":  "Pechuga de pollo",
-    "lemon":           "Limón",
-    "onion":           "Cebolla",
-    "garlic":          "Ajo",
-    "quinoa":          "Quinoa"
+    "white_rice": "Arroz blanco",
+    "chicken_breast": "Pechuga de pollo",
+    "lemon": "Limón",
+    "onion": "Cebolla",
+    "garlic": "Ajo",
+    "quinoa": "Quinoa"
   },
   "recipes": {
-    "chicken_quinoa":    "Pechuga de pollo con quinoa",
+    "chicken_quinoa": "Pechuga de pollo con quinoa",
     "rice_chicken_bowl": "Bowl de arroz con pollo",
-    "chicken_salad":     "Pollo con ensalada",
+    "chicken_salad": "Pollo con ensalada",
     "lemon_garlic_rice": "Arroz al limón con ajo"
   },
   "food_items": {

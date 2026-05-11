@@ -1,10 +1,15 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit } from '@angular/core';
 import { NgClass } from '@angular/common';
+import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { BehavioralConsistencyStore } from '../../../application/behavioral-consistency.store';
+import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
 import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
+import { MealType } from '../../../../nutrition-tracking/domain/model/meal-type.enum';
+import { MealRecord } from '../../../../nutrition-tracking/domain/model/meal-record.entity';
 
 interface DashboardMealVm {
   nameKey: string;
@@ -20,6 +25,11 @@ interface DashboardMacroVm {
   consumed: number;
   target: number;
   colorClass: string;
+}
+
+interface DonutArcVm {
+  dasharray: string;
+  dashoffset: string;
 }
 
 interface DashboardVm {
@@ -65,12 +75,23 @@ interface DashboardVm {
   styleUrl: './behavioral-dashboard.css',
 })
 export class BehavioralDashboard implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
+
   protected readonly iamStore = inject(IamStore);
   protected readonly behavioralStore = inject(BehavioralConsistencyStore);
+  protected readonly nutritionStore = inject(NutritionStore);
 
   protected readonly currentUser = this.iamStore.currentUser;
   protected readonly currentProgress = this.behavioralStore.currentProgress;
-  protected readonly error = this.behavioralStore.error;
+
+  protected readonly isLoading = computed(() =>
+    this.behavioralStore.loading() || this.nutritionStore.loading(),
+  );
+
+  protected readonly loadError = computed(() =>
+    this.behavioralStore.error() ?? this.nutritionStore.error(),
+  );
 
   protected readonly hasProgress = computed(() => this.currentProgress() !== null);
 
@@ -83,17 +104,95 @@ export class BehavioralDashboard implements OnInit {
     year: 'numeric',
   });
 
-  protected readonly dashboardVm = computed<DashboardVm>(() => {
-    const status = this.currentProgress()?.adherenceStatus ?? AdherenceStatus.ON_TRACK;
+  protected readonly donutArcs = computed<{ protein: DonutArcVm; carbs: DonutArcVm; fat: DonutArcVm }>(() => {
+    const circumference = 2 * Math.PI * 42;
+    const totals = this.nutritionStore.dailyTotals();
+    const proteinKcal = totals.protein * 4;
+    const carbsKcal = totals.carbs * 4;
+    const fatKcal = totals.fat * 9;
+    const totalKcal = proteinKcal + carbsKcal + fatKcal;
 
-    if (status === AdherenceStatus.AT_RISK) return this.buildAtRiskVm();
-    if (status === AdherenceStatus.DROPPED) return this.buildDroppedVm();
-    if (status === AdherenceStatus.RECOVERED) return this.buildRecoveredVm();
-    return this.buildOnTrackVm();
+    const empty = { dasharray: `0 ${circumference}`, dashoffset: '0' };
+    if (totalKcal === 0) {
+      return { protein: empty, carbs: empty, fat: empty };
+    }
+
+    const proteinArc = (proteinKcal / totalKcal) * circumference;
+    const carbsArc = (carbsKcal / totalKcal) * circumference;
+    const fatArc = (fatKcal / totalKcal) * circumference;
+
+    return {
+      protein: { dasharray: `${proteinArc} ${circumference}`, dashoffset: '0' },
+      carbs: { dasharray: `${carbsArc} ${circumference}`, dashoffset: `${-proteinArc}` },
+      fat: { dasharray: `${fatArc} ${circumference}`, dashoffset: `${-(proteinArc + carbsArc)}` },
+    };
+  });
+
+  protected readonly dashboardVm = computed<DashboardVm>(() => {
+    const progress = this.currentProgress();
+    const status = progress?.adherenceStatus ?? AdherenceStatus.ON_TRACK;
+    const streak = progress?.streak ?? 0;
+    const consecutiveMisses = progress?.consecutiveMisses ?? 0;
+    const weekDots = progress?.weekDots ?? [false, false, false, false, false, false, false];
+    const todayIndex = (new Date().getDay() + 6) % 7;
+    const streakMilestone = Math.ceil((streak + 1) / 7) * 7;
+
+    const intake = this.nutritionStore.dailyIntake();
+    const totals = this.nutritionStore.dailyTotals();
+    const user = this.currentUser();
+
+    const targetCalories = intake?.dailyGoal ?? user?.dailyCalorieTarget ?? 1800;
+    const consumedCalories = Math.round(totals.calories);
+    const activeCalories = intake?.active ?? 0;
+    const remainingCalories = intake
+      ? intake.remaining
+      : targetCalories - consumedCalories;
+    const progressPercent = intake
+      ? intake.percentConsumed
+      : Math.min(Math.round((consumedCalories / targetCalories) * 100), 100);
+    const netBalance = Math.abs(consumedCalories - activeCalories);
+
+    const proteinTarget = user?.proteinTarget ?? 120;
+    const carbsTarget = user?.carbsTarget ?? 220;
+    const fatTarget = user?.fatTarget ?? 65;
+
+    return {
+      status,
+      greetingKey: status === AdherenceStatus.RECOVERED ? 'dashboard.greeting_back' : 'dashboard.greeting',
+      greetingParams: { name: this.firstName },
+      badgeLabelKey: this.badgeKeyFor(status),
+      badgeLabelParams: this.badgeParamsFor(status, streak, consecutiveMisses),
+      badgeClass: this.badgeClassFor(status),
+      showAlert: status !== AdherenceStatus.ON_TRACK,
+      ...this.alertVmFor(status, consecutiveMisses),
+      consumedCalories,
+      targetCalories,
+      remainingCalories,
+      netBalance,
+      progressPercent,
+      topAccentClass: this.accentFor(status),
+      googleFitCalories: activeCalories > 0 ? activeCalories : null,
+      netBalanceSubtitleKey:
+        status === AdherenceStatus.AT_RISK && activeCalories === 0
+          ? 'dashboard.no_activity_synced'
+          : null,
+      meals: status === AdherenceStatus.DROPPED ? [] : this.buildMealsVm(),
+      macros: [
+        { nameKey: 'dashboard.macro_protein', consumed: Math.round(totals.protein), target: proteinTarget, colorClass: 'macro-teal' },
+        { nameKey: 'dashboard.macro_carbs', consumed: Math.round(totals.carbs), target: carbsTarget, colorClass: 'macro-orange' },
+        { nameKey: 'dashboard.macro_fat', consumed: Math.round(totals.fat), target: fatTarget, colorClass: 'macro-pink' },
+      ],
+      streak,
+      ...this.streakVmFor(status, streak, consecutiveMisses, streakMilestone),
+      weekDots,
+      todayIndex,
+      showNoMealsLoggedBlock: status === AdherenceStatus.DROPPED,
+      noMealsDays: status === AdherenceStatus.DROPPED ? consecutiveMisses : 0,
+    };
   });
 
   ngOnInit(): void {
-    this.behavioralStore.loadPreviewProgress();
+    this.loadData();
   }
 
   protected onGoalMet(): void {
@@ -104,201 +203,187 @@ export class BehavioralDashboard implements OnInit {
     this.behavioralStore.markGoalMissed();
   }
 
+  protected onLogMeal(): void {
+    void this.router.navigate(['/nutrition']);
+  }
+
+  protected onRetry(): void {
+    this.loadData();
+  }
+
   protected macroPercent(consumed: number, target: number): number {
     return Math.min(Math.round((consumed / target) * 100), 100);
   }
 
   private get firstName(): string {
-    return this.currentUser()?.firstName ?? 'Ana';
+    return this.currentUser()?.firstName ?? '';
   }
 
-  private notLoggedMeal(nameKey: string, dotClass: string, missed = false): DashboardMealVm {
-    return { nameKey, description: '', caloriesLabel: '— kcal', dotClass, notLogged: true, missed };
+  private loadData(): void {
+    const user = this.currentUser();
+    if (!user) return;
+    this.behavioralStore
+      .ensureProgressForUser(user.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
+    void this.nutritionStore.fetchMealEntries();
+    void this.nutritionStore.fetchDailyBalance();
   }
 
-  private buildOnTrackVm(): DashboardVm {
+  private buildMealsVm(): DashboardMealVm[] {
+    const byType = this.nutritionStore.recordsByMealType();
+    return [
+      this.buildMealVm('dashboard.meal_breakfast', byType[MealType.BREAKFAST], 'dot-orange'),
+      this.buildMealVm('dashboard.meal_lunch', byType[MealType.LUNCH], 'dot-teal'),
+      this.buildMealVm('dashboard.meal_snack', byType[MealType.SNACK], 'dot-pink'),
+      this.buildMealVm('dashboard.meal_dinner', byType[MealType.DINNER], 'dot-empty'),
+    ];
+  }
+
+  private buildMealVm(nameKey: string, records: MealRecord[], dotClass: string): DashboardMealVm {
+    const todayRecords = records.filter((r) => r.isFromToday);
+    if (todayRecords.length === 0) {
+      return { nameKey, description: '', caloriesLabel: '— kcal', dotClass, notLogged: true, missed: false };
+    }
+    const totalKcal = todayRecords.reduce((sum, r) => sum + r.calories, 0);
+    const firstName = todayRecords[0].foodItemName;
+    const time = new Date(todayRecords[0].loggedAt).toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+    const description =
+      todayRecords.length === 1
+        ? `${firstName} · ${time}`
+        : `${firstName} +${todayRecords.length - 1} more · ${time}`;
     return {
-      status: AdherenceStatus.ON_TRACK,
-      greetingKey: 'dashboard.greeting',
-      greetingParams: { name: this.firstName },
-      badgeLabelKey: 'dashboard.status_on_track',
-      badgeLabelParams: { streak: 5 },
-      badgeClass: 'status-on-track',
-      showAlert: false,
-      alertIcon: '',
-      alertTitleKey: '',
-      alertTitleParams: {},
-      alertDescKey: '',
-      alertBtnKey: '',
-      alertButtonClass: '',
-      consumedCalories: 1340,
-      targetCalories: 1800,
-      remainingCalories: 460,
-      netBalance: 1040,
-      progressPercent: 74,
-      topAccentClass: 'accent-teal',
-      googleFitCalories: 300,
-      netBalanceSubtitleKey: null,
-      meals: [
-        { nameKey: 'dashboard.meal_breakfast', description: 'Oatmeal + banana · 7:30 am', caloriesLabel: '380 kcal', dotClass: 'dot-orange', notLogged: false, missed: false },
-        { nameKey: 'dashboard.meal_lunch', description: 'Rice + chicken + salad · 1:00 pm', caloriesLabel: '720 kcal', dotClass: 'dot-teal', notLogged: false, missed: false },
-        { nameKey: 'dashboard.meal_snack', description: 'Greek yoghurt · 4:00 pm', caloriesLabel: '240 kcal', dotClass: 'dot-pink', notLogged: false, missed: false },
-        this.notLoggedMeal('dashboard.meal_dinner', 'dot-empty'),
-      ],
-      macros: [
-        { nameKey: 'dashboard.macro_protein', consumed: 82, target: 120, colorClass: 'macro-teal' },
-        { nameKey: 'dashboard.macro_carbs', consumed: 165, target: 220, colorClass: 'macro-orange' },
-        { nameKey: 'dashboard.macro_fat', consumed: 42, target: 65, colorClass: 'macro-pink' },
-      ],
-      streak: 5,
-      streakDescKey: 'dashboard.streak_on_track_desc',
-      streakDescParams: {},
-      streakFooterKey: 'dashboard.streak_on_track_footer',
-      streakFooterParams: { days: 7 },
-      streakClass: 'streak-on-track',
-      weekDots: [true, true, true, true, true, false, false],
-      todayIndex: 4,
-      showNoMealsLoggedBlock: false,
-      noMealsDays: 0,
+      nameKey,
+      description,
+      caloriesLabel: `${Math.round(totalKcal)} kcal`,
+      dotClass,
+      notLogged: false,
+      missed: false,
     };
   }
 
-  private buildAtRiskVm(): DashboardVm {
-    return {
-      status: AdherenceStatus.AT_RISK,
-      greetingKey: 'dashboard.greeting',
-      greetingParams: { name: this.firstName },
-      badgeLabelKey: 'dashboard.status_at_risk',
-      badgeLabelParams: { misses: 3 },
-      badgeClass: 'status-at-risk',
-      showAlert: true,
-      alertIcon: '⚠️',
-      alertTitleKey: 'dashboard.alert_at_risk_title',
-      alertTitleParams: { days: 3 },
-      alertDescKey: 'dashboard.alert_at_risk_desc',
-      alertBtnKey: 'dashboard.alert_at_risk_btn',
-      alertButtonClass: 'risk-button-orange',
-      consumedCalories: 310,
-      targetCalories: 1800,
-      remainingCalories: 1490,
-      netBalance: 1490,
-      progressPercent: 17,
-      topAccentClass: 'accent-orange',
-      googleFitCalories: null,
-      netBalanceSubtitleKey: 'dashboard.no_activity_synced',
-      meals: [
-        { nameKey: 'dashboard.meal_breakfast', description: 'Oatmeal + banana · 7:30 am', caloriesLabel: '310 kcal', dotClass: 'dot-orange', notLogged: false, missed: false },
-        this.notLoggedMeal('dashboard.meal_lunch', 'dot-danger', true),
-        this.notLoggedMeal('dashboard.meal_snack', 'dot-danger', true),
-        this.notLoggedMeal('dashboard.meal_dinner', 'dot-empty'),
-      ],
-      macros: [
-        { nameKey: 'dashboard.macro_protein', consumed: 18, target: 120, colorClass: 'macro-teal' },
-        { nameKey: 'dashboard.macro_carbs', consumed: 38, target: 220, colorClass: 'macro-orange' },
-        { nameKey: 'dashboard.macro_fat', consumed: 9, target: 65, colorClass: 'macro-pink' },
-      ],
-      streak: 0,
-      streakDescKey: 'dashboard.streak_at_risk_desc',
-      streakDescParams: { misses: 3 },
-      streakFooterKey: 'dashboard.streak_at_risk_footer',
-      streakFooterParams: {},
-      streakClass: 'streak-at-risk',
-      weekDots: [true, false, false, false, false, false, false],
-      todayIndex: 4,
-      showNoMealsLoggedBlock: false,
-      noMealsDays: 0,
-    };
+  private badgeKeyFor(status: AdherenceStatus): string {
+    switch (status) {
+      case AdherenceStatus.AT_RISK: return 'dashboard.status_at_risk';
+      case AdherenceStatus.DROPPED: return 'dashboard.status_dropped';
+      case AdherenceStatus.RECOVERED: return 'dashboard.status_recovered';
+      default: return 'dashboard.status_on_track';
+    }
   }
 
-  private buildDroppedVm(): DashboardVm {
-    const targetCalories = 1800;
-    return {
-      status: AdherenceStatus.DROPPED,
-      greetingKey: 'dashboard.greeting',
-      greetingParams: { name: this.firstName },
-      badgeLabelKey: 'dashboard.status_dropped',
-      badgeLabelParams: { days: 7 },
-      badgeClass: 'status-dropped',
-      showAlert: true,
-      alertIcon: '💙',
-      alertTitleKey: 'dashboard.alert_dropped_title',
-      alertTitleParams: { days: 7 },
-      alertDescKey: 'dashboard.alert_dropped_desc',
-      alertBtnKey: 'dashboard.alert_dropped_btn',
-      alertButtonClass: 'risk-button-red',
-      consumedCalories: 0,
-      targetCalories,
-      remainingCalories: targetCalories,
-      netBalance: 0,
-      progressPercent: 0,
-      topAccentClass: 'accent-red',
-      googleFitCalories: null,
-      netBalanceSubtitleKey: null,
-      meals: [],
-      macros: [
-        { nameKey: 'dashboard.macro_protein', consumed: 0, target: 120, colorClass: 'macro-teal' },
-        { nameKey: 'dashboard.macro_carbs', consumed: 0, target: 220, colorClass: 'macro-orange' },
-        { nameKey: 'dashboard.macro_fat', consumed: 0, target: 65, colorClass: 'macro-pink' },
-      ],
-      streak: 0,
-      streakDescKey: 'dashboard.streak_dropped_desc',
-      streakDescParams: { days: 7 },
-      streakFooterKey: 'dashboard.streak_dropped_footer',
-      streakFooterParams: {},
-      streakClass: 'streak-dropped',
-      weekDots: [false, false, false, false, false, false, false],
-      todayIndex: -1,
-      showNoMealsLoggedBlock: true,
-      noMealsDays: 7,
-    };
+  private badgeParamsFor(status: AdherenceStatus, streak: number, misses: number): Record<string, unknown> {
+    switch (status) {
+      case AdherenceStatus.AT_RISK: return { misses };
+      case AdherenceStatus.DROPPED: return { days: misses };
+      default: return { streak };
+    }
   }
 
-  private buildRecoveredVm(): DashboardVm {
-    const targetCalories = 1800;
-    const consumedCalories = 480;
-    return {
-      status: AdherenceStatus.RECOVERED,
-      greetingKey: 'dashboard.greeting_back',
-      greetingParams: { name: this.firstName },
-      badgeLabelKey: 'dashboard.status_recovered',
-      badgeLabelParams: {},
-      badgeClass: 'status-recovered',
-      showAlert: true,
-      alertIcon: '🎉',
-      alertTitleKey: 'dashboard.alert_recovered_title',
-      alertTitleParams: {},
-      alertDescKey: 'dashboard.alert_recovered_desc',
-      alertBtnKey: 'dashboard.alert_recovered_btn',
-      alertButtonClass: 'risk-button-green',
-      consumedCalories,
-      targetCalories,
-      remainingCalories: targetCalories - consumedCalories,
-      netBalance: 0,
-      progressPercent: Math.round((consumedCalories / targetCalories) * 100),
-      topAccentClass: 'accent-green',
-      googleFitCalories: null,
-      netBalanceSubtitleKey: null,
-      meals: [
-        { nameKey: 'dashboard.meal_breakfast', description: 'Oatmeal + banana · 7:30 am', caloriesLabel: '480 kcal', dotClass: 'dot-orange', notLogged: false, missed: false },
-        this.notLoggedMeal('dashboard.meal_lunch', 'dot-empty'),
-        this.notLoggedMeal('dashboard.meal_snack', 'dot-empty'),
-        this.notLoggedMeal('dashboard.meal_dinner', 'dot-empty'),
-      ],
-      macros: [
-        { nameKey: 'dashboard.macro_protein', consumed: Math.round((consumedCalories * 0.2) / 4), target: 120, colorClass: 'macro-teal' },
-        { nameKey: 'dashboard.macro_carbs', consumed: Math.round((consumedCalories * 0.5) / 4), target: 220, colorClass: 'macro-orange' },
-        { nameKey: 'dashboard.macro_fat', consumed: Math.round((consumedCalories * 0.3) / 9), target: 65, colorClass: 'macro-pink' },
-      ],
-      streak: 1,
-      streakDescKey: 'dashboard.streak_recovered_desc',
-      streakDescParams: {},
-      streakFooterKey: 'dashboard.streak_recovered_footer',
-      streakFooterParams: {},
-      streakClass: 'streak-recovered',
-      weekDots: [false, false, false, false, false, false, true],
-      todayIndex: 6,
-      showNoMealsLoggedBlock: false,
-      noMealsDays: 0,
-    };
+  private badgeClassFor(status: AdherenceStatus): string {
+    switch (status) {
+      case AdherenceStatus.AT_RISK: return 'status-at-risk';
+      case AdherenceStatus.DROPPED: return 'status-dropped';
+      case AdherenceStatus.RECOVERED: return 'status-recovered';
+      default: return 'status-on-track';
+    }
+  }
+
+  private accentFor(status: AdherenceStatus): string {
+    switch (status) {
+      case AdherenceStatus.AT_RISK: return 'accent-orange';
+      case AdherenceStatus.DROPPED: return 'accent-red';
+      case AdherenceStatus.RECOVERED: return 'accent-green';
+      default: return 'accent-teal';
+    }
+  }
+
+  private alertVmFor(
+    status: AdherenceStatus,
+    misses: number,
+  ): Pick<DashboardVm, 'alertIcon' | 'alertTitleKey' | 'alertTitleParams' | 'alertDescKey' | 'alertBtnKey' | 'alertButtonClass'> {
+    switch (status) {
+      case AdherenceStatus.AT_RISK:
+        return {
+          alertIcon: '⚠️',
+          alertTitleKey: 'dashboard.alert_at_risk_title',
+          alertTitleParams: { days: misses },
+          alertDescKey: 'dashboard.alert_at_risk_desc',
+          alertBtnKey: 'dashboard.alert_at_risk_btn',
+          alertButtonClass: 'risk-button-orange',
+        };
+      case AdherenceStatus.DROPPED:
+        return {
+          alertIcon: '💙',
+          alertTitleKey: 'dashboard.alert_dropped_title',
+          alertTitleParams: { days: misses },
+          alertDescKey: 'dashboard.alert_dropped_desc',
+          alertBtnKey: 'dashboard.alert_dropped_btn',
+          alertButtonClass: 'risk-button-red',
+        };
+      case AdherenceStatus.RECOVERED:
+        return {
+          alertIcon: '🎉',
+          alertTitleKey: 'dashboard.alert_recovered_title',
+          alertTitleParams: {},
+          alertDescKey: 'dashboard.alert_recovered_desc',
+          alertBtnKey: 'dashboard.alert_recovered_btn',
+          alertButtonClass: 'risk-button-green',
+        };
+      default:
+        return {
+          alertIcon: '',
+          alertTitleKey: '',
+          alertTitleParams: {},
+          alertDescKey: '',
+          alertBtnKey: '',
+          alertButtonClass: '',
+        };
+    }
+  }
+
+  private streakVmFor(
+    status: AdherenceStatus,
+    streak: number,
+    misses: number,
+    milestone: number,
+  ): Pick<DashboardVm, 'streakDescKey' | 'streakDescParams' | 'streakFooterKey' | 'streakFooterParams' | 'streakClass'> {
+    switch (status) {
+      case AdherenceStatus.AT_RISK:
+        return {
+          streakDescKey: 'dashboard.streak_at_risk_desc',
+          streakDescParams: { misses },
+          streakFooterKey: 'dashboard.streak_at_risk_footer',
+          streakFooterParams: {},
+          streakClass: 'streak-at-risk',
+        };
+      case AdherenceStatus.DROPPED:
+        return {
+          streakDescKey: 'dashboard.streak_dropped_desc',
+          streakDescParams: { days: misses },
+          streakFooterKey: 'dashboard.streak_dropped_footer',
+          streakFooterParams: {},
+          streakClass: 'streak-dropped',
+        };
+      case AdherenceStatus.RECOVERED:
+        return {
+          streakDescKey: 'dashboard.streak_recovered_desc',
+          streakDescParams: {},
+          streakFooterKey: 'dashboard.streak_recovered_footer',
+          streakFooterParams: {},
+          streakClass: 'streak-recovered',
+        };
+      default:
+        return {
+          streakDescKey: 'dashboard.streak_on_track_desc',
+          streakDescParams: {},
+          streakFooterKey: 'dashboard.streak_on_track_footer',
+          streakFooterParams: { days: milestone },
+          streakClass: 'streak-on-track',
+        };
+    }
   }
 }

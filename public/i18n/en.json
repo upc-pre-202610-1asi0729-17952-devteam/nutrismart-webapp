@@ -309,7 +309,10 @@
     "streak_dropped_desc": "{{days}} days inactive",
     "streak_dropped_footer": "Your plan is ready when you are",
     "streak_recovered_desc": "Recovery streak started — keep going!",
-    "streak_recovered_footer": "You're back on track"
+    "streak_recovered_footer": "You're back on track",
+    "loading_progress": "Loading your dashboard…",
+    "load_error": "Could not load your data. Please try again.",
+    "retry": "Retry"
   },
   "nutrition": {
     "page_title": "Daily Log",
@@ -618,27 +621,27 @@
     "mixed_salad": "Mixed salad"
   },
   "ingredient_categories": {
-    "grain":          "Grain",
+    "grain": "Grain",
     "animal_protein": "Animal protein",
-    "vegetable":      "Vegetable",
-    "fruit":          "Fruit",
-    "dairy":          "Dairy",
-    "legume":         "Legume",
-    "seasoning":      "Seasoning",
-    "other":          "Other"
+    "vegetable": "Vegetable",
+    "fruit": "Fruit",
+    "dairy": "Dairy",
+    "legume": "Legume",
+    "seasoning": "Seasoning",
+    "other": "Other"
   },
   "pantry_items": {
-    "white_rice":      "White rice",
-    "chicken_breast":  "Chicken breast",
-    "lemon":           "Lemon",
-    "onion":           "Onion",
-    "garlic":          "Garlic",
-    "quinoa":          "Quinoa"
+    "white_rice": "White rice",
+    "chicken_breast": "Chicken breast",
+    "lemon": "Lemon",
+    "onion": "Onion",
+    "garlic": "Garlic",
+    "quinoa": "Quinoa"
   },
   "recipes": {
-    "chicken_quinoa":    "Chicken breast with quinoa",
+    "chicken_quinoa": "Chicken breast with quinoa",
     "rice_chicken_bowl": "Rice and chicken bowl",
-    "chicken_salad":     "Chicken and salad",
+    "chicken_salad": "Chicken and salad",
     "lemon_garlic_rice": "Lemon garlic rice"
   },
   "pantry": {

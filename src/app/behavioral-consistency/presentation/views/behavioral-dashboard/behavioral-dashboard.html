@@ -1,5 +1,17 @@
-@if (hasProgress()) {
+@if (isLoading() && !hasProgress()) {
+  <div class="dashboard-state-block">
+    <p>{{ 'dashboard.loading_progress' | translate }}</p>
+  </div>
+} @else if (loadError() && !hasProgress()) {
+  <div class="dashboard-state-block">
+    <p>{{ 'dashboard.load_error' | translate }}</p>
+    <button type="button" class="retry-button" (click)="onRetry()">
+      {{ 'dashboard.retry' | translate }}
+    </button>
+  </div>
+} @else if (hasProgress()) {
   @let vm = dashboardVm();
+  @let arcs = donutArcs();
 
   <main class="dashboard-shell">
     <header class="dashboard-header">
@@ -74,7 +86,7 @@
             <div class="no-meals-icon">💙</div>
             <h3>{{ 'dashboard.no_meals_title' | translate: { days: vm.noMealsDays } }}</h3>
             <p>{{ 'dashboard.no_meals_desc' | translate }}</p>
-            <button type="button" class="log-meal-button">
+            <button type="button" class="log-meal-button" (click)="onLogMeal()">
               {{ 'dashboard.log_meal_btn' | translate }}
             </button>
           </div>
@@ -102,7 +114,7 @@
                   {{ meal.caloriesLabel }}
                 </strong>
 
-                <button type="button" class="add-button">+</button>
+                <button type="button" class="add-button" (click)="onLogMeal()">+</button>
               </div>
             }
           </div>
@@ -115,9 +127,24 @@
         <div class="donut-wrapper">
           <svg viewBox="0 0 120 120" class="donut-chart" aria-hidden="true">
             <circle class="donut-bg" cx="60" cy="60" r="42"></circle>
-            <circle class="donut-arc donut-protein" cx="60" cy="60" r="42"></circle>
-            <circle class="donut-arc donut-carbs" cx="60" cy="60" r="42"></circle>
-            <circle class="donut-arc donut-fat" cx="60" cy="60" r="42"></circle>
+            <circle
+              class="donut-arc donut-protein"
+              cx="60" cy="60" r="42"
+              [style.stroke-dasharray]="arcs.protein.dasharray"
+              [style.stroke-dashoffset]="arcs.protein.dashoffset">
+            </circle>
+            <circle
+              class="donut-arc donut-carbs"
+              cx="60" cy="60" r="42"
+              [style.stroke-dasharray]="arcs.carbs.dasharray"
+              [style.stroke-dashoffset]="arcs.carbs.dashoffset">
+            </circle>
+            <circle
+              class="donut-arc donut-fat"
+              cx="60" cy="60" r="42"
+              [style.stroke-dasharray]="arcs.fat.dasharray"
+              [style.stroke-dashoffset]="arcs.fat.dashoffset">
+            </circle>
           </svg>
 
           <div class="donut-center">
