@@ -13,7 +13,7 @@
     <button class="date-nav-btn"
             [disabled]="isAtAccountStart()"
             (click)="goToPreviousDay()"
-            aria-label="Previous day">
+            [attr.aria-label]="'nutrition.prev_day' | translate">
       &#8249;
     </button>
     <div class="date-nav-label" [class.date-nav-label--today]="isToday()">
@@ -23,7 +23,7 @@
     <button class="date-nav-btn"
             [disabled]="isToday()"
             (click)="goToNextDay()"
-            aria-label="Next day">
+            [attr.aria-label]="'nutrition.next_day' | translate">
       &#8250;
     </button>
   </div>

@@ -1,5 +1,7 @@
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs/operators';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { DietaryRestriction } from '../../../../iam/domain/model/dietary-restriction.enum';
 import { NutritionStore } from '../../../application/nutrition.store';
@@ -56,7 +58,7 @@ export class DailyLog implements OnInit {
   /** Demo state: which meals are marked as skipped (T21). */
   private skippedMeals = signal<MealType[]>([]);
 
-  protected showGoalMetAlert = signal(true);
+  protected showGoalMetAlert = signal(false);
 
   /** Currently selected date for the day navigator. */
   protected selectedDate = signal<Date>(new Date());
@@ -102,10 +104,15 @@ export class DailyLog implements OnInit {
     return diffDays < 7;
   });
 
-  /** Formatted label for the date navigator pill. */
+  private readonly activeLang = toSignal(
+    this.translate.onLangChange.pipe(map((e) => e.lang)),
+    { initialValue: this.translate.currentLang ?? 'en' },
+  );
+
+  /** Formatted label for the date navigator pill — reactive to language changes. */
   protected formattedDate = computed(() => {
+    const lang = this.activeLang();
     if (this.isToday()) return this.translate.instant('nutrition.date_today');
-    const lang = this.translate.currentLang ?? 'en';
     return new Intl.DateTimeFormat(lang === 'es' ? 'es-ES' : 'en-US', {
       weekday: 'short',
       day: 'numeric',
@@ -308,6 +315,15 @@ export class DailyLog implements OnInit {
     const user = this.iamStore.currentUser();
     if (!user) return;
 
+    const logDate = this.isToday()
+      ? new Date()
+      : new Date(
+          this.selectedDate().getFullYear(),
+          this.selectedDate().getMonth(),
+          this.selectedDate().getDate(),
+          12, 0, 0,
+        );
+
     const props: MealRecordProps = {
       id: 0,
       foodItemId: payload.food.id,
@@ -322,7 +338,7 @@ export class DailyLog implements OnInit {
       fat: payload.nutrients.fat,
       fiber: payload.nutrients.fiber,
       sugar: payload.nutrients.sugar,
-      loggedAt: new Date().toISOString(),
+      loggedAt: logDate.toISOString(),
       userId: user.id,
     };
 
@@ -344,17 +360,27 @@ export class DailyLog implements OnInit {
 
   /** Updates a meal entry's quantity and recalculates macros proportionally. */
   async onEditEntry(payload: { id: number; quantity: number }): Promise<void> {
-    const record = this.nutritionStore.mealRecords().find((r) => r.id === payload.id);
-    if (!record || record.quantity === 0) return;
-    const ratio = payload.quantity / record.quantity;
-    record.quantity = payload.quantity;
-    record.calories = Math.round(record.calories * ratio * 10) / 10;
-    record.protein = Math.round(record.protein * ratio * 10) / 10;
-    record.carbs = Math.round(record.carbs * ratio * 10) / 10;
-    record.fat = Math.round(record.fat * ratio * 10) / 10;
-    record.fiber = Math.round(record.fiber * ratio * 10) / 10;
-    record.sugar = Math.round(record.sugar * ratio * 10) / 10;
-    await this.nutritionStore.updateMealEntry(record);
+    const original = this.nutritionStore.mealRecords().find((r) => r.id === payload.id);
+    if (!original || original.quantity === 0) return;
+    const ratio = payload.quantity / original.quantity;
+    const updated = new MealRecord({
+      id: original.id,
+      foodItemId: original.foodItemId,
+      foodItemName: original.foodItemName,
+      foodItemNameEs: original.foodItemNameEs,
+      mealType: original.mealType,
+      quantity: payload.quantity,
+      unit: original.unit,
+      calories: Math.round(original.calories * ratio * 10) / 10,
+      protein: Math.round(original.protein * ratio * 10) / 10,
+      carbs: Math.round(original.carbs * ratio * 10) / 10,
+      fat: Math.round(original.fat * ratio * 10) / 10,
+      fiber: Math.round(original.fiber * ratio * 10) / 10,
+      sugar: Math.round(original.sugar * ratio * 10) / 10,
+      loggedAt: original.loggedAt,
+      userId: original.userId,
+    });
+    await this.nutritionStore.updateMealEntry(updated);
     this.selectedEntry.set(null);
   }
 }

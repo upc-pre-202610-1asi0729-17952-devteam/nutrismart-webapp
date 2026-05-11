@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, inject, input, Output, signal } from '@angular/core';
+import { Component, computed, EventEmitter, inject, input, OnInit, Output, signal } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { FoodItem } from '../../../domain/model/food-item.entity';
 import { MealType } from '../../../domain/model/meal-type.enum';
@@ -27,7 +27,7 @@ export interface AddFoodPayload {
   templateUrl: './add-food-dialog.html',
   styleUrl: './add-food-dialog.css',
 })
-export class AddFoodDialogComponent {
+export class AddFoodDialogComponent implements OnInit {
 
   /** The food item to add. */
   food = input.required<FoodItem>();
