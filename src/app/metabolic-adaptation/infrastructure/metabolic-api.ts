@@ -122,32 +122,31 @@ export class MetabolicApi extends BaseApi {
   }
 
   /**
-   * Saves updated body composition measurements (waist, neck) and recalculates
-   * body fat percentage using the US Navy method.
+   * Saves a body composition measurement via direct cm input or a pre-calculated
+   * body fat percentage override (pant-size or visual-range estimation).
    *
-   * @param userId   - The user's numeric ID.
-   * @param waistCm  - Waist circumference in centimetres.
-   * @param neckCm   - Neck circumference in centimetres.
-   * @param weightKg - Current weight in kilograms.
-   * @param heightCm - Height in centimetres.
+   * @param userId                  - The user's numeric ID.
+   * @param weightKg                - Current weight in kilograms.
+   * @param heightCm                - Height in centimetres.
+   * @param waistCm                 - Waist circumference in cm (modes A and B).
+   * @param overrideBodyFatPercent  - Direct body fat % estimate (mode C).
    * @returns Observable emitting the updated {@link BodyComposition}.
    */
-  updateBodyComposition(
-    userId:   number,
-    waistCm:  number,
-    neckCm:   number,
-    weightKg: number,
-    heightCm: number,
+  setComposition(
+    userId:                 number,
+    weightKg:               number,
+    heightCm:               number,
+    waistCm?:               number,
+    overrideBodyFatPercent?: number,
   ): Observable<BodyComposition> {
     return of(new BodyComposition({
-      id:                     Date.now(),
+      id:                    Date.now(),
       userId,
-      waistCm,
-      neckCm,
+      waistCm:               waistCm ?? 0,
       heightCm,
       weightKg,
-      measuredAt:             new Date().toISOString(),
-      previousBodyFatPercent: 13.0,
+      measuredAt:            new Date().toISOString(),
+      overrideBodyFatPercent,
     }));
   }
 }

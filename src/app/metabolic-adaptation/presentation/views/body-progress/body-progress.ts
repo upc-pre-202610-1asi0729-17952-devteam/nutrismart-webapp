@@ -258,9 +258,8 @@ export class BodyProgressView implements OnInit {
 
   async onCalculateComposition(): Promise<void> {
     const waist = parseFloat(this.waistInputModel);
-    const neck  = parseFloat(this.neckInputModel);
-    if (!waist || !neck || waist <= 0 || neck <= 0) return;
-    await this.store.updateBodyComposition(waist, neck);
+    if (!waist || waist <= 0) return;
+    await this.store.setComposition(waist);
     this.waistInputModel = '';
     this.neckInputModel  = '';
   }

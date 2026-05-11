@@ -177,16 +177,6 @@ export class MetabolicStore {
       });
     });
 
-    if (this.isMuscleGain()) {
-      this._composition.set(new BodyComposition({
-        id: 1, userId: user.id,
-        waistCm: 82, neckCm: 37,
-        heightCm: user.height, weightKg: user.weight,
-        measuredAt: new Date().toISOString(),
-        previousBodyFatPercent: 13.0,
-      }));
-    }
-
     this._loading.set(false);
   }
 
@@ -286,25 +276,29 @@ export class MetabolicStore {
   }
 
   /**
-   * Updates body composition measurements and recalculates body fat %.
+   * Saves a body composition measurement from any of the three input modes:
+   * - Mode A: waist in cm (waistCm provided, no override)
+   * - Mode B: pant size converted to waist cm (waistCm provided, no override)
+   * - Mode C: visual-range estimation (overrideBodyFatPercent provided, waistCm omitted)
    *
-   * @param waistCm - Waist circumference in centimetres.
-   * @param neckCm  - Neck circumference in centimetres.
-   * @returns Promise that resolves when composition is updated.
+   * @param waistCm                - Waist circumference in cm (modes A and B).
+   * @param overrideBodyFatPercent - Direct body fat % estimate (mode C).
+   * @returns Promise that resolves when composition is saved.
    */
-  async updateBodyComposition(waistCm: number, neckCm: number): Promise<void> {
+  async setComposition(waistCm?: number, overrideBodyFatPercent?: number): Promise<void> {
     const user   = this.iamStore.currentUser();
     const metric = this._currentMetric();
-    if (!user || !metric) return;
+    if (!user) return;
+    const weightKg = metric?.weightKg ?? user.weight;
+    const heightCm = metric?.heightCm ?? user.height;
     this._loading.set(true);
     await new Promise<void>(resolve => {
-      this.api.updateBodyComposition(
-        user.id, waistCm, neckCm, metric.weightKg, metric.heightCm,
-      ).subscribe(comp => {
-        this._composition.set(comp);
-        this._loading.set(false);
-        resolve();
-      });
+      this.api.setComposition(user.id, weightKg, heightCm, waistCm, overrideBodyFatPercent)
+        .subscribe(comp => {
+          this._composition.set(comp);
+          this._loading.set(false);
+          resolve();
+        });
     });
   }
 

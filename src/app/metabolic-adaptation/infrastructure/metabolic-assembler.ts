@@ -57,27 +57,29 @@ export class BodyCompositionAssembler
 
   toEntityFromResource(r: BodyCompositionResource): BodyComposition {
     return new BodyComposition({
-      id:                     r.id,
-      userId:                 r.user_id,
-      waistCm:                r.waist_cm,
-      neckCm:                 r.neck_cm,
-      heightCm:               r.height_cm,
-      weightKg:               r.weight_kg,
-      measuredAt:             r.measured_at,
-      previousBodyFatPercent: r.previous_body_fat_percent,
+      id:                       r.id,
+      userId:                   r.user_id,
+      waistCm:                  r.waist_cm,
+      neckCm:                   r.neck_cm,
+      heightCm:                 r.height_cm,
+      weightKg:                 r.weight_kg,
+      measuredAt:               r.measured_at,
+      previousBodyFatPercent:   r.previous_body_fat_percent,
+      overrideBodyFatPercent:   r.override_body_fat_percent,
     });
   }
 
   toResourceFromEntity(e: BodyComposition): BodyCompositionResource {
     return {
-      id:                       e.id,
-      user_id:                  e.userId,
-      waist_cm:                 e.waistCm,
-      neck_cm:                  e.neckCm,
-      height_cm:                e.heightCm,
-      weight_kg:                e.weightKg,
-      measured_at:              e.measuredAt,
-      previous_body_fat_percent: e.previousBodyFatPercent,
+      id:                         e.id,
+      user_id:                    e.userId,
+      waist_cm:                   e.waistCm,
+      neck_cm:                    e.neckCm,
+      height_cm:                  e.heightCm,
+      weight_kg:                  e.weightKg,
+      measured_at:                e.measuredAt,
+      previous_body_fat_percent:  e.previousBodyFatPercent,
+      override_body_fat_percent:  e.overrideBodyFatPercent,
     };
   }
 

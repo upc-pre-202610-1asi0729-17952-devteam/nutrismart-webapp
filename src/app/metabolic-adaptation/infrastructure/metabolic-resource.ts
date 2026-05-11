@@ -22,11 +22,12 @@ export interface BodyMetricResource extends BaseResource {
 export interface BodyCompositionResource extends BaseResource {
   user_id: number;
   waist_cm: number;
-  neck_cm: number;
+  neck_cm?: number;
   height_cm: number;
   weight_kg: number;
   measured_at: string;
   previous_body_fat_percent?: number;
+  override_body_fat_percent?: number;
 }
 
 /**
