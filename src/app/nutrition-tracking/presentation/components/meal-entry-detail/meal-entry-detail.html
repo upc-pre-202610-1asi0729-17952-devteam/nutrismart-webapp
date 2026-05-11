@@ -2,7 +2,7 @@
   <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="detail-title">
 
     <div class="dialog-header">
-      <h2 id="detail-title" class="dialog-title">{{ entry().getLocalizedFoodName(currentLang) }}</h2>
+      <h2 id="detail-title" class="dialog-title">{{ entry().getLocalizedFoodName(currentLang()) }}</h2>
       <button class="close-btn" aria-label="Close" (click)="close.emit()">✕</button>
     </div>
 
@@ -13,7 +13,7 @@
       <!-- ── View mode ─────────────────────────────────────────── -->
       <div class="quantity-row">
         <span class="qty-label">{{ 'nutrition.quantity_logged' | translate }}</span>
-        <span class="qty-value">{{ entry().quantity }} {{ entry().unit }}</span>
+        <span class="qty-value">{{ entry().quantity }} {{ 'units.' + entry().unit | translate }}</span>
       </div>
 
       <div class="macros-grid">
@@ -57,7 +57,7 @@
       <!-- ── Edit mode ─────────────────────────────────────────── -->
       <div class="edit-form">
         <label class="edit-label" for="qty-input">
-          {{ 'nutrition.new_quantity' | translate }} ({{ entry().unit }})
+          {{ 'nutrition.new_quantity' | translate }} ({{ 'units.' + entry().unit | translate }})
         </label>
         <input
           id="qty-input"

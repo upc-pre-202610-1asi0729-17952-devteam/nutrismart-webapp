@@ -68,9 +68,9 @@ export class NutritionStore {
     };
   });
 
-  /** Aggregated daily totals from all meal records. */
+  /** Aggregated totals from today's meal records only. */
   readonly dailyTotals = computed(() =>
-    this._mealRecords().reduce(
+    this._mealRecords().filter(r => r.isFromToday).reduce(
       (acc, r) => ({
         calories: Math.round((acc.calories + r.calories) * 10) / 10,
         protein: Math.round((acc.protein + r.protein) * 10) / 10,

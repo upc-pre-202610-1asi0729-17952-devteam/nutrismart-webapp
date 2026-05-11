@@ -45,6 +45,9 @@ const bodyProgressRoutes = () =>
     (m) => m.bodyProgressRoutes,
   );
 
+/** Lazy-loads the pantry child routes (smart-recommendation context). */
+const pantryRoutes = () =>
+  import('./smart-recommendation/presentation/pantry.routes').then((m) => m.pantryRoutes);
 
 /** Lazy-loads the wearable child routes (metabolic-adaptation context). */
 const wearableRoutes = () =>
