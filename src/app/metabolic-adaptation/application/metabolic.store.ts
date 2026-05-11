@@ -1,9 +1,12 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { MetabolicApi } from '../infrastructure/metabolic-api';
 import { BodyMetric } from '../domain/model/body-metric.entity';
 import { BodyComposition } from '../domain/model/body-composition.entity';
 import { IamStore } from '../../iam/application/iam.store';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
+
+const STALE_DAYS_THRESHOLD = 14;
 
 /**
  * Central state store for the Metabolic Adaptation bounded context.
@@ -66,8 +69,7 @@ export class MetabolicStore {
 
   // ─── Computed Signals ─────────────────────────────────────────────────────
 
-  /** True when the last weight entry is older than 14 days (no-data banner). */
-  readonly isStale = computed(() => this._currentMetric()?.isStale(14) ?? false);
+  readonly isStale = computed(() => this._currentMetric()?.isStale(STALE_DAYS_THRESHOLD) ?? false);
 
   /**
    * True when the user has logged weight in the current history window but the
@@ -152,148 +154,111 @@ export class MetabolicStore {
 
   // ─── Actions ──────────────────────────────────────────────────────────────
 
-  /**
-   * Loads the initial metric snapshot and default 7-day history.
-   *
-   * @returns Promise that resolves once all data is loaded.
-   */
   async initialise(): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
     this._loading.set(true);
     this._error.set(null);
-
-    await new Promise<void>(resolve => {
-      this.api.getMetabolicTargets(user.id).subscribe(metric => {
-        this._currentMetric.set(metric);
-        resolve();
-      });
-    });
-
-    await new Promise<void>(resolve => {
-      this.api.getMetricsHistory(user.id, 7).subscribe(history => {
-        this._metricsHistory.set(history);
-        resolve();
-      });
-    });
-
-    if (this.isMuscleGain()) {
-      await new Promise<void>(resolve => {
-        this.api.getComposition(user.id).subscribe(comp => {
-          this._composition.set(comp);
-          resolve();
-        });
-      });
+    try {
+      const metric = await firstValueFrom(this.api.getMetabolicTargets(user.id));
+      this._currentMetric.set(metric);
+      const history = await firstValueFrom(this.api.getMetricsHistory(user.id, 7));
+      this._metricsHistory.set(history);
+      if (this.isMuscleGain()) {
+        const comp = await firstValueFrom(this.api.getComposition(user.id));
+        this._composition.set(comp);
+      }
+    } catch {
+      this._error.set('body_progress.error_load_failed');
+    } finally {
+      this._loading.set(false);
     }
-
-    this._loading.set(false);
   }
 
-  /**
-   * Records a new weight entry and updates the current metric reactively.
-   *
-   * Triggers BodyMetricLogged domain event implicitly via signal update.
-   *
-   * @param weightKg - New weight in kilograms.
-   * @returns Promise that resolves when the entry is saved.
-   */
   async logWeight(weightKg: number): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
     this._loading.set(true);
-    await new Promise<void>(resolve => {
-      this.api.logWeight(user.id, weightKg, this._currentMetric()?.heightCm ?? user.height)
-        .subscribe(metric => {
-          this._currentMetric.set(metric);
-          this._metricsHistory.update(h => [...h, metric]);
-          this._loading.set(false);
-          resolve();
-        });
-    });
+    this._error.set(null);
+    try {
+      const metric = await firstValueFrom(
+        this.api.logWeight(user.id, weightKg, this._currentMetric()?.heightCm ?? user.height),
+      );
+      this._currentMetric.set(metric);
+      this._metricsHistory.update(h => [...h, metric]);
+    } catch {
+      this._error.set('body_progress.error_save_failed');
+    } finally {
+      this._loading.set(false);
+    }
   }
 
-  /**
-   * Updates the user's height and triggers BMI recalculation via signal update.
-   *
-   * @param heightCm - New height in centimetres.
-   * @returns Promise that resolves when the update is complete.
-   */
   async updateHeight(heightCm: number): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
     this._loading.set(true);
-    await new Promise<void>(resolve => {
-      this.api.updateHeight(user.id, heightCm, this._currentMetric()?.weightKg ?? user.weight)
-        .subscribe(metric => {
-          this._currentMetric.set(metric);
-          this._loading.set(false);
-          resolve();
-        });
-    });
+    this._error.set(null);
+    try {
+      const metric = await firstValueFrom(
+        this.api.updateHeight(user.id, heightCm, this._currentMetric()?.weightKg ?? user.weight),
+      );
+      this._currentMetric.set(metric);
+    } catch {
+      this._error.set('body_progress.error_save_failed');
+    } finally {
+      this._loading.set(false);
+    }
   }
 
-  /**
-   * Sets the target weight and updates the projected achievement date.
-   *
-   * @param targetWeightKg - Target weight in kilograms.
-   * @returns Promise that resolves when the target is saved.
-   */
   async setTargetWeight(targetWeightKg: number): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
     this._loading.set(true);
-    await new Promise<void>(resolve => {
-      this.api.setTargetWeight(user.id, targetWeightKg).subscribe(metric => {
-        // Create a new BodyMetric instance so Angular signals detect the reference
-        // change and re-evaluate all dependent computeds (formattedProjectedDate, etc.).
-        this._currentMetric.update(current => {
-          if (!current) return metric;
-          return new BodyMetric({
-            id:                       current.id,
-            userId:                   current.userId,
-            weightKg:                 current.weightKg,
-            heightCm:                 current.heightCm,
-            loggedAt:                 current.loggedAt,
-            targetWeightKg:           metric.targetWeightKg,
-            projectedAchievementDate: metric.projectedAchievementDate,
-          });
+    this._error.set(null);
+    try {
+      // defaultValue: null handles the EMPTY case when no current metric exists yet.
+      const metric = await firstValueFrom(
+        this.api.setTargetWeight(user.id, targetWeightKg),
+        { defaultValue: null },
+      );
+      if (!metric) return;
+      // New instance forces Angular signal equality check to detect the change
+      // and re-evaluate dependents (formattedProjectedDate, chartPoints, etc.).
+      this._currentMetric.update(current => {
+        if (!current) return metric;
+        return new BodyMetric({
+          id:                       current.id,
+          userId:                   current.userId,
+          weightKg:                 current.weightKg,
+          heightCm:                 current.heightCm,
+          loggedAt:                 current.loggedAt,
+          targetWeightKg:           metric.targetWeightKg,
+          projectedAchievementDate: metric.projectedAchievementDate,
         });
-        this._loading.set(false);
-        resolve();
       });
-    });
+    } catch {
+      this._error.set('body_progress.error_save_failed');
+    } finally {
+      this._loading.set(false);
+    }
   }
 
-  /**
-   * Reloads the weight history for the given date range and updates the chart.
-   *
-   * @param days - Date range in days: 7, 30, or 90.
-   * @returns Promise that resolves when history is loaded.
-   */
   async loadHistory(days: 7 | 30 | 90): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
     this._selectedDays.set(days);
     this._loading.set(true);
-    await new Promise<void>(resolve => {
-      this.api.getMetricsHistory(user.id, days).subscribe(history => {
-        this._metricsHistory.set(history);
-        this._loading.set(false);
-        resolve();
-      });
-    });
+    this._error.set(null);
+    try {
+      const history = await firstValueFrom(this.api.getMetricsHistory(user.id, days));
+      this._metricsHistory.set(history);
+    } catch {
+      this._error.set('body_progress.error_load_failed');
+    } finally {
+      this._loading.set(false);
+    }
   }
 
-  /**
-   * Saves a body composition measurement from any of the three input modes:
-   * - Mode A: waist in cm (waistCm provided, no override)
-   * - Mode B: pant size converted to waist cm (waistCm provided, no override)
-   * - Mode C: visual-range estimation (overrideBodyFatPercent provided, waistCm omitted)
-   *
-   * @param waistCm                - Waist circumference in cm (modes A and B).
-   * @param overrideBodyFatPercent - Direct body fat % estimate (mode C).
-   * @returns Promise that resolves when composition is saved.
-   */
   async setComposition(waistCm?: number, overrideBodyFatPercent?: number): Promise<void> {
     const user   = this.iamStore.currentUser();
     const metric = this._currentMetric();
@@ -301,14 +266,17 @@ export class MetabolicStore {
     const weightKg = metric?.weightKg ?? user.weight;
     const heightCm = metric?.heightCm ?? user.height;
     this._loading.set(true);
-    await new Promise<void>(resolve => {
-      this.api.setComposition(user.id, weightKg, heightCm, waistCm, overrideBodyFatPercent)
-        .subscribe(comp => {
-          this._composition.set(comp);
-          this._loading.set(false);
-          resolve();
-        });
-    });
+    this._error.set(null);
+    try {
+      const comp = await firstValueFrom(
+        this.api.setComposition(user.id, weightKg, heightCm, waistCm, overrideBodyFatPercent),
+      );
+      this._composition.set(comp);
+    } catch {
+      this._error.set('body_progress.error_save_failed');
+    } finally {
+      this._loading.set(false);
+    }
   }
 
   /**
