@@ -1,11 +1,10 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RecommendationsStore } from '../../../application/recommendations.store';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
-import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
 
 @Component({
   selector: 'app-recommendations',
@@ -18,10 +17,6 @@ export class RecommendationsView implements OnInit {
   protected iamStore   = inject(IamStore);
   private nutStore     = inject(NutritionStore);
   private translate    = inject(TranslateService);
-
-  // ─── Demo bar state ───────────────────────────────────────────────────────
-
-  protected demoAdherence = signal<'on_track' | 'at_risk' | 'dropped'>('on_track');
 
   protected isPro = computed(() => this.iamStore.currentUser()?.isPro() ?? false);
 
@@ -101,18 +96,6 @@ export class RecommendationsView implements OnInit {
     await this.store.initialise();
     await this.nutStore.loadDailyBalance();
     await this.nutStore.loadMealHistory();
-  }
-
-  // ─── Demo bar actions ─────────────────────────────────────────────────────
-
-  setDemoAdherence(state: 'on_track' | 'at_risk' | 'dropped'): void {
-    this.demoAdherence.set(state);
-    const map: Record<string, AdherenceStatus> = {
-      on_track: AdherenceStatus.ON_TRACK,
-      at_risk:  AdherenceStatus.AT_RISK,
-      dropped:  AdherenceStatus.DROPPED,
-    };
-    this.store.setAdherenceStatus(map[state]);
   }
 
   // ─── Travel mode user actions ─────────────────────────────────────────────

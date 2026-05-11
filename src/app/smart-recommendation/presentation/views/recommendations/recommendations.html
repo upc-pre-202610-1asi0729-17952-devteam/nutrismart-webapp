@@ -39,21 +39,6 @@
       </div>
     }
 
-    <!-- ── Demo bar ─────────────────────────────────────────── -->
-    <div class="demo-bar">
-      <span class="demo-label">{{ 'recommendations.demo_label' | translate }}</span>
-
-      <div class="demo-group">
-        <span class="demo-group-label">{{ 'recommendations.demo_adherence' | translate }}</span>
-        <button class="demo-btn" [class.demo-btn--active]="demoAdherence() === 'on_track'"
-                (click)="setDemoAdherence('on_track')">{{ 'recommendations.demo_on_track' | translate }}</button>
-        <button class="demo-btn demo-btn--warn" [class.demo-btn--active]="demoAdherence() === 'at_risk'"
-                (click)="setDemoAdherence('at_risk')">{{ 'recommendations.demo_at_risk' | translate }}</button>
-        <button class="demo-btn demo-btn--danger" [class.demo-btn--active]="demoAdherence() === 'dropped'"
-                (click)="setDemoAdherence('dropped')">{{ 'recommendations.demo_dropped' | translate }}</button>
-      </div>
-    </div>
-
     <!-- ── Location denied banner ──────────────────────────────── -->
     @if (store.locationDenied() && !store.isTravelMode()) {
       <div class="location-banner">
