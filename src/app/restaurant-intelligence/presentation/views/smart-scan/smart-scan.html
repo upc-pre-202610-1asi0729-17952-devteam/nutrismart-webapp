@@ -353,7 +353,7 @@
                   <span class="alternative-item__meta">
                     {{ dish.calories }} kcal · P{{ dish.protein }}g ·
                     {{ 'smart_scan.compatibility' | translate }}
-                    {{ smartScanStore.menuAnalysis()!.compatibilityLabel(dish) }}
+                    {{ dish.formattedScore() }}
                   </span>
                   @if (smartScanStore.menuDishAlertsByRank()[dish.rank]; as alerts) {
                     <ul class="impact-list impact-list--compact" role="list">
