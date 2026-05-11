@@ -43,6 +43,9 @@ export interface BodyMetricProps {
  *
  * @author Espinoza Cruz, Angela Milagros
  */
+const TDEE_ACTIVITY_MULTIPLIER = 1.55;
+const DEFAULT_WEEKLY_RATE_KG   = 0.25;
+
 export class BodyMetric implements BaseEntity {
   #id: number;
   #userId: number;
@@ -125,14 +128,8 @@ export class BodyMetric implements BaseEntity {
     return Math.round(10 * this.#weightKg + 6.25 * this.#heightCm - 161);
   }
 
-  /**
-   * Estimates Total Daily Energy Expenditure assuming moderate activity
-   * (multiplier 1.55).
-   *
-   * Result rounded to the nearest integer.
-   */
   tdee(): number {
-    return Math.round(this.bmr() * 1.55);
+    return Math.round(this.bmr() * TDEE_ACTIVITY_MULTIPLIER);
   }
 
   /**
@@ -175,7 +172,7 @@ export class BodyMetric implements BaseEntity {
    */
   calculateProjectedDate(
     targetWeightKg: number,
-    weeklyRateKg = 0.25,
+    weeklyRateKg = DEFAULT_WEEKLY_RATE_KG,
     from: Date = new Date(),
   ): Date {
     const diff       = Math.abs(this.#weightKg - targetWeightKg);

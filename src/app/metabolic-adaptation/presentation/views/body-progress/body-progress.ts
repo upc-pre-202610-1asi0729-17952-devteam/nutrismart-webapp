@@ -1,4 +1,8 @@
 import { Component, computed, HostListener, inject, OnInit, signal } from '@angular/core';
+
+const WEIGHT_MAX_KG = 500;
+const WAIST_MIN_CM  = 30;
+const WAIST_MAX_CM  = 200;
 import { DecimalPipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
@@ -68,7 +72,7 @@ export class BodyProgressView implements OnInit {
     const mode = this.compositionMode();
     if (mode === 'A') {
       const v = parseFloat(this.compositionWaistCm());
-      return !isNaN(v) && v >= 30 && v <= 200;
+      return !isNaN(v) && v >= WAIST_MIN_CM && v <= WAIST_MAX_CM;
     }
     if (mode === 'B') return this.compositionPantSize() !== null;
     return this.compositionVisualLevel() !== null;
@@ -88,7 +92,7 @@ export class BodyProgressView implements OnInit {
    */
   protected weightPreview = computed<{ bmi: number; tdee: number } | null>(() => {
     const raw      = parseFloat(this.weightInput());
-    if (!raw || raw <= 0 || raw > 500) return null;
+    if (!raw || raw <= 0 || raw > WEIGHT_MAX_KG) return null;
     const heightCm = this.store.currentMetric()?.heightCm;
     if (!heightCm) return null;
     const temp = new BodyMetric({ id: 0, userId: 0, weightKg: raw, heightCm, loggedAt: new Date().toISOString() });
@@ -97,7 +101,7 @@ export class BodyProgressView implements OnInit {
 
   protected weightInputInvalid = computed(() => {
     const raw = parseFloat(this.weightInput());
-    return this.weightInput().trim().length > 0 && (isNaN(raw) || raw <= 0 || raw > 500);
+    return this.weightInput().trim().length > 0 && (isNaN(raw) || raw <= 0 || raw > WEIGHT_MAX_KG);
   });
 
   protected readonly goalInputInvalid = computed(() => {
@@ -222,7 +226,7 @@ export class BodyProgressView implements OnInit {
       this.weightError.set(this.translate.instant('body_progress.error_weight_positive'));
       return;
     }
-    if (val > 500) {
+    if (val > WEIGHT_MAX_KG) {
       this.weightError.set(this.translate.instant('body_progress.error_weight_max'));
       return;
     }

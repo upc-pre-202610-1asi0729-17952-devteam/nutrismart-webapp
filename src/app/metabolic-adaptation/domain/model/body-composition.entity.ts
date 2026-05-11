@@ -38,6 +38,9 @@ export interface BodyCompositionProps {
  *
  * @author Espinoza Cruz, Angela Milagros
  */
+const DEFAULT_NECK_CM             = 36;
+const FAT_ALERT_THRESHOLD_PERCENT = 1.5;
+
 export class BodyComposition implements BaseEntity {
   #id: number;
   #userId: number;
@@ -53,7 +56,7 @@ export class BodyComposition implements BaseEntity {
     this.#id                     = props.id;
     this.#userId                 = props.userId;
     this.#waistCm                = props.waistCm;
-    this.#neckCm                 = props.neckCm ?? 36;
+    this.#neckCm                 = props.neckCm ?? DEFAULT_NECK_CM;
     this.#heightCm               = props.heightCm;
     this.#weightKg               = props.weightKg;
     this.#measuredAt             = props.measuredAt;
@@ -147,7 +150,7 @@ export class BodyComposition implements BaseEntity {
    */
   hasFatIncreaseAlert(): boolean {
     if (this.#previousBodyFatPercent === 0) return false;
-    return this.bodyFatPercent() - this.#previousBodyFatPercent > 1.5;
+    return this.bodyFatPercent() - this.#previousBodyFatPercent > FAT_ALERT_THRESHOLD_PERCENT;
   }
 
 }
