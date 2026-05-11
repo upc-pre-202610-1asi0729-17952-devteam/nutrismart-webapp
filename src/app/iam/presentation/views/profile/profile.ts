@@ -1,9 +1,10 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageSwitcher } from '../../../../shared/presentation/components/language-switcher/language-switcher';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { MetabolicStore } from '../../../../metabolic-adaptation/application/metabolic.store';
+import { CityLookupApi } from '../../../../shared/infrastructure/city-lookup-api';
 import { ActivityLevel } from '../../../../iam/domain/model/activity-level.enum';
 import { DietaryRestriction } from '../../../../iam/domain/model/dietary-restriction.enum';
 import { MedicalCondition } from '../../../../iam/domain/model/medical-condition.enum';
@@ -47,14 +48,14 @@ interface PanelNavItem {
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
-export class Profile {
-  /** IAM store providing current user state and update methods. */
+export class Profile implements OnInit {
   iamStore = inject(IamStore);
 
-  private metabolicStore = inject(MetabolicStore);
+  private metabolicStore  = inject(MetabolicStore);
+  private cityLookupApi   = inject(CityLookupApi);
+  private translate       = inject(TranslateService);
 
-  /** ngx-translate service for language switching in panel 4. */
-  private translate = inject(TranslateService);
+  readonly knownCities = signal<string[]>([]);
 
   /** Form builder for constructing panel-specific reactive forms. */
   private fb = inject(FormBuilder);
@@ -203,6 +204,12 @@ export class Profile {
    *
    * @param panel - The {@link ProfilePanel} to activate.
    */
+  ngOnInit(): void {
+    this.cityLookupApi.getKnownCities().subscribe({
+      next: cities => this.knownCities.set(cities),
+    });
+  }
+
   setPanel(panel: ProfilePanel): void {
     this.activePanel.set(panel);
   }

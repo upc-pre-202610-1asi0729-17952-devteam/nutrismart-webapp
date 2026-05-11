@@ -81,7 +81,12 @@
             <div class="form-group">
               <label class="form-label">{{ 'profile.home_city' | translate }}</label>
               <input type="text" formControlName="homeCity" class="form-input"
-                     [placeholder]="'profile.home_city_hint' | translate" />
+                     list="known-cities-list" autocomplete="off" />
+              <datalist id="known-cities-list">
+                @for (city of knownCities(); track city) {
+                  <option [value]="city"></option>
+                }
+              </datalist>
               <span class="field-hint">{{ 'profile.home_city_hint' | translate }}</span>
             </div>
 
