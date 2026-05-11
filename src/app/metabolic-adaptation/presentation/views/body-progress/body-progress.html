@@ -176,7 +176,12 @@
           </mat-button-toggle-group>
         </div>
 
-        @if (store.metricsHistory().length >= 2) {
+        @if (store.loading()) {
+          <div class="chart-loading" role="status"
+               [attr.aria-label]="'body_progress.loading_chart' | translate">
+            <span class="material-icons chart-loading-icon">refresh</span>
+          </div>
+        } @else if (store.metricsHistory().length >= 2) {
           <div class="chart-wrap">
             <svg viewBox="0 0 800 140" class="chart-svg">
               @if (store.currentMetric()?.targetWeightKg) {
