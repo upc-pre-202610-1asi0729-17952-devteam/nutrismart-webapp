@@ -10,32 +10,37 @@
     </button>
   </div>
 } @else if (hasProgress()) {
-  @let vm = dashboardVm();
+  @let greeting = greetingVm();
+  @let alert = alertVm();
+  @let calories = caloriesVm();
+  @let meals = mealsVm();
+  @let macros = macrosVm();
+  @let streak = streakVm();
   @let arcs = donutArcs();
 
   <main class="dashboard-shell">
     <header class="dashboard-header">
       <div>
-        <h1>{{ vm.greetingKey | translate: vm.greetingParams }}</h1>
+        <h1>{{ greeting.greetingKey | translate: greeting.greetingParams }}</h1>
         <p>{{ dateLabel() }}</p>
       </div>
 
-      <span class="status-pill" [ngClass]="vm.badgeClass">
-        {{ vm.badgeLabelKey | translate: vm.badgeLabelParams }}
+      <span class="status-pill" [ngClass]="greeting.badgeClass">
+        {{ greeting.badgeLabelKey | translate: greeting.badgeLabelParams }}
       </span>
     </header>
 
-    @if (vm.showAlert) {
-      <section class="risk-banner" [ngClass]="vm.topAccentClass">
-        <div class="risk-icon">{{ vm.alertIcon }}</div>
+    @if (alert.show) {
+      <section class="risk-banner" [ngClass]="greeting.topAccentClass">
+        <div class="risk-icon">{{ alert.icon }}</div>
 
         <div class="risk-content">
-          <strong>{{ vm.alertTitleKey | translate: vm.alertTitleParams }}</strong>
-          <p>{{ vm.alertDescKey | translate }}</p>
+          <strong>{{ alert.titleKey | translate: alert.titleParams }}</strong>
+          <p>{{ alert.descKey | translate }}</p>
         </div>
 
-        <button type="button" class="risk-button" [ngClass]="vm.alertButtonClass" (click)="onLogMeal()">
-          {{ vm.alertBtnKey | translate }}
+        <button type="button" class="risk-button" [ngClass]="alert.btnClass" (click)="onLogMeal()">
+          {{ alert.btnKey | translate }}
         </button>
       </section>
     }
@@ -43,21 +48,21 @@
     <section class="top-cards">
       <article class="metric-card">
         <span class="metric-label">{{ 'dashboard.calories_consumed_label' | translate }}</span>
-        <strong>{{ vm.consumedCalories }}</strong>
-        <p>{{ 'dashboard.calories_consumed_desc' | translate: { target: vm.targetCalories } }}</p>
+        <strong>{{ calories.consumed }}</strong>
+        <p>{{ 'dashboard.calories_consumed_desc' | translate: { target: calories.target } }}</p>
 
         <div class="progress-track">
           <div
             class="progress-fill"
-            [ngClass]="vm.topAccentClass"
-            [style.width.%]="vm.progressPercent">
+            [ngClass]="greeting.topAccentClass"
+            [style.width.%]="calories.progressPercent">
           </div>
         </div>
       </article>
 
       <article class="metric-card">
         <span class="metric-label">{{ 'dashboard.calories_remaining_label' | translate }}</span>
-        <strong class="teal-value">{{ vm.remainingCalories }}</strong>
+        <strong class="teal-value">{{ calories.remaining }}</strong>
         <p>{{ 'dashboard.calories_remaining_desc' | translate }}</p>
 
         <div class="progress-track muted">
@@ -67,11 +72,11 @@
 
       <article class="metric-card">
         <span class="metric-label">{{ 'dashboard.net_balance_label' | translate }}</span>
-        <strong>{{ vm.netBalance }}</strong>
+        <strong>{{ calories.netBalance }}</strong>
         <p>{{ 'dashboard.net_balance_desc' | translate }}</p>
 
-        @if (vm.googleFitCalories !== null) {
-          <span class="fit-badge">{{ 'dashboard.fit_badge' | translate: { calories: vm.googleFitCalories } }}</span>
+        @if (calories.googleFitCalories !== null) {
+          <span class="fit-badge">{{ 'dashboard.fit_badge' | translate: { calories: calories.googleFitCalories } }}</span>
         }
       </article>
     </section>
@@ -85,10 +90,10 @@
           </button>
         </div>
 
-        @if (vm.showNoMealsLoggedBlock) {
+        @if (meals.showNoMealsLoggedBlock) {
           <div class="no-meals-logged-block">
             <div class="no-meals-icon">💙</div>
-            <h3>{{ 'dashboard.no_meals_title' | translate: { days: vm.noMealsDays } }}</h3>
+            <h3>{{ 'dashboard.no_meals_title' | translate: { days: meals.noMealsDays } }}</h3>
             <p>{{ 'dashboard.no_meals_desc' | translate }}</p>
             <button type="button" class="log-meal-button" (click)="onLogMeal()">
               {{ 'dashboard.log_meal_btn' | translate }}
@@ -96,7 +101,7 @@
           </div>
         } @else {
           <div class="meal-list">
-            @for (meal of vm.meals; track meal.nameKey) {
+            @for (meal of meals.meals; track meal.nameKey) {
               <div class="meal-row">
                 <div class="meal-dot" [ngClass]="meal.dotClass"></div>
 
@@ -150,13 +155,13 @@
           </svg>
 
           <div class="donut-center">
-            <strong>{{ vm.consumedCalories }}</strong>
+            <strong>{{ calories.consumed }}</strong>
             <span>kcal</span>
           </div>
         </div>
 
         <div class="macro-list">
-          @for (macro of vm.macros; track macro.nameKey) {
+          @for (macro of macros.macros; track macro.nameKey) {
             <div class="macro-row">
               <div class="macro-row-header">
                 <span>
@@ -180,31 +185,31 @@
       </article>
     </section>
 
-    <section class="streak-card" [ngClass]="vm.streakClass">
+    <section class="streak-card" [ngClass]="streak.streakClass">
       <div class="streak-left">
         <span>{{ 'dashboard.active_streak_label' | translate }}</span>
-        <strong>{{ vm.streak }}</strong>
-        <p>{{ vm.streakDescKey | translate: vm.streakDescParams }}</p>
+        <strong>{{ streak.streak }}</strong>
+        <p>{{ streak.descKey | translate: streak.descParams }}</p>
       </div>
 
       <div class="streak-right">
         <span>{{ 'dashboard.streak_this_week' | translate }}</span>
 
         <div class="week-dots">
-          @for (dot of vm.weekDots; track $index) {
+          @for (dot of streak.weekDots; track $index) {
             <div class="week-dot-wrapper">
               <span
                 class="week-dot"
                 [class.filled]="dot"
-                [class.today]="$index === vm.todayIndex">
+                [class.today]="$index === streak.todayIndex">
               </span>
               <small>{{ weekLabels()[$index] }}</small>
             </div>
           }
         </div>
 
-        <p>{{ vm.streakFooterKey | translate: vm.streakFooterParams }}</p>
-        <span class="weekly-rate">{{ vm.weeklyCompletionRate }}% {{ 'dashboard.weekly_completion' | translate }}</span>
+        <p>{{ streak.footerKey | translate: streak.footerParams }}</p>
+        <span class="weekly-rate">{{ streak.weeklyCompletionRate }}% {{ 'dashboard.weekly_completion' | translate }}</span>
       </div>
     </section>
   </main>

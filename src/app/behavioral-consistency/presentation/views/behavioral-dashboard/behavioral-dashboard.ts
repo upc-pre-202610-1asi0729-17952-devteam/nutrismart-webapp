@@ -32,40 +32,54 @@ interface DonutArcVm {
   dashoffset: string;
 }
 
-interface DashboardVm {
-  status: AdherenceStatus;
+interface GreetingVm {
   greetingKey: string;
   greetingParams: Record<string, unknown>;
   badgeLabelKey: string;
   badgeLabelParams: Record<string, unknown>;
   badgeClass: string;
-  showAlert: boolean;
-  alertIcon: string;
-  alertTitleKey: string;
-  alertTitleParams: Record<string, unknown>;
-  alertDescKey: string;
-  alertBtnKey: string;
-  alertButtonClass: string;
-  consumedCalories: number;
-  targetCalories: number;
-  remainingCalories: number;
+  topAccentClass: string;
+}
+
+interface AlertVm {
+  show: boolean;
+  icon: string;
+  titleKey: string;
+  titleParams: Record<string, unknown>;
+  descKey: string;
+  btnKey: string;
+  btnClass: string;
+}
+
+interface CaloriesVm {
+  consumed: number;
+  target: number;
+  remaining: number;
   netBalance: number;
   progressPercent: number;
-  topAccentClass: string;
   googleFitCalories: number | null;
+}
+
+interface MealsVm {
   meals: DashboardMealVm[];
+  showNoMealsLoggedBlock: boolean;
+  noMealsDays: number;
+}
+
+interface MacrosVm {
   macros: DashboardMacroVm[];
+}
+
+interface StreakVm {
   streak: number;
-  streakDescKey: string;
-  streakDescParams: Record<string, unknown>;
-  streakFooterKey: string;
-  streakFooterParams: Record<string, unknown>;
+  descKey: string;
+  descParams: Record<string, unknown>;
+  footerKey: string;
+  footerParams: Record<string, unknown>;
   streakClass: string;
   weekDots: boolean[];
   todayIndex: number;
   weeklyCompletionRate: number;
-  showNoMealsLoggedBlock: boolean;
-  noMealsDays: number;
 }
 
 @Component({
@@ -141,65 +155,94 @@ export class BehavioralDashboard implements OnInit {
     };
   });
 
-  protected readonly dashboardVm = computed<DashboardVm>(() => {
-    const progress = this.currentProgress();
-    const status = progress?.adherenceStatus ?? AdherenceStatus.ON_TRACK;
-    const streak = progress?.streak ?? 0;
-    const consecutiveMisses = progress?.consecutiveMisses ?? 0;
-    const weekDots = progress?.weekDots ?? [false, false, false, false, false, false, false];
-    const todayIndex = (new Date().getDay() + 6) % 7;
-    const streakMilestone = progress?.nextStreakMilestone ?? Math.ceil((streak + 1) / 7) * 7;
-    const weeklyCompletionRate = progress?.weeklyCompletionRate ?? 0;
+  private readonly status = computed(() =>
+    this.currentProgress()?.adherenceStatus ?? AdherenceStatus.ON_TRACK,
+  );
 
-    const intake = this.nutritionStore.getDailyIntakeFor(new Date());
-    const totals = this.nutritionStore.dailyTotals();
-    const user = this.currentUser();
-    const locale = this.activeLang() === 'es' ? 'es-ES' : 'en-US';
+  private readonly streak = computed(() => this.currentProgress()?.streak ?? 0);
 
-    const targetCalories = intake?.dailyGoal ?? user?.dailyCalorieTarget ?? 1800;
-    const consumedCalories = Math.round(totals.calories);
-    const activeCalories = intake?.active ?? 0;
-    const remainingCalories = intake
-      ? intake.remaining
-      : targetCalories - consumedCalories;
-    const progressPercent = intake
-      ? intake.percentConsumed
-      : Math.min(Math.round((consumedCalories / targetCalories) * 100), 100);
-    const netBalance = consumedCalories - activeCalories;
+  private readonly consecutiveMisses = computed(() =>
+    this.currentProgress()?.consecutiveMisses ?? 0,
+  );
 
-    const proteinTarget = user?.proteinTarget ?? 120;
-    const carbsTarget = user?.carbsTarget ?? 220;
-    const fatTarget = user?.fatTarget ?? 65;
-
+  protected readonly greetingVm = computed<GreetingVm>(() => {
+    const status = this.status();
+    const streak = this.streak();
+    const misses = this.consecutiveMisses();
     return {
-      status,
       greetingKey: status === AdherenceStatus.RECOVERED ? 'dashboard.greeting_back' : 'dashboard.greeting',
       greetingParams: { name: this.firstName },
       badgeLabelKey: this.badgeKeyFor(status),
-      badgeLabelParams: this.badgeParamsFor(status, streak, consecutiveMisses),
+      badgeLabelParams: this.badgeParamsFor(status, streak, misses),
       badgeClass: this.badgeClassFor(status),
-      showAlert: progress?.hasAlert() ?? status !== AdherenceStatus.ON_TRACK,
-      ...this.alertVmFor(status, consecutiveMisses),
-      consumedCalories,
-      targetCalories,
-      remainingCalories,
-      netBalance,
-      progressPercent,
       topAccentClass: this.accentFor(status),
+    };
+  });
+
+  protected readonly alertVm = computed<AlertVm>(() => {
+    const status = this.status();
+    const misses = this.consecutiveMisses();
+    const progress = this.currentProgress();
+    const show = progress?.hasAlert() ?? status !== AdherenceStatus.ON_TRACK;
+    return { show, ...this.alertVmFor(status, misses) };
+  });
+
+  protected readonly caloriesVm = computed<CaloriesVm>(() => {
+    const intake = this.nutritionStore.getDailyIntakeFor(new Date());
+    const totals = this.nutritionStore.dailyTotals();
+    const user = this.currentUser();
+    const targetCalories = intake?.dailyGoal ?? user?.dailyCalorieTarget ?? 1800;
+    const consumedCalories = Math.round(totals.calories);
+    const activeCalories = intake?.active ?? 0;
+    const remainingCalories = intake ? intake.remaining : targetCalories - consumedCalories;
+    const progressPercent = intake
+      ? intake.percentConsumed
+      : Math.min(Math.round((consumedCalories / targetCalories) * 100), 100);
+    return {
+      consumed: consumedCalories,
+      target: targetCalories,
+      remaining: remainingCalories,
+      netBalance: consumedCalories - activeCalories,
+      progressPercent,
       googleFitCalories: activeCalories > 0 ? activeCalories : null,
+    };
+  });
+
+  protected readonly mealsVm = computed<MealsVm>(() => {
+    const status = this.status();
+    const misses = this.consecutiveMisses();
+    const locale = this.activeLang() === 'es' ? 'es-ES' : 'en-US';
+    return {
       meals: status === AdherenceStatus.DROPPED ? [] : this.buildMealsVm(locale),
-      macros: [
-        { nameKey: 'dashboard.macro_protein', consumed: Math.round(totals.protein), target: proteinTarget, colorClass: 'macro-teal' },
-        { nameKey: 'dashboard.macro_carbs', consumed: Math.round(totals.carbs), target: carbsTarget, colorClass: 'macro-orange' },
-        { nameKey: 'dashboard.macro_fat', consumed: Math.round(totals.fat), target: fatTarget, colorClass: 'macro-pink' },
-      ],
-      streak,
-      ...this.streakVmFor(status, streak, consecutiveMisses, streakMilestone),
-      weekDots,
-      todayIndex,
-      weeklyCompletionRate,
       showNoMealsLoggedBlock: status === AdherenceStatus.DROPPED,
-      noMealsDays: status === AdherenceStatus.DROPPED ? consecutiveMisses : 0,
+      noMealsDays: status === AdherenceStatus.DROPPED ? misses : 0,
+    };
+  });
+
+  protected readonly macrosVm = computed<MacrosVm>(() => {
+    const totals = this.nutritionStore.dailyTotals();
+    const user = this.currentUser();
+    return {
+      macros: [
+        { nameKey: 'dashboard.macro_protein', consumed: Math.round(totals.protein), target: user?.proteinTarget ?? 120, colorClass: 'macro-teal' },
+        { nameKey: 'dashboard.macro_carbs', consumed: Math.round(totals.carbs), target: user?.carbsTarget ?? 220, colorClass: 'macro-orange' },
+        { nameKey: 'dashboard.macro_fat', consumed: Math.round(totals.fat), target: user?.fatTarget ?? 65, colorClass: 'macro-pink' },
+      ],
+    };
+  });
+
+  protected readonly streakVm = computed<StreakVm>(() => {
+    const status = this.status();
+    const streak = this.streak();
+    const misses = this.consecutiveMisses();
+    const progress = this.currentProgress();
+    const milestone = progress?.nextStreakMilestone ?? Math.ceil((streak + 1) / 7) * 7;
+    return {
+      streak,
+      ...this.streakVmFor(status, streak, misses, milestone),
+      weekDots: progress?.weekDots ?? [false, false, false, false, false, false, false],
+      todayIndex: (new Date().getDay() + 6) % 7,
+      weeklyCompletionRate: progress?.weeklyCompletionRate ?? 0,
     };
   });
 
@@ -308,43 +351,43 @@ export class BehavioralDashboard implements OnInit {
   private alertVmFor(
     status: AdherenceStatus,
     misses: number,
-  ): Pick<DashboardVm, 'alertIcon' | 'alertTitleKey' | 'alertTitleParams' | 'alertDescKey' | 'alertBtnKey' | 'alertButtonClass'> {
+  ): Omit<AlertVm, 'show'> {
     switch (status) {
       case AdherenceStatus.AT_RISK:
         return {
-          alertIcon: '⚠️',
-          alertTitleKey: 'dashboard.alert_at_risk_title',
-          alertTitleParams: { days: misses },
-          alertDescKey: 'dashboard.alert_at_risk_desc',
-          alertBtnKey: 'dashboard.alert_at_risk_btn',
-          alertButtonClass: 'risk-button-orange',
+          icon: '⚠️',
+          titleKey: 'dashboard.alert_at_risk_title',
+          titleParams: { days: misses },
+          descKey: 'dashboard.alert_at_risk_desc',
+          btnKey: 'dashboard.alert_at_risk_btn',
+          btnClass: 'risk-button-orange',
         };
       case AdherenceStatus.DROPPED:
         return {
-          alertIcon: '💙',
-          alertTitleKey: 'dashboard.alert_dropped_title',
-          alertTitleParams: { days: misses },
-          alertDescKey: 'dashboard.alert_dropped_desc',
-          alertBtnKey: 'dashboard.alert_dropped_btn',
-          alertButtonClass: 'risk-button-red',
+          icon: '💙',
+          titleKey: 'dashboard.alert_dropped_title',
+          titleParams: { days: misses },
+          descKey: 'dashboard.alert_dropped_desc',
+          btnKey: 'dashboard.alert_dropped_btn',
+          btnClass: 'risk-button-red',
         };
       case AdherenceStatus.RECOVERED:
         return {
-          alertIcon: '🎉',
-          alertTitleKey: 'dashboard.alert_recovered_title',
-          alertTitleParams: {},
-          alertDescKey: 'dashboard.alert_recovered_desc',
-          alertBtnKey: 'dashboard.alert_recovered_btn',
-          alertButtonClass: 'risk-button-green',
+          icon: '🎉',
+          titleKey: 'dashboard.alert_recovered_title',
+          titleParams: {},
+          descKey: 'dashboard.alert_recovered_desc',
+          btnKey: 'dashboard.alert_recovered_btn',
+          btnClass: 'risk-button-green',
         };
       default:
         return {
-          alertIcon: '',
-          alertTitleKey: '',
-          alertTitleParams: {},
-          alertDescKey: '',
-          alertBtnKey: '',
-          alertButtonClass: '',
+          icon: '',
+          titleKey: '',
+          titleParams: {},
+          descKey: '',
+          btnKey: '',
+          btnClass: '',
         };
     }
   }
@@ -354,38 +397,38 @@ export class BehavioralDashboard implements OnInit {
     streak: number,
     misses: number,
     milestone: number,
-  ): Pick<DashboardVm, 'streakDescKey' | 'streakDescParams' | 'streakFooterKey' | 'streakFooterParams' | 'streakClass'> {
+  ): Pick<StreakVm, 'descKey' | 'descParams' | 'footerKey' | 'footerParams' | 'streakClass'> {
     switch (status) {
       case AdherenceStatus.AT_RISK:
         return {
-          streakDescKey: 'dashboard.streak_at_risk_desc',
-          streakDescParams: { misses },
-          streakFooterKey: 'dashboard.streak_at_risk_footer',
-          streakFooterParams: {},
+          descKey: 'dashboard.streak_at_risk_desc',
+          descParams: { misses },
+          footerKey: 'dashboard.streak_at_risk_footer',
+          footerParams: {},
           streakClass: 'streak-at-risk',
         };
       case AdherenceStatus.DROPPED:
         return {
-          streakDescKey: 'dashboard.streak_dropped_desc',
-          streakDescParams: { days: misses },
-          streakFooterKey: 'dashboard.streak_dropped_footer',
-          streakFooterParams: {},
+          descKey: 'dashboard.streak_dropped_desc',
+          descParams: { days: misses },
+          footerKey: 'dashboard.streak_dropped_footer',
+          footerParams: {},
           streakClass: 'streak-dropped',
         };
       case AdherenceStatus.RECOVERED:
         return {
-          streakDescKey: 'dashboard.streak_recovered_desc',
-          streakDescParams: {},
-          streakFooterKey: 'dashboard.streak_recovered_footer',
-          streakFooterParams: {},
+          descKey: 'dashboard.streak_recovered_desc',
+          descParams: {},
+          footerKey: 'dashboard.streak_recovered_footer',
+          footerParams: {},
           streakClass: 'streak-recovered',
         };
       default:
         return {
-          streakDescKey: 'dashboard.streak_on_track_desc',
-          streakDescParams: {},
-          streakFooterKey: 'dashboard.streak_on_track_footer',
-          streakFooterParams: { days: milestone },
+          descKey: 'dashboard.streak_on_track_desc',
+          descParams: {},
+          footerKey: 'dashboard.streak_on_track_footer',
+          footerParams: { days: milestone },
           streakClass: 'streak-on-track',
         };
     }
