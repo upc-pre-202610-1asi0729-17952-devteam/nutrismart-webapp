@@ -1,0 +1,41 @@
+<div class="meal-section" [attr.aria-label]="getMealLabel()">
+
+  <div class="meal-header">
+    <div class="meal-dot" [style.backgroundColor]="color()"></div>
+    <span class="meal-name">{{ getMealLabel() }}</span>
+    @if (isSkipped()) {
+      <span class="badge badge--skipped" role="status">{{ 'nutrition.meal_skipped' | translate }}</span>
+    } @else {
+      <span class="meal-kcal">{{ totalCalories() }} {{ 'nutrition.kcal' | translate }}</span>
+    }
+  </div>
+
+  @if (isSkipped()) {
+    <p class="skipped-text" aria-live="polite">{{ 'nutrition.meal_skipped_text' | translate }}</p>
+  } @else if (records().length === 0) {
+    <p class="empty-text">{{ 'nutrition.not_yet_logged' | translate }}</p>
+  } @else {
+    <div class="records-list" role="list">
+      @for (record of records(); track record.id) {
+        <div class="record-row" role="listitem" style="cursor:pointer"
+             (click)="viewEntry.emit(record)">
+          <div class="record-info">
+            <span class="record-name">{{ getRecordName(record) }}</span>
+            <span class="record-qty">{{ record.quantity }} {{ 'units.' + record.unit | translate }}</span>
+          </div>
+          <div class="record-macros">
+            <span class="record-kcal">{{ record.calories }} {{ 'nutrition.kcal' | translate }}</span>
+            <span class="record-detail">{{ record.macroSummary }}</span>
+          </div>
+          <button class="remove-btn"
+                  [attr.aria-label]="'Remove ' + record.foodItemName"
+                  (click)="$event.stopPropagation(); onRemove(record.id)">
+            ⊗
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+
+</div>

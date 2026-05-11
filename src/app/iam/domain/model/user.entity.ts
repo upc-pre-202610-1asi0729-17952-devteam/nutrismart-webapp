@@ -48,6 +48,12 @@ export interface UserProps {
   birthday?: string;
   /** Biological sex: 'male' | 'female' | 'other'. Optional. */
   biologicalSex?: string;
+  /** Account creation date in ISO format (YYYY-MM-DD). */
+  createdAt?: string;
+  /** City the user considers home, used for travel detection. */
+  homeCity?: string;
+  /** ISO date (YYYY-MM-DD) when the current goal was started. */
+  goalStartedAt?: string;
 }
 
 /**
@@ -98,6 +104,12 @@ export class User implements BaseEntity {
   private _birthday: string;
   /** @see UserProps.biologicalSex */
   private _biologicalSex: string;
+  /** @see UserProps.createdAt */
+  private _createdAt: string;
+  /** @see UserProps.homeCity */
+  private _homeCity: string;
+  /** @see UserProps.goalStartedAt */
+  private _goalStartedAt: string;
 
   /**
    * Creates a new User domain entity.
@@ -125,109 +137,219 @@ export class User implements BaseEntity {
     this._consecutiveMisses = props.consecutiveMisses;
     this._birthday = props.birthday ?? '';
     this._biologicalSex = props.biologicalSex ?? '';
+    this._createdAt = props.createdAt ?? '';
+    this._homeCity = props.homeCity ?? '';
+    this._goalStartedAt = props.goalStartedAt ?? '';
   }
 
   // ─── Getters & Setters ────────────────────────────────────────────────────
 
   /** Unique numeric identifier assigned by the backend. */
-  get id(): number { return this._id; }
+  get id(): number {
+    return this._id;
+  }
   /** @param value - New identifier value. */
-  set id(value: number) { this._id = value; }
+  set id(value: number) {
+    this._id = value;
+  }
 
   /** User's given name. */
-  get firstName(): string { return this._firstName; }
+  get firstName(): string {
+    return this._firstName;
+  }
   /** @param value - New given name. */
-  set firstName(value: string) { this._firstName = value; }
+  set firstName(value: string) {
+    this._firstName = value;
+  }
 
   /** User's family name. */
-  get lastName(): string { return this._lastName; }
+  get lastName(): string {
+    return this._lastName;
+  }
   /** @param value - New family name. */
-  set lastName(value: string) { this._lastName = value; }
+  set lastName(value: string) {
+    this._lastName = value;
+  }
 
   /** User's email address. */
-  get email(): string { return this._email; }
+  get email(): string {
+    return this._email;
+  }
   /** @param value - New email address. */
-  set email(value: string) { this._email = value; }
+  set email(value: string) {
+    this._email = value;
+  }
 
   /** Primary fitness goal driving macro calculations. */
-  get goal(): UserGoal { return this._goal; }
+  get goal(): UserGoal {
+    return this._goal;
+  }
   /** @param value - New fitness goal. */
-  set goal(value: UserGoal) { this._goal = value; }
+  set goal(value: UserGoal) {
+    this._goal = value;
+  }
 
   /** Body weight in kilograms. */
-  get weight(): number { return this._weight; }
+  get weight(): number {
+    return this._weight;
+  }
   /** @param value - New weight in kg. */
-  set weight(value: number) { this._weight = value; }
+  set weight(value: number) {
+    this._weight = value;
+  }
 
   /** Height in centimetres. */
-  get height(): number { return this._height; }
+  get height(): number {
+    return this._height;
+  }
   /** @param value - New height in cm. */
-  set height(value: number) { this._height = value; }
+  set height(value: number) {
+    this._height = value;
+  }
 
   /** Physical activity level used in TDEE calculation. */
-  get activityLevel(): ActivityLevel { return this._activityLevel; }
+  get activityLevel(): ActivityLevel {
+    return this._activityLevel;
+  }
   /** @param value - New activity level. */
-  set activityLevel(value: ActivityLevel) { this._activityLevel = value; }
+  set activityLevel(value: ActivityLevel) {
+    this._activityLevel = value;
+  }
 
   /** Current subscription tier. Null when no plan has been chosen yet. */
-  get plan(): SubscriptionPlan | null { return this._plan; }
+  get plan(): SubscriptionPlan | null {
+    return this._plan;
+  }
   /** @param value - New subscription plan. */
-  set plan(value: SubscriptionPlan | null) { this._plan = value; }
+  set plan(value: SubscriptionPlan | null) {
+    this._plan = value;
+  }
 
   /** Active dietary restrictions. Returns a copy of the internal array. */
-  get restrictions(): DietaryRestriction[] { return [...this._restrictions]; }
+  get restrictions(): DietaryRestriction[] {
+    return [...this._restrictions];
+  }
   /** @param value - Replacement restrictions array. */
-  set restrictions(value: DietaryRestriction[]) { this._restrictions = [...value]; }
+  set restrictions(value: DietaryRestriction[]) {
+    this._restrictions = [...value];
+  }
 
   /** Free-text medical conditions relevant to diet. Returns a copy. */
-  get medicalConditions(): string[] { return [...this._medicalConditions]; }
+  get medicalConditions(): string[] {
+    return [...this._medicalConditions];
+  }
   /** @param value - Replacement medical conditions array. */
-  set medicalConditions(value: string[]) { this._medicalConditions = [...value]; }
+  set medicalConditions(value: string[]) {
+    this._medicalConditions = [...value];
+  }
 
   /** Daily calorie target in kcal. */
-  get dailyCalorieTarget(): number { return this._dailyCalorieTarget; }
+  get dailyCalorieTarget(): number {
+    return this._dailyCalorieTarget;
+  }
   /** @param value - New calorie target. */
-  set dailyCalorieTarget(value: number) { this._dailyCalorieTarget = value; }
+  set dailyCalorieTarget(value: number) {
+    this._dailyCalorieTarget = value;
+  }
 
   /** Daily protein target in grams. */
-  get proteinTarget(): number { return this._proteinTarget; }
+  get proteinTarget(): number {
+    return this._proteinTarget;
+  }
   /** @param value - New protein target. */
-  set proteinTarget(value: number) { this._proteinTarget = value; }
+  set proteinTarget(value: number) {
+    this._proteinTarget = value;
+  }
 
   /** Daily carbohydrate target in grams. */
-  get carbsTarget(): number { return this._carbsTarget; }
+  get carbsTarget(): number {
+    return this._carbsTarget;
+  }
   /** @param value - New carbs target. */
-  set carbsTarget(value: number) { this._carbsTarget = value; }
+  set carbsTarget(value: number) {
+    this._carbsTarget = value;
+  }
 
   /** Daily fat target in grams. */
-  get fatTarget(): number { return this._fatTarget; }
+  get fatTarget(): number {
+    return this._fatTarget;
+  }
   /** @param value - New fat target. */
-  set fatTarget(value: number) { this._fatTarget = value; }
+  set fatTarget(value: number) {
+    this._fatTarget = value;
+  }
 
   /** Daily dietary fibre target in grams. */
-  get fiberTarget(): number { return this._fiberTarget; }
+  get fiberTarget(): number {
+    return this._fiberTarget;
+  }
   /** @param value - New fiber target. */
-  set fiberTarget(value: number) { this._fiberTarget = value; }
+  set fiberTarget(value: number) {
+    this._fiberTarget = value;
+  }
 
   /** Consecutive days with on-track logging. */
-  get streak(): number { return this._streak; }
+  get streak(): number {
+    return this._streak;
+  }
   /** @param value - New streak value. */
-  set streak(value: number) { this._streak = value; }
+  set streak(value: number) {
+    this._streak = value;
+  }
 
   /** Consecutive days where logs were missed. */
-  get consecutiveMisses(): number { return this._consecutiveMisses; }
+  get consecutiveMisses(): number {
+    return this._consecutiveMisses;
+  }
   /** @param value - New consecutiveMisses value. */
-  set consecutiveMisses(value: number) { this._consecutiveMisses = value; }
+  set consecutiveMisses(value: number) {
+    this._consecutiveMisses = value;
+  }
 
   /** Date of birth in ISO format (YYYY-MM-DD). */
-  get birthday(): string { return this._birthday; }
+  get birthday(): string {
+    return this._birthday;
+  }
   /** @param value - New birthday value. */
-  set birthday(value: string) { this._birthday = value; }
+  set birthday(value: string) {
+    this._birthday = value;
+  }
 
   /** Biological sex string. */
-  get biologicalSex(): string { return this._biologicalSex; }
+  get biologicalSex(): string {
+    return this._biologicalSex;
+  }
   /** @param value - New biologicalSex value. */
-  set biologicalSex(value: string) { this._biologicalSex = value; }
+  set biologicalSex(value: string) {
+    this._biologicalSex = value;
+  }
+
+  /** Account creation date in ISO format (YYYY-MM-DD). */
+  get createdAt(): string {
+    return this._createdAt;
+  }
+  /** @param value - New createdAt value. */
+  set createdAt(value: string) {
+    this._createdAt = value;
+  }
+
+  /** City the user considers home, used for travel detection. */
+  get homeCity(): string {
+    return this._homeCity;
+  }
+  /** @param value - New homeCity value. */
+  set homeCity(value: string) {
+    this._homeCity = value;
+  }
+
+  /** ISO date (YYYY-MM-DD) when the current goal was started. */
+  get goalStartedAt(): string {
+    return this._goalStartedAt;
+  }
+  /** @param value - New goalStartedAt date. */
+  set goalStartedAt(value: string) {
+    this._goalStartedAt = value;
+  }
 
   // ─── Computed / Behaviour Methods ─────────────────────────────────────────
 
@@ -306,7 +428,7 @@ export class User implements BaseEntity {
    * @param r - The restriction to remove.
    */
   removeRestriction(r: DietaryRestriction): void {
-    this._restrictions = this._restrictions.filter(x => x !== r);
+    this._restrictions = this._restrictions.filter((x) => x !== r);
   }
 
   /**
@@ -326,7 +448,7 @@ export class User implements BaseEntity {
    * @param c - The medical condition description to remove.
    */
   removeMedicalCondition(c: string): void {
-    this._medicalConditions = this._medicalConditions.filter(x => x !== c);
+    this._medicalConditions = this._medicalConditions.filter((x) => x !== c);
   }
 
   /**
@@ -344,7 +466,7 @@ export class User implements BaseEntity {
    * Results are rounded to the nearest integer and stored on the entity.
    */
   recalculateMacros(): void {
-    const bmr = (10 * this._weight) + (6.25 * this._height) - 161;
+    const bmr = 10 * this._weight + 6.25 * this._height - 161;
 
     const multipliers: Record<ActivityLevel, number> = {
       [ActivityLevel.SEDENTARY]: 1.2,
@@ -354,13 +476,13 @@ export class User implements BaseEntity {
     };
     const tdee = bmr * multipliers[this._activityLevel];
 
-    const calories = this._goal === UserGoal.WEIGHT_LOSS
-      ? Math.round(tdee - 300)
-      : Math.round(tdee + 300);
+    const calories =
+      this._goal === UserGoal.WEIGHT_LOSS ? Math.round(tdee - 300) : Math.round(tdee + 300);
 
-    const protein = this._goal === UserGoal.WEIGHT_LOSS
-      ? Math.round(this._weight * 1.6)
-      : Math.round(this._weight * 2.0);
+    const protein =
+      this._goal === UserGoal.WEIGHT_LOSS
+        ? Math.round(this._weight * 1.6)
+        : Math.round(this._weight * 2.0);
 
     const fat = Math.round((calories * 0.25) / 9);
     const proteinCals = protein * 4;

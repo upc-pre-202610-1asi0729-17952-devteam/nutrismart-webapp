@@ -62,15 +62,29 @@ export class IamStore {
 
   private saveSession(user: User): void {
     const props: UserProps = {
-      id: user.id, firstName: user.firstName, lastName: user.lastName,
-      email: user.email, goal: user.goal, weight: user.weight, height: user.height,
-      activityLevel: user.activityLevel, plan: user.plan,
-      restrictions: user.restrictions, medicalConditions: user.medicalConditions,
-      dailyCalorieTarget: user.dailyCalorieTarget, proteinTarget: user.proteinTarget,
-      carbsTarget: user.carbsTarget, fatTarget: user.fatTarget,
-      fiberTarget: user.fiberTarget, streak: user.streak,
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      goal: user.goal,
+      weight: user.weight,
+      height: user.height,
+      activityLevel: user.activityLevel,
+      plan: user.plan,
+      restrictions: user.restrictions,
+      medicalConditions: user.medicalConditions,
+      dailyCalorieTarget: user.dailyCalorieTarget,
+      proteinTarget: user.proteinTarget,
+      carbsTarget: user.carbsTarget,
+      fatTarget: user.fatTarget,
+      fiberTarget: user.fiberTarget,
+      streak: user.streak,
       consecutiveMisses: user.consecutiveMisses,
-      birthday: user.birthday, biologicalSex: user.biologicalSex,
+      birthday: user.birthday,
+      biologicalSex: user.biologicalSex,
+      createdAt: user.createdAt,
+      homeCity: user.homeCity,
+      goalStartedAt: user.goalStartedAt,
     };
     localStorage.setItem(SESSION_KEY, JSON.stringify(props));
   }
@@ -108,12 +122,12 @@ export class IamStore {
     this._error.set(null);
 
     return this.iamApi.getUsers().pipe(
-      map(users => {
-        const user = users.find(u => u.email === email);
+      map((users) => {
+        const user = users.find((u) => u.email === email);
         if (!user) throw new Error('Invalid email or password.');
         return user;
       }),
-      tap(user => {
+      tap((user) => {
         this._currentUser.set(user);
         this._isAuthenticated.set(true);
         this._loading.set(false);
@@ -123,11 +137,11 @@ export class IamStore {
         else if (!user.plan) this.router.navigate(['/subscription']);
         else this.router.navigate(['/dashboard']);
       }),
-      catchError(err => {
+      catchError((err) => {
         this._loading.set(false);
         this._error.set(err.message);
         return throwError(() => err);
-      })
+      }),
     );
   }
 
@@ -148,7 +162,7 @@ export class IamStore {
     this._error.set(null);
 
     const newUser = new User({
-      id: Date.now(),
+      id: 0,
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
@@ -166,21 +180,22 @@ export class IamStore {
       fiberTarget: 25,
       streak: 0,
       consecutiveMisses: 0,
+      createdAt: new Date().toISOString().slice(0, 10),
     });
 
     return this.iamApi.createUser(newUser).pipe(
-      tap(created => {
+      tap((created) => {
         this._currentUser.set(created);
         this._isAuthenticated.set(true);
         this._loading.set(false);
         this.saveSession(created);
         this.router.navigate(['/onboarding']);
       }),
-      catchError(err => {
+      catchError((err) => {
         this._loading.set(false);
         this._error.set(err.message);
         return throwError(() => err);
-      })
+      }),
     );
   }
 
@@ -204,11 +219,11 @@ export class IamStore {
     const user = this._currentUser();
     if (!user) return;
     this.iamApi.updateUser(user).subscribe({
-      next: updated => {
+      next: (updated) => {
         this._currentUser.set(updated);
         this.saveSession(updated);
       },
-      error: err => this._error.set(err.message),
+      error: (err) => this._error.set(err.message),
     });
   }
 
@@ -219,7 +234,15 @@ export class IamStore {
    *
    * @param updates - Partial object with firstName, lastName and/or email.
    */
-  updateProfile(updates: Partial<{ firstName: string; lastName: string; email: string; birthday: string; biologicalSex: string }>): void {
+  updateProfile(
+    updates: Partial<{
+      firstName: string;
+      lastName: string;
+      email: string;
+      birthday: string;
+      biologicalSex: string;
+    }>,
+  ): void {
     const user = this._currentUser();
     if (!user) return;
     if (updates.firstName !== undefined) user.firstName = updates.firstName;
@@ -250,16 +273,42 @@ export class IamStore {
   }
 
   /**
-   * Changes the fitness goal, recalculates macros, and persists.
+   * Changes the fitness goal, stamps goalStartedAt to today, recalculates
+   * macros, and persists. Creates a new User instance so Angular's signal
+   * equality check detects the change.
    *
    * @param goal - The new {@link UserGoal}.
    */
   changeGoal(goal: UserGoal): void {
     const user = this._currentUser();
     if (!user) return;
-    user.goal = goal;
-    user.recalculateMacros();
-    this._currentUser.set(user);
+    const updated = new User({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      goal,
+      weight: user.weight,
+      height: user.height,
+      activityLevel: user.activityLevel,
+      plan: user.plan,
+      restrictions: user.restrictions,
+      medicalConditions: user.medicalConditions,
+      dailyCalorieTarget: user.dailyCalorieTarget,
+      proteinTarget: user.proteinTarget,
+      carbsTarget: user.carbsTarget,
+      fatTarget: user.fatTarget,
+      fiberTarget: user.fiberTarget,
+      streak: user.streak,
+      consecutiveMisses: user.consecutiveMisses,
+      birthday: user.birthday,
+      biologicalSex: user.biologicalSex,
+      createdAt: user.createdAt,
+      homeCity: user.homeCity,
+      goalStartedAt: new Date().toISOString().slice(0, 10),
+    });
+    updated.recalculateMacros();
+    this._currentUser.set(updated);
     this.persist();
   }
 

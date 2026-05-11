@@ -1,7 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { LanguageSwitcher } from '../../../../shared/presentation/components/language-switcher/language-switcher';
 import { IamStore } from '../../../../iam/application/iam.store';
+import { MetabolicStore } from '../../../../metabolic-adaptation/application/metabolic.store';
 import { ActivityLevel } from '../../../../iam/domain/model/activity-level.enum';
 import { DietaryRestriction } from '../../../../iam/domain/model/dietary-restriction.enum';
 import { MedicalCondition } from '../../../../iam/domain/model/medical-condition.enum';
@@ -10,12 +12,7 @@ import { UserGoal } from '../../../../iam/domain/model/user-goal.enum';
 /**
  * Valid panel identifiers for the profile settings navigation.
  */
-export type ProfilePanel =
-  | 'personal'
-  | 'physical'
-  | 'dietary'
-  | 'language'
-  | 'security';
+export type ProfilePanel = 'personal' | 'physical' | 'dietary' | 'language' | 'security';
 
 /**
  * Navigation item descriptor for the left-panel sidebar.
@@ -46,13 +43,15 @@ interface PanelNavItem {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, LanguageSwitcher],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
 export class Profile {
   /** IAM store providing current user state and update methods. */
   iamStore = inject(IamStore);
+
+  private metabolicStore = inject(MetabolicStore);
 
   /** ngx-translate service for language switching in panel 4. */
   private translate = inject(TranslateService);
@@ -76,11 +75,11 @@ export class Profile {
    * Reactive form for personal information.
    */
   personalForm = this.fb.group({
-    firstName:    [this.iamStore.currentUser()?.firstName    ?? '', Validators.required],
-    lastName:     [this.iamStore.currentUser()?.lastName     ?? '', Validators.required],
-    email:        [this.iamStore.currentUser()?.email        ?? '', [Validators.required, Validators.email]],
-    birthday:     [this.iamStore.currentUser()?.birthday     ?? ''],
-    biologicalSex:[this.iamStore.currentUser()?.biologicalSex ?? ''],
+    firstName: [this.iamStore.currentUser()?.firstName ?? '', Validators.required],
+    lastName: [this.iamStore.currentUser()?.lastName ?? '', Validators.required],
+    email: [this.iamStore.currentUser()?.email ?? '', [Validators.required, Validators.email]],
+    birthday: [this.iamStore.currentUser()?.birthday ?? ''],
+    biologicalSex: [this.iamStore.currentUser()?.biologicalSex ?? ''],
   });
 
   // ─── Panel 2 — Physical details and goals ─────────────────────────────────
@@ -90,24 +89,34 @@ export class Profile {
    */
   physicalSaved = signal(false);
 
-  /**
-   * Signal holding the pending goal change message (shown after selection).
-   */
-  pendingGoalConfirm = signal<string | null>(null);
+  showGoalLockConfirm = signal(false);
 
   /**
    * Currently selected activity level in panel 2.
    */
   selectedActivity = signal<ActivityLevel>(
-    this.iamStore.currentUser()?.activityLevel ?? ActivityLevel.MODERATE
+    this.iamStore.currentUser()?.activityLevel ?? ActivityLevel.MODERATE,
   );
 
   /**
    * Currently selected fitness goal in panel 2.
    */
-  selectedGoal = signal<UserGoal>(
-    this.iamStore.currentUser()?.goal ?? UserGoal.WEIGHT_LOSS
+  selectedGoal = signal<UserGoal>(this.iamStore.currentUser()?.goal ?? UserGoal.WEIGHT_LOSS);
+
+  protected isGoalLocked   = computed(() => this.metabolicStore.isGoalLocked());
+  protected daysUntilUnlock = computed(() => this.metabolicStore.daysUntilUnlock());
+  protected unlockDate      = computed(() => this.metabolicStore.unlockDate());
+
+  protected isGoalSwitching = computed(() =>
+    this.selectedGoal() !== this.iamStore.currentUser()?.goal
   );
+
+  protected goalName(goal: UserGoal): string {
+    const key = goal === UserGoal.WEIGHT_LOSS
+      ? 'body_progress.goal_name_weight_loss'
+      : 'body_progress.goal_name_muscle_gain';
+    return this.translate.instant(key);
+  }
 
   /**
    * Reactive form for physical details.
@@ -128,14 +137,14 @@ export class Profile {
    * All available dietary restriction options (for adding new ones).
    */
   readonly allRestrictions: Array<{ value: DietaryRestriction; label: string }> = [
-    { value: DietaryRestriction.LACTOSE_FREE,  label: 'restrictions.LACTOSE_FREE' },
-    { value: DietaryRestriction.GLUTEN_FREE,   label: 'restrictions.GLUTEN_FREE' },
-    { value: DietaryRestriction.VEGAN,         label: 'restrictions.VEGAN' },
-    { value: DietaryRestriction.VEGETARIAN,    label: 'restrictions.VEGETARIAN' },
-    { value: DietaryRestriction.NUT_FREE,      label: 'restrictions.NUT_FREE' },
-    { value: DietaryRestriction.SEAFOOD_FREE,  label: 'restrictions.SEAFOOD_FREE' },
-    { value: DietaryRestriction.KOSHER,        label: 'restrictions.KOSHER' },
-    { value: DietaryRestriction.HALAL,         label: 'restrictions.HALAL' },
+    { value: DietaryRestriction.LACTOSE_FREE, label: 'restrictions.LACTOSE_FREE' },
+    { value: DietaryRestriction.GLUTEN_FREE, label: 'restrictions.GLUTEN_FREE' },
+    { value: DietaryRestriction.VEGAN, label: 'restrictions.VEGAN' },
+    { value: DietaryRestriction.VEGETARIAN, label: 'restrictions.VEGETARIAN' },
+    { value: DietaryRestriction.NUT_FREE, label: 'restrictions.NUT_FREE' },
+    { value: DietaryRestriction.SEAFOOD_FREE, label: 'restrictions.SEAFOOD_FREE' },
+    { value: DietaryRestriction.KOSHER, label: 'restrictions.KOSHER' },
+    { value: DietaryRestriction.HALAL, label: 'restrictions.HALAL' },
   ];
 
   /** Notification toggle signals (visual only). */
@@ -145,11 +154,6 @@ export class Profile {
   notif4 = signal(true);
   notif5 = signal(false);
 
-  // ─── Panel 4 — Language ───────────────────────────────────────────────────
-
-  /** Currently selected language code. */
-  selectedLang = signal<'en' | 'es'>('en');
-
   // ─── Panel 5 — Security ───────────────────────────────────────────────────
 
   /**
@@ -157,7 +161,7 @@ export class Profile {
    */
   passwordForm = this.fb.group({
     currentPassword: ['', Validators.required],
-    newPassword:     ['', [Validators.required, Validators.minLength(8)]],
+    newPassword: ['', [Validators.required, Validators.minLength(8)]],
     confirmPassword: ['', Validators.required],
   });
 
@@ -172,23 +176,23 @@ export class Profile {
    * Left-panel navigation items.
    */
   readonly navItems: PanelNavItem[] = [
-    { id: 'personal',  label: 'profile.nav_personal',  icon: '' },
-    { id: 'physical',  label: 'profile.nav_physical',  icon: '' },
-    { id: 'dietary',   label: 'profile.nav_dietary',   icon: '' },
-    { id: 'language',  label: 'profile.nav_language',  icon: '' },
-    { id: 'security',  label: 'profile.nav_security',  icon: '' },
+    { id: 'personal', label: 'profile.nav_personal', icon: '' },
+    { id: 'physical', label: 'profile.nav_physical', icon: '' },
+    { id: 'dietary', label: 'profile.nav_dietary', icon: '' },
+    { id: 'language', label: 'profile.nav_language', icon: '' },
+    { id: 'security', label: 'profile.nav_security', icon: '' },
   ];
 
   /**
    * All available medical condition options.
    */
   readonly allConditions: Array<{ value: MedicalCondition; label: string }> = [
-    { value: MedicalCondition.TYPE_2_DIABETES,     label: 'medical.TYPE_2_DIABETES' },
+    { value: MedicalCondition.TYPE_2_DIABETES, label: 'medical.TYPE_2_DIABETES' },
     { value: MedicalCondition.HIGH_BLOOD_PRESSURE, label: 'medical.HIGH_BLOOD_PRESSURE' },
-    { value: MedicalCondition.COELIAC_DISEASE,     label: 'medical.COELIAC_DISEASE' },
-    { value: MedicalCondition.HYPOTHYROIDISM,      label: 'medical.HYPOTHYROIDISM' },
-    { value: MedicalCondition.KIDNEY_DISEASE,      label: 'medical.KIDNEY_DISEASE' },
-    { value: MedicalCondition.GOUT,                label: 'medical.GOUT' },
+    { value: MedicalCondition.COELIAC_DISEASE, label: 'medical.COELIAC_DISEASE' },
+    { value: MedicalCondition.HYPOTHYROIDISM, label: 'medical.HYPOTHYROIDISM' },
+    { value: MedicalCondition.KIDNEY_DISEASE, label: 'medical.KIDNEY_DISEASE' },
+    { value: MedicalCondition.GOUT, label: 'medical.GOUT' },
   ];
 
   // ─── Methods ──────────────────────────────────────────────────────────────
@@ -206,9 +210,17 @@ export class Profile {
    * Saves personal information changes from panel 1.
    */
   applyPersonal(): void {
-    if (this.personalForm.invalid) { this.personalForm.markAllAsTouched(); return; }
+    if (this.personalForm.invalid) {
+      this.personalForm.markAllAsTouched();
+      return;
+    }
     const { firstName, lastName, birthday, biologicalSex } = this.personalForm.value;
-    this.iamStore.updateProfile({ firstName: firstName!, lastName: lastName!, birthday: birthday ?? '', biologicalSex: biologicalSex ?? '' });
+    this.iamStore.updateProfile({
+      firstName: firstName!,
+      lastName: lastName!,
+      birthday: birthday ?? '',
+      biologicalSex: biologicalSex ?? '',
+    });
     this.personalSaved.set(true);
     setTimeout(() => this.personalSaved.set(false), 2500);
   }
@@ -223,25 +235,44 @@ export class Profile {
   }
 
   /**
-   * Sets the selected goal in panel 2 and shows a confirmation hint.
+   * Sets the selected goal in panel 2.
    *
    * @param goal - The {@link UserGoal} the user selected.
    */
   setGoal(goal: UserGoal): void {
     this.selectedGoal.set(goal);
-    const label = goal === UserGoal.WEIGHT_LOSS ? 'Lose weight' : 'Gain muscle';
-    this.pendingGoalConfirm.set(`Goal changed to "${label}" — click Save to apply.`);
   }
 
   /**
-   * Saves physical details changes from panel 2.
+   * Saves physical details. If the user is switching goal while locked,
+   * shows a confirmation modal instead of applying immediately.
    */
   applyPhysical(): void {
-    if (this.physicalForm.invalid) { this.physicalForm.markAllAsTouched(); return; }
+    if (this.physicalForm.invalid) {
+      this.physicalForm.markAllAsTouched();
+      return;
+    }
+    if (this.isGoalSwitching() && this.isGoalLocked()) {
+      this.showGoalLockConfirm.set(true);
+      return;
+    }
+    this.commitPhysical();
+  }
+
+  onConfirmGoalSwitch(): void {
+    this.showGoalLockConfirm.set(false);
+    this.commitPhysical();
+  }
+
+  onCancelGoalSwitch(): void {
+    this.showGoalLockConfirm.set(false);
+    this.selectedGoal.set(this.iamStore.currentUser()?.goal ?? UserGoal.WEIGHT_LOSS);
+  }
+
+  private commitPhysical(): void {
     const { weight, height } = this.physicalForm.value;
     this.iamStore.updatePhysicalDetails(weight!, height!, this.selectedActivity());
     this.iamStore.changeGoal(this.selectedGoal());
-    this.pendingGoalConfirm.set(null);
     this.physicalSaved.set(true);
     setTimeout(() => this.physicalSaved.set(false), 2500);
   }
@@ -253,7 +284,7 @@ export class Profile {
    * @returns The display label.
    */
   restrictionLabel(r: DietaryRestriction): string {
-    return this.allRestrictions.find(x => x.value === r)?.label ?? r;
+    return this.allRestrictions.find((x) => x.value === r)?.label ?? r;
   }
 
   /**
@@ -282,17 +313,13 @@ export class Profile {
   }
 
   /**
-   * Saves the selected language and applies it via ngx-translate.
-   */
-  applyLanguage(): void {
-    this.translate.use(this.selectedLang());
-  }
-
-  /**
    * Simulates a password change (no backend call).
    */
   changePassword(): void {
-    if (this.passwordForm.invalid) { this.passwordForm.markAllAsTouched(); return; }
+    if (this.passwordForm.invalid) {
+      this.passwordForm.markAllAsTouched();
+      return;
+    }
     this.passwordForm.reset();
     this.passwordChanged.set(true);
     setTimeout(() => this.passwordChanged.set(false), 3000);

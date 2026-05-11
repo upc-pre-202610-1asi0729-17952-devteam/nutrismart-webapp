@@ -18,7 +18,12 @@ import { UserResource, UsersResponse } from './user-resource';
  * endpoint.getAll().subscribe(users => console.log(users));
  * ```
  */
-export class IamApiEndpoint extends BaseApiEndpoint<User, UserResource, UsersResponse, UserAssembler> {
+export class IamApiEndpoint extends BaseApiEndpoint<
+  User,
+  UserResource,
+  UsersResponse,
+  UserAssembler
+> {
   /**
    * @param http - Angular's {@link HttpClient} injected by the parent service.
    */

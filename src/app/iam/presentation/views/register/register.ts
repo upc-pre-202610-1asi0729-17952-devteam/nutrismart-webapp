@@ -64,17 +64,15 @@ export function emailTakenValidator(iamApi: IamApi): AsyncValidatorFn {
     return of(email).pipe(
       debounceTime(400),
       distinctUntilChanged(),
-      switchMap(e =>
+      switchMap((e) =>
         iamApi.getUsers().pipe(
-          map(users =>
-            users.some(u => u.email.toLowerCase() === e)
-              ? { emailTaken: true }
-              : null
+          map((users) =>
+            users.some((u) => u.email.toLowerCase() === e) ? { emailTaken: true } : null,
           ),
-          catchError(() => of(null))
-        )
+          catchError(() => of(null)),
+        ),
       ),
-      first()
+      first(),
     );
   };
 }
@@ -91,31 +89,36 @@ export function emailTakenValidator(iamApi: IamApi): AsyncValidatorFn {
 })
 export class Register {
   private iamStore = inject(IamStore);
-  private iamApi   = inject(IamApi);
-  private router   = inject(Router);
-  private fb       = inject(FormBuilder);
+  private iamApi = inject(IamApi);
+  private router = inject(Router);
+  private fb = inject(FormBuilder);
 
-  showPassword   = signal(false);
-  registerError  = signal<string | null>(null);
-  loading        = signal(false);
+  showPassword = signal(false);
+  registerError = signal<string | null>(null);
+  loading = signal(false);
 
   form = this.fb.group({
-    firstName:       ['', Validators.required],
-    lastName:        ['', Validators.required],
-    email:           ['',
-      [Validators.required, Validators.email],
-      [emailTakenValidator(this.iamApi)],
-    ],
-    password:        ['', [Validators.required, passwordStrengthValidator()]],
+    firstName: ['', Validators.required],
+    lastName: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email], [emailTakenValidator(this.iamApi)]],
+    password: ['', [Validators.required, passwordStrengthValidator()]],
     confirmPassword: ['', [Validators.required, confirmPasswordValidator('password')]],
-    terms:           [false, Validators.requiredTrue],
+    terms: [false, Validators.requiredTrue],
   });
 
-  togglePassword(): void { this.showPassword.update(v => !v); }
+  togglePassword(): void {
+    this.showPassword.update((v) => !v);
+  }
 
-  get reqLength():   boolean { return !this.form.get('password')?.errors?.['minLength']; }
-  get reqNumber():   boolean { return !this.form.get('password')?.errors?.['hasNumber']; }
-  get reqUppercase():boolean { return !this.form.get('password')?.errors?.['hasUppercase']; }
+  get reqLength(): boolean {
+    return !this.form.get('password')?.errors?.['minLength'];
+  }
+  get reqNumber(): boolean {
+    return !this.form.get('password')?.errors?.['hasNumber'];
+  }
+  get reqUppercase(): boolean {
+    return !this.form.get('password')?.errors?.['hasUppercase'];
+  }
 
   /** `true` while the async email-taken check is running. */
   get checkingEmail(): boolean {
@@ -132,17 +135,21 @@ export class Register {
     this.loading.set(true);
     this.registerError.set(null);
 
-    this.iamStore.register({
-      firstName: firstName!,
-      lastName:  lastName!,
-      email:     email!,
-      password:  password!,
-    }).subscribe({
-      next:  () => { this.loading.set(false); },
-      error: (err: Error) => {
-        this.loading.set(false);
-        this.registerError.set(err.message);
-      },
-    });
+    this.iamStore
+      .register({
+        firstName: firstName!,
+        lastName: lastName!,
+        email: email!,
+        password: password!,
+      })
+      .subscribe({
+        next: () => {
+          this.loading.set(false);
+        },
+        error: (err: Error) => {
+          this.loading.set(false);
+          this.registerError.set(err.message);
+        },
+      });
   }
 }

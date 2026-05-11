@@ -96,7 +96,10 @@ export abstract class BaseApiEndpoint<
    */
   create(entity: TEntity): Observable<TEntity> {
     const resource = this.assembler.toResourceFromEntity(entity);
-    return this.http.post<TResource>(this.endpointUrl, resource).pipe(
+    // Omit `id` from POST body — the server assigns the canonical ID.
+    // Sending a client-generated id causes json-server v1 to return 404.
+    const { id, ...body } = resource as Record<string, unknown>;
+    return this.http.post<TResource>(this.endpointUrl, body).pipe(
       map(created => this.assembler.toEntityFromResource(created)),
       catchError(this.handleError('Failed to create entity'))
     );

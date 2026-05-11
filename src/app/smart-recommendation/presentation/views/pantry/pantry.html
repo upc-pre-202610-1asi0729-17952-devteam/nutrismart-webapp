@@ -1,0 +1,191 @@
+<div class="pantry-page">
+
+  <!-- ── Page header ─────────────────────────────────────────────── -->
+  <header class="page-header">
+    <h1 class="page-title">{{ 'pantry.page_title' | translate }}</h1>
+    <p class="page-subtitle">{{ 'pantry.page_subtitle' | translate }}</p>
+  </header>
+
+  <!-- ── Two-column grid ────────────────────────────────────────── -->
+  <div class="pantry-grid">
+
+    <!-- ══ LEFT PANEL — ingredients ══════════════════════════════ -->
+    <section class="panel panel--left" [attr.aria-label]="'pantry.my_ingredients' | translate">
+      <h2 class="panel__title">{{ 'pantry.my_ingredients' | translate }}</h2>
+
+      <!-- Search / Add input (autocomplete) -->
+      <div class="add-ingredient-row">
+        <div class="autocomplete-wrapper">
+          <input class="ingredient-input"
+                 type="text"
+                 [placeholder]="'pantry.add_placeholder' | translate"
+                 [value]="searchText()"
+                 (input)="onSearchInput($event)"
+                 (focus)="onInputFocus()"
+                 (blur)="onInputBlur()"
+                 [attr.aria-label]="'pantry.add_placeholder' | translate"
+                 autocomplete="off"
+                 role="combobox"
+                 [attr.aria-expanded]="showDropdown()"
+                 aria-haspopup="listbox">
+          @if (showDropdown()) {
+            @if (filteredCatalog().length > 0) {
+              <ul class="autocomplete-dropdown" role="listbox">
+                @for (item of filteredCatalog(); track item.id) {
+                  <li class="autocomplete-option"
+                      role="option"
+                      (mousedown)="onOptionMousedown($event, item)">
+                    {{ 'pantry_items.' + item.nameKey | translate }}
+                  </li>
+                }
+              </ul>
+            } @else {
+              <div class="autocomplete-no-results">
+                {{ 'pantry.no_results' | translate }}
+              </div>
+            }
+          }
+        </div>
+        <button mat-flat-button
+                class="btn-go"
+                [disabled]="!selectedItem() || pantryStore.loading()"
+                (click)="onAddIngredient()">
+          {{ 'pantry.go_btn' | translate }}
+        </button>
+      </div>
+
+      <!-- ── Ingredient list ──────────────────────────────────── -->
+      @if (!pantryStore.isEmpty()) {
+        <ul class="ingredient-list" role="list">
+          @for (item of pantryStore.pantryItems(); track item.id) {
+            <li class="ingredient-item">
+              <div class="ingredient-item__info">
+                <span class="ingredient-item__name">
+                  {{ item.nameKey ? ('pantry_items.' + item.nameKey | translate) : item.name }}
+                </span>
+                <span class="ingredient-item__category">· {{ categoryI18nKey(item.category) | translate }}</span>
+              </div>
+              <div class="ingredient-item__actions">
+                <button class="btn-remove"
+                        [attr.aria-label]="item.name"
+                        [disabled]="pantryStore.loading()"
+                        (click)="onRemoveItem(item.id)">
+                  <mat-icon class="btn-remove__icon">close</mat-icon>
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <!-- Empty state -->
+        <div class="empty-pantry">
+          <mat-icon class="empty-pantry__icon">kitchen</mat-icon>
+          <p class="empty-pantry__title">{{ 'pantry.empty_title' | translate }}</p>
+          <p class="empty-pantry__desc">{{ 'pantry.empty_desc' | translate }}</p>
+        </div>
+      }
+
+      <!-- ── Daily balance footer ─────────────────────────────── -->
+      <footer class="balance-footer">
+        <div class="balance-footer__row">
+          <span class="balance-footer__label">{{ 'pantry.daily_goal' | translate }}</span>
+          <span class="balance-footer__value">{{ pantryStore.dailyGoal() }} kcal</span>
+        </div>
+        <div class="balance-footer__row">
+          <span class="balance-footer__label">{{ 'pantry.consumed' | translate }}</span>
+          <span class="balance-footer__value">{{ pantryStore.dailyConsumed() }} kcal</span>
+        </div>
+        <div class="balance-footer__row">
+          <span class="balance-footer__label">{{ 'pantry.remaining_label' | translate }}</span>
+          <span class="balance-footer__value balance-footer__value--remaining">
+            {{ pantryStore.remainingCalories() }} kcal
+          </span>
+        </div>
+        <div class="balance-footer__bar"
+             role="progressbar"
+             [attr.aria-valuenow]="pantryStore.dailyConsumed()"
+             [attr.aria-valuemax]="pantryStore.dailyGoal()">
+          <div class="balance-footer__bar-fill"
+               [style.width.%]="dailyProgressPct()"></div>
+        </div>
+        @if (pantryStore.userGoal() === UserGoal.WEIGHT_LOSS) {
+          <p class="balance-footer__hint">{{ 'pantry.deficit_hint' | translate }}</p>
+        } @else {
+          <p class="balance-footer__hint">
+            {{ 'pantry.protein_hint' | translate: {
+                remaining: pantryStore.remainingProtein(),
+                total: iamStore.currentUser()?.proteinTarget ?? 120
+              }
+            }}
+          </p>
+        }
+      </footer>
+    </section>
+
+    <!-- ══ RIGHT PANEL — recipe suggestions ══════════════════════ -->
+    <section class="panel panel--right" [attr.aria-label]="'pantry.recipes_title' | translate">
+      <h2 class="panel__title">{{ 'pantry.recipes_title' | translate }}</h2>
+      <p class="panel__subtitle">{{ recipeSubtitle() }}</p>
+
+      @if (pantryStore.isEmpty()) {
+        <div class="empty-recipes">
+          <mat-icon class="empty-recipes__icon">menu_book</mat-icon>
+          <p class="empty-recipes__text">{{ 'pantry.empty_recipes' | translate }}</p>
+        </div>
+      } @else if (pantryStore.loading() && pantryStore.recipeSuggestions().length === 0) {
+        <div class="loading-state">
+          <mat-spinner diameter="36"></mat-spinner>
+        </div>
+      } @else if (pantryStore.recipeSuggestions().length === 0) {
+        <div class="empty-recipes">
+          <mat-icon class="empty-recipes__icon">search_off</mat-icon>
+          <p class="empty-recipes__text">{{ 'pantry.no_matching_recipes' | translate }}</p>
+        </div>
+      } @else {
+        <ul class="recipe-list" role="list">
+          @for (recipe of pantryStore.recipeSuggestions(); track recipe.id) {
+            <li class="recipe-card">
+              <div class="recipe-card__header">
+                <span class="recipe-card__name">
+                  {{ recipe.nameKey ? ('recipes.' + recipe.nameKey | translate) : recipe.name }}
+                </span>
+                <span class="recipe-card__kcal">{{ recipe.calories }} kcal</span>
+              </div>
+              <p class="recipe-card__ingredients">{{ resolvedIngredients(recipe) }}</p>
+              <div class="recipe-card__badges">
+                <span class="macro-badge macro-badge--protein">P {{ recipe.protein }}g</span>
+                <span class="macro-badge macro-badge--fat">G {{ recipe.fat }}g</span>
+                <span class="goal-badge" [style.background-color]="recipe.goalBadgeColor">
+                  {{ (recipe.goalType === UserGoal.WEIGHT_LOSS
+                      ? 'pantry.goal_weight_loss'
+                      : 'pantry.goal_muscle_gain') | translate }}
+                </span>
+              </div>
+              @if (recipeCalorieImpact(recipe); as impact) {
+                <div class="recipe-impact"
+                     [class.recipe-impact--warning]="impact.severity === 'warning'"
+                     [class.recipe-impact--danger]="impact.severity === 'danger'">
+                  <mat-icon class="recipe-impact__icon">
+                    {{ impact.severity === 'danger' ? 'error' : 'warning' }}
+                  </mat-icon>
+                  <span class="recipe-impact__msg">
+                    {{ (impact.severity === 'danger'
+                        ? 'pantry.recipe_impact_danger'
+                        : 'pantry.recipe_impact_warning') | translate: { percent: impact.percent } }}
+                  </span>
+                </div>
+              }
+              <button mat-flat-button
+                      class="btn-add-log"
+                      (click)="onAddToLog(recipe.id)">
+                {{ 'common.add_to_log' | translate }}
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+  </div>
+
+</div>

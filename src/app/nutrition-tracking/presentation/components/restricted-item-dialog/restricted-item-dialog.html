@@ -1,0 +1,21 @@
+<div class="dialog-backdrop" (click)="onBackdropClick($event)">
+  <div class="dialog dialog--restricted" role="alertdialog" aria-modal="true" aria-labelledby="blocked-title">
+
+    <div class="blocked-icon">🚫</div>
+
+    <h2 id="blocked-title" class="blocked-food-name">{{ food().name }}</h2>
+
+    <p class="blocked-description">
+      {{ 'nutrition.restricted_description' | translate: { conflicts: conflictNames() } }}
+    </p>
+
+    <div class="restriction-info-box">
+      {{ 'nutrition.restricted_info_box' | translate: { restrictions: restrictionNames() } }}
+    </div>
+
+    <button class="btn-understood" (click)="close.emit()">
+      {{ 'nutrition.restricted_understood' | translate }}
+    </button>
+
+  </div>
+</div>

@@ -42,7 +42,7 @@
               <div class="form-group">
                 <label class="form-label">{{ 'profile.first_name' | translate }}</label>
                 <input type="text" formControlName="firstName" class="form-input"
-                  [class.is-invalid]="personalForm.get('firstName')?.invalid && personalForm.get('firstName')?.touched" />
+                       [class.is-invalid]="personalForm.get('firstName')?.invalid && personalForm.get('firstName')?.touched" />
                 @if (personalForm.get('firstName')?.invalid && personalForm.get('firstName')?.touched) {
                   <span class="field-error">{{ 'common.required' | translate }}</span>
                 }
@@ -50,7 +50,7 @@
               <div class="form-group">
                 <label class="form-label">{{ 'profile.last_name' | translate }}</label>
                 <input type="text" formControlName="lastName" class="form-input"
-                  [class.is-invalid]="personalForm.get('lastName')?.invalid && personalForm.get('lastName')?.touched" />
+                       [class.is-invalid]="personalForm.get('lastName')?.invalid && personalForm.get('lastName')?.touched" />
                 @if (personalForm.get('lastName')?.invalid && personalForm.get('lastName')?.touched) {
                   <span class="field-error">{{ 'common.required' | translate }}</span>
                 }
@@ -124,18 +124,20 @@
             <p class="form-label">{{ 'profile.goal' | translate }}</p>
             <div class="goal-toggle">
               <button type="button" class="goal-btn"
-                [class.active]="selectedGoal() === UserGoal.WEIGHT_LOSS"
-                (click)="setGoal(UserGoal.WEIGHT_LOSS)">
+                      [class.active]="selectedGoal() === UserGoal.WEIGHT_LOSS"
+                      (click)="setGoal(UserGoal.WEIGHT_LOSS)">
                 {{ 'onboarding.goal_weight_loss' | translate }}
               </button>
               <button type="button" class="goal-btn"
-                [class.active]="selectedGoal() === UserGoal.MUSCLE_GAIN"
-                (click)="setGoal(UserGoal.MUSCLE_GAIN)">
+                      [class.active]="selectedGoal() === UserGoal.MUSCLE_GAIN"
+                      (click)="setGoal(UserGoal.MUSCLE_GAIN)">
                 {{ 'onboarding.goal_muscle_gain' | translate }}
               </button>
             </div>
-            @if (pendingGoalConfirm()) {
-              <p class="goal-confirm-text">{{ pendingGoalConfirm() }}</p>
+            @if (isGoalLocked()) {
+              <p class="goal-lock-note">
+                🔒 {{ 'body_progress.goal_locked_switch_disabled' | translate:{ days: daysUntilUnlock() } }}
+              </p>
             }
           </div>
 
@@ -169,8 +171,8 @@
             <div class="chip-picker">
               @for (item of allRestrictions; track item.value) {
                 <button type="button" class="picker-chip"
-                  [class.active]="iamStore.currentUser()?.hasRestriction(item.value)"
-                  (click)="iamStore.addRestriction(item.value)">
+                        [class.active]="iamStore.currentUser()?.hasRestriction(item.value)"
+                        (click)="iamStore.addRestriction(item.value)">
                   {{ item.label | translate }}
                 </button>
               }
@@ -231,23 +233,7 @@
       @case ('language') {
         <section class="panel-section">
           <h2 class="panel-title">{{ 'profile.language_title' | translate }}</h2>
-
-          <div class="lang-options">
-            <label class="lang-option">
-              <input type="radio" name="lang" value="en"
-                [checked]="selectedLang() === 'en'"
-                (change)="selectedLang.set('en')" />
-              <span>English</span>
-            </label>
-            <label class="lang-option">
-              <input type="radio" name="lang" value="es"
-                [checked]="selectedLang() === 'es'"
-                (change)="selectedLang.set('es')" />
-              <span>Español</span>
-            </label>
-          </div>
-
-          <button type="button" class="btn-save" (click)="applyLanguage()">{{ 'profile.apply_language' | translate }}</button>
+          <app-language-switcher></app-language-switcher>
         </section>
       }
 
@@ -266,12 +252,12 @@
             <div class="form-group">
               <label class="form-label">{{ 'profile.current_password' | translate }}</label>
               <input type="password" formControlName="currentPassword" class="form-input"
-                [class.is-invalid]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched" />
+                     [class.is-invalid]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched" />
             </div>
             <div class="form-group">
               <label class="form-label">{{ 'profile.new_password' | translate }}</label>
               <input type="password" formControlName="newPassword" class="form-input"
-                [class.is-invalid]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched" />
+                     [class.is-invalid]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched" />
               @if (passwordForm.get('newPassword')?.errors?.['minlength'] && passwordForm.get('newPassword')?.touched) {
                 <span class="field-error">{{ 'auth.error_password_min' | translate }}</span>
               }
@@ -302,4 +288,25 @@
     }
 
   </main>
+
+  <!-- ── Goal switch confirmation modal ──────────────────────────── -->
+  @if (showGoalLockConfirm()) {
+    <div class="profile-modal-overlay" (click)="onCancelGoalSwitch()">
+      <div class="profile-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+        <h3 class="profile-modal-title">{{ 'body_progress.goal_switch_confirm_title' | translate }}</h3>
+        <p class="profile-modal-desc">
+          {{ 'body_progress.goal_switch_confirm_desc' | translate:{ goal: goalName(selectedGoal()) } }}
+        </p>
+        <div class="profile-modal-actions">
+          <button class="profile-modal-btn profile-modal-btn--cancel" (click)="onCancelGoalSwitch()">
+            {{ 'body_progress.goal_switch_cancel_btn' | translate }}
+          </button>
+          <button class="profile-modal-btn profile-modal-btn--confirm" (click)="onConfirmGoalSwitch()">
+            {{ 'body_progress.goal_switch_confirm_btn' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
 </div>

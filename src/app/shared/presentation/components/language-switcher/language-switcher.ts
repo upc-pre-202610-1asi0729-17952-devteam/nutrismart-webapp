@@ -20,7 +20,7 @@ export class LanguageSwitcher {
 
   /** Returns the currently active language code (e.g. `'en'` or `'es'`). */
   get currentLang(): string {
-    return this.translate.currentLang;
+    return localStorage.getItem('lang') ?? 'en';
   }
 
   /**
@@ -30,5 +30,6 @@ export class LanguageSwitcher {
    */
   switchLanguage(lang: string): void {
     this.translate.use(lang);
+    localStorage.setItem('lang', lang);
   }
 }
