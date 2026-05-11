@@ -17,7 +17,7 @@
     <header class="dashboard-header">
       <div>
         <h1>{{ vm.greetingKey | translate: vm.greetingParams }}</h1>
-        <p>{{ dateLabel }}</p>
+        <p>{{ dateLabel() }}</p>
       </div>
 
       <span class="status-pill" [ngClass]="vm.badgeClass">
@@ -199,7 +199,7 @@
                 [class.filled]="dot"
                 [class.today]="$index === vm.todayIndex">
               </span>
-              <small>{{ weekLabels[$index] }}</small>
+              <small>{{ weekLabels()[$index] }}</small>
             </div>
           }
         </div>

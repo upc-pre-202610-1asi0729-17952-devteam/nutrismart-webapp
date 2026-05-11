@@ -1,7 +1,6 @@
 import { Component, computed, DestroyRef, inject, OnInit } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { Router } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
@@ -71,7 +70,7 @@ interface DashboardVm {
 
 @Component({
   selector: 'app-behavioral-dashboard',
-  imports: [NgClass, MatIconModule, TranslatePipe],
+  imports: [NgClass, TranslatePipe],
   templateUrl: './behavioral-dashboard.html',
   styleUrl: './behavioral-dashboard.css',
 })
@@ -97,11 +96,15 @@ export class BehavioralDashboard implements OnInit {
 
   protected readonly hasProgress = computed(() => this.currentProgress() !== null);
 
-  protected readonly weekLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-
   private readonly activeLang = toSignal(
     this.translateService.onLangChange.pipe(map((e) => e.lang)),
     { initialValue: this.translateService.currentLang ?? 'en' },
+  );
+
+  protected readonly weekLabels = computed(() =>
+    this.activeLang() === 'es'
+      ? ['L', 'M', 'X', 'J', 'V', 'S', 'D']
+      : ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
   );
 
   protected readonly dateLabel = computed(() => {
@@ -150,6 +153,7 @@ export class BehavioralDashboard implements OnInit {
     const intake = this.nutritionStore.dailyIntake();
     const totals = this.nutritionStore.dailyTotals();
     const user = this.currentUser();
+    const locale = this.activeLang() === 'es' ? 'es-ES' : 'en-US';
 
     const targetCalories = intake?.dailyGoal ?? user?.dailyCalorieTarget ?? 1800;
     const consumedCalories = Math.round(totals.calories);
@@ -160,7 +164,7 @@ export class BehavioralDashboard implements OnInit {
     const progressPercent = intake
       ? intake.percentConsumed
       : Math.min(Math.round((consumedCalories / targetCalories) * 100), 100);
-    const netBalance = Math.abs(consumedCalories - activeCalories);
+    const netBalance = intake ? intake.remaining : targetCalories - consumedCalories;
 
     const proteinTarget = user?.proteinTarget ?? 120;
     const carbsTarget = user?.carbsTarget ?? 220;
@@ -186,7 +190,7 @@ export class BehavioralDashboard implements OnInit {
         status === AdherenceStatus.AT_RISK && activeCalories === 0
           ? 'dashboard.no_activity_synced'
           : null,
-      meals: status === AdherenceStatus.DROPPED ? [] : this.buildMealsVm(),
+      meals: status === AdherenceStatus.DROPPED ? [] : this.buildMealsVm(locale),
       macros: [
         { nameKey: 'dashboard.macro_protein', consumed: Math.round(totals.protein), target: proteinTarget, colorClass: 'macro-teal' },
         { nameKey: 'dashboard.macro_carbs', consumed: Math.round(totals.carbs), target: carbsTarget, colorClass: 'macro-orange' },
@@ -203,14 +207,6 @@ export class BehavioralDashboard implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
-  }
-
-  protected onGoalMet(): void {
-    this.behavioralStore.markGoalMet();
-  }
-
-  protected onGoalMissed(): void {
-    this.behavioralStore.markGoalMissed();
   }
 
   protected onLogMeal(): void {
@@ -240,32 +236,32 @@ export class BehavioralDashboard implements OnInit {
     void this.nutritionStore.fetchDailyBalance();
   }
 
-  private buildMealsVm(): DashboardMealVm[] {
+  private buildMealsVm(locale: string): DashboardMealVm[] {
     const byType = this.nutritionStore.recordsByMealType();
     return [
-      this.buildMealVm('dashboard.meal_breakfast', byType[MealType.BREAKFAST], 'dot-orange'),
-      this.buildMealVm('dashboard.meal_lunch', byType[MealType.LUNCH], 'dot-teal'),
-      this.buildMealVm('dashboard.meal_snack', byType[MealType.SNACK], 'dot-pink'),
-      this.buildMealVm('dashboard.meal_dinner', byType[MealType.DINNER], 'dot-empty'),
+      this.buildMealVm('dashboard.meal_breakfast', byType[MealType.BREAKFAST], 'dot-orange', locale),
+      this.buildMealVm('dashboard.meal_lunch', byType[MealType.LUNCH], 'dot-teal', locale),
+      this.buildMealVm('dashboard.meal_snack', byType[MealType.SNACK], 'dot-pink', locale),
+      this.buildMealVm('dashboard.meal_dinner', byType[MealType.DINNER], 'dot-empty', locale),
     ];
   }
 
-  private buildMealVm(nameKey: string, records: MealRecord[], dotClass: string): DashboardMealVm {
+  private buildMealVm(nameKey: string, records: MealRecord[], dotClass: string, locale: string): DashboardMealVm {
     const todayRecords = records.filter((r) => r.isFromToday);
     if (todayRecords.length === 0) {
       return { nameKey, description: '', caloriesLabel: '— kcal', dotClass, notLogged: true, missed: false };
     }
     const totalKcal = todayRecords.reduce((sum, r) => sum + r.calories, 0);
-    const firstName = todayRecords[0].foodItemName;
-    const time = new Date(todayRecords[0].loggedAt).toLocaleTimeString('en-US', {
+    const foodName = todayRecords[0].foodItemName;
+    const time = new Date(todayRecords[0].loggedAt).toLocaleTimeString(locale, {
       hour: 'numeric',
       minute: '2-digit',
-      hour12: true,
+      hour12: locale !== 'es-ES',
     });
     const description =
       todayRecords.length === 1
-        ? `${firstName} · ${time}`
-        : `${firstName} +${todayRecords.length - 1} more · ${time}`;
+        ? `${foodName} · ${time}`
+        : `${foodName} +${todayRecords.length - 1} more · ${time}`;
     return {
       nameKey,
       description,
