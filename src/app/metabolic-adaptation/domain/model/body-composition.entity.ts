@@ -12,8 +12,8 @@ export interface BodyCompositionProps {
   userId: number;
   /** Waist circumference in centimetres. */
   waistCm: number;
-  /** Neck circumference in centimetres. */
-  neckCm: number;
+  /** Neck circumference in centimetres. Defaults to 36 cm when omitted. */
+  neckCm?: number;
   /** Height in centimetres (needed for the US Navy body fat formula). */
   heightCm: number;
   /** Weight in kilograms (needed for lean/fat mass calculation). */
@@ -22,6 +22,11 @@ export interface BodyCompositionProps {
   measuredAt: string;
   /** Body fat percentage from the previous measurement period (for delta check). */
   previousBodyFatPercent?: number;
+  /**
+   * Direct body fat percentage override (from pant-size or visual-range estimation).
+   * When present, bypasses the US Navy formula entirely.
+   */
+  overrideBodyFatPercent?: number;
 }
 
 /**
@@ -42,16 +47,18 @@ export class BodyComposition implements BaseEntity {
   #weightKg: number;
   #measuredAt: string;
   #previousBodyFatPercent: number;
+  #overrideBodyFatPercent: number | undefined;
 
   constructor(props: BodyCompositionProps) {
     this.#id                     = props.id;
     this.#userId                 = props.userId;
     this.#waistCm                = props.waistCm;
-    this.#neckCm                 = props.neckCm;
+    this.#neckCm                 = props.neckCm ?? 36;
     this.#heightCm               = props.heightCm;
     this.#weightKg               = props.weightKg;
     this.#measuredAt             = props.measuredAt;
     this.#previousBodyFatPercent = props.previousBodyFatPercent ?? 0;
+    this.#overrideBodyFatPercent = props.overrideBodyFatPercent;
   }
 
   // ─── Getters & Setters ────────────────────────────────────────────────────
@@ -68,9 +75,13 @@ export class BodyComposition implements BaseEntity {
   get waistCm(): number { return this.#waistCm; }
   set waistCm(v: number) { this.#waistCm = v; }
 
-  /** Neck circumference in cm. */
+  /** Neck circumference in cm (defaults to 36 when not measured). */
   get neckCm(): number { return this.#neckCm; }
   set neckCm(v: number) { this.#neckCm = v; }
+
+  /** Direct body fat % override; bypasses US Navy formula when set. */
+  get overrideBodyFatPercent(): number | undefined { return this.#overrideBodyFatPercent; }
+  set overrideBodyFatPercent(v: number | undefined) { this.#overrideBodyFatPercent = v; }
 
   /** Height in cm. */
   get heightCm(): number { return this.#heightCm; }
@@ -100,6 +111,7 @@ export class BodyComposition implements BaseEntity {
    * Result rounded to one decimal place.
    */
   bodyFatPercent(): number {
+    if (this.#overrideBodyFatPercent !== undefined) return this.#overrideBodyFatPercent;
     const abdomen = this.#waistCm;
     const neck    = this.#neckCm;
     const height  = this.#heightCm;
