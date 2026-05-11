@@ -135,7 +135,6 @@
           <button class="search-modal-close" (click)="closeFoodSearch()" type="button" [attr.aria-label]="'common.close' | translate">✕</button>
         </div>
         <app-food-search-panel
-          [hasRecords]="filteredRecords().length > 0"
           (foodSelected)="onFoodSelected($event)">
         </app-food-search-panel>
       </div>
