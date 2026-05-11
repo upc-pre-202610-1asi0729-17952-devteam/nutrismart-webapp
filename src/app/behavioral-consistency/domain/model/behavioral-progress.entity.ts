@@ -176,8 +176,13 @@ export class BehavioralProgress implements BaseEntity {
    * - ON_TRACK: no consecutive misses.
    */
   recalculateAdherenceStatus(): void {
+    if (this._consecutiveMisses >= 7) {
+      this._adherenceStatus = AdherenceStatus.DROPPED;
+      return;
+    }
+
     if (this._consecutiveMisses >= 3) {
-      this._adherenceStatus = AdherenceStatus.OFF_TRACK;
+      this._adherenceStatus = AdherenceStatus.AT_RISK;
       return;
     }
 
