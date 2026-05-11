@@ -9,6 +9,7 @@ import { DomainEventBus } from '../../shared/application/domain-event-bus';
 import { WeightLogged } from '../../shared/domain/weight-logged.event';
 import { TargetWeightSet } from '../../shared/domain/target-weight-set.event';
 import { GoalSwitched } from '../../shared/domain/goal-switched.event';
+import { WeightGoalAchieved } from '../../shared/domain/weight-goal-achieved.event';
 
 const STALE_DAYS_THRESHOLD     = 14;
 const STAGNATION_WINDOW_DAYS   = 14;
@@ -193,6 +194,11 @@ export class MetabolicStore {
   async logWeight(weightKg: number): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
+
+    // Capture target before overwriting _currentMetric with the new entry
+    // (logWeight API returns a metric without target — target lives on previous snapshot).
+    const previousTarget = this._currentMetric()?.targetWeightKg ?? 0;
+
     this._loading.set(true);
     this._error.set(null);
     try {
@@ -202,6 +208,18 @@ export class MetabolicStore {
       this._currentMetric.set(metric);
       this._metricsHistory.update(h => [...h, metric]);
       this.eventBus.publish(new WeightLogged(user.id, weightKg, metric.bmi()));
+
+      // Auto-maintenance: when the user reaches or drops below their WEIGHT_LOSS
+      // target, reset the target to their current weight (maintenance mode) and
+      // recalculate the projected date to today.
+      if (
+        user.goal === UserGoal.WEIGHT_LOSS &&
+        previousTarget > 0 &&
+        weightKg <= previousTarget
+      ) {
+        await this.setTargetWeight(weightKg);
+        this.eventBus.publish(new WeightGoalAchieved(user.id, weightKg));
+      }
     } catch {
       this._error.set('body_progress.error_save_failed');
     } finally {

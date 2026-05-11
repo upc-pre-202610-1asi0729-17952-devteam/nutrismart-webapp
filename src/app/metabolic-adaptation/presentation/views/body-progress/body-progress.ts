@@ -106,12 +106,10 @@ export class BodyProgressView implements OnInit {
   });
 
   protected readonly goalInputInvalid = computed(() => {
-    const val     = this.goalInputModel();
-    const raw     = parseFloat(val);
-    const current = this.store.currentMetric()?.weightKg ?? 0;
+    const val = this.goalInputModel();
+    const raw = parseFloat(val);
     if (!val.trim()) return false;
-    if (isNaN(raw) || raw <= 0) return true;
-    return raw >= current;
+    return isNaN(raw) || raw <= 0;
   });
 
   protected formattedProjectedDate = computed(() => {
@@ -264,17 +262,10 @@ export class BodyProgressView implements OnInit {
   }
 
   async onSaveGoalInline(): Promise<void> {
-    const raw     = parseFloat(this.goalInputModel());
-    const current = this.store.currentMetric()?.weightKg ?? 0;
+    const raw = parseFloat(this.goalInputModel());
 
     if (!this.goalInputModel().trim() || isNaN(raw) || raw <= 0) {
       this.goalInputError.set(this.translate.instant('body_progress.error_weight_invalid'));
-      return;
-    }
-    if (raw >= current) {
-      this.goalInputError.set(
-        this.translate.instant('body_progress.error_goal_below_current', { current }),
-      );
       return;
     }
 
