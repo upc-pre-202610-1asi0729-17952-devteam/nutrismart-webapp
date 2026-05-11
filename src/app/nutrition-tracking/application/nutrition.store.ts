@@ -260,7 +260,16 @@ export class NutritionStore {
         next: (balances) => {
           const userId = String(user.id);
           const userBalance = balances.find((b) => String(b.userId) === userId);
-          this._dailyIntake.set(userBalance ?? null);
+          this._dailyIntake.set(
+            userBalance ?? new DailyIntake({
+              id: 0,
+              userId: user.id,
+              date: new Date().toISOString().slice(0, 10),
+              dailyGoal: user.dailyCalorieTarget,
+              consumed: 0,
+              active: 0,
+            })
+          );
           this._loading.set(false);
           resolve();
         },
