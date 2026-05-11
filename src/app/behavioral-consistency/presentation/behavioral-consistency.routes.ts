@@ -9,7 +9,7 @@ import { BehavioralDashboard } from './views/behavioral-dashboard/behavioral-das
  */
 export const behavioralConsistencyRoutes: Routes = [
   {
-    path: 'behavioral',
+    path: '',
     component: BehavioralDashboard,
   },
 ];
