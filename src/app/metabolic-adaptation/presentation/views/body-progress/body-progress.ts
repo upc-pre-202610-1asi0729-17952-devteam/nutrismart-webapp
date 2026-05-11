@@ -1,7 +1,6 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, HostListener, inject, OnInit, signal } from '@angular/core';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MetabolicStore } from '../../../application/metabolic.store';
@@ -14,13 +13,11 @@ import { BodyMetric, BmiCategory } from '../../../domain/model/body-metric.entit
  * Single responsibility: execute UpdateBodyMetrics and display the resulting
  * read models (Weight History Chart, BMI Result, Updated Caloric Target View).
  *
- * Height and goal-weight editing belong in Profile Settings.
- *
  * @author Espinoza Cruz, Angela Milagros
  */
 @Component({
   selector: 'app-body-progress',
-  imports: [DecimalPipe, NgClass, FormsModule, RouterLink, MatButtonToggleGroup, MatButtonToggle, TranslatePipe],
+  imports: [DecimalPipe, NgClass, FormsModule, MatButtonToggleGroup, MatButtonToggle, TranslatePipe],
   templateUrl: './body-progress.html',
   styleUrl: './body-progress.css',
 })
@@ -29,10 +26,17 @@ export class BodyProgressView implements OnInit {
   protected iamStore = inject(IamStore);
   private translate  = inject(TranslateService);
 
-  // ─── Log weight form ──────────────────────────────────────────────────────
+  // ─── Log weight modal ─────────────────────────────────────────────────────
 
-  protected weightInput = signal<string>('');
-  protected weightError = signal<string>('');
+  protected showLogModal = signal<boolean>(false);
+  protected weightInput  = signal<string>('');
+  protected weightError  = signal<string>('');
+
+  // ─── Inline goal weight editing ───────────────────────────────────────────
+
+  protected isEditingGoal  = signal<boolean>(false);
+  protected goalInputModel = '';
+  protected goalInputError = signal<string>('');
 
   // ─── Body composition inputs ──────────────────────────────────────────────
 
@@ -68,6 +72,19 @@ export class BodyProgressView implements OnInit {
     const raw = parseFloat(this.weightInput());
     return this.weightInput().trim().length > 0 && (isNaN(raw) || raw <= 0 || raw > 500);
   });
+
+  /**
+   * Validates the inline goal weight input.
+   * Getter (not signal) because it reads the plain `goalInputModel` property.
+   */
+  protected get goalInputInvalid(): boolean {
+    const raw     = parseFloat(this.goalInputModel);
+    const current = this.store.currentMetric()?.weightKg ?? 0;
+    if (!this.goalInputModel.trim()) return false;
+    if (isNaN(raw) || raw <= 0) return true;
+    if (raw >= current) return true;
+    return false;
+  }
 
   protected formattedProjectedDate = computed(() => {
     const date = this.store.currentMetric()?.projectedAchievementDate;
@@ -143,15 +160,30 @@ export class BodyProgressView implements OnInit {
     await this.store.initialise();
   }
 
+  // ─── Global keyboard handler ──────────────────────────────────────────────
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.showLogModal())   this.onCloseLogModal();
+    if (this.isEditingGoal())  this.onCancelGoalInline();
+  }
+
   // ─── Date range toggle ────────────────────────────────────────────────────
 
   async selectDays(days: 7 | 30 | 90): Promise<void> {
     await this.store.loadHistory(days);
   }
 
-  // ─── Log weight ───────────────────────────────────────────────────────────
+  // ─── Log weight modal ─────────────────────────────────────────────────────
 
-  onOpenLogWeight(): void {
+  onOpenLogModal(): void {
+    this.weightInput.set('');
+    this.weightError.set('');
+    this.showLogModal.set(true);
+  }
+
+  onCloseLogModal(): void {
+    this.showLogModal.set(false);
     this.weightInput.set('');
     this.weightError.set('');
   }
@@ -169,6 +201,7 @@ export class BodyProgressView implements OnInit {
     this.weightError.set('');
     await this.store.logWeight(val);
     this.weightInput.set('');
+    this.showLogModal.set(false);
   }
 
   onCancelWeight(): void {
@@ -179,6 +212,46 @@ export class BodyProgressView implements OnInit {
   onWeightInputChange(value: string): void {
     this.weightInput.set(value);
     this.weightError.set('');
+  }
+
+  // ─── Inline goal weight edit ──────────────────────────────────────────────
+
+  onStartEditGoal(): void {
+    const target = this.store.currentMetric()?.targetWeightKg;
+    this.goalInputModel = target && target > 0 ? target.toString() : '';
+    this.goalInputError.set('');
+    this.isEditingGoal.set(true);
+  }
+
+  onCancelGoalInline(): void {
+    this.isEditingGoal.set(false);
+    this.goalInputModel = '';
+    this.goalInputError.set('');
+  }
+
+  async onSaveGoalInline(): Promise<void> {
+    const val     = parseFloat(this.goalInputModel);
+    const current = this.store.currentMetric()?.weightKg ?? 0;
+
+    if (!this.goalInputModel.trim() || isNaN(val) || val <= 0) {
+      this.goalInputError.set(this.translate.instant('body_progress.error_weight_invalid'));
+      return;
+    }
+    if (val >= current) {
+      this.goalInputError.set(
+        this.translate.instant('body_progress.error_goal_below_current', { current }),
+      );
+      return;
+    }
+
+    this.goalInputError.set('');
+    await this.store.setTargetWeight(val);
+    this.isEditingGoal.set(false);
+    this.goalInputModel = '';
+  }
+
+  onGoalModelChange(): void {
+    this.goalInputError.set('');
   }
 
   // ─── Body composition ─────────────────────────────────────────────────────

@@ -481,6 +481,107 @@
 .btn--primary:disabled { background: var(--nutrismart-primary) !important; }
 .btn--outline:disabled { border-color: var(--nutrismart-border) !important; color: var(--nutrismart-text-light) !important; }
 
+/* ── Single-column layout (WEIGHT_LOSS) ── */
+.bp-grid--single { display: block; }
+
+/* ── Icon buttons ── */
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--nutrismart-text-light);
+  padding: 2px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+.icon-btn .material-icons { font-size: 17px; }
+.icon-btn:hover { color: var(--nutrismart-text-dark); }
+.icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.icon-btn--confirm { color: var(--nutrismart-primary); }
+.icon-btn--confirm:hover { color: var(--nutrismart-primary-dark); }
+
+/* ── Inline goal edit (chart goal row) ── */
+.chart-goal-value-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.goal-inline-edit {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.goal-inline-input {
+  width: 80px;
+  padding: 4px 8px;
+  border: 1.5px solid var(--nutrismart-primary);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
+  color: var(--nutrismart-text-dark);
+  background: white;
+  outline: none;
+}
+
+.goal-inline-error {
+  font-size: 11px;
+  color: #ef4444;
+  margin: 3px 0 0;
+}
+
+/* ── Log weight modal ── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-dialog {
+  background: white;
+  border-radius: 14px;
+  padding: 24px 28px;
+  width: 360px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--nutrismart-text-dark);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
 /* ── Dialog (kept for backward compatibility) ── */
 .dialog-backdrop {
   position: fixed;

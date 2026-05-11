@@ -71,7 +71,7 @@ export class GoalSelectionScreen {
    * synchronously so that `MetabolicStore.isMuscleGain()` reflects the new value
    * before the destination route initialises.
    */
-  onContinue(): void {
+  async onContinue(): Promise<void> {
     const goal = this.selectedGoal();
     if (!goal) return;
 
@@ -84,6 +84,10 @@ export class GoalSelectionScreen {
     //    subscribers. setSessionGoal() writes a new primitive value to a separate
     //    signal, guaranteeing that isMuscleGain() is correct when the view mounts.
     this.metabolicStore.setSessionGoal(goal);
+
+    // 3. Auto-calculate and persist the initial target weight based on the goal.
+    //    WEIGHT_LOSS → BMI 24.9 target. MUSCLE_GAIN → no target (skipped).
+    await this.metabolicStore.applyInitialTarget(goal);
 
     this.router.navigate(['/body-progress', 'progress']);
   }

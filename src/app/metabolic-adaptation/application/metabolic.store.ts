@@ -305,6 +305,28 @@ export class MetabolicStore {
   }
 
   /**
+   * Auto-calculates and persists the initial target weight when the user sets
+   * or changes their goal on {@link GoalSelectionScreen}.
+   *
+   * - WEIGHT_LOSS: target = weight at BMI 24.9 (top of the WHO normal range),
+   *   computed from the user's stored height.
+   * - MUSCLE_GAIN: no target weight concept applies — skipped entirely.
+   *
+   * Always overwrites any previous target so that switching goals produces a
+   * fresh, contextually meaningful suggestion the user can then override inline.
+   *
+   * @param goal - The goal the user confirmed.
+   */
+  async applyInitialTarget(goal: UserGoal): Promise<void> {
+    if (goal === UserGoal.MUSCLE_GAIN) return;
+    const user = this.iamStore.currentUser();
+    if (!user?.height) return;
+    const h      = user.height / 100;
+    const target = Math.round(24.9 * h * h * 10) / 10;
+    await this.setTargetWeight(target);
+  }
+
+  /**
    * Stores the goal chosen on {@link GoalSelectionScreen} so that
    * {@link isMuscleGain} reacts immediately, bypassing the IamStore
    * same-reference signal issue.
