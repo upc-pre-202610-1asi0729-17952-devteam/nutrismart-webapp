@@ -259,7 +259,7 @@ export class NutritionStore {
       this.nutritionApi.getDailyBalance().subscribe({
         next: (balances) => {
           const userId = String(user.id);
-          const userBalance = (balances as any[]).find((b) => String(b.userId) === userId);
+          const userBalance = balances.find((b) => String(b.userId) === userId);
           this._dailyIntake.set(userBalance ?? null);
           this._loading.set(false);
           resolve();

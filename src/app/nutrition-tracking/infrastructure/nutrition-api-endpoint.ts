@@ -74,7 +74,7 @@ export class NutritionLogEndpoint extends BaseApiEndpoint<
    * @param userId - The user whose records should be fetched.
    * @returns Observable emitting an array of {@link MealRecord} entities.
    */
-  getByUserId(userId: any): Observable<MealRecord[]> {
+  getByUserId(userId: number | string): Observable<MealRecord[]> {
     return this.http
       .get<MealRecordResource[]>(this.endpointUrl)
       .pipe(map((resources) => resources.map((r) => this.assembler.toEntityFromResource(r))));
