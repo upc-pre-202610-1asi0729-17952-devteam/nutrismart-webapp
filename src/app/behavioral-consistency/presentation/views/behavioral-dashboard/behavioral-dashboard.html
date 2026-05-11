@@ -34,7 +34,7 @@
           <p>{{ vm.alertDescKey | translate }}</p>
         </div>
 
-        <button type="button" class="risk-button" [ngClass]="vm.alertButtonClass">
+        <button type="button" class="risk-button" [ngClass]="vm.alertButtonClass" (click)="onLogMeal()">
           {{ vm.alertBtnKey | translate }}
         </button>
       </section>
