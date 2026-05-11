@@ -1,0 +1,10 @@
+<div class="period-toggle">
+  @for (period of periods; track period.value) {
+    <button
+      type="button"
+      [class.active]="selectedPeriod === period.value"
+      (click)="onSelectPeriod(period.value)">
+      {{ period.label }}
+    </button>
+  }
+</div>

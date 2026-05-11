@@ -1,0 +1,91 @@
+:host {
+  display: block;
+}
+
+.summary-card {
+  background: white;
+  padding: 20px;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  border-left: 5px solid var(--nutrismart-border, #e0eaea);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.card-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--nutrismart-text-light, #8aa8a8);
+  text-transform: uppercase;
+}
+
+.rate-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+/* SVG Circular Chart */
+.circular-chart {
+  display: block;
+  margin: 0 auto;
+  max-width: 70px;
+  max-height: 70px;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: #eee;
+  stroke-width: 3.8;
+}
+
+.circle {
+  fill: none;
+  stroke-width: 3.8;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.6s ease;
+}
+
+.percentage {
+  fill: var(--nutrismart-text-dark, #1a2e2e);
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.rate-label {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+}
+
+.days-count {
+  font-size: 0.85rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+}
+
+.summary-text {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--nutrismart-text-mid, #4a6060);
+  margin: 0;
+  padding-top: 10px;
+  border-top: 1px dashed var(--nutrismart-border, #e0eaea);
+}
+
+/* Color States */
+.success .circle { stroke: var(--nutrismart-primary, #508B89); }
+.success { border-left-color: var(--nutrismart-primary, #508B89); }
+
+.warning .circle { stroke: #f59e0b; }
+.warning { border-left-color: #f59e0b; }
+
+.danger .circle { stroke: #f43f5e; }
+.danger { border-left-color: #f43f5e; }

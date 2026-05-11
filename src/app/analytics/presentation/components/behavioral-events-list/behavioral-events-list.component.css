@@ -1,0 +1,42 @@
+.behavioral-events-list {
+  padding: 18px 20px;
+}
+
+.panel-title {
+  margin: 0 0 24px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #1f1f1f;
+}
+
+.event-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.event-item {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.event-date {
+  font-weight: 600;
+  color: #555555;
+  margin-right: 10px;
+  white-space: nowrap;
+}
+
+.event-description {
+  color: #1f1f1f;
+  line-height: 1.4;
+}
+
+.no-data-message {
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+  color: #8b8b8b;
+}

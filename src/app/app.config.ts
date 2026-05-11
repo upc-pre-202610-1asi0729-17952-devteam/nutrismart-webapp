@@ -6,6 +6,8 @@ import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { firstValueFrom } from 'rxjs';
 
 import { routes } from './app.routes';
+import { AnalyticsApi } from './analytics/infrastructure/analytics-api';
+import { AnalyticsApiMockService } from './analytics/infrastructure/analytics-api-mock.service';
 
 function initLanguage(translate: TranslateService) {
   return async () => {
@@ -26,6 +28,7 @@ function initLanguage(translate: TranslateService) {
  * - `provideHttpClient` — Angular's HTTP client (required by TranslateHttpLoader).
  * - `provideTranslateService` — ngx-translate (language bootstrapped via APP_INITIALIZER).
  * - `provideTranslateHttpLoader` — loads translation files from `/i18n/<lang>.json`.
+ * - `AnalyticsApi` — Provides the mock implementation for AnalyticsApi.
  */
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -34,6 +37,9 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideTranslateService(),
     provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),
+    // Provide the mock implementation for AnalyticsApi
+    { provide: AnalyticsApi, useClass: AnalyticsApiMockService },
+  ]
     {
       provide: APP_INITIALIZER,
       useFactory: initLanguage,

@@ -1,0 +1,125 @@
+.average-macros-panel {
+  padding: 18px 20px;
+}
+
+.panel-title {
+  margin: 0 0 24px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #1f1f1f;
+}
+
+.macro-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.macro-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.macro-row-header strong {
+  font-size: 13px;
+  color: #1f1f1f;
+}
+
+.macro-row-header strong.macro-above-target {
+  color: #0f7a67; /* Green for above target, e.g., protein in muscle gain */
+}
+
+.macro-dot {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+/* Macro color classes (example, adjust as needed) */
+.macro-teal {
+  background: #55938e;
+}
+
+.macro-orange {
+  background: #f4bea4;
+}
+
+.macro-pink {
+  background: #ffb0c4;
+}
+
+.macro-track {
+  height: 6px;
+  margin-top: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #eeeae6;
+}
+
+.macro-fill {
+  height: 100%;
+  border-radius: inherit;
+}
+
+.protein-compliance {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eeeae6;
+}
+
+.protein-compliance p {
+  margin: 0;
+  font-size: 14px;
+  color: #0f7a67; /* Green for positive compliance */
+  font-weight: 600;
+}
+
+.days-logged-section {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eeeae6;
+}
+
+.days-logged-section h4 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f1f1f;
+}
+
+.week-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.week-dot-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.week-dot {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #b9b9b9;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.week-dot.filled {
+  background: #55938e; /* Teal for filled */
+  border-color: #55938e;
+}
+
+.week-dot-wrapper small {
+  font-size: 10px;
+  color: #8b8b8b;
+}

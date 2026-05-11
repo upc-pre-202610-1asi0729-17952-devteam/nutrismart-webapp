@@ -80,22 +80,10 @@ export const routes: Routes = [
   { path: 'profile', loadChildren: profileRoutes, canActivate: [authGuard, subscriptionGuard] },
   { path: 'dashboard', loadChildren: dashboardRoutes, canActivate: [authGuard, subscriptionGuard] },
   { path: 'nutrition', loadChildren: nutritionRoutes, canActivate: [authGuard, subscriptionGuard] },
-  {
-    path: 'smart-scan',
-    loadChildren: smartScanRoutes,
-    canActivate: [authGuard, subscriptionGuard],
-  },
-  {
-    path: 'recommendations',
-    loadChildren: recommendationsRoutes,
-    canActivate: [authGuard, subscriptionGuard],
-  },
-  {
-    path: 'body-progress',
-    loadChildren: bodyProgressRoutes,
-    canActivate: [authGuard, subscriptionGuard],
-  },
-
+  { path: 'smart-scan', loadChildren: smartScanRoutes, canActivate: [authGuard, subscriptionGuard] },
+  { path: 'recommendations', loadChildren: recommendationsRoutes, canActivate: [authGuard, subscriptionGuard] },
+  { path: 'body-progress', loadChildren: bodyProgressRoutes, canActivate: [authGuard, subscriptionGuard] },
+  { path: 'pantry', loadChildren: pantryRoutes, canActivate: [authGuard, subscriptionGuard] },
   { path: 'wearable', loadChildren: wearableRoutes, canActivate: [authGuard, subscriptionGuard] },
   { path: 'analytics', loadChildren: analyticsRoutes, canActivate: [authGuard, subscriptionGuard] },
   { path: 'subscription', loadChildren: subscriptionsRoutes, canActivate: [authGuard] },

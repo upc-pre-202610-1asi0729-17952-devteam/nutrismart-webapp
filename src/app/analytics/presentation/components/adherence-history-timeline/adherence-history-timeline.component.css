@@ -1,0 +1,83 @@
+.adherence-history-timeline {
+  padding: 18px 20px;
+}
+
+.panel-title {
+  margin: 0 0 24px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #1f1f1f;
+}
+
+.timeline-container {
+  display: flex;
+  flex-wrap: wrap; /* Allow entries to wrap to the next line */
+  gap: 10px; /* Space between entries */
+  justify-content: flex-start;
+  max-height: 150px; /* Limit height for scrollability if many entries */
+  overflow-y: auto;
+  padding-bottom: 10px; /* Space for scrollbar */
+}
+
+.timeline-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 40px; /* Fixed width for each entry */
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+.timeline-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-bottom: 5px;
+  border: 1px solid #b9b9b9; /* Default border */
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.timeline-dot:hover {
+  transform: scale(1.1);
+}
+
+.timeline-date {
+  font-size: 10px;
+  color: #8b8b8b;
+  text-align: center;
+  white-space: nowrap; /* Prevent date from wrapping */
+}
+
+/* Status classes for dots */
+.status-on-track {
+  background-color: #55938e; /* Teal */
+  border-color: #55938e;
+}
+
+.status-at-risk {
+  background-color: #ff9f2d; /* Orange */
+  border-color: #ff9f2d;
+}
+
+.status-dropped {
+  background-color: #c65353; /* Red */
+  border-color: #c65353;
+}
+
+.status-recovered {
+  background-color: #0f7a67; /* Darker Green */
+  border-color: #0f7a67;
+}
+
+.status-unknown {
+  background-color: #e0e0e0; /* Grey for unknown/default */
+  border-color: #e0e0e0;
+}
+
+.no-data-message {
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+  color: #8b8b8b;
+}

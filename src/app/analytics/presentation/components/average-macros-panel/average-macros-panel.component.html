@@ -1,0 +1,50 @@
+<div class="average-macros-panel">
+  <h3 class="panel-title">Avg. Macros — This Week</h3>
+
+  <div class="macro-list">
+    @for (macro of macroAnalysis; track macro.name) {
+      <div class="macro-row">
+        <div class="macro-row-header">
+          <span>
+            <i class="macro-dot" [ngClass]="macro.colorClass"></i>
+            {{ macro.name }}
+          </span>
+
+          <strong [ngClass]="{'macro-above-target': macro.isAboveTarget}">
+            {{ macro.consumed }}g / {{ macro.target }}g
+          </strong>
+        </div>
+
+        <div class="macro-track">
+          <div
+            class="macro-fill"
+            [ngClass]="macro.colorClass"
+            [style.width.%]="macroPercent(macro.consumed, macro.target)">
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (proteinCompliance) {
+    <div class="protein-compliance">
+      <p>{{ proteinCompliance }}</p>
+      <!-- Potentially add a progress bar here if needed for protein compliance -->
+    </div>
+  }
+
+  <div class="days-logged-section">
+    <h4>Days with complete log:</h4>
+    <div class="week-dots">
+      @for (dot of daysWithCompleteLog; track $index) {
+        <div class="week-dot-wrapper">
+          <span
+            class="week-dot"
+            [class.filled]="dot">
+          </span>
+          <small>{{ weekLabels[$index] }}</small>
+        </div>
+      }
+    </div>
+  </div>
+</div>

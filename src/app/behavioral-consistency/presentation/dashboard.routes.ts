@@ -1,7 +1,14 @@
-/**
- * Dashboard routes (behavioral-consistency context).
- *
- * Register the main dashboard view and its nested routes here.
- */
 import { Routes } from '@angular/router';
-export const dashboardRoutes: Routes = [];
+import { BehavioralDashboard } from './views/behavioral-dashboard/behavioral-dashboard';
+
+/**
+ * Dashboard routes for the Behavioral Consistency bounded context.
+ *
+ * Registers the main behavioral dashboard view.
+ */
+export const dashboardRoutes: Routes = [
+  {
+    path: '',
+    component: BehavioralDashboard,
+  },
+];

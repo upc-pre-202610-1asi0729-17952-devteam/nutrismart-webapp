@@ -1,0 +1,16 @@
+<div class="behavioral-events-list">
+  <h3 class="panel-title" aria-label="Behavioral Events List">Behavioral events this month</h3>
+
+  @if (behavioralEvents.length > 0) {
+    <ul class="event-list">
+      @for (event of behavioralEvents; track $index) {
+        <li class="event-item">
+          <span class="event-date">{{ formatDate(event.date) }}</span>
+          <span class="event-description">{{ event.description }}</span>
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="no-data-message">No behavioral events recorded for this period.</div>
+  }
+</div>

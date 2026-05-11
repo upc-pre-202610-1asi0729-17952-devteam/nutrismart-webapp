@@ -1,0 +1,98 @@
+<div class="daily-calories-chart">
+  <h3 class="chart-title" aria-label="Daily Calories Chart">
+    Daily Calories —
+    @if (period === '7_DAYS') {
+      Last 7 Days
+    } @else if (period === '30_DAYS') {
+      Last 30 Days
+    } @else {
+      Last 90 Days
+    }
+    · Goal: {{ goal }} kcal
+  </h3>
+
+  <div class="chart-container">
+    <svg [attr.viewBox]="'0 0 ' + (chartData.length * 40 + 10) + ' 200'" preserveAspectRatio="xMidYMax meet" class="bar-chart">
+      <!-- Goal line -->
+      <line
+        [attr.x1]="0"
+        [attr.y1]="150 - (goal / maxCalories) * 150"
+        [attr.x2]="chartData.length * 40 + 10"
+        [attr.y2]="150 - (goal / maxCalories) * 150"
+        stroke="#8b8b8b"
+        stroke-dasharray="4 2"
+        stroke-width="1"
+        aria-label="Goal line at {{ goal }} kcal"
+      />
+      <text
+        [attr.x]="chartData.length * 40 + 5"
+        [attr.y]="150 - (goal / maxCalories) * 150 - 5"
+        text-anchor="end"
+        fill="#8b8b8b"
+        font-size="10"
+        aria-label="Goal value"
+      >{{ goal }} kcal</text>
+
+      @for (entry of chartData; track $index) {
+        @let barWidth = 30;
+        @let barX = $index * 40 + 5;
+        @let barHeight = (entry.height / 100) * 150; /* Scale height to 150 units */
+        @let barY = 150 - barHeight; /* SVG y-axis starts from top, chart area is 150 units high */
+
+        <!-- Bar -->
+        <rect
+          [attr.x]="barX"
+          [attr.y]="barY"
+          [attr.width]="barWidth"
+          [attr.height]="barHeight"
+          [ngClass]="{
+            'bar-over-goal': entry.status === 'over',
+            'bar-on-target': entry.status === 'on-target',
+            'bar-no-data': entry.status === 'no-data'
+          }"
+          rx="3" ry="3"
+          aria-label="Calories for {{ entry.day }}: {{ entry.label }} kcal"
+        />
+
+        <!-- Value label above bar -->
+        <text
+          [attr.x]="barX + barWidth / 2"
+          [attr.y]="barY - 5"
+          text-anchor="middle"
+          fill="#1f1f1f"
+          font-size="12"
+          aria-hidden="true"
+        >{{ entry.label }}</text>
+
+        <!-- Day label below chart -->
+        <text
+          [attr.x]="barX + barWidth / 2"
+          y="175"
+          text-anchor="middle"
+          fill="#8b8b8b"
+          font-size="12"
+          aria-hidden="true"
+        >{{ entry.day }}</text>
+      }
+    </svg>
+  </div>
+
+  <div class="chart-legend">
+    <span class="legend-item">
+      <span class="legend-color-box legend-goal"></span> Goal: {{ goal }} kcal
+    </span>
+    <span class="legend-item">
+      <span class="legend-color-box legend-over-goal"></span> Over goal
+    </span>
+    <span class="legend-item">
+      <span class="legend-color-box legend-on-target"></span> On target
+    </span>
+    <span class="legend-item">
+      <span class="legend-color-box legend-no-data"></span> No data
+    </span>
+  </div>
+
+  <div class="chart-footer">
+    Average: {{ averageCalories }} kcal
+  </div>
+</div>
