@@ -44,6 +44,20 @@
 .stale-banner-icon { font-size: 18px; flex-shrink: 0; }
 .stale-banner-text { flex: 1; }
 
+/* ── Stagnation banner ── */
+.stagnation-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #eff6ff;
+  border: 1.5px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 12px 18px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  color: #1e40af;
+}
+
 /* ── Metric cards ── */
 .metric-cards {
   display: grid;
@@ -70,7 +84,38 @@
   color: var(--nutrismart-text-light);
   text-transform: uppercase;
   letter-spacing: 0.6px;
+}
+
+/* Row that holds the card label + ⓘ tooltip trigger */
+.tooltip-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 6px;
+}
+
+.tooltip-btn {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: var(--nutrismart-text-light);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+.tooltip-btn:hover { opacity: 1; color: var(--nutrismart-primary); }
+
+.metric-tooltip {
+  font-size: 11px;
+  color: var(--nutrismart-text-mid);
+  background: var(--nutrismart-bg);
+  border: 1px solid var(--nutrismart-border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin: 0 0 6px;
+  line-height: 1.45;
 }
 
 .metric-card-header-row {

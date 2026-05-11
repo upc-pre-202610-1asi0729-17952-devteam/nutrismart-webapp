@@ -66,8 +66,23 @@ export class MetabolicStore {
 
   // ─── Computed Signals ─────────────────────────────────────────────────────
 
-  /** Whether the last weight entry is older than 14 days (staleness banner). */
+  /** True when the last weight entry is older than 14 days (no-data banner). */
   readonly isStale = computed(() => this._currentMetric()?.isStale(14) ?? false);
+
+  /**
+   * True when the user has logged weight in the current history window but the
+   * trend shows no progress toward their goal (StagnationDetected domain event).
+   *
+   * Requires ≥ 3 entries so a single outlier doesn't trigger a false alarm.
+   * Only active when isStale() is false (user IS logging but not progressing).
+   */
+  readonly hasStagnated = computed(() => {
+    const history = this._metricsHistory();
+    if (history.length < 3) return false;
+    const first = history[0].weightKg;
+    const last  = history[history.length - 1].weightKg;
+    return this.isMuscleGain() ? last <= first : last >= first;
+  });
 
   /**
    * Whether the current session targets MUSCLE_GAIN.
@@ -100,11 +115,15 @@ export class MetabolicStore {
     const history = this._metricsHistory();
     if (history.length < 2) return { points: '', minW: 0, maxW: 0, dates: [] as string[], targetY: 0 };
 
-    const weights   = history.map(m => m.weightKg);
-    const minW      = Math.min(...weights) - 1;
-    const maxW      = Math.max(...weights) + 1;
-    const chartH    = 120;
-    const chartW    = 560;
+    const weights = history.map(m => m.weightKg);
+    const rawMin  = Math.min(...weights);
+    const rawMax  = Math.max(...weights);
+    const range   = rawMax - rawMin;
+    const pad     = Math.max(range * 0.025, 0.5);
+    const minW    = rawMin - pad;
+    const maxW    = rawMax + pad;
+    const chartH  = 120;
+    const chartW  = 560;
 
     const toY = (w: number) =>
       Math.round(chartH - ((w - minW) / (maxW - minW)) * chartH);
@@ -117,12 +136,14 @@ export class MetabolicStore {
       })
       .join(' ');
 
-    const target       = this._currentMetric()?.targetWeightKg ?? 0;
-    const targetY      = target > 0 ? toY(target) : chartH;
-    const dateLabels   = [history[0], history[Math.floor(history.length / 2)], history[history.length - 1]]
-      .map(m => new Date(m.loggedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    const target  = this._currentMetric()?.targetWeightKg ?? 0;
+    const targetY = target > 0 ? toY(target) : chartH;
 
-    return { points, minW, maxW, dates: dateLabels, targetY };
+    // Return raw ISO dates — the component formats them using the current UI locale.
+    const dates = [history[0], history[Math.floor(history.length / 2)], history[history.length - 1]]
+      .map(m => m.loggedAt);
+
+    return { points, minW, maxW, dates, targetY };
   });
 
   // ─── Actions ──────────────────────────────────────────────────────────────
@@ -220,11 +241,19 @@ export class MetabolicStore {
     this._loading.set(true);
     await new Promise<void>(resolve => {
       this.api.setTargetWeight(user.id, targetWeightKg).subscribe(metric => {
+        // Create a new BodyMetric instance so Angular signals detect the reference
+        // change and re-evaluate all dependent computeds (formattedProjectedDate, etc.).
         this._currentMetric.update(current => {
           if (!current) return metric;
-          current.targetWeightKg           = metric.targetWeightKg;
-          current.projectedAchievementDate = metric.projectedAchievementDate;
-          return current;
+          return new BodyMetric({
+            id:                       current.id,
+            userId:                   current.userId,
+            weightKg:                 current.weightKg,
+            heightCm:                 current.heightCm,
+            loggedAt:                 current.loggedAt,
+            targetWeightKg:           metric.targetWeightKg,
+            projectedAchievementDate: metric.projectedAchievementDate,
+          });
         });
         this._loading.set(false);
         resolve();

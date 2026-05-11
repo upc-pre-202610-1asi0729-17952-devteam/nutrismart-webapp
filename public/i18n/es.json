@@ -437,7 +437,14 @@
     "placeholder_eg": "Ej.: {{value}}",
     "placeholder_waist": "ej. 90 cm",
     "placeholder_neck": "ej. 38 cm",
-    "placeholder_goal": "ej. 65 kg"
+    "placeholder_goal": "ej. 65 kg",
+    "tooltip_bmi": "El IMC (Índice de Masa Corporal) mide la grasa corporal en función de tu peso y altura. Es una herramienta de detección aproximada, no un diagnóstico.",
+    "tooltip_bmr": "La TMB (Tasa Metabólica Basal) son las calorías que quema tu cuerpo en reposo completo, solo para mantener tus órganos funcionando.",
+    "tooltip_tdee": "El TDEE es el gasto calórico total diario, incluyendo tu actividad física. Tu objetivo calórico se calcula a partir de este valor.",
+    "tooltip_body_fat": "Porcentaje de grasa corporal estimado con el método de circunferencia de la Marina de EE. UU. (medidas de cintura y cuello).",
+    "tooltip_lean_mass": "La masa magra es tu peso total menos la grasa — incluye músculo, hueso, órganos y agua.",
+    "stagnation_banner_loss": "Has estado registrando tu peso de forma constante, pero no ha bajado en este período. Considera revisar tu déficit calórico o la calidad de tu nutrición.",
+    "stagnation_banner_gain": "Has estado registrando tu peso de forma constante, pero no ha subido en este período. Considera revisar tu superávit calórico o la carga de entrenamiento."
   },
   "my_plan": {
     "page_title": "Suscripción y facturación",

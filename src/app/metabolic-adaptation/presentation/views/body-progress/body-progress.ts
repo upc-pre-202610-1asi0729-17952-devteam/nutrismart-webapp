@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MetabolicStore } from '../../../application/metabolic.store';
@@ -11,92 +11,49 @@ import { BodyMetric, BmiCategory } from '../../../domain/model/body-metric.entit
 /**
  * Main Body Progress view — route `/body-progress/progress`.
  *
- * Orchestrates:
- * - 4 metric cards: current weight, BMI+badge, BMR/TDEE (WEIGHT_LOSS) or
- *   % Body Fat/Lean Mass (MUSCLE_GAIN) (T38)
- * - Weight Evolution SVG chart with MatButtonToggle 7/30/90 days (T39)
- * - Dashed pink goal reference line + Edit goal panel trigger (T39)
- * - Log History table (last 3 entries) + View all link (T40)
- * - Live BMI/TDEE preview while typing a weight value (WA_BP_Registrar_peso)
- * - Inline validation errors on Log weight and Set goal weight (WA_BP_Error)
- * - Set goal weight right panel (replaces Update height when active) (T40)
- * - Body Composition section for MUSCLE_GAIN users (T41)
- * - 14-day staleness banner (T38)
+ * Single responsibility: execute UpdateBodyMetrics and display the resulting
+ * read models (Weight History Chart, BMI Result, Updated Caloric Target View).
+ *
+ * Height and goal-weight editing belong in Profile Settings.
  *
  * @author Espinoza Cruz, Angela Milagros
  */
 @Component({
   selector: 'app-body-progress',
-  imports: [DecimalPipe, NgClass, FormsModule, MatButtonToggleGroup, MatButtonToggle, TranslatePipe],
+  imports: [DecimalPipe, NgClass, FormsModule, RouterLink, MatButtonToggleGroup, MatButtonToggle, TranslatePipe],
   templateUrl: './body-progress.html',
   styleUrl: './body-progress.css',
 })
 export class BodyProgressView implements OnInit {
-  protected store     = inject(MetabolicStore);
-  protected iamStore  = inject(IamStore);
-  private translate   = inject(TranslateService);
-  private router      = inject(Router);
-
-  // ─── Right panel state ────────────────────────────────────────────────────
-
-  /**
-   * Controls which secondary right panel is shown:
-   * - 'height' → Update height (default)
-   * - 'goal'   → Set goal weight (activated by "Edit goal →" in the chart)
-   *
-   * The Log weight panel is always visible regardless of this value.
-   */
-  protected activeSecondaryPanel = signal<'height' | 'goal'>('height');
+  protected store    = inject(MetabolicStore);
+  protected iamStore = inject(IamStore);
+  private translate  = inject(TranslateService);
 
   // ─── Log weight form ──────────────────────────────────────────────────────
 
-  /** Raw string from the Log weight input. */
   protected weightInput = signal<string>('');
-
-  /** Inline validation error for the Log weight input. Empty string = no error. */
   protected weightError = signal<string>('');
-
-  // ─── Update height form ───────────────────────────────────────────────────
-
-  /** Raw string from the Update height input. */
-  protected heightInput = signal<string>('');
-
-  // ─── Set goal weight panel ────────────────────────────────────────────────
-
-  /**
-   * Two-way bound via [(ngModel)] — using a plain property instead of a signal
-   * avoids Angular's [value] re-render loop on number inputs that caused the
-   * field to reject mid-keystroke input.
-   */
-  protected goalWeightInputModel = '';
-
-  /** Inline validation error for the goal weight input. Empty string = no error. */
-  protected goalWeightError = signal<string>('');
 
   // ─── Body composition inputs ──────────────────────────────────────────────
 
   /**
-   * Plain properties bound via [(ngModel)] for the same reason as
-   * goalWeightInputModel: number inputs with [value]+signal cause Angular to
-   * reset the DOM value mid-keystroke, making the field unresponsive.
+   * Plain properties bound via [(ngModel)]: number inputs with [value]+signal
+   * cause Angular to reset the DOM value mid-keystroke, making the field unresponsive.
    */
   protected waistInputModel = '';
   protected neckInputModel  = '';
 
+  // ─── Tooltip state ────────────────────────────────────────────────────────
+
+  protected activeTooltip = signal<'bmi' | 'bmr' | 'tdee' | 'body_fat' | 'lean_mass' | null>(null);
+
   // ─── Computed ─────────────────────────────────────────────────────────────
 
-  /**
-   * True when the user has typed something in the Log weight input.
-   * Drives the preview banner and Cancel button visibility.
-   */
   protected isWeightTyping = computed(() => this.weightInput().trim().length > 0);
 
   /**
-   * Live BMI and TDEE preview computed from the typed weight value.
-   * Null when the input is empty, invalid, or height is not yet loaded.
-   *
-   * Delegates to {@link BodyMetric} entity methods to avoid duplicating
-   * the Mifflin-St Jeor formula and TDEE multiplier.
+   * Live BMI/TDEE preview — delegates to BodyMetric entity methods to avoid
+   * duplicating the Mifflin-St Jeor formula.
    */
   protected weightPreview = computed<{ bmi: number; tdee: number } | null>(() => {
     const raw      = parseFloat(this.weightInput());
@@ -107,32 +64,11 @@ export class BodyProgressView implements OnInit {
     return { bmi: temp.bmi(), tdee: temp.tdee() };
   });
 
-  /**
-   * True when the Log weight input has content that cannot be saved
-   * (e.g. non-positive or out-of-range value).
-   */
   protected weightInputInvalid = computed(() => {
     const raw = parseFloat(this.weightInput());
     return this.weightInput().trim().length > 0 && (isNaN(raw) || raw <= 0 || raw > 500);
   });
 
-  /**
-   * Returns `true` when the goal weight input value fails validation.
-   *
-   * Implemented as a getter (not a computed signal) because it reads a plain
-   * property (`goalWeightInputModel`). Angular re-evaluates getters on every
-   * CD cycle triggered by other signal changes, keeping the template in sync.
-   */
-  protected get goalInputInvalid(): boolean {
-    const raw     = parseFloat(this.goalWeightInputModel);
-    const current = this.store.currentMetric()?.weightKg ?? 0;
-    if (!this.goalWeightInputModel.trim()) return false;
-    if (isNaN(raw) || raw <= 0) return true;
-    if (!this.store.isMuscleGain() && raw >= current) return true;
-    return false;
-  }
-
-  /** Formatted projected achievement date (e.g. "August 14, 2026"). */
   protected formattedProjectedDate = computed(() => {
     const date = this.store.currentMetric()?.projectedAchievementDate;
     if (!date) return this.translate.instant('body_progress.not_set');
@@ -142,7 +78,6 @@ export class BodyProgressView implements OnInit {
     });
   });
 
-  /** Short label shown inside the BMI badge pill (e.g. "Normal", not "Normal weight"). */
   protected bmiBadgeLabel = computed(() => {
     if (this.bmiOutdated()) return this.translate.instant('body_progress.bmi_outdated');
     const cat = this.store.currentMetric()?.bmiCategory();
@@ -152,7 +87,6 @@ export class BodyProgressView implements OnInit {
       : cat;
   });
 
-  /** CSS class for the BMI WHO-category badge. */
   protected bmiCategoryClass = computed(() => {
     const cat = this.store.currentMetric()?.bmiCategory();
     switch (cat) {
@@ -164,10 +98,8 @@ export class BodyProgressView implements OnInit {
     }
   });
 
-  /** Whether BMI may be inaccurate due to stale data. */
   protected bmiOutdated = computed(() => this.store.isStale());
 
-  /** Translated BMI category label for the metric card sub-line. */
   protected bmiCategoryLabel = computed(() => {
     if (this.bmiOutdated()) return this.translate.instant('body_progress.bmi_may_inaccurate');
     const cat = this.store.currentMetric()?.bmiCategory();
@@ -181,7 +113,6 @@ export class BodyProgressView implements OnInit {
     }
   });
 
-  /** Translated "Updated today / yesterday / outdated" label for metric cards and the stale banner. */
   protected formattedUpdatedLabel = computed(() => {
     const metric = this.store.currentMetric();
     if (!metric) return '';
@@ -194,49 +125,39 @@ export class BodyProgressView implements OnInit {
     return this.translate.instant('body_progress.updated_outdated', { date });
   });
 
-  /** Placeholder for the Log weight input showing the current stored weight. */
   protected weightPlaceholder = computed(() => {
     const val = this.store.currentMetric()?.weightKg;
     return this.translate.instant('body_progress.placeholder_eg', { value: val?.toFixed(1) ?? '70.0' });
   });
 
-  /** Placeholder for the Update height input showing the current stored height. */
-  protected heightPlaceholder = computed(() => {
-    const val = this.store.currentMetric()?.heightCm;
-    return this.translate.instant('body_progress.placeholder_eg', { value: val ?? '165' });
+  /** Chart X-axis date labels formatted in the current UI language. */
+  protected formattedChartDates = computed(() => {
+    const lang   = this.translate.currentLang ?? 'en';
+    const locale = lang === 'es' ? 'es-ES' : 'en-US';
+    return this.store.chartPoints().dates.map(iso =>
+      new Date(iso).toLocaleDateString(locale, { month: 'short', day: 'numeric' }),
+    );
   });
-
-  onChangeGoal(): void {
-    this.router.navigate(['/body-progress', 'change-goal']);
-  }
 
   async ngOnInit(): Promise<void> {
     await this.store.initialise();
   }
 
-  // ─── Date range toggle (T39) ──────────────────────────────────────────────
+  // ─── Date range toggle ────────────────────────────────────────────────────
 
   async selectDays(days: 7 | 30 | 90): Promise<void> {
     await this.store.loadHistory(days);
   }
 
-  // ─── Log weight actions ───────────────────────────────────────────────────
+  // ─── Log weight ───────────────────────────────────────────────────────────
 
-  /** Scrolls focus to the Log weight panel (header button). */
   onOpenLogWeight(): void {
     this.weightInput.set('');
     this.weightError.set('');
   }
 
-  /**
-   * Validates the typed weight value and shows inline error if invalid.
-   * On success saves via the store and clears the input.
-   *
-   * Validation (WA_BP_Error): must be a positive number ≤ 500.
-   */
   async onSaveWeight(): Promise<void> {
     const val = parseFloat(this.weightInput());
-
     if (!this.weightInput().trim() || isNaN(val) || val <= 0) {
       this.weightError.set(this.translate.instant('body_progress.error_weight_positive'));
       return;
@@ -245,102 +166,22 @@ export class BodyProgressView implements OnInit {
       this.weightError.set(this.translate.instant('body_progress.error_weight_max'));
       return;
     }
-
     this.weightError.set('');
     await this.store.logWeight(val);
     this.weightInput.set('');
   }
 
-  /** Clears the Log weight input and resets its error state. */
   onCancelWeight(): void {
     this.weightInput.set('');
     this.weightError.set('');
   }
 
-  /** Clears error on every keystroke so the user gets immediate feedback. */
   onWeightInputChange(value: string): void {
     this.weightInput.set(value);
     this.weightError.set('');
   }
 
-  // ─── Update height actions ────────────────────────────────────────────────
-
-  /** Switches secondary panel to "Update height". */
-  onOpenUpdateHeight(): void {
-    this.activeSecondaryPanel.set('height');
-    this.goalWeightInputModel = '';
-    this.goalWeightError.set('');
-  }
-
-  /**
-   * Saves the new height. BMI is recalculated synchronously via Signals.
-   */
-  async onUpdateHeight(): Promise<void> {
-    const val = parseFloat(this.heightInput());
-    if (!val || val <= 0 || val > 300) return;
-    await this.store.updateHeight(val);
-    this.heightInput.set('');
-  }
-
-  // ─── Set goal weight actions (T40, WA_BP_Error) ───────────────────────────
-
-  /**
-   * Opens the "Set goal weight" right panel and pre-fills the existing target.
-   * Replaces the "Update height" panel in the right column.
-   */
-  onOpenGoalPanel(): void {
-    const current = this.store.currentMetric();
-    // Pre-fill existing target weight so the user can see and adjust it
-    this.goalWeightInputModel =
-      current?.targetWeightKg && current.targetWeightKg > 0
-        ? current.targetWeightKg.toString()
-        : '';
-    this.goalWeightError.set('');
-    this.activeSecondaryPanel.set('goal');
-  }
-
-  /** Dismisses the Set goal weight panel and returns to Update height. */
-  onCancelGoal(): void {
-    this.activeSecondaryPanel.set('height');
-    this.goalWeightInputModel = '';
-    this.goalWeightError.set('');
-  }
-
-  /**
-   * Validates the target weight and saves it via the store.
-   *
-   * Validation (WA_BP_Error):
-   * - Must be a positive number.
-   * - For WEIGHT_LOSS: must be strictly below the current weight.
-   */
-  async onSaveGoal(): Promise<void> {
-    const val     = parseFloat(this.goalWeightInputModel);
-    const current = this.store.currentMetric()?.weightKg ?? 0;
-
-    if (!this.goalWeightInputModel.trim() || isNaN(val) || val <= 0) {
-      this.goalWeightError.set(this.translate.instant('body_progress.error_weight_invalid'));
-      return;
-    }
-
-    if (!this.store.isMuscleGain() && val >= current) {
-      this.goalWeightError.set(
-        this.translate.instant('body_progress.error_goal_below_current', { current }),
-      );
-      return;
-    }
-
-    this.goalWeightError.set('');
-    await this.store.setTargetWeight(val);
-    this.activeSecondaryPanel.set('height');
-    this.goalWeightInputModel = '';
-  }
-
-  /** Clears the goal error on every model change (ngModel fires this). */
-  onGoalModelChange(): void {
-    this.goalWeightError.set('');
-  }
-
-  // ─── Body composition actions (T41) ──────────────────────────────────────
+  // ─── Body composition ─────────────────────────────────────────────────────
 
   async onCalculateComposition(): Promise<void> {
     const waist = parseFloat(this.waistInputModel);
@@ -349,6 +190,12 @@ export class BodyProgressView implements OnInit {
     await this.store.updateBodyComposition(waist, neck);
     this.waistInputModel = '';
     this.neckInputModel  = '';
+  }
+
+  // ─── Tooltips ─────────────────────────────────────────────────────────────
+
+  toggleTooltip(card: 'bmi' | 'bmr' | 'tdee' | 'body_fat' | 'lean_mass'): void {
+    this.activeTooltip.update(current => (current === card ? null : card));
   }
 
   // ─── History formatting ───────────────────────────────────────────────────

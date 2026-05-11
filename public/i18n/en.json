@@ -437,7 +437,14 @@
     "placeholder_eg": "E.g.: {{value}}",
     "placeholder_waist": "e.g. 90 cm",
     "placeholder_neck": "e.g. 38 cm",
-    "placeholder_goal": "e.g. 65 kg"
+    "placeholder_goal": "e.g. 65 kg",
+    "tooltip_bmi": "BMI (Body Mass Index) measures body fat based on your weight and height. It's a rough screening tool — not a diagnosis.",
+    "tooltip_bmr": "BMR (Basal Metabolic Rate) is the calories your body burns at complete rest — just to keep your organs running.",
+    "tooltip_tdee": "TDEE (Total Daily Energy Expenditure) is your total calorie burn per day, including physical activity. Your caloric target is based on this.",
+    "tooltip_body_fat": "Estimated body fat percentage calculated using the US Navy circumference method (waist and neck measurements).",
+    "tooltip_lean_mass": "Lean mass is your total body weight minus fat — it includes muscle, bone, organs, and water.",
+    "stagnation_banner_loss": "You've been logging consistently but your weight hasn't trended downward in this period. Consider reviewing your caloric deficit or nutrition quality.",
+    "stagnation_banner_gain": "You've been logging consistently but your weight hasn't trended upward in this period. Consider reviewing your caloric surplus or training load."
   },
   "my_plan": {
     "page_title": "Subscription and billing",
