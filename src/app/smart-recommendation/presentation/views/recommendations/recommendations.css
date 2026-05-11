@@ -293,6 +293,17 @@
 
 .btn--red:hover { background: #dc2626; }
 
+.btn--ghost {
+  background: transparent;
+  color: var(--nutrismart-text-mid);
+  border: 1px solid var(--nutrismart-border);
+}
+
+.btn--ghost:hover {
+  background: var(--nutrismart-bg);
+  border-color: var(--nutrismart-text-mid);
+}
+
 .btn--full { width: 100%; }
 .btn--sm   { padding: 6px 14px; font-size: 12px; }
 .btn--add  { flex-shrink: 0; font-size: 12px; padding: 7px 14px; }
@@ -320,7 +331,7 @@
   border: 1px solid var(--nutrismart-border);
   font-size: 12px;
   color: var(--nutrismart-text-mid);
-  cursor: pointer;
+  cursor: default;
 }
 
 /* ── Balance ── */
@@ -387,6 +398,37 @@
 }
 
 .travel-input:focus { border-color: var(--nutrismart-primary); }
+
+/* ── Error banner ── */
+.error-banner {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: #991b1b;
+}
+
+/* ── Loading skeleton ── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 6px;
+}
+
+.skeleton--icon  { width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0; }
+.skeleton--title { height: 14px; width: 60%; margin-bottom: 8px; }
+.skeleton--desc  { height: 12px; width: 85%; }
+
+.rec-card--skeleton { pointer-events: none; }
+.skeleton-body { flex: 1; }
 
 /* ── Empty state ── */
 .empty-state {

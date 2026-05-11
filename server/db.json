@@ -24,7 +24,9 @@
       "consecutiveMisses": 0,
       "birthday": "1998-03-15",
       "biologicalSex": "female",
-      "createdAt": "2026-05-01"
+      "createdAt": "2026-05-01",
+      "home_city": "Lima",
+      "goal_started_at": "2026-04-01"
     },
     {
       "id": "Mv9paKyK60k",
@@ -112,27 +114,54 @@
       "createdAt": "2026-05-11"
     },
     {
-      "id": "ATAs1HP14XE",
+      "id": "1kw0egk4a",
       "firstName": "A",
-      "lastName": "Villarreal",
+      "lastName": "C",
       "email": "c@gmail.com",
       "goal": "MUSCLE_GAIN",
       "weight": 70,
       "height": 170,
-      "activityLevel": "MODERATE",
+      "activityLevel": "SEDENTARY",
       "plan": "PREMIUM",
       "restrictions": [],
       "medicalConditions": [],
-      "dailyCalorieTarget": 2502,
+      "dailyCalorieTarget": 2222,
       "proteinTarget": 140,
-      "carbsTarget": 328,
-      "fatTarget": 70,
+      "carbsTarget": 276,
+      "fatTarget": 62,
       "fiberTarget": 25,
       "streak": 0,
       "consecutiveMisses": 0,
-      "birthday": "2005-05-11",
+      "birthday": "2005-02-19",
       "biologicalSex": "male",
-      "createdAt": "2026-05-11"
+      "createdAt": "2026-05-11",
+      "home_city": "",
+      "goal_started_at": "2026-05-11"
+    },
+    {
+      "id": "2aux86td0",
+      "firstName": "A",
+      "lastName": "C",
+      "email": "d@gmail.com",
+      "goal": "WEIGHT_LOSS",
+      "weight": 70,
+      "height": 150,
+      "activityLevel": "SEDENTARY",
+      "plan": "PREMIUM",
+      "restrictions": [],
+      "medicalConditions": [],
+      "dailyCalorieTarget": 1472,
+      "proteinTarget": 112,
+      "carbsTarget": 164,
+      "fatTarget": 41,
+      "fiberTarget": 25,
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "birthday": "2005-02-19",
+      "biologicalSex": "female",
+      "createdAt": "2026-05-11",
+      "home_city": "",
+      "goal_started_at": "2026-05-11"
     }
   ],
   "nutrition-log": [
@@ -590,6 +619,33 @@
       "target_weight_kg": 0,
       "projected_achievement_date": "",
       "id": "11cHERuab3A"
+    },
+    {
+      "user_id": "ATAs1HP14XE",
+      "weight_kg": 71,
+      "height_cm": 170,
+      "logged_at": "2026-05-11T10:54:46.991Z",
+      "target_weight_kg": 0,
+      "projected_achievement_date": "",
+      "id": "ipOtrP9522k"
+    },
+    {
+      "user_id": "1kw0egk4a",
+      "weight_kg": 70,
+      "height_cm": 170,
+      "logged_at": "2026-05-11T12:36:33.058Z",
+      "target_weight_kg": 0,
+      "projected_achievement_date": "",
+      "id": "Z-IAYEpCvPE"
+    },
+    {
+      "id": "SqxO7UkyJnA",
+      "user_id": "2aux86td0",
+      "weight_kg": 70,
+      "height_cm": 150,
+      "logged_at": "2026-05-11T12:41:40.550Z",
+      "target_weight_kg": 56,
+      "projected_achievement_date": "2027-06-07T12:41:40.576Z"
     }
   ],
   "analytics": [
@@ -950,6 +1006,246 @@
       "measured_at": "2026-05-11T10:28:28.596Z",
       "previous_body_fat_percent": 0,
       "id": "_CpxISwRvp8"
+    },
+    {
+      "user_id": "1kw0egk4a",
+      "waist_cm": 81,
+      "neck_cm": 36,
+      "height_cm": 170,
+      "weight_kg": 70,
+      "measured_at": "2026-05-11T12:36:31.439Z",
+      "previous_body_fat_percent": 0,
+      "id": "9KIzvmKfSns"
+    }
+  ],
+  "user-location-snapshots": [
+    {
+      "id": "ls-1-1",
+      "user_id": "1",
+      "city": "Lima",
+      "country": "Peru",
+      "recorded_at": "2026-05-09T08:00:00.000Z"
+    },
+    {
+      "id": "ls-1-2",
+      "user_id": "1",
+      "city": "Lima",
+      "country": "Peru",
+      "recorded_at": "2026-05-10T09:00:00.000Z"
+    },
+    {
+      "id": "ls-1-3",
+      "user_id": "1",
+      "city": "Cusco",
+      "country": "Peru",
+      "recorded_at": "2026-05-11T08:00:00.000Z"
+    }
+  ],
+  "weather-snapshots": [
+    {
+      "id": "ws-1",
+      "city": "Lima",
+      "country": "Peru",
+      "temperature_celsius": 31,
+      "condition": "Sunny",
+      "weather_type": "HOT",
+      "updated_at": "2026-05-11T07:00:00.000Z"
+    },
+    {
+      "id": "ws-2",
+      "city": "Cusco",
+      "country": "Peru",
+      "temperature_celsius": 14,
+      "condition": "Partly Cloudy",
+      "weather_type": "COLD",
+      "updated_at": "2026-05-11T07:00:00.000Z"
+    },
+    {
+      "id": "ws-3",
+      "city": "Arequipa",
+      "country": "Peru",
+      "temperature_celsius": 24,
+      "condition": "Sunny",
+      "weather_type": "HOT",
+      "updated_at": "2026-05-11T07:00:00.000Z"
+    }
+  ],
+  "recommendation-cards": [
+    {
+      "id": "rc-1",
+      "name": "Chicken and Cucumber Salad",
+      "description": "Refreshing · High in protein · Hydrating",
+      "kcal": 320,
+      "protein": "P 32g",
+      "badge": "Light",
+      "weather_type": "HOT",
+      "travel_city": null,
+      "card_type": "weather"
+    },
+    {
+      "id": "rc-2",
+      "name": "Hake ceviche",
+      "description": "Peruvian dish · Fresh and high in protein",
+      "kcal": 280,
+      "protein": "P 38g",
+      "badge": "Light",
+      "weather_type": "HOT",
+      "travel_city": null,
+      "card_type": "weather"
+    },
+    {
+      "id": "rc-3",
+      "name": "Gazpacho with wholemeal toast",
+      "description": "Cold soup · Filling without making you feel hot",
+      "kcal": 210,
+      "protein": "P 6g",
+      "badge": "Light",
+      "weather_type": "HOT",
+      "travel_city": null,
+      "card_type": "weather"
+    },
+    {
+      "id": "rc-4",
+      "name": "Lentil soup with bread",
+      "description": "High in iron and plant-based protein",
+      "kcal": 420,
+      "protein": "P 22g",
+      "badge": "H. Calories",
+      "weather_type": "COLD",
+      "travel_city": null,
+      "card_type": "weather"
+    },
+    {
+      "id": "rc-5",
+      "name": "Beef stew with sweet potato",
+      "description": "Comfort food · High in protein",
+      "kcal": 280,
+      "protein": "P 38g",
+      "badge": "Light",
+      "weather_type": "COLD",
+      "travel_city": null,
+      "card_type": "weather"
+    },
+    {
+      "id": "rc-6",
+      "name": "Tacu tacu with beans",
+      "description": "Peruvian dish · Comfort food",
+      "kcal": 210,
+      "protein": "P 18g",
+      "badge": "Light",
+      "weather_type": "COLD",
+      "travel_city": null,
+      "card_type": "weather"
+    },
+    {
+      "id": "rc-10",
+      "name": "Quinoa soup",
+      "description": "Andean soup · High in plant protein",
+      "kcal": 380,
+      "protein": "P 22g",
+      "badge": "Local",
+      "weather_type": null,
+      "travel_city": "Cusco",
+      "card_type": "travel"
+    },
+    {
+      "id": "rc-11",
+      "name": "Cusco-style chicken broth",
+      "description": "Restorative · Low in fat",
+      "kcal": 190,
+      "protein": "P 28g",
+      "badge": "Local",
+      "weather_type": null,
+      "travel_city": "Cusco",
+      "card_type": "travel"
+    },
+    {
+      "id": "rc-12",
+      "name": "Chicken-stuffed causa",
+      "description": "Cold dish · Lactose-free",
+      "kcal": 420,
+      "protein": "P 18g",
+      "badge": "Local",
+      "weather_type": null,
+      "travel_city": "Cusco",
+      "card_type": "travel"
+    },
+    {
+      "id": "rc-16",
+      "name": "Rocoto relleno",
+      "description": "Stuffed pepper · Traditional Arequipa dish",
+      "kcal": 340,
+      "protein": "P 18g",
+      "badge": "Local",
+      "weather_type": null,
+      "travel_city": "Arequipa",
+      "card_type": "travel"
+    },
+    {
+      "id": "rc-17",
+      "name": "Chupe de camarones",
+      "description": "Shrimp soup · Andean comfort food",
+      "kcal": 280,
+      "protein": "P 22g",
+      "badge": "Local",
+      "weather_type": null,
+      "travel_city": "Arequipa",
+      "card_type": "travel"
+    },
+    {
+      "id": "rc-18",
+      "name": "Adobo arequipeño",
+      "description": "Marinated pork · Local specialty",
+      "kcal": 420,
+      "protein": "P 32g",
+      "badge": "Local",
+      "weather_type": null,
+      "travel_city": "Arequipa",
+      "card_type": "travel"
+    },
+    {
+      "id": "rc-20",
+      "name": "Grilled chicken with steamed vegetables",
+      "description": "Simple · High protein · Compatible with your deficit",
+      "kcal": 380,
+      "protein": "P 42g",
+      "badge": "Easy start",
+      "weather_type": null,
+      "travel_city": null,
+      "card_type": "preventive"
+    },
+    {
+      "id": "rc-21",
+      "name": "Simple egg bowl with toast",
+      "description": "Low effort · Nutritionally complete · Quick to prepare",
+      "kcal": 280,
+      "protein": "P 24g",
+      "badge": "Day 1",
+      "weather_type": null,
+      "travel_city": null,
+      "card_type": "intervention"
+    }
+  ],
+  "recommendation-sessions": [
+    {
+      "id": "rs-1",
+      "user_id": "1",
+      "adherence_status": "ON_TRACK",
+      "consecutive_misses": 0,
+      "simplified_kcal_target": 1404,
+      "created_at": "2026-05-11T07:00:00.000Z",
+      "is_active": true
+    }
+  ],
+  "travel-contexts": [
+    {
+      "id": "tc-1",
+      "user_id": "1",
+      "city": "",
+      "country": "",
+      "is_active": false,
+      "is_manual": false,
+      "activated_at": ""
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

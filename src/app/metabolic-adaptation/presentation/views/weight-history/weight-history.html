@@ -1,0 +1,52 @@
+<div class="history-page">
+
+  <header class="history-header">
+    <a routerLink="/body-progress/progress" class="back-link">
+      {{ 'body_progress.back_to_progress' | translate }}
+    </a>
+    <h1 class="history-title">{{ 'body_progress.history_title' | translate }}</h1>
+    <p class="history-subtitle">{{ 'body_progress.history_subtitle' | translate }}</p>
+  </header>
+
+  @if (store.loading()) {
+    <div class="loading-state">
+      @for (_ of [1, 2, 3, 4, 5]; track $index) {
+        <div class="skeleton-row">
+          <div class="skeleton skeleton--date"></div>
+          <div class="skeleton skeleton--weight"></div>
+          <div class="skeleton skeleton--delta"></div>
+        </div>
+      }
+    </div>
+  } @else if (rows().length === 0) {
+    <div class="empty-state">
+      <p>{{ 'body_progress.history_empty' | translate }}</p>
+    </div>
+  } @else {
+    <div class="history-card">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th class="col-date">{{ 'body_progress.updated_today' | translate }}</th>
+            <th class="col-weight">Kg</th>
+            <th class="col-delta">Δ</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.metric.id) {
+            <tr>
+              <td class="cell-date">{{ formatDate(row.metric.loggedAt) }}</td>
+              <td class="cell-weight">{{ row.metric.weightKg | number:'1.1-1' }} kg</td>
+              <td class="cell-delta"
+                  [class.delta--pos]="isDeltaPositive(row.delta)"
+                  [class.delta--neg]="isDeltaNegative(row.delta)">
+                {{ formatDelta(row.delta) }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>

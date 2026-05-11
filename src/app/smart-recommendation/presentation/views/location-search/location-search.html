@@ -1,0 +1,39 @@
+<div class="location-search-page">
+
+  <div class="location-search-card">
+
+    <h1 class="location-search-title">{{ 'recommendations.location_search_title' | translate }}</h1>
+    <p class="location-search-subtitle">{{ 'recommendations.location_search_subtitle' | translate }}</p>
+
+    <div class="location-search-input-row">
+      <input
+        class="location-search-input"
+        type="text"
+        [placeholder]="'recommendations.location_search_placeholder' | translate"
+        [ngModel]="cityInput()"
+        (ngModelChange)="cityInput.set($event)"
+        (keyup.enter)="confirm()" />
+      <button
+        class="btn btn--primary"
+        [disabled]="!canConfirm || store.loading()"
+        (click)="confirm()">
+        {{ 'recommendations.location_search_confirm' | translate }}
+      </button>
+    </div>
+
+    <div class="location-search-quick">
+      <span class="quick-label">{{ 'recommendations.location_search_quick' | translate }}</span>
+      <div class="quick-chips">
+        @for (item of knownCities; track item.city) {
+          <button class="chip" (click)="selectCity(item.city, item.country)">{{ item.city }}</button>
+        }
+      </div>
+    </div>
+
+    <button class="btn btn--ghost" (click)="goBack()">
+      {{ 'recommendations.location_search_back' | translate }}
+    </button>
+
+  </div>
+
+</div>

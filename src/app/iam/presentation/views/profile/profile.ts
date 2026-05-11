@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageSwitcher } from '../../../../shared/presentation/components/language-switcher/language-switcher';
 import { IamStore } from '../../../../iam/application/iam.store';
+import { MetabolicStore } from '../../../../metabolic-adaptation/application/metabolic.store';
 import { ActivityLevel } from '../../../../iam/domain/model/activity-level.enum';
 import { DietaryRestriction } from '../../../../iam/domain/model/dietary-restriction.enum';
 import { MedicalCondition } from '../../../../iam/domain/model/medical-condition.enum';
@@ -50,6 +51,8 @@ export class Profile {
   /** IAM store providing current user state and update methods. */
   iamStore = inject(IamStore);
 
+  private metabolicStore = inject(MetabolicStore);
+
   /** ngx-translate service for language switching in panel 4. */
   private translate = inject(TranslateService);
 
@@ -86,10 +89,7 @@ export class Profile {
    */
   physicalSaved = signal(false);
 
-  /**
-   * Signal holding the pending goal change message (shown after selection).
-   */
-  pendingGoalConfirm = signal<string | null>(null);
+  showGoalLockConfirm = signal(false);
 
   /**
    * Currently selected activity level in panel 2.
@@ -102,6 +102,21 @@ export class Profile {
    * Currently selected fitness goal in panel 2.
    */
   selectedGoal = signal<UserGoal>(this.iamStore.currentUser()?.goal ?? UserGoal.WEIGHT_LOSS);
+
+  protected isGoalLocked   = computed(() => this.metabolicStore.isGoalLocked());
+  protected daysUntilUnlock = computed(() => this.metabolicStore.daysUntilUnlock());
+  protected unlockDate      = computed(() => this.metabolicStore.unlockDate());
+
+  protected isGoalSwitching = computed(() =>
+    this.selectedGoal() !== this.iamStore.currentUser()?.goal
+  );
+
+  protected goalName(goal: UserGoal): string {
+    const key = goal === UserGoal.WEIGHT_LOSS
+      ? 'body_progress.goal_name_weight_loss'
+      : 'body_progress.goal_name_muscle_gain';
+    return this.translate.instant(key);
+  }
 
   /**
    * Reactive form for physical details.
@@ -220,28 +235,44 @@ export class Profile {
   }
 
   /**
-   * Sets the selected goal in panel 2 and shows a confirmation hint.
+   * Sets the selected goal in panel 2.
    *
    * @param goal - The {@link UserGoal} the user selected.
    */
   setGoal(goal: UserGoal): void {
     this.selectedGoal.set(goal);
-    const label = goal === UserGoal.WEIGHT_LOSS ? 'Lose weight' : 'Gain muscle';
-    this.pendingGoalConfirm.set(`Goal changed to "${label}" — click Save to apply.`);
   }
 
   /**
-   * Saves physical details changes from panel 2.
+   * Saves physical details. If the user is switching goal while locked,
+   * shows a confirmation modal instead of applying immediately.
    */
   applyPhysical(): void {
     if (this.physicalForm.invalid) {
       this.physicalForm.markAllAsTouched();
       return;
     }
+    if (this.isGoalSwitching() && this.isGoalLocked()) {
+      this.showGoalLockConfirm.set(true);
+      return;
+    }
+    this.commitPhysical();
+  }
+
+  onConfirmGoalSwitch(): void {
+    this.showGoalLockConfirm.set(false);
+    this.commitPhysical();
+  }
+
+  onCancelGoalSwitch(): void {
+    this.showGoalLockConfirm.set(false);
+    this.selectedGoal.set(this.iamStore.currentUser()?.goal ?? UserGoal.WEIGHT_LOSS);
+  }
+
+  private commitPhysical(): void {
     const { weight, height } = this.physicalForm.value;
     this.iamStore.updatePhysicalDetails(weight!, height!, this.selectedActivity());
     this.iamStore.changeGoal(this.selectedGoal());
-    this.pendingGoalConfirm.set(null);
     this.physicalSaved.set(true);
     setTimeout(() => this.physicalSaved.set(false), 2500);
   }

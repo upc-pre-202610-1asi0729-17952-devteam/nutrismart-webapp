@@ -45,6 +45,8 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
       birthday: resource.birthday ?? '',
       biologicalSex: resource.biologicalSex ?? '',
       createdAt: resource.createdAt ?? '',
+      homeCity: resource.home_city ?? '',
+      goalStartedAt: resource.goal_started_at ?? '',
     });
   }
 
@@ -78,6 +80,8 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
       birthday: entity.birthday,
       biologicalSex: entity.biologicalSex,
       createdAt: entity.createdAt,
+      home_city: entity.homeCity,
+      goal_started_at: entity.goalStartedAt,
     };
   }
 

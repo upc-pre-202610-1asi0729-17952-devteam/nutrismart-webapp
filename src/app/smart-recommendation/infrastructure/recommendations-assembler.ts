@@ -1,21 +1,35 @@
 import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
+import { LocationSnapshot } from '../domain/model/location-snapshot.entity';
 import { WeatherContext } from '../domain/model/weather-context.entity';
 import { TravelContext } from '../domain/model/travel-context.entity';
 import { RecommendationSession } from '../domain/model/recommendation-session.entity';
 import { AdherenceStatus } from '../domain/model/adherence-status.enum';
 import { WeatherType } from '../domain/model/weather-type.enum';
 import {
+  LocationSnapshotResource,
   WeatherContextResource, WeatherContextResponse,
   TravelContextResource, TravelContextResponse,
   RecommendationSessionResource, RecommendationSessionResponse,
 } from './recommendations-resource';
+
+export class LocationSnapshotAssembler {
+  toEntityFromResource(r: LocationSnapshotResource): LocationSnapshot {
+    return new LocationSnapshot({
+      id:         typeof r.id === 'string' ? 0 : r.id as number,
+      userId:     typeof r.user_id === 'string' ? parseInt(r.user_id, 10) : r.user_id as unknown as number,
+      city:       r.city,
+      country:    r.country,
+      recordedAt: r.recorded_at,
+    });
+  }
+}
 
 export class WeatherContextAssembler
   implements BaseAssembler<WeatherContext, WeatherContextResource, WeatherContextResponse> {
 
   toEntityFromResource(r: WeatherContextResource): WeatherContext {
     return new WeatherContext({
-      id:                 r.id,
+      id:                 typeof r.id === 'string' ? 0 : r.id as number,
       city:               r.city,
       country:            r.country,
       temperatureCelsius: r.temperature_celsius,
@@ -47,7 +61,7 @@ export class TravelContextAssembler
 
   toEntityFromResource(r: TravelContextResource): TravelContext {
     return new TravelContext({
-      id:          r.id,
+      id:          typeof r.id === 'string' ? 0 : r.id as number,
       city:        r.city,
       country:     r.country,
       isActive:    r.is_active,
@@ -59,6 +73,7 @@ export class TravelContextAssembler
   toResourceFromEntity(e: TravelContext): TravelContextResource {
     return {
       id:           e.id,
+      user_id:      String(e.id),
       city:         e.city,
       country:      e.country,
       is_active:    e.isActive,
@@ -77,8 +92,8 @@ export class RecommendationSessionAssembler
 
   toEntityFromResource(r: RecommendationSessionResource): RecommendationSession {
     return new RecommendationSession({
-      id:                   r.id,
-      userId:               r.user_id,
+      id:                   typeof r.id === 'string' ? 0 : r.id as number,
+      userId:               typeof r.user_id === 'string' ? parseInt(r.user_id, 10) : r.user_id as unknown as number,
       adherenceStatus:      r.adherence_status as AdherenceStatus,
       consecutiveMisses:    r.consecutive_misses,
       simplifiedKcalTarget: r.simplified_kcal_target,
@@ -90,7 +105,7 @@ export class RecommendationSessionAssembler
   toResourceFromEntity(e: RecommendationSession): RecommendationSessionResource {
     return {
       id:                     e.id,
-      user_id:                e.userId,
+      user_id:                String(e.userId),
       adherence_status:       e.adherenceStatus,
       consecutive_misses:     e.consecutiveMisses,
       simplified_kcal_target: e.simplifiedKcalTarget,

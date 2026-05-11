@@ -50,6 +50,10 @@ export interface UserProps {
   biologicalSex?: string;
   /** Account creation date in ISO format (YYYY-MM-DD). */
   createdAt?: string;
+  /** City the user considers home, used for travel detection. */
+  homeCity?: string;
+  /** ISO date (YYYY-MM-DD) when the current goal was started. */
+  goalStartedAt?: string;
 }
 
 /**
@@ -102,6 +106,10 @@ export class User implements BaseEntity {
   private _biologicalSex: string;
   /** @see UserProps.createdAt */
   private _createdAt: string;
+  /** @see UserProps.homeCity */
+  private _homeCity: string;
+  /** @see UserProps.goalStartedAt */
+  private _goalStartedAt: string;
 
   /**
    * Creates a new User domain entity.
@@ -130,6 +138,8 @@ export class User implements BaseEntity {
     this._birthday = props.birthday ?? '';
     this._biologicalSex = props.biologicalSex ?? '';
     this._createdAt = props.createdAt ?? '';
+    this._homeCity = props.homeCity ?? '';
+    this._goalStartedAt = props.goalStartedAt ?? '';
   }
 
   // ─── Getters & Setters ────────────────────────────────────────────────────
@@ -321,6 +331,24 @@ export class User implements BaseEntity {
   /** @param value - New createdAt value. */
   set createdAt(value: string) {
     this._createdAt = value;
+  }
+
+  /** City the user considers home, used for travel detection. */
+  get homeCity(): string {
+    return this._homeCity;
+  }
+  /** @param value - New homeCity value. */
+  set homeCity(value: string) {
+    this._homeCity = value;
+  }
+
+  /** ISO date (YYYY-MM-DD) when the current goal was started. */
+  get goalStartedAt(): string {
+    return this._goalStartedAt;
+  }
+  /** @param value - New goalStartedAt date. */
+  set goalStartedAt(value: string) {
+    this._goalStartedAt = value;
   }
 
   // ─── Computed / Behaviour Methods ─────────────────────────────────────────

@@ -1,17 +1,15 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
-import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RecommendationsStore } from '../../../application/recommendations.store';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
-import { WeatherType } from '../../../domain/model/weather-type.enum';
 import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
 
 @Component({
   selector: 'app-recommendations',
-  imports: [RouterLink, NgClass, MatSlideToggle, TranslatePipe],
+  imports: [RouterLink, NgClass, TranslatePipe],
   templateUrl: './recommendations.html',
   styleUrl: './recommendations.css',
 })
@@ -21,14 +19,9 @@ export class RecommendationsView implements OnInit {
   private nutStore     = inject(NutritionStore);
   private translate    = inject(TranslateService);
 
-  protected manualCity = signal<string>('');
-  protected rightPanel = signal<'none'>('none');
-
   // ─── Demo bar state ───────────────────────────────────────────────────────
 
-  protected demoWeather    = signal<'hot' | 'cold'>('hot');
-  protected demoAdherence  = signal<'on_track' | 'at_risk' | 'dropped'>('on_track');
-  protected demoTravel     = signal<boolean>(false);
+  protected demoAdherence = signal<'on_track' | 'at_risk' | 'dropped'>('on_track');
 
   protected isPro = computed(() => this.iamStore.currentUser()?.isPro() ?? false);
 
@@ -55,6 +48,8 @@ export class RecommendationsView implements OnInit {
   });
 
   protected travelCity = computed(() => this.store.travelContext()?.city ?? '');
+
+  protected homeCity = computed(() => this.iamStore.currentUser()?.homeCity ?? 'your home city');
 
   protected sectionTitle = computed(() => {
     if (this.store.isTravelMode()) {
@@ -100,10 +95,6 @@ export class RecommendationsView implements OnInit {
     this.store.isTravelMode() ? '📍' : this.weatherIcon()
   );
 
-  protected travelDetectedAuto = computed(() =>
-    this.store.isTravelMode() && !this.store.travelContext()?.isManual
-  );
-
   protected session = computed(() => this.store.session());
 
   async ngOnInit(): Promise<void> {
@@ -113,11 +104,6 @@ export class RecommendationsView implements OnInit {
   }
 
   // ─── Demo bar actions ─────────────────────────────────────────────────────
-
-  setDemoWeather(type: 'hot' | 'cold'): void {
-    this.demoWeather.set(type);
-    this.store.setWeatherType(type === 'hot' ? WeatherType.HOT : WeatherType.COLD);
-  }
 
   setDemoAdherence(state: 'on_track' | 'at_risk' | 'dropped'): void {
     this.demoAdherence.set(state);
@@ -129,42 +115,14 @@ export class RecommendationsView implements OnInit {
     this.store.setAdherenceStatus(map[state]);
   }
 
-  onTravelToggleChange(event: MatSlideToggleChange): void {
-    if (event.checked) {
-      const city = this.manualCity().trim() || 'Cusco';
-      this.store.activateTravelMode(city, '', true);
-      this.demoTravel.set(true);
-    } else {
-      this.onTurnOffTravel();
-    }
-  }
-
-  toggleDemoTravel(): void {
-    const next = !this.demoTravel();
-    this.demoTravel.set(next);
-    if (next) {
-      this.store.activateTravelMode('Cusco', 'Peru', false);
-    } else {
-      this.store.deactivateTravelMode();
-    }
-  }
-
   // ─── Travel mode user actions ─────────────────────────────────────────────
 
-  onConfirmManualCity(): void {
-    const city = this.manualCity().trim();
-    if (!city) return;
-    this.store.activateTravelMode(city, '', true);
-    this.demoTravel.set(true);
-  }
-
-  onTurnOffTravel(): void {
+  onDisableAutoTravel(): void {
     this.store.deactivateTravelMode();
-    this.demoTravel.set(false);
-    this.manualCity.set('');
   }
 
-  onAddToLog(_cardId: number): void {}
+  // TODO: wire to NutritionStore once cross-BC integration is ready
+  onAddToLog(_cardId: number | string): void {}
 
   onAcceptSimplifiedPlan(): void {
     this.store.setAdherenceStatus(AdherenceStatus.ON_TRACK);

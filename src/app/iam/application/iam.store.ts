@@ -83,6 +83,8 @@ export class IamStore {
       birthday: user.birthday,
       biologicalSex: user.biologicalSex,
       createdAt: user.createdAt,
+      homeCity: user.homeCity,
+      goalStartedAt: user.goalStartedAt,
     };
     localStorage.setItem(SESSION_KEY, JSON.stringify(props));
   }
@@ -271,16 +273,42 @@ export class IamStore {
   }
 
   /**
-   * Changes the fitness goal, recalculates macros, and persists.
+   * Changes the fitness goal, stamps goalStartedAt to today, recalculates
+   * macros, and persists. Creates a new User instance so Angular's signal
+   * equality check detects the change.
    *
    * @param goal - The new {@link UserGoal}.
    */
   changeGoal(goal: UserGoal): void {
     const user = this._currentUser();
     if (!user) return;
-    user.goal = goal;
-    user.recalculateMacros();
-    this._currentUser.set(user);
+    const updated = new User({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      goal,
+      weight: user.weight,
+      height: user.height,
+      activityLevel: user.activityLevel,
+      plan: user.plan,
+      restrictions: user.restrictions,
+      medicalConditions: user.medicalConditions,
+      dailyCalorieTarget: user.dailyCalorieTarget,
+      proteinTarget: user.proteinTarget,
+      carbsTarget: user.carbsTarget,
+      fatTarget: user.fatTarget,
+      fiberTarget: user.fiberTarget,
+      streak: user.streak,
+      consecutiveMisses: user.consecutiveMisses,
+      birthday: user.birthday,
+      biologicalSex: user.biologicalSex,
+      createdAt: user.createdAt,
+      homeCity: user.homeCity,
+      goalStartedAt: new Date().toISOString().slice(0, 10),
+    });
+    updated.recalculateMacros();
+    this._currentUser.set(updated);
     this.persist();
   }
 

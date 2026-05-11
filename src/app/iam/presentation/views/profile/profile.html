@@ -134,8 +134,10 @@
                 {{ 'onboarding.goal_muscle_gain' | translate }}
               </button>
             </div>
-            @if (pendingGoalConfirm()) {
-              <p class="goal-confirm-text">{{ pendingGoalConfirm() }}</p>
+            @if (isGoalLocked()) {
+              <p class="goal-lock-note">
+                🔒 {{ 'body_progress.goal_locked_switch_disabled' | translate:{ days: daysUntilUnlock() } }}
+              </p>
             }
           </div>
 
@@ -286,4 +288,25 @@
     }
 
   </main>
+
+  <!-- ── Goal switch confirmation modal ──────────────────────────── -->
+  @if (showGoalLockConfirm()) {
+    <div class="profile-modal-overlay" (click)="onCancelGoalSwitch()">
+      <div class="profile-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+        <h3 class="profile-modal-title">{{ 'body_progress.goal_switch_confirm_title' | translate }}</h3>
+        <p class="profile-modal-desc">
+          {{ 'body_progress.goal_switch_confirm_desc' | translate:{ goal: goalName(selectedGoal()) } }}
+        </p>
+        <div class="profile-modal-actions">
+          <button class="profile-modal-btn profile-modal-btn--cancel" (click)="onCancelGoalSwitch()">
+            {{ 'body_progress.goal_switch_cancel_btn' | translate }}
+          </button>
+          <button class="profile-modal-btn profile-modal-btn--confirm" (click)="onConfirmGoalSwitch()">
+            {{ 'body_progress.goal_switch_confirm_btn' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
 </div>

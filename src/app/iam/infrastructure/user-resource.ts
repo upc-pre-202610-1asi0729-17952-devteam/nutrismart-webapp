@@ -50,6 +50,10 @@ export interface UserResource extends BaseResource {
   biologicalSex?: string;
   /** Account creation date in ISO format (YYYY-MM-DD). */
   createdAt?: string;
+  /** City the user considers home, used for travel detection. */
+  home_city?: string;
+  /** ISO date when the current goal was started. */
+  goal_started_at?: string;
 }
 
 /**

@@ -15,4 +15,9 @@ export const environment = {
   billingHistoryEndpointPath: '/billing-history',
   behavioralProgressEndpointPath: '/behavioral-progress',
   dailyBalanceEndpointPath: '/daily-balance',
+  locationSnapshotsEndpointPath: '/user-location-snapshots',
+  weatherSnapshotsEndpointPath: '/weather-snapshots',
+  recommendationCardsEndpointPath: '/recommendation-cards',
+  recommendationSessionsEndpointPath: '/recommendation-sessions',
+  travelContextsEndpointPath: '/travel-contexts',
 };

@@ -7,4 +7,10 @@ export const recommendationsRoutes: Routes = [
       import('./views/recommendations/recommendations').then(m => m.RecommendationsView),
     title: 'NutriSmart - Recommendations',
   },
+  {
+    path: 'location-search',
+    loadComponent: () =>
+      import('./views/location-search/location-search').then(m => m.LocationSearchView),
+    title: 'NutriSmart - Set Location',
+  },
 ];
