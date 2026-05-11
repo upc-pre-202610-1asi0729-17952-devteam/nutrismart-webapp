@@ -2,6 +2,13 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
 import { AdherenceStatus } from '../domain/model/adherence-status.enum';
 import { WeatherType } from '../domain/model/weather-type.enum';
 
+export interface LocationSnapshotResource extends BaseResource {
+  user_id: string;
+  city: string;
+  country: string;
+  recorded_at: string;
+}
+
 export interface WeatherContextResource extends BaseResource {
   city: string;
   country: string;
@@ -12,6 +19,7 @@ export interface WeatherContextResource extends BaseResource {
 }
 
 export interface TravelContextResource extends BaseResource {
+  user_id: string;
   city: string;
   country: string;
   is_active: boolean;
@@ -20,12 +28,23 @@ export interface TravelContextResource extends BaseResource {
 }
 
 export interface RecommendationSessionResource extends BaseResource {
-  user_id: number;
+  user_id: string;
   adherence_status: string;
   consecutive_misses: number;
   simplified_kcal_target: number;
   created_at: string;
   is_active: boolean;
+}
+
+export interface RecommendationCardResource extends BaseResource {
+  name: string;
+  description: string;
+  kcal: number;
+  protein: string;
+  badge: string;
+  weather_type: string | null;
+  travel_city: string | null;
+  card_type: string;
 }
 
 export interface WeatherContextResponse extends BaseResponse {
