@@ -30,8 +30,8 @@ export class MealEntryDetailComponent {
   /** Emitted when the user closes the dialog. */
   @Output() close = new EventEmitter<void>();
 
-  /** Emitted when the user confirms an edit with the new quantity. */
-  @Output() editConfirm = new EventEmitter<{ id: number; quantity: number }>();
+  /** Emitted when the user confirms a portion adjustment. */
+  @Output() portionAdjusted = new EventEmitter<{ id: number; quantity: number }>();
 
   private translate = inject(TranslateService);
 
@@ -69,7 +69,7 @@ export class MealEntryDetailComponent {
   confirmEdit(): void {
     const qty = this.newQuantity();
     if (qty <= 0) return;
-    this.editConfirm.emit({ id: this.entry().id, quantity: qty });
+    this.portionAdjusted.emit({ id: this.entry().id, quantity: qty });
     this.editMode.set(false);
   }
 

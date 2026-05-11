@@ -97,7 +97,7 @@ export class Pantry implements OnInit {
   async ngOnInit(): Promise<void> {
     this.pantryStore.fetchCatalog();
     await Promise.all([
-      this.nutritionStore.fetchMealEntries(),
+      this.nutritionStore.loadMealHistory(),
       this.pantryStore.fetchPantryItems(),
     ]);
   }

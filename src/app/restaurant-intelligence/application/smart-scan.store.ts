@@ -174,7 +174,7 @@ export class SmartScanStore {
 
   /** Fetches fresh daily meal records so macroAlerts reflects the current state. */
   async refreshDailyTotals(): Promise<void> {
-    await this.nutritionStore.fetchMealEntries();
+    await this.nutritionStore.loadMealHistory();
   }
 
   async scanFoodPlate(imageBase64: string): Promise<void> {
@@ -261,7 +261,7 @@ export class SmartScanStore {
           loggedAt:        timestamp,
           userId:          user.id,
         };
-        await this.nutritionStore.addMealEntry(new MealRecord(props));
+        await this.nutritionStore.recordMeal(new MealRecord(props));
       }
       this._loading.set(false);
       this.reset();
@@ -306,7 +306,7 @@ export class SmartScanStore {
     };
 
     try {
-      await this.nutritionStore.addMealEntry(new MealRecord(props));
+      await this.nutritionStore.recordMeal(new MealRecord(props));
       this._loading.set(false);
       this.reset();
     } catch {

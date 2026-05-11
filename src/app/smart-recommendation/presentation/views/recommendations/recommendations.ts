@@ -99,8 +99,8 @@ export class RecommendationsView implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.store.initialise();
-    await this.nutStore.fetchDailyBalance();
-    await this.nutStore.fetchMealEntries();
+    await this.nutStore.loadDailyBalance();
+    await this.nutStore.loadMealHistory();
   }
 
   // ─── Demo bar actions ─────────────────────────────────────────────────────

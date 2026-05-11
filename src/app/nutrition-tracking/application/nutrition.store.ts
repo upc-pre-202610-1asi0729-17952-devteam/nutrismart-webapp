@@ -146,7 +146,7 @@ export class NutritionStore {
    *
    * @returns Promise that resolves when loading is complete.
    */
-  async fetchMealEntries(): Promise<void> {
+  async loadMealHistory(): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
     this._loading.set(true);
@@ -176,7 +176,7 @@ export class NutritionStore {
    * @param record - The {@link MealRecord} entity to save.
    * @returns Promise that resolves when the record is saved.
    */
-  async addMealEntry(record: MealRecord): Promise<void> {
+  async recordMeal(record: MealRecord): Promise<void> {
     this._loading.set(true);
     this._error.set(null);
     return new Promise((resolve, reject) => {
@@ -201,7 +201,7 @@ export class NutritionStore {
    * @param record - The updated {@link MealRecord} entity.
    * @returns Promise that resolves when the update is complete.
    */
-  async updateMealEntry(record: MealRecord): Promise<void> {
+  async adjustPortion(record: MealRecord): Promise<void> {
     this._loading.set(true);
     this._error.set(null);
     return new Promise((resolve, reject) => {
@@ -226,7 +226,7 @@ export class NutritionStore {
    * @param id - Numeric ID of the record to delete.
    * @returns Promise that resolves when deletion is complete.
    */
-  async deleteMealEntry(id: number): Promise<void> {
+  async removeMeal(id: number): Promise<void> {
     this._loading.set(true);
     this._error.set(null);
     return new Promise((resolve, reject) => {
@@ -250,7 +250,7 @@ export class NutritionStore {
    *
    * @returns Promise that resolves when loading is complete.
    */
-  async fetchDailyBalance(): Promise<void> {
+  async loadDailyBalance(): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
     this._loading.set(true);

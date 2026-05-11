@@ -227,8 +227,8 @@ export class BehavioralDashboard implements OnInit {
       .ensureProgressForUser(user.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
-    void this.nutritionStore.fetchMealEntries();
-    void this.nutritionStore.fetchDailyBalance();
+    void this.nutritionStore.loadMealHistory();
+    void this.nutritionStore.loadDailyBalance();
   }
 
   private buildMealsVm(locale: string): DashboardMealVm[] {

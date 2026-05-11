@@ -8,6 +8,7 @@ import { NutritionStore } from '../../../application/nutrition.store';
 import { MealType } from '../../../domain/model/meal-type.enum';
 import { FoodItem } from '../../../domain/model/food-item.entity';
 import { MealRecord, MealRecordProps } from '../../../domain/model/meal-record.entity';
+import { MacronutrientDistribution } from '../../../domain/model/macronutrient-distribution.value-object';
 import { MealSectionComponent } from '../../components/meal-section/meal-section';
 import { FoodSearchPanelComponent } from '../../components/food-search-panel/food-search-panel';
 import { DailyBalancePanelComponent } from '../../components/daily-balance-panel/daily-balance-panel';
@@ -182,16 +183,9 @@ export class DailyLog implements OnInit {
 
   protected filteredTotals = computed(() =>
     this.filteredRecords().reduce(
-      (acc, r) => ({
-        calories: Math.round((acc.calories + r.calories) * 10) / 10,
-        protein: Math.round((acc.protein + r.protein) * 10) / 10,
-        carbs: Math.round((acc.carbs + r.carbs) * 10) / 10,
-        fat: Math.round((acc.fat + r.fat) * 10) / 10,
-        fiber: Math.round((acc.fiber + r.fiber) * 10) / 10,
-        sugar: Math.round((acc.sugar + r.sugar) * 10) / 10,
-      }),
-      { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, sugar: 0 },
-    ),
+      (acc, r) => acc.add(r.macros),
+      MacronutrientDistribution.zero(),
+    )
   );
 
   // ─── Computed ─────────────────────────────────────────────────────────────
@@ -314,8 +308,8 @@ export class DailyLog implements OnInit {
   // ─── Lifecycle ────────────────────────────────────────────────────────────
 
   async ngOnInit(): Promise<void> {
-    await this.nutritionStore.fetchMealEntries();
-    await this.nutritionStore.fetchDailyBalance();
+    await this.nutritionStore.loadMealHistory();
+    await this.nutritionStore.loadDailyBalance();
   }
 
   // ─── Date Navigation ──────────────────────────────────────────────────────
@@ -353,9 +347,9 @@ export class DailyLog implements OnInit {
     this.selectedEntry.set(record);
   }
 
-  /** Removes a meal record and refreshes the balance. */
-  async onRemoveEntry(id: number): Promise<void> {
-    await this.nutritionStore.deleteMealEntry(id);
+  /** Handles MealRemoved intent — delegates to the store. */
+  async onMealRemoved(id: number): Promise<void> {
+    await this.nutritionStore.removeMeal(id);
   }
 
   /**
@@ -373,8 +367,8 @@ export class DailyLog implements OnInit {
     }
   }
 
-  /** Persists the confirmed meal entry (MealRecorded event). */
-  async onConfirmAdd(payload: AddFoodPayload): Promise<void> {
+  /** Handles MealRecorded event — persists the confirmed entry. */
+  async onMealRecorded(payload: AddFoodPayload): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
 
@@ -405,7 +399,7 @@ export class DailyLog implements OnInit {
       userId: user.id,
     };
 
-    await this.nutritionStore.addMealEntry(new MealRecord(props));
+    await this.nutritionStore.recordMeal(new MealRecord(props));
     this.selectedFood.set(null);
     this.nutritionStore.clearSearch();
   }
@@ -421,11 +415,11 @@ export class DailyLog implements OnInit {
     this.nutritionStore.clearSearch();
   }
 
-  /** Updates a meal entry's quantity and recalculates macros proportionally. */
-  async onEditEntry(payload: { id: number; quantity: number }): Promise<void> {
+  /** Handles PortionAdjusted intent — recalculates macros proportionally. */
+  async onPortionAdjusted(payload: { id: number; quantity: number }): Promise<void> {
     const original = this.nutritionStore.mealRecords().find((r) => r.id === payload.id);
     if (!original || original.quantity === 0) return;
-    const ratio = payload.quantity / original.quantity;
+    const scaled = original.macros.scale(payload.quantity / original.quantity);
     const updated = new MealRecord({
       id: original.id,
       foodItemId: original.foodItemId,
@@ -434,16 +428,16 @@ export class DailyLog implements OnInit {
       mealType: original.mealType,
       quantity: payload.quantity,
       unit: original.unit,
-      calories: Math.round(original.calories * ratio * 10) / 10,
-      protein: Math.round(original.protein * ratio * 10) / 10,
-      carbs: Math.round(original.carbs * ratio * 10) / 10,
-      fat: Math.round(original.fat * ratio * 10) / 10,
-      fiber: Math.round(original.fiber * ratio * 10) / 10,
-      sugar: Math.round(original.sugar * ratio * 10) / 10,
+      calories: scaled.calories,
+      protein:  scaled.protein,
+      carbs:    scaled.carbs,
+      fat:      scaled.fat,
+      fiber:    scaled.fiber,
+      sugar:    scaled.sugar,
       loggedAt: original.loggedAt,
-      userId: original.userId,
+      userId:   original.userId,
     });
-    await this.nutritionStore.updateMealEntry(updated);
+    await this.nutritionStore.adjustPortion(updated);
     this.selectedEntry.set(null);
   }
 }
