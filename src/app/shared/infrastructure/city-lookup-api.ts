@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../../environments/environment.development';
 
 interface WeatherSnapshotResource {
   id: string;
