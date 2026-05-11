@@ -84,19 +84,19 @@ export class MenuAnalysisAssembler
   implements BaseAssembler<MenuAnalysis, MenuAnalysisResource, MenuAnalysisResponse>
 {
   toEntityFromResource(r: MenuAnalysisResource): MenuAnalysis {
-    const ranked: RankedDish[] = r.ranked_dishes.map(d => ({
-      rank:             d.rank,
-      name:             d.name,
-      nameKey:          d.name_key ?? null,
-      calories:         d.calories,
-      protein:          d.protein,
-      carbs:            d.carbs,
-      fat:              d.fat,
+    const ranked: RankedDish[] = r.ranked_dishes.map(d => new RankedDish({
+      rank:               d.rank,
+      name:               d.name,
+      nameKey:            d.name_key ?? null,
+      calories:           d.calories,
+      protein:            d.protein,
+      carbs:              d.carbs,
+      fat:                d.fat,
       compatibilityScore: d.compatibility_score,
-      justification:    d.justification,
-      justificationKey: d.justification_key ?? null,
+      justification:      d.justification,
+      justificationKey:   d.justification_key ?? null,
     }));
-    const restricted: RestrictedDish[] = r.restricted_dishes.map(d => ({
+    const restricted: RestrictedDish[] = r.restricted_dishes.map(d => new RestrictedDish({
       name:        d.name,
       nameKey:     d.name_key ?? null,
       restriction: d.restriction as DietaryRestriction,
