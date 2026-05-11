@@ -126,9 +126,13 @@ export class BodyProgressView implements OnInit {
     if (this.bmiOutdated()) return this.translate.instant('body_progress.bmi_outdated');
     const cat = this.store.currentMetric()?.bmiCategory();
     if (!cat) return '';
-    return cat === BmiCategory.NORMAL
-      ? this.translate.instant('body_progress.bmi_normal')
-      : cat;
+    switch (cat) {
+      case BmiCategory.NORMAL:      return this.translate.instant('body_progress.bmi_normal');
+      case BmiCategory.UNDERWEIGHT: return this.translate.instant('body_progress.bmi_category_underweight');
+      case BmiCategory.OVERWEIGHT:  return this.translate.instant('body_progress.bmi_category_overweight');
+      case BmiCategory.OBESE:       return this.translate.instant('body_progress.bmi_category_obese');
+      default:                      return cat;
+    }
   });
 
   protected bmiCategoryClass = computed(() => {
