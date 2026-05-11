@@ -37,14 +37,6 @@
       <span class="demo-label">{{ 'recommendations.demo_label' | translate }}</span>
 
       <div class="demo-group">
-        <span class="demo-group-label">{{ 'recommendations.demo_weather' | translate }}</span>
-        <button class="demo-btn" [class.demo-btn--active]="demoWeather() === 'hot'"
-                (click)="setDemoWeather('hot')">{{ 'recommendations.demo_hot' | translate }}</button>
-        <button class="demo-btn" [class.demo-btn--active]="demoWeather() === 'cold'"
-                (click)="setDemoWeather('cold')">{{ 'recommendations.demo_cold' | translate }}</button>
-      </div>
-
-      <div class="demo-group">
         <span class="demo-group-label">{{ 'recommendations.demo_adherence' | translate }}</span>
         <button class="demo-btn" [class.demo-btn--active]="demoAdherence() === 'on_track'"
                 (click)="setDemoAdherence('on_track')">{{ 'recommendations.demo_on_track' | translate }}</button>
@@ -52,14 +44,6 @@
                 (click)="setDemoAdherence('at_risk')">{{ 'recommendations.demo_at_risk' | translate }}</button>
         <button class="demo-btn demo-btn--danger" [class.demo-btn--active]="demoAdherence() === 'dropped'"
                 (click)="setDemoAdherence('dropped')">{{ 'recommendations.demo_dropped' | translate }}</button>
-      </div>
-
-      <div class="demo-group">
-        <span class="demo-group-label">{{ 'recommendations.demo_travel' | translate }}</span>
-        <button class="demo-btn" [class.demo-btn--active]="demoTravel()"
-                (click)="toggleDemoTravel()">
-          {{ demoTravel() ? ('recommendations.demo_travel_on' | translate) : ('recommendations.demo_travel_off' | translate) }}
-        </button>
       </div>
     </div>
 
@@ -230,62 +214,36 @@
           </div>
         </div>
 
-        <!-- Travel mode panel (T36) -->
+        <!-- Travel mode panel -->
         <div class="panel">
-          <div class="travel-toggle-row">
-            <h3 class="panel-title" style="margin:0">{{ 'recommendations.travel_panel_title' | translate }}</h3>
-            <mat-slide-toggle
-              color="primary"
-              [checked]="store.isTravelMode()"
-              (change)="onTravelToggleChange($event)">
-            </mat-slide-toggle>
-          </div>
+          <h3 class="panel-title">{{ 'recommendations.travel_panel_title' | translate }}</h3>
 
           @if (store.isTravelMode()) {
-            <p class="panel-subtitle">{{ 'recommendations.travel_panel_subtitle' | translate }}</p>
-
-            <!-- Detected city badge -->
-            @if (store.travelContext()?.city) {
-              <div class="travel-active-row">
-                <div class="travel-city-info">
-                  <span class="travel-city-name">{{ store.travelContext()?.city }}{{ store.travelContext()?.country ? ', ' + store.travelContext()?.country : '' }}</span>
-                  <span class="travel-city-sub">{{ store.travelContext()?.isManual ? ('recommendations.entered_manually' | translate) : ('recommendations.detected_auto' | translate) }}</span>
-                </div>
+            <!-- Auto-detected travel active -->
+            <div class="travel-active-row">
+              <div class="travel-city-info">
+                <span class="travel-city-name">
+                  {{ store.travelContext()?.city }}{{ store.travelContext()?.country ? ', ' + store.travelContext()?.country : '' }}
+                </span>
+                <span class="travel-city-sub">{{ 'recommendations.travel_auto_detected' | translate }}</span>
               </div>
-            }
+            </div>
 
-            <!-- Unrecognized city fallback (T36) -->
             @if (store.unrecognizedCity()) {
               <div class="unrecognized-city-msg">
                 <span>{{ 'recommendations.unrecognized_city' | translate }}</span>
-                <button class="link-btn" (click)="manualCity.set('Cusco'); onConfirmManualCity()">Cusco</button>
-                or
-                <button class="link-btn" (click)="manualCity.set('Arequipa'); onConfirmManualCity()">Arequipa</button>.
               </div>
             }
 
-            <!-- Manual city input (always visible in travel mode) -->
-            <div class="travel-input-row" style="margin-top:10px;">
-              <input class="travel-input"
-                     type="text"
-                     [placeholder]="'recommendations.city_placeholder' | translate"
-                     [value]="manualCity()"
-                     (input)="manualCity.set($any($event.target).value)"
-                     (keyup.enter)="onConfirmManualCity()" />
-              <button class="btn btn--primary btn--sm" (click)="onConfirmManualCity()">Go</button>
-            </div>
+            <button class="btn btn--ghost btn--sm" style="margin-top:10px" (click)="onDisableAutoTravel()">
+              {{ 'recommendations.travel_disable' | translate }}
+            </button>
 
           } @else {
-            <p class="panel-subtitle">{{ 'recommendations.travel_no_location' | translate }}</p>
-            <div class="travel-input-row">
-              <input class="travel-input"
-                     type="text"
-                     [placeholder]="'recommendations.city_placeholder' | translate"
-                     [value]="manualCity()"
-                     (input)="manualCity.set($any($event.target).value)"
-                     (keyup.enter)="onConfirmManualCity()" />
-              <button class="btn btn--primary btn--sm" (click)="onConfirmManualCity()">Go</button>
-            </div>
+            <!-- At home — informational -->
+            <p class="panel-subtitle">
+              {{ 'recommendations.travel_at_home' | translate:{ homeCity: homeCity() } }}
+            </p>
           }
         </div>
 

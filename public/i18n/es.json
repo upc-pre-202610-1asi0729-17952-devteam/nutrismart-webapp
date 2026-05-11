@@ -371,7 +371,10 @@
     "entered_manually": "Ingresado manualmente",
     "unrecognized_city": "⚠ Ciudad no reconocida. Prueba con una ciudad cercana como",
     "city_placeholder": "Ej.: Cusco, Arequipa...",
-    "header_badge_travel": "Modo Viaje · {{ city }} · {{ temp }}°C"
+    "header_badge_travel": "Modo Viaje · {{ city }} · {{ temp }}°C",
+    "travel_auto_detected": "Detectado automáticamente · fuera de casa",
+    "travel_disable": "Desactivar modo viaje",
+    "travel_at_home": "Las recomendaciones se adaptan automáticamente cuando viajas fuera de {{homeCity}}"
   },
   "body_progress": {
     "page_title": "Progreso Corporal",

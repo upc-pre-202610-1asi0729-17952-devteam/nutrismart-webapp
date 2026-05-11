@@ -371,7 +371,10 @@
     "entered_manually": "Entered manually",
     "unrecognized_city": "⚠ City not recognized. Try a nearby major city like",
     "city_placeholder": "E.g.: Cusco, Arequipa...",
-    "header_badge_travel": "Travel Mode · {{ city }} · {{ temp }}°C"
+    "header_badge_travel": "Travel Mode · {{ city }} · {{ temp }}°C",
+    "travel_auto_detected": "Detected automatically · away from home",
+    "travel_disable": "Disable travel mode",
+    "travel_at_home": "Recommendations adapt automatically when you travel away from {{homeCity}}"
   },
   "body_progress": {
     "page_title": "Body Progress",
