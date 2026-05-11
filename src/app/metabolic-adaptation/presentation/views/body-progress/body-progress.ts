@@ -1,12 +1,12 @@
 import { Component, computed, HostListener, inject, OnInit, signal } from '@angular/core';
+import { DecimalPipe, NgClass } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 const WEIGHT_MAX_KG = 500;
 const WAIST_MIN_CM  = 30;
 const WAIST_MAX_CM  = 200;
-import { DecimalPipe, NgClass } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MetabolicStore } from '../../../application/metabolic.store';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { BodyMetric, BmiCategory } from '../../../domain/model/body-metric.entity';
@@ -202,8 +202,9 @@ export class BodyProgressView implements OnInit {
 
   // ─── Date range toggle ────────────────────────────────────────────────────
 
-  async selectDays(days: 7 | 30 | 90): Promise<void> {
-    await this.store.loadHistory(days);
+  onDaysChange(event: MatButtonToggleChange): void {
+    const days = event.value as 7 | 30 | 90;
+    this.store.loadHistory(days);
   }
 
   // ─── Log weight modal ─────────────────────────────────────────────────────

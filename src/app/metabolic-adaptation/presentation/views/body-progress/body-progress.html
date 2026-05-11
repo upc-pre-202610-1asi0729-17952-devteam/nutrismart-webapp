@@ -178,7 +178,7 @@
           <h2 class="chart-title">{{ 'body_progress.chart_title' | translate }}</h2>
           <mat-button-toggle-group
             [value]="store.selectedDays()"
-            (change)="selectDays($any($event.value))"
+            (change)="onDaysChange($event)"
             class="day-toggle-mat">
             <mat-button-toggle [value]="7">{{ 'body_progress.days_7' | translate }}</mat-button-toggle>
             <mat-button-toggle [value]="30">{{ 'body_progress.days_30' | translate }}</mat-button-toggle>
