@@ -23,7 +23,7 @@ const profileRoutes = () =>
 
 /** Lazy-loads the dashboard child routes (behavioral-consistency context). */
 const dashboardRoutes = () =>
-  import('./behavioral-consistency/presentation/dashboard.routes').then((m) => m.dashboardRoutes);
+  import('./behavioral-consistency/presentation/behavioral-consistency.routes').then((m) => m.behavioralConsistencyRoutes);
 
 /** Lazy-loads the nutrition tracking child routes. */
 const nutritionRoutes = () =>
