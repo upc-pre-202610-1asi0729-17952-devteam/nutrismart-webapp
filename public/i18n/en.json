@@ -404,6 +404,7 @@
     "log_history": "Log History",
     "fat_alert": "Body fat has increased by more than 1.5% over the last two weeks. Consider reducing your caloric surplus to avoid excessive fat gain.",
     "composition_title": "Body Composition",
+    "composition_subtitle": "Separates muscle from fat so your progress reflects real changes in body composition.",
     "update_measurements": "Update measurements →",
     "lean_mass": "Lean mass",
     "fat_mass": "Fat mass",
@@ -462,6 +463,7 @@
     "tooltip_tdee": "TDEE (Total Daily Energy Expenditure) is your total calorie burn per day, including physical activity. Your caloric target is based on this.",
     "tooltip_body_fat": "Estimated body fat percentage calculated using the US Navy circumference method (waist and neck measurements).",
     "tooltip_lean_mass": "Lean mass is your total body weight minus fat — it includes muscle, bone, organs, and water.",
+    "tooltip_lean_bulk": "Lean bulk means gaining muscle while keeping fat gain minimal (typically below 1.5% per cycle). It requires a moderate caloric surplus with high protein intake.",
     "stagnation_banner_loss": "You've been logging consistently but your weight hasn't trended downward in this period. Consider reviewing your caloric deficit or nutrition quality.",
     "stagnation_banner_gain": "You've been logging consistently but your weight hasn't trended upward in this period. Consider reviewing your caloric surplus or training load."
   },

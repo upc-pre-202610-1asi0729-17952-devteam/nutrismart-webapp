@@ -404,6 +404,7 @@
     "log_history": "Historial de registros",
     "fat_alert": "La grasa corporal aumentó más del 1.5% en las últimas dos semanas. Considera reducir tu superávit calórico para evitar un exceso de grasa.",
     "composition_title": "Composición Corporal",
+    "composition_subtitle": "Separa músculo de grasa para que tu progreso refleje cambios reales en la composición corporal.",
     "update_measurements": "Actualizar medidas →",
     "lean_mass": "Masa magra",
     "fat_mass": "Masa grasa",
@@ -462,6 +463,7 @@
     "tooltip_tdee": "El TDEE es el gasto calórico total diario, incluyendo tu actividad física. Tu objetivo calórico se calcula a partir de este valor.",
     "tooltip_body_fat": "Porcentaje de grasa corporal estimado con el método de circunferencia de la Marina de EE. UU. (medidas de cintura y cuello).",
     "tooltip_lean_mass": "La masa magra es tu peso total menos la grasa — incluye músculo, hueso, órganos y agua.",
+    "tooltip_lean_bulk": "El lean bulk (volumen limpio) consiste en ganar músculo manteniendo la ganancia de grasa al mínimo (menos del 1.5% por ciclo). Requiere un superávit calórico moderado con alta ingesta de proteínas.",
     "stagnation_banner_loss": "Has estado registrando tu peso de forma constante, pero no ha bajado en este período. Considera revisar tu déficit calórico o la calidad de tu nutrición.",
     "stagnation_banner_gain": "Has estado registrando tu peso de forma constante, pero no ha subido en este período. Considera revisar tu superávit calórico o la carga de entrenamiento."
   },
