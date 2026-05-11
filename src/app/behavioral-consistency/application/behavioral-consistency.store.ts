@@ -7,6 +7,9 @@ import {
   BehavioralProgressProps,
 } from '../domain/model/behavioral-progress.entity';
 import { BehavioralConsistencyApi } from '../infrastructure/behavioral-consistency-api';
+import { DomainEventBus } from '../../shared/application/domain-event-bus';
+import { BehavioralDropDetected } from '../../shared/domain/behavioral-drop-detected.event';
+import { ConsistencyRecovered } from '../../shared/domain/consistency-recovered.event';
 
 /**
  * Central state store for the Behavioral Consistency bounded context.
@@ -18,8 +21,8 @@ import { BehavioralConsistencyApi } from '../infrastructure/behavioral-consisten
  */
 @Injectable({ providedIn: 'root' })
 export class BehavioralConsistencyStore {
-  /** API façade for HTTP operations on behavioral progress resources. */
   private behavioralConsistencyApi = inject(BehavioralConsistencyApi);
+  private eventBus                 = inject(DomainEventBus);
 
   /** Current behavioral progress for the active user, or `null` if not loaded. */
   private _currentProgress = signal<BehavioralProgress | null>(null);
@@ -160,14 +163,16 @@ export class BehavioralConsistencyStore {
     const progress = this._currentProgress();
     if (!progress) return;
 
+    const wasDegraded = progress.adherenceStatus !== AdherenceStatus.ON_TRACK;
     progress.markGoalMet(date);
     this._currentProgress.set(progress);
     this.persist();
+
+    if (wasDegraded && progress.isOnTrack()) {
+      this.eventBus.publish(new ConsistencyRecovered(progress.userId));
+    }
   }
 
-  /**
-   * Marks today's behavioral goal as missed and persists the change.
-   */
   markGoalMissed(): void {
     const progress = this._currentProgress();
     if (!progress) return;
@@ -175,6 +180,10 @@ export class BehavioralConsistencyStore {
     progress.markGoalMissed();
     this._currentProgress.set(progress);
     this.persist();
+
+    if (progress.consecutiveMisses >= 2) {
+      this.eventBus.publish(new BehavioralDropDetected(progress.userId, progress.consecutiveMisses));
+    }
   }
 
   /**

@@ -80,6 +80,7 @@ export class Profile {
     email: [this.iamStore.currentUser()?.email ?? '', [Validators.required, Validators.email]],
     birthday: [this.iamStore.currentUser()?.birthday ?? ''],
     biologicalSex: [this.iamStore.currentUser()?.biologicalSex ?? ''],
+    homeCity: [this.iamStore.currentUser()?.homeCity ?? ''],
   });
 
   // ─── Panel 2 — Physical details and goals ─────────────────────────────────
@@ -214,12 +215,13 @@ export class Profile {
       this.personalForm.markAllAsTouched();
       return;
     }
-    const { firstName, lastName, birthday, biologicalSex } = this.personalForm.value;
+    const { firstName, lastName, birthday, biologicalSex, homeCity } = this.personalForm.value;
     this.iamStore.updateProfile({
       firstName: firstName!,
       lastName: lastName!,
       birthday: birthday ?? '',
       biologicalSex: biologicalSex ?? '',
+      homeCity: homeCity ?? '',
     });
     this.personalSaved.set(true);
     setTimeout(() => this.personalSaved.set(false), 2500);

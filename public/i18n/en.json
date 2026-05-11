@@ -208,6 +208,8 @@
     "email": "Email address",
     "birthday": "Date of birth",
     "biological_sex": "Biological sex",
+    "home_city": "Home city",
+    "home_city_hint": "Used to detect when you are travelling and show local recommendations.",
     "weight": "Weight (kg)",
     "height": "Height (cm)",
     "activity_level": "Activity level",

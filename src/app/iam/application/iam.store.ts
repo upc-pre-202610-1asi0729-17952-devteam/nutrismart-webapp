@@ -241,6 +241,7 @@ export class IamStore {
       email: string;
       birthday: string;
       biologicalSex: string;
+      homeCity: string;
     }>,
   ): void {
     const user = this._currentUser();
@@ -250,6 +251,7 @@ export class IamStore {
     if (updates.email !== undefined) user.email = updates.email;
     if (updates.birthday !== undefined) user.birthday = updates.birthday;
     if (updates.biologicalSex !== undefined) user.biologicalSex = updates.biologicalSex;
+    if (updates.homeCity !== undefined) user.homeCity = updates.homeCity;
     this._currentUser.set(user);
     this.persist();
   }

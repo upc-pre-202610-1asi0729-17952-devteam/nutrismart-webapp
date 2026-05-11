@@ -78,6 +78,13 @@
               </div>
             </div>
 
+            <div class="form-group">
+              <label class="form-label">{{ 'profile.home_city' | translate }}</label>
+              <input type="text" formControlName="homeCity" class="form-input"
+                     [placeholder]="'profile.home_city_hint' | translate" />
+              <span class="field-hint">{{ 'profile.home_city_hint' | translate }}</span>
+            </div>
+
             <div class="plan-info-card">
               <span class="plan-badge">{{ iamStore.currentUser()?.plan }}</span>
               <span class="plan-renewal">{{ 'profile.nav_personal' | translate }}</span>

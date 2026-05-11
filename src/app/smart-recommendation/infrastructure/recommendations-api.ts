@@ -128,20 +128,23 @@ export class RecommendationsApi extends BaseApi {
       );
   }
 
-  getStrategyAdjustment(status: AdherenceStatus): Observable<RecommendationSession> {
-    const params = new HttpParams().set('user_id', '1').set('is_active', 'true');
+  getStrategyAdjustment(status: AdherenceStatus, userId: string): Observable<RecommendationSession> {
+    const params = new HttpParams().set('user_id', userId).set('is_active', 'true');
     return this.http
       .get<RecommendationSessionResource[]>(`${BASE}${environment.recommendationSessionsEndpointPath}`, { params })
       .pipe(
-        map(list => {
-          const resource = list[0];
+        map(list => list[0]),
+        map(resource => {
           const consecutiveMisses = status === AdherenceStatus.DROPPED ? 5
             : status === AdherenceStatus.AT_RISK ? 2 : 0;
-          return this.sessionAssembler.toEntityFromResource({
-            ...resource,
-            adherence_status:   status,
-            consecutive_misses: consecutiveMisses,
-          });
+          return { ...resource, adherence_status: status, consecutive_misses: consecutiveMisses };
+        }),
+        map(patched => {
+          this.http.patch(
+            `${BASE}${environment.recommendationSessionsEndpointPath}/${patched.id}`,
+            { adherence_status: patched.adherence_status, consecutive_misses: patched.consecutive_misses },
+          ).pipe(retry(2), catchError(err => throwError(() => err))).subscribe();
+          return this.sessionAssembler.toEntityFromResource(patched);
         }),
         retry(2),
         catchError(err => throwError(() => err)),
@@ -159,38 +162,48 @@ export class RecommendationsApi extends BaseApi {
       );
   }
 
-  activateTravelMode(city: string, country: string): Observable<TravelContext> {
-    const params = new HttpParams().set('user_id', '1');
+  activateTravelMode(city: string, country: string, userId: string): Observable<TravelContext> {
+    const params = new HttpParams().set('user_id', userId);
     return this.http
       .get<TravelContextResource[]>(`${BASE}${environment.travelContextsEndpointPath}`, { params })
       .pipe(
         map(list => list[0]),
-        map(resource => {
-          const patch: Partial<TravelContextResource> = {
-            city,
-            country,
-            is_active:    true,
-            is_manual:    false,
-            activated_at: new Date().toISOString(),
-          };
-          return { ...resource, ...patch } as TravelContextResource;
+        map(resource => ({
+          ...resource,
+          city,
+          country,
+          is_active:    true,
+          is_manual:    false,
+          activated_at: new Date().toISOString(),
+        } as TravelContextResource)),
+        map(patched => {
+          this.http.patch(
+            `${BASE}${environment.travelContextsEndpointPath}/${patched.id}`,
+            { city: patched.city, country: patched.country, is_active: true, is_manual: false, activated_at: patched.activated_at },
+          ).pipe(retry(2), catchError(err => throwError(() => err))).subscribe();
+          return this.travelAssembler.toEntityFromResource(patched);
         }),
+        retry(2),
         catchError(err => throwError(() => err)),
-        map(updated => this.travelAssembler.toEntityFromResource(updated)),
       );
   }
 
-  deactivateTravelMode(): Observable<TravelContext> {
-    const params = new HttpParams().set('user_id', '1');
+  deactivateTravelMode(userId: string): Observable<TravelContext> {
+    const params = new HttpParams().set('user_id', userId);
     return this.http
       .get<TravelContextResource[]>(`${BASE}${environment.travelContextsEndpointPath}`, { params })
       .pipe(
-        map(list => {
-          const resource = list[0];
-          const patch: Partial<TravelContextResource> = {
-            city: '', country: '', is_active: false, is_manual: false, activated_at: '',
-          };
-          return this.travelAssembler.toEntityFromResource({ ...resource, ...patch });
+        map(list => list[0]),
+        map(resource => ({
+          ...resource,
+          city: '', country: '', is_active: false, is_manual: false, activated_at: '',
+        } as TravelContextResource)),
+        map(patched => {
+          this.http.patch(
+            `${BASE}${environment.travelContextsEndpointPath}/${patched.id}`,
+            { city: '', country: '', is_active: false, is_manual: false, activated_at: '' },
+          ).pipe(retry(2), catchError(err => throwError(() => err))).subscribe();
+          return this.travelAssembler.toEntityFromResource(patched);
         }),
         retry(2),
         catchError(err => throwError(() => err)),

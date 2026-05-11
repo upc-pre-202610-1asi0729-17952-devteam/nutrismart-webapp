@@ -1,16 +1,27 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom } from 'rxjs';
 import { RecommendationsApi, RecommendationCard } from '../infrastructure/recommendations-api';
 import { WeatherContext } from '../domain/model/weather-context.entity';
 import { TravelContext } from '../domain/model/travel-context.entity';
 import { RecommendationSession } from '../domain/model/recommendation-session.entity';
 import { AdherenceStatus } from '../domain/model/adherence-status.enum';
 import { IamStore } from '../../iam/application/iam.store';
+import { BehavioralConsistencyStore } from '../../behavioral-consistency/application/behavioral-consistency.store';
+import { AdherenceStatus as BcAdherenceStatus } from '../../behavioral-consistency/domain/model/adherence-status.enum';
+import { DomainEventBus } from '../../shared/application/domain-event-bus';
+import { BehavioralDropDetected } from '../../shared/domain/behavioral-drop-detected.event';
+import { ConsistencyRecovered } from '../../shared/domain/consistency-recovered.event';
 
 @Injectable({ providedIn: 'root' })
 export class RecommendationsStore {
   private api      = inject(RecommendationsApi);
   private iamStore = inject(IamStore);
+  private bcStore  = inject(BehavioralConsistencyStore);
+  private eventBus = inject(DomainEventBus);
+
+  constructor() {
+    this.subscribeToAdherenceEvents();
+  }
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
@@ -118,6 +129,8 @@ export class RecommendationsStore {
         const weatherCards = await firstValueFrom(this.api.getWeatherRecommendations(weather.weatherType));
         this._weatherCards.set(weatherCards);
       }
+
+      await this.syncAdherenceFromBehavioralContext(user.id, userId);
     } catch {
       this._error.set('recommendations.error_load_failed');
     } finally {
@@ -125,11 +138,41 @@ export class RecommendationsStore {
     }
   }
 
+  private async syncAdherenceFromBehavioralContext(userId: number, userIdStr: string): Promise<void> {
+    await firstValueFrom(this.bcStore.ensureProgressForUser(userId));
+    const bcStatus = this.bcStore.adherenceStatus();
+    if (!bcStatus) return;
+
+    const mapped = this.mapBcAdherenceStatus(bcStatus);
+    if (mapped === AdherenceStatus.ON_TRACK) return;
+
+    const session = await firstValueFrom(this.api.getStrategyAdjustment(mapped, userIdStr));
+    this._session.set(session);
+
+    if (session.requiresPreventiveRecommendation()) {
+      const card = await firstValueFrom(this.api.getPreventiveRecommendation());
+      this._preventiveCard.set(card);
+    } else if (session.requiresInterventionRecommendation()) {
+      const card = await firstValueFrom(this.api.getInterventionRecommendation());
+      this._interventionCard.set(card);
+    }
+  }
+
+  private mapBcAdherenceStatus(bcStatus: BcAdherenceStatus): AdherenceStatus {
+    switch (bcStatus) {
+      case BcAdherenceStatus.DROPPED:   return AdherenceStatus.DROPPED;
+      case BcAdherenceStatus.AT_RISK:
+      case BcAdherenceStatus.OFF_TRACK: return AdherenceStatus.AT_RISK;
+      default:                          return AdherenceStatus.ON_TRACK;
+    }
+  }
+
   async setAdherenceStatus(status: AdherenceStatus): Promise<void> {
+    const userId = String(this.iamStore.currentUser()?.id ?? '1');
     this._loading.set(true);
     this._error.set(null);
     try {
-      const session = await firstValueFrom(this.api.getStrategyAdjustment(status));
+      const session = await firstValueFrom(this.api.getStrategyAdjustment(status, userId));
       this._session.set(session);
 
       if (session.requiresPreventiveRecommendation()) {
@@ -152,11 +195,12 @@ export class RecommendationsStore {
   }
 
   async activateTravelMode(city: string, country: string, manual: boolean = false): Promise<void> {
+    const userId = String(this.iamStore.currentUser()?.id ?? '1');
     this._loading.set(true);
     this._unrecognizedCity.set(false);
     this._error.set(null);
     try {
-      const ctx = await firstValueFrom(this.api.activateTravelMode(city, country));
+      const ctx = await firstValueFrom(this.api.activateTravelMode(city, country, userId));
       ctx.isManual = manual;
       this._travelContext.set(ctx);
 
@@ -175,11 +219,12 @@ export class RecommendationsStore {
   }
 
   async deactivateTravelMode(): Promise<void> {
+    const userId = String(this.iamStore.currentUser()?.id ?? '1');
     this._loading.set(true);
     this._unrecognizedCity.set(false);
     this._error.set(null);
     try {
-      const ctx = await firstValueFrom(this.api.deactivateTravelMode());
+      const ctx = await firstValueFrom(this.api.deactivateTravelMode(userId));
       this._travelContext.set(ctx);
       this._travelCards.set([]);
     } catch {
@@ -195,5 +240,21 @@ export class RecommendationsStore {
 
   allowLocation(): void {
     this._locationDenied.set(false);
+  }
+
+  private subscribeToAdherenceEvents(): void {
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof BehavioralDropDetected))
+      .subscribe(async (e) => {
+        const event = e as BehavioralDropDetected;
+        const status = event.consecutiveMisses >= 5 ? AdherenceStatus.DROPPED : AdherenceStatus.AT_RISK;
+        await this.setAdherenceStatus(status);
+      });
+
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof ConsistencyRecovered))
+      .subscribe(async () => {
+        await this.setAdherenceStatus(AdherenceStatus.ON_TRACK);
+      });
   }
 }
