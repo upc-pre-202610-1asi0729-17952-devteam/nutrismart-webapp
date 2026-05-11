@@ -23,16 +23,6 @@ export class MetabolicApi extends BaseApi {
     );
   }
 
-  updateHeight(userId: number | string, heightCm: number, weightKg: number): Observable<BodyMetric> {
-    return this.metricEp.create(new BodyMetric({
-      id: 0, userId: userId as number, weightKg, heightCm,
-      loggedAt: new Date().toISOString(),
-    })).pipe(
-      retry(2),
-      catchError(err => throwError(() => err)),
-    );
-  }
-
   getMetricsHistory(
     userId: number | string,
     days: number,
@@ -114,6 +104,18 @@ export class MetabolicApi extends BaseApi {
           return this.compositionEp.update(comp, String(existing.id) as unknown as number).pipe(retry(2));
         }
         return this.compositionEp.create(comp).pipe(retry(2));
+      }),
+      catchError(err => throwError(() => err)),
+    );
+  }
+
+  getAllMetricsHistory(userId: number | string, goalStartedAt?: string): Observable<BodyMetric[]> {
+    return this.metricEp.getByUserId(userId).pipe(
+      map(metrics => {
+        const scoped = goalStartedAt
+          ? metrics.filter(m => new Date(m.loggedAt) >= new Date(goalStartedAt))
+          : metrics;
+        return scoped.sort((a, b) => new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime());
       }),
       catchError(err => throwError(() => err)),
     );

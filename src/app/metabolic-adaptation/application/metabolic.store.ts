@@ -32,6 +32,7 @@ export class MetabolicStore {
   private _currentMetric     = signal<BodyMetric | null>(null);
   private _metricsHistory    = signal<BodyMetric[]>([]);
   private _stagnationHistory = signal<BodyMetric[]>([]);
+  private _allHistory        = signal<BodyMetric[]>([]);
   private _composition       = signal<BodyComposition | null>(null);
   private _selectedDays      = signal<7 | 30 | 90>(7);
   private _loading           = signal<boolean>(false);
@@ -56,6 +57,9 @@ export class MetabolicStore {
 
   /** Last error message, or null. */
   readonly error          = this._error.asReadonly();
+
+  /** All weight entries for the current goal cycle, newest first. */
+  readonly allHistory     = this._allHistory.asReadonly();
 
   // ─── Goal Lock Computeds ──────────────────────────────────────────────────
 
@@ -203,23 +207,6 @@ export class MetabolicStore {
     }
   }
 
-  async updateHeight(heightCm: number): Promise<void> {
-    const user = this.iamStore.currentUser();
-    if (!user) return;
-    this._loading.set(true);
-    this._error.set(null);
-    try {
-      const metric = await firstValueFrom(
-        this.api.updateHeight(user.id, heightCm, this._currentMetric()?.weightKg ?? user.weight),
-      );
-      this._currentMetric.set(metric);
-    } catch {
-      this._error.set('body_progress.error_save_failed');
-    } finally {
-      this._loading.set(false);
-    }
-  }
-
   async setTargetWeight(targetWeightKg: number): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
@@ -311,6 +298,22 @@ export class MetabolicStore {
     const h      = user.height / 100;
     const target = Math.round(24.9 * h * h * 10) / 10;
     await this.setTargetWeight(target);
+  }
+
+  async loadAllHistory(): Promise<void> {
+    const user = this.iamStore.currentUser();
+    if (!user) return;
+    const goalStartedAt = user.goalStartedAt || undefined;
+    this._loading.set(true);
+    this._error.set(null);
+    try {
+      const all = await firstValueFrom(this.api.getAllMetricsHistory(user.id, goalStartedAt));
+      this._allHistory.set(all);
+    } catch {
+      this._error.set('body_progress.error_load_failed');
+    } finally {
+      this._loading.set(false);
+    }
   }
 
 }
