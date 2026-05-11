@@ -63,7 +63,9 @@
     <div class="metric-card" [class.metric-card--stale]="bmiOutdated()">
       <div class="tooltip-trigger">
         <span class="metric-card-label">{{ 'body_progress.metric_bmi' | translate }}</span>
-        <button class="icon-btn" type="button" (click)="toggleTooltip('bmi')">
+        <button class="icon-btn" type="button"
+                [attr.aria-label]="'body_progress.aria_more_info' | translate"
+                (click)="toggleTooltip('bmi')">
           <span class="material-icons">info_outline</span>
         </button>
       </div>
@@ -86,7 +88,9 @@
       <div class="metric-card">
         <div class="tooltip-trigger">
           <span class="metric-card-label">{{ 'body_progress.metric_body_fat' | translate }}</span>
-          <button class="icon-btn" type="button" (click)="toggleTooltip('body_fat')">
+          <button class="icon-btn" type="button"
+                  [attr.aria-label]="'body_progress.aria_more_info' | translate"
+                  (click)="toggleTooltip('body_fat')">
             <span class="material-icons">info_outline</span>
           </button>
         </div>
@@ -103,7 +107,9 @@
       <div class="metric-card">
         <div class="tooltip-trigger">
           <span class="metric-card-label">{{ 'body_progress.metric_bmr' | translate }}</span>
-          <button class="icon-btn" type="button" (click)="toggleTooltip('bmr')">
+          <button class="icon-btn" type="button"
+                  [attr.aria-label]="'body_progress.aria_more_info' | translate"
+                  (click)="toggleTooltip('bmr')">
             <span class="material-icons">info_outline</span>
           </button>
         </div>
@@ -123,7 +129,9 @@
       <div class="metric-card">
         <div class="tooltip-trigger">
           <span class="metric-card-label">{{ 'body_progress.metric_lean_mass' | translate }}</span>
-          <button class="icon-btn" type="button" (click)="toggleTooltip('lean_mass')">
+          <button class="icon-btn" type="button"
+                  [attr.aria-label]="'body_progress.aria_more_info' | translate"
+                  (click)="toggleTooltip('lean_mass')">
             <span class="material-icons">info_outline</span>
           </button>
         </div>
@@ -140,7 +148,9 @@
       <div class="metric-card">
         <div class="tooltip-trigger">
           <span class="metric-card-label">{{ 'body_progress.metric_tdee' | translate }}</span>
-          <button class="icon-btn" type="button" (click)="toggleTooltip('tdee')">
+          <button class="icon-btn" type="button"
+                  [attr.aria-label]="'body_progress.aria_more_info' | translate"
+                  (click)="toggleTooltip('tdee')">
             <span class="material-icons">info_outline</span>
           </button>
         </div>
@@ -240,7 +250,7 @@
                         : ('body_progress.not_set' | translate) }}
                   </span>
                   <button class="icon-btn" type="button"
-                          [title]="'body_progress.edit_goal' | translate"
+                          [attr.aria-label]="'body_progress.aria_edit_goal' | translate"
                           (click)="onStartEditGoal()">
                     <span class="material-icons">edit</span>
                   </button>
@@ -254,11 +264,14 @@
                          [placeholder]="'body_progress.placeholder_goal' | translate"
                          min="0.1" max="500" step="0.1" />
                   <button class="icon-btn icon-btn--confirm" type="button"
+                          [attr.aria-label]="'body_progress.aria_confirm' | translate"
                           [disabled]="goalInputInvalid()"
                           (click)="onSaveGoalInline()">
                     <span class="material-icons">check</span>
                   </button>
-                  <button class="icon-btn" type="button" (click)="onCancelGoalInline()">
+                  <button class="icon-btn" type="button"
+                          [attr.aria-label]="'body_progress.aria_cancel' | translate"
+                          (click)="onCancelGoalInline()">
                     <span class="material-icons">close</span>
                   </button>
                 </div>
@@ -342,7 +355,9 @@
             <div class="composition-item">
               <div class="tooltip-trigger">
                 <span class="composition-item-label">{{ 'body_progress.lean_bulk' | translate }}</span>
-                <button class="icon-btn" type="button" (click)="toggleTooltip('lean_bulk')">
+                <button class="icon-btn" type="button"
+                        [attr.aria-label]="'body_progress.aria_more_info' | translate"
+                        (click)="toggleTooltip('lean_bulk')">
                   <span class="material-icons">info_outline</span>
                 </button>
               </div>
@@ -378,7 +393,9 @@
 
       <div class="modal-header">
         <h3 class="modal-title">{{ 'body_progress.update_measurements' | translate }}</h3>
-        <button class="icon-btn" type="button" (click)="onCloseCompositionModal()">
+        <button class="icon-btn" type="button"
+                [attr.aria-label]="'common.close' | translate"
+                (click)="onCloseCompositionModal()">
           <span class="material-icons">close</span>
         </button>
       </div>
@@ -471,7 +488,9 @@
 
       <div class="modal-header">
         <h3 class="modal-title">{{ 'body_progress.log_weight_panel' | translate }}</h3>
-        <button class="icon-btn" type="button" (click)="onCloseLogModal()">
+        <button class="icon-btn" type="button"
+                [attr.aria-label]="'common.close' | translate"
+                (click)="onCloseLogModal()">
           <span class="material-icons">close</span>
         </button>
       </div>
