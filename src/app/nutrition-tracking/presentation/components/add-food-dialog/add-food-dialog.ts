@@ -41,6 +41,9 @@ export class AddFoodDialogComponent implements OnInit {
   /** User's daily calorie goal — used for impact indicator. */
   dailyGoal = input<number>(1800);
 
+  /** Meal types available to select (time-gated by parent for today). */
+  availableMealTypes = input<MealType[]>([MealType.BREAKFAST, MealType.LUNCH, MealType.SNACK, MealType.DINNER]);
+
   /** Emitted with the full payload when the user confirms. */
   @Output() confirm = new EventEmitter<AddFoodPayload>();
 
@@ -51,7 +54,6 @@ export class AddFoodDialogComponent implements OnInit {
 
   protected get currentLang(): string { return this.translate.currentLang ?? 'en'; }
 
-  protected mealTypes        = Object.values(MealType);
   protected selectedMealType: MealType = MealType.LUNCH;
   protected quantity = signal(100);
 
@@ -87,7 +89,10 @@ export class AddFoodDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.quantity.set(this.food().servingSize > 0 ? this.food().servingSize : 100);
-    this.selectedMealType = this.targetMealType();
+    const preferred = this.targetMealType();
+    this.selectedMealType = this.availableMealTypes().includes(preferred)
+      ? preferred
+      : this.availableMealTypes()[0];
   }
 
   onQuantityChange(event: Event): void {

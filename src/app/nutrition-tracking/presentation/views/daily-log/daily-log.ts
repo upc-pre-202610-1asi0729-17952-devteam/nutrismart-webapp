@@ -49,8 +49,25 @@ export class DailyLog implements OnInit {
   /** Food selected from the search panel — drives the Add Food dialog. */
   protected selectedFood = signal<FoodItem | null>(null);
 
-  /** Meal type where the user wants to add the selected food. */
-  protected targetMealType = signal<MealType>(MealType.LUNCH);
+  /** Active meal type for the current hour — pre-selects the dialog picker. */
+  protected targetMealType = computed((): MealType => {
+    if (!this.isToday()) return MealType.LUNCH;
+    const hour = new Date().getHours();
+    if (hour >= 17) return MealType.DINNER;
+    if (hour >= 11) return MealType.LUNCH;
+    return MealType.BREAKFAST;
+  });
+
+  /** Meal types the user may log right now (time-gated for today). */
+  protected availableMealTypes = computed((): MealType[] => {
+    if (!this.isToday()) return [MealType.BREAKFAST, MealType.LUNCH, MealType.SNACK, MealType.DINNER];
+    const hour = new Date().getHours();
+    const types: MealType[] = [MealType.BREAKFAST];
+    if (hour >= 11) types.push(MealType.LUNCH);
+    types.push(MealType.SNACK);
+    if (hour >= 17) types.push(MealType.DINNER);
+    return types;
+  });
 
   /** Food blocked due to restriction — drives the Restricted Item dialog. */
   protected blockedFood = signal<FoodItem | null>(null);

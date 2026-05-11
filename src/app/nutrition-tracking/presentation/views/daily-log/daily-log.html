@@ -146,6 +146,7 @@
     <app-add-food-dialog
       [food]="selectedFood()!"
       [targetMealType]="targetMealType()"
+      [availableMealTypes]="availableMealTypes()"
       [currentConsumed]="filteredTotals().calories"
       [dailyGoal]="dailyGoalTarget()"
       (confirm)="onConfirmAdd($event)"

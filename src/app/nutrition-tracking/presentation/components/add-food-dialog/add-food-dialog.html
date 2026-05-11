@@ -41,7 +41,7 @@
     <div class="meal-type-section">
       <label class="field-label">{{ 'nutrition.meal_type' | translate }}</label>
       <div class="meal-type-buttons" role="group" [attr.aria-label]="'nutrition.meal_type' | translate">
-        @for (mt of mealTypes; track mt) {
+        @for (mt of availableMealTypes(); track mt) {
           <button class="meal-btn"
                   [class.meal-btn--active]="selectedMealType === mt"
                   [attr.aria-pressed]="selectedMealType === mt"
