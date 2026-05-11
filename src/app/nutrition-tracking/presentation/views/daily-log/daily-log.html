@@ -16,17 +16,6 @@
     }
   </header>
 
-  <!-- ── Empty-day banner ─────────────────────────────────── -->
-  @if (filteredRecords().length === 0 && isEditable()) {
-    <div class="no-meals-banner" role="status">
-      <span class="no-meals-banner__icon">🍽</span>
-      <div class="no-meals-banner__body">
-        <strong>{{ 'nutrition.no_meals_banner_title' | translate }}</strong>
-        <span>{{ 'nutrition.no_meals_banner_desc' | translate }}</span>
-      </div>
-    </div>
-  }
-
   <!-- ── Date Navigator ────────────────────────────────────── -->
   <div class="date-nav">
     <button class="date-nav-btn"
@@ -46,6 +35,17 @@
       &#8250;
     </button>
   </div>
+
+  <!-- ── Empty-day banner ─────────────────────────────────── -->
+  @if (filteredRecords().length === 0 && isEditable()) {
+    <div class="no-meals-banner" role="status">
+      <span class="no-meals-banner__icon">🍽</span>
+      <div class="no-meals-banner__body">
+        <strong>{{ 'nutrition.no_meals_banner_title' | translate }}</strong>
+        <span>{{ 'nutrition.no_meals_banner_desc' | translate }}</span>
+      </div>
+    </div>
+  }
 
   <!-- ── Read-only notice ───────────────────────────────────── -->
   @if (!isEditable()) {

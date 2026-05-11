@@ -58,8 +58,26 @@ export class DailyLog implements OnInit {
   /** Whether the food search modal is open. */
   protected showFoodSearchModal = signal(false);
 
-  /** Demo state: which meals are marked as skipped (T21). */
-  private skippedMeals = signal<MealType[]>([]);
+  /** End hour (exclusive) of each meal window per the domain model (Swimlane 5). */
+  private readonly mealWindowEnds: Partial<Record<MealType, number>> = {
+    [MealType.BREAKFAST]: 10,
+    [MealType.LUNCH]:     15,
+    [MealType.DINNER]:    22,
+  };
+
+  /**
+   * MealSkipped domain event — derived from time-window detection.
+   * A meal type is skipped when its window has passed (today only)
+   * and no records exist for that window.
+   */
+  private skippedMeals = computed(() => {
+    if (!this.isToday()) return [];
+    const currentHour = new Date().getHours();
+    const groups = this.filteredByMealType();
+    return (Object.entries(this.mealWindowEnds) as [MealType, number][])
+      .filter(([type, endHour]) => currentHour >= endHour && groups[type].length === 0)
+      .map(([type]) => type);
+  });
 
   protected showGoalMetAlert = signal(false);
 
@@ -71,7 +89,10 @@ export class DailyLog implements OnInit {
 
   constructor() {
     effect(() => {
-      if (this.allMealsLogged() && !this.isDailyGoalExceeded()) {
+      const calories = this.filteredTotals().calories;
+      const goal = this.dailyGoalTarget();
+      const withinRange = calories >= goal * 0.9 && !this.isDailyGoalExceeded();
+      if (this.allMealsLogged() && withinRange) {
         this.showGoalMetAlert.set(true);
         setTimeout(() => this.showGoalMetAlert.set(false), 4000);
       }
@@ -192,11 +213,11 @@ export class DailyLog implements OnInit {
       {
         label: 'nutrition.calories',
         value: t.calories,
-        target: user?.dailyCalorieTarget ?? 1800,
+        target: this.dailyGoalTarget(),
         unit: 'kcal',
         color: '#2d9e8f',
-        percent: pct(t.calories, user?.dailyCalorieTarget ?? 1800),
-        over: t.calories > (user?.dailyCalorieTarget ?? 1800),
+        percent: pct(t.calories, this.dailyGoalTarget()),
+        over: t.calories > this.dailyGoalTarget(),
       },
       {
         label: 'nutrition.protein',
