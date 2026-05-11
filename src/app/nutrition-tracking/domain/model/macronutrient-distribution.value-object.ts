@@ -1,3 +1,5 @@
+import { NutritionalRiskLevel } from './nutritional-risk-level.enum';
+
 /**
  * Immutable Value Object representing a complete macronutrient snapshot.
  *
@@ -51,6 +53,24 @@ export class MacronutrientDistribution {
       fiber:    r(this.fiber),
       sugar:    r(this.sugar),
     });
+  }
+
+  /**
+   * Classifies the caloric risk of this distribution in context.
+   *
+   * HIGH     — combined total meets or exceeds the daily goal.
+   * MODERATE — combined total reaches ≥ 80 % of the goal.
+   * SAFE     — combined total stays below 80 %.
+   *
+   * @param dailyGoal      - User's daily calorie target.
+   * @param alreadyConsumed - Calories already logged for the day.
+   */
+  classifyRisk(dailyGoal: number, alreadyConsumed: number): NutritionalRiskLevel {
+    if (dailyGoal <= 0) return NutritionalRiskLevel.SAFE;
+    const ratio = (alreadyConsumed + this.calories) / dailyGoal;
+    if (ratio >= 1.0) return NutritionalRiskLevel.HIGH;
+    if (ratio >= 0.8) return NutritionalRiskLevel.MODERATE;
+    return NutritionalRiskLevel.SAFE;
   }
 
   /** Zero-value distribution — identity element for {@link add}. */

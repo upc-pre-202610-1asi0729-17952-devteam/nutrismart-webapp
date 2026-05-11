@@ -9,6 +9,7 @@ import { MealType } from '../../../domain/model/meal-type.enum';
 import { FoodItem } from '../../../domain/model/food-item.entity';
 import { MealRecord, MealRecordProps } from '../../../domain/model/meal-record.entity';
 import { MacronutrientDistribution } from '../../../domain/model/macronutrient-distribution.value-object';
+import { DailyIntake } from '../../../domain/model/daily-intake.entity';
 import { MealSectionComponent } from '../../components/meal-section/meal-section';
 import { FoodSearchPanelComponent } from '../../components/food-search-panel/food-search-panel';
 import { DailyBalancePanelComponent } from '../../components/daily-balance-panel/daily-balance-panel';
@@ -198,6 +199,21 @@ export class DailyLog implements OnInit {
   /** Active (burned) calories for the selected date — 0 when no record exists. */
   protected readonly selectedActive = computed(() => this.selectedDailyIntake()?.active ?? 0);
 
+  /**
+   * Always-non-null DailyIntake for the selected date.
+   * Uses the real record when available; builds a synthetic one from the user profile otherwise.
+   */
+  private readonly effectiveDailyIntake = computed(() =>
+    this.selectedDailyIntake() ?? new DailyIntake({
+      id: 0,
+      userId: this.iamStore.currentUser()?.id ?? 0,
+      date: this.selectedDate().toISOString().slice(0, 10),
+      dailyGoal: this.iamStore.currentUser()?.dailyCalorieTarget ?? 1800,
+      consumed: 0,
+      active: 0,
+    })
+  );
+
   /** Daily calorie goal for the selected date, falling back to user profile then 1800. */
   protected dailyGoalTarget = computed(() =>
     this.selectedDailyIntake()?.dailyGoal ?? this.iamStore.currentUser()?.dailyCalorieTarget ?? 1800
@@ -221,54 +237,61 @@ export class DailyLog implements OnInit {
   /** Summary bar macro descriptors. */
   protected summaryMacros = computed(() => {
     const user = this.iamStore.currentUser();
-    const t = this.filteredTotals();
-    const pct = (v: number, max: number) => Math.min(Math.round((v / max) * 100), 100);
+    const t    = this.filteredTotals();
+    const pct  = (v: number, max: number) => Math.min(Math.round((v / max) * 100), 100);
+    const targets = {
+      protein: user?.proteinTarget ?? 120,
+      carbs:   user?.carbsTarget   ?? 200,
+      fat:     user?.fatTarget     ?? 55,
+      fiber:   user?.fiberTarget   ?? 25,
+    };
+    const valid = this.effectiveDailyIntake().validateMacronutrients(t, targets);
 
     return [
       {
-        label: 'nutrition.calories',
-        value: t.calories,
-        target: this.dailyGoalTarget(),
-        unit: 'kcal',
-        color: '#2d9e8f',
+        label:   'nutrition.calories',
+        value:   t.calories,
+        target:  this.dailyGoalTarget(),
+        unit:    'kcal',
+        color:   '#2d9e8f',
         percent: pct(t.calories, this.dailyGoalTarget()),
-        over: t.calories > this.dailyGoalTarget(),
+        over:    !valid.calories,
       },
       {
-        label: 'nutrition.protein',
-        value: t.protein,
-        target: user?.proteinTarget ?? 120,
-        unit: 'g',
-        color: '#2d9e8f',
-        percent: pct(t.protein, user?.proteinTarget ?? 120),
-        over: t.protein > (user?.proteinTarget ?? 120),
+        label:   'nutrition.protein',
+        value:   t.protein,
+        target:  targets.protein,
+        unit:    'g',
+        color:   '#2d9e8f',
+        percent: pct(t.protein, targets.protein),
+        over:    !valid.protein,
       },
       {
-        label: 'nutrition.carbohydrates',
-        value: t.carbs,
-        target: user?.carbsTarget ?? 200,
-        unit: 'g',
-        color: '#f59e0b',
-        percent: pct(t.carbs, user?.carbsTarget ?? 200),
-        over: t.carbs > (user?.carbsTarget ?? 200),
+        label:   'nutrition.carbohydrates',
+        value:   t.carbs,
+        target:  targets.carbs,
+        unit:    'g',
+        color:   '#f59e0b',
+        percent: pct(t.carbs, targets.carbs),
+        over:    !valid.carbs,
       },
       {
-        label: 'nutrition.fats',
-        value: t.fat,
-        target: user?.fatTarget ?? 55,
-        unit: 'g',
-        color: '#f87171',
-        percent: pct(t.fat, user?.fatTarget ?? 55),
-        over: t.fat > (user?.fatTarget ?? 55),
+        label:   'nutrition.fats',
+        value:   t.fat,
+        target:  targets.fat,
+        unit:    'g',
+        color:   '#f87171',
+        percent: pct(t.fat, targets.fat),
+        over:    !valid.fat,
       },
       {
-        label: 'nutrition.fiber',
-        value: t.fiber,
-        target: user?.fiberTarget ?? 25,
-        unit: 'g',
-        color: '#a3e635',
-        percent: pct(t.fiber, user?.fiberTarget ?? 25),
-        over: t.fiber > (user?.fiberTarget ?? 25),
+        label:   'nutrition.fiber',
+        value:   t.fiber,
+        target:  targets.fiber,
+        unit:    'g',
+        color:   '#a3e635',
+        percent: pct(t.fiber, targets.fiber),
+        over:    !valid.fiber,
       },
     ];
   });

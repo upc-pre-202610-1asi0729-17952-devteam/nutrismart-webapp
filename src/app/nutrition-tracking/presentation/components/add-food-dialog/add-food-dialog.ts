@@ -2,6 +2,7 @@ import { Component, computed, EventEmitter, inject, input, OnInit, Output, signa
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { FoodItem } from '../../../domain/model/food-item.entity';
 import { MealType } from '../../../domain/model/meal-type.enum';
+import { NutritionalRiskLevel } from '../../../domain/model/nutritional-risk-level.enum';
 
 /**
  * Payload emitted when the user confirms adding a food to the log.
@@ -54,6 +55,7 @@ export class AddFoodDialogComponent implements OnInit {
 
   protected get currentLang(): string { return this.translate.currentLang ?? 'en'; }
 
+  protected readonly RiskLevel = NutritionalRiskLevel;
   protected selectedMealType: MealType = MealType.LUNCH;
   protected quantity = signal(100);
 
@@ -79,13 +81,10 @@ export class AddFoodDialogComponent implements OnInit {
     return Math.min(Math.round(((this.currentConsumed() + this.nutrients().calories) / goal) * 100), 150);
   });
 
-  /** Impact level: 'safe' < 80%, 'warning' 80–99%, 'danger' ≥ 100%. */
-  protected impactLevel = computed((): 'safe' | 'warning' | 'danger' => {
-    const p = this.impactPercent();
-    if (p >= 100) return 'danger';
-    if (p >= 80) return 'warning';
-    return 'safe';
-  });
+  /** Nutritional risk of adding this food given the current daily consumption. */
+  protected impactLevel = computed((): NutritionalRiskLevel =>
+    this.nutrients().classifyRisk(this.dailyGoal(), this.currentConsumed())
+  );
 
   ngOnInit(): void {
     this.quantity.set(this.food().servingSize > 0 ? this.food().servingSize : 100);

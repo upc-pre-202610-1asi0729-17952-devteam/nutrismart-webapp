@@ -73,12 +73,12 @@
     </div>
 
     <!-- Calorie impact indicator -->
-    <div class="impact-bar" [class.impact-bar--warning]="impactLevel() === 'warning'" [class.impact-bar--danger]="impactLevel() === 'danger'">
+    <div class="impact-bar" [class.impact-bar--warning]="impactLevel() === RiskLevel.MODERATE" [class.impact-bar--danger]="impactLevel() === RiskLevel.HIGH">
       <div class="impact-track">
         <div class="impact-fill" [style.width.%]="impactPercent()"></div>
       </div>
       <span class="impact-label">
-        @if (impactLevel() === 'danger') {
+        @if (impactLevel() === RiskLevel.HIGH) {
           {{ 'nutrition.impact_exceeded' | translate: { percent: impactPercent() } }}
         } @else {
           {{ 'nutrition.impact_approaching' | translate: { percent: impactPercent() } }}
