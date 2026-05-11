@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, retry } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment.development';
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { LocationSnapshot } from '../domain/model/location-snapshot.entity';
@@ -16,6 +17,7 @@ import {
   TravelContextResource,
   RecommendationSessionResource,
   RecommendationCardResource,
+  FoodCardResource,
 } from './recommendations-resource';
 import {
   LocationSnapshotAssembler,
@@ -38,6 +40,7 @@ const BASE = environment.apiBaseUrl;
 @Injectable({ providedIn: 'root' })
 export class RecommendationsApi extends BaseApi {
   private http                  = inject(HttpClient);
+  private translate             = inject(TranslateService);
   private locationAssembler     = new LocationSnapshotAssembler();
   private weatherAssembler      = new WeatherContextAssembler();
   private travelAssembler       = new TravelContextAssembler();
@@ -72,7 +75,8 @@ export class RecommendationsApi extends BaseApi {
   getWeatherRecommendations(weatherType: WeatherType): Observable<RecommendationCard[]> {
     const params = new HttpParams()
       .set('weather_type', weatherType)
-      .set('card_type', 'weather');
+      .set('card_type', 'weather')
+      .set('_expand', 'food');
     return this.http
       .get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params })
       .pipe(
@@ -85,7 +89,8 @@ export class RecommendationsApi extends BaseApi {
   getTravelRecommendations(city: string): Observable<RecommendationCard[]> {
     const params = new HttpParams()
       .set('travel_city', city)
-      .set('card_type', 'travel');
+      .set('card_type', 'travel')
+      .set('_expand', 'food');
     return this.http
       .get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params })
       .pipe(
@@ -96,7 +101,9 @@ export class RecommendationsApi extends BaseApi {
   }
 
   getPreventiveRecommendation(): Observable<RecommendationCard> {
-    const params = new HttpParams().set('card_type', 'preventive');
+    const params = new HttpParams()
+      .set('card_type', 'preventive')
+      .set('_expand', 'food');
     return this.http
       .get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params })
       .pipe(
@@ -107,7 +114,9 @@ export class RecommendationsApi extends BaseApi {
   }
 
   getInterventionRecommendation(): Observable<RecommendationCard> {
-    const params = new HttpParams().set('card_type', 'intervention');
+    const params = new HttpParams()
+      .set('card_type', 'intervention')
+      .set('_expand', 'food');
     return this.http
       .get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params })
       .pipe(
@@ -211,6 +220,15 @@ export class RecommendationsApi extends BaseApi {
   }
 
   private toCard(r: RecommendationCardResource): RecommendationCard {
-    return { id: r.id, name: r.name, description: r.description, kcal: r.kcal, protein: r.protein, badge: r.badge };
+    const food: FoodCardResource = r.food!;
+    const es = this.translate.currentLang === 'es';
+    return {
+      id:          r.id,
+      name:        es ? food.name_es : food.name,
+      description: es ? r.description_es : r.description,
+      kcal:        food.kcal,
+      protein:     `P ${food.protein_g}g`,
+      badge:       r.badge,
+    };
   }
 }

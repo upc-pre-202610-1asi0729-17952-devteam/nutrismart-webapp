@@ -1,5 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { filter, firstValueFrom } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 import { RecommendationsApi, RecommendationCard } from '../infrastructure/recommendations-api';
 import { WeatherContext } from '../domain/model/weather-context.entity';
 import { TravelContext } from '../domain/model/travel-context.entity';
@@ -14,13 +15,15 @@ import { ConsistencyRecovered } from '../../shared/domain/consistency-recovered.
 
 @Injectable({ providedIn: 'root' })
 export class RecommendationsStore {
-  private api      = inject(RecommendationsApi);
-  private iamStore = inject(IamStore);
-  private bcStore  = inject(BehavioralConsistencyStore);
-  private eventBus = inject(DomainEventBus);
+  private api       = inject(RecommendationsApi);
+  private iamStore  = inject(IamStore);
+  private bcStore   = inject(BehavioralConsistencyStore);
+  private eventBus  = inject(DomainEventBus);
+  private translate = inject(TranslateService);
 
   constructor() {
     this.subscribeToAdherenceEvents();
+    this.subscribeToLangChange();
   }
 
   // ─── Private Signals ──────────────────────────────────────────────────────
@@ -240,6 +243,14 @@ export class RecommendationsStore {
 
   allowLocation(): void {
     this._locationDenied.set(false);
+  }
+
+  private subscribeToLangChange(): void {
+    this.translate.onLangChange.subscribe(() => {
+      if (this.iamStore.currentUser()) {
+        void this.initialise();
+      }
+    });
   }
 
   private subscribeToAdherenceEvents(): void {

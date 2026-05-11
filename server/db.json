@@ -148,7 +148,10 @@
       "height": 150,
       "activityLevel": "SEDENTARY",
       "plan": "PREMIUM",
-      "restrictions": [],
+      "restrictions": [
+        "LACTOSE_FREE",
+        "GLUTEN_FREE"
+      ],
       "medicalConditions": [],
       "dailyCalorieTarget": 1472,
       "proteinTarget": 112,
@@ -436,6 +439,74 @@
       "loggedAt": "2026-05-10T17:00:00.000Z",
       "userId": "e9vvnrmqq",
       "id": "z-0T-DTLdyQ"
+    },
+    {
+      "foodItemId": 0,
+      "foodItemName": "Grilled chicken breast",
+      "foodItemNameEs": "Pechuga de pollo a la plancha",
+      "mealType": "LUNCH",
+      "quantity": 150,
+      "unit": "g",
+      "calories": 248,
+      "protein": 47,
+      "carbs": 0,
+      "fat": 5,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-11T20:05:59.550Z",
+      "userId": "e9vvnrmqq",
+      "id": "Sqaz28cQPhU"
+    },
+    {
+      "foodItemId": 0,
+      "foodItemName": "White rice",
+      "foodItemNameEs": "Arroz blanco",
+      "mealType": "LUNCH",
+      "quantity": 180,
+      "unit": "g",
+      "calories": 234,
+      "protein": 4,
+      "carbs": 52,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-11T20:05:59.550Z",
+      "userId": "e9vvnrmqq",
+      "id": "SwerHJRqCjY"
+    },
+    {
+      "foodItemId": 0,
+      "foodItemName": "Mixed salad",
+      "foodItemNameEs": "Ensalada mixta",
+      "mealType": "LUNCH",
+      "quantity": 80,
+      "unit": "g",
+      "calories": 45,
+      "protein": 2,
+      "carbs": 8,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-11T20:05:59.550Z",
+      "userId": "e9vvnrmqq",
+      "id": "HhfIc1Qihq8"
+    },
+    {
+      "foodItemId": 0,
+      "foodItemName": "Hake ceviche",
+      "foodItemNameEs": "Ceviche de merluza",
+      "mealType": "SNACK",
+      "quantity": 1,
+      "unit": "serving",
+      "calories": 280,
+      "protein": 38,
+      "carbs": 12,
+      "fat": 8,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-11T20:08:32.129Z",
+      "userId": "e9vvnrmqq",
+      "id": "hq7jWDxm7fQ"
     }
   ],
   "foods": [
@@ -608,6 +679,248 @@
       "fat_per_100g": 0.4,
       "fiber_per_100g": 2.6,
       "sugar_per_100g": 1.7,
+      "restrictions": []
+    },
+    {
+      "id": "12",
+      "name": "Chicken and Cucumber Salad",
+      "name_es": "Ensalada de pollo y pepino",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "kcal": 320,
+      "protein_g": 32,
+      "calories_per_100g": 107,
+      "protein_per_100g": 10.7,
+      "carbs_per_100g": 5,
+      "fat_per_100g": 4,
+      "fiber_per_100g": 1.5,
+      "sugar_per_100g": 2,
+      "restrictions": []
+    },
+    {
+      "id": "13",
+      "name": "Hake ceviche",
+      "name_es": "Ceviche de merluza",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "kcal": 280,
+      "protein_g": 38,
+      "calories_per_100g": 93,
+      "protein_per_100g": 12.7,
+      "carbs_per_100g": 6,
+      "fat_per_100g": 3,
+      "fiber_per_100g": 1,
+      "sugar_per_100g": 2,
+      "restrictions": [
+        "SEAFOOD_FREE"
+      ]
+    },
+    {
+      "id": "14",
+      "name": "Gazpacho with wholemeal toast",
+      "name_es": "Gazpacho con tostada integral",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "kcal": 210,
+      "protein_g": 6,
+      "calories_per_100g": 70,
+      "protein_per_100g": 2,
+      "carbs_per_100g": 30,
+      "fat_per_100g": 4,
+      "fiber_per_100g": 4,
+      "sugar_per_100g": 8,
+      "restrictions": []
+    },
+    {
+      "id": "15",
+      "name": "Lentil soup with bread",
+      "name_es": "Sopa de lentejas con pan",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "kcal": 420,
+      "protein_g": 22,
+      "calories_per_100g": 105,
+      "protein_per_100g": 5.5,
+      "carbs_per_100g": 55,
+      "fat_per_100g": 5,
+      "fiber_per_100g": 9,
+      "sugar_per_100g": 4,
+      "restrictions": []
+    },
+    {
+      "id": "16",
+      "name": "Beef stew with sweet potato",
+      "name_es": "Estofado de res con camote",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "kcal": 480,
+      "protein_g": 38,
+      "calories_per_100g": 120,
+      "protein_per_100g": 9.5,
+      "carbs_per_100g": 28,
+      "fat_per_100g": 14,
+      "fiber_per_100g": 3,
+      "sugar_per_100g": 5,
+      "restrictions": []
+    },
+    {
+      "id": "17",
+      "name": "Tacu tacu with beans",
+      "name_es": "Tacu tacu con frijoles",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "kcal": 410,
+      "protein_g": 18,
+      "calories_per_100g": 137,
+      "protein_per_100g": 6,
+      "carbs_per_100g": 60,
+      "fat_per_100g": 8,
+      "fiber_per_100g": 7,
+      "sugar_per_100g": 2,
+      "restrictions": []
+    },
+    {
+      "id": "18",
+      "name": "Quinoa soup",
+      "name_es": "Sopa de quinoa",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "kcal": 380,
+      "protein_g": 22,
+      "calories_per_100g": 95,
+      "protein_per_100g": 5.5,
+      "carbs_per_100g": 50,
+      "fat_per_100g": 7,
+      "fiber_per_100g": 6,
+      "sugar_per_100g": 3,
+      "restrictions": []
+    },
+    {
+      "id": "19",
+      "name": "Cusco-style chicken broth",
+      "name_es": "Caldo de pollo estilo Cusco",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "kcal": 190,
+      "protein_g": 28,
+      "calories_per_100g": 48,
+      "protein_per_100g": 7,
+      "carbs_per_100g": 8,
+      "fat_per_100g": 3,
+      "fiber_per_100g": 1,
+      "sugar_per_100g": 2,
+      "restrictions": []
+    },
+    {
+      "id": "20",
+      "name": "Chicken-stuffed causa",
+      "name_es": "Causa rellena de pollo",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "kcal": 420,
+      "protein_g": 18,
+      "calories_per_100g": 140,
+      "protein_per_100g": 6,
+      "carbs_per_100g": 45,
+      "fat_per_100g": 12,
+      "fiber_per_100g": 2,
+      "sugar_per_100g": 3,
+      "restrictions": []
+    },
+    {
+      "id": "21",
+      "name": "Rocoto relleno",
+      "name_es": "Rocoto relleno",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "kcal": 340,
+      "protein_g": 18,
+      "calories_per_100g": 113,
+      "protein_per_100g": 6,
+      "carbs_per_100g": 20,
+      "fat_per_100g": 16,
+      "fiber_per_100g": 3,
+      "sugar_per_100g": 5,
+      "restrictions": []
+    },
+    {
+      "id": "22",
+      "name": "Chupe de camarones",
+      "name_es": "Chupe de camarones",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "kcal": 380,
+      "protein_g": 22,
+      "calories_per_100g": 95,
+      "protein_per_100g": 5.5,
+      "carbs_per_100g": 22,
+      "fat_per_100g": 14,
+      "fiber_per_100g": 2,
+      "sugar_per_100g": 3,
+      "restrictions": [
+        "SEAFOOD_FREE"
+      ]
+    },
+    {
+      "id": "23",
+      "name": "Adobo arequipeño",
+      "name_es": "Adobo arequipeño",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "kcal": 420,
+      "protein_g": 32,
+      "calories_per_100g": 140,
+      "protein_per_100g": 10.7,
+      "carbs_per_100g": 12,
+      "fat_per_100g": 22,
+      "fiber_per_100g": 1,
+      "sugar_per_100g": 4,
+      "restrictions": []
+    },
+    {
+      "id": "24",
+      "name": "Grilled chicken with steamed vegetables",
+      "name_es": "Pollo a la plancha con verduras al vapor",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "kcal": 380,
+      "protein_g": 42,
+      "calories_per_100g": 95,
+      "protein_per_100g": 10.5,
+      "carbs_per_100g": 15,
+      "fat_per_100g": 8,
+      "fiber_per_100g": 4,
+      "sugar_per_100g": 3,
+      "restrictions": []
+    },
+    {
+      "id": "25",
+      "name": "Simple egg bowl with toast",
+      "name_es": "Bol de huevo con tostada",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "kcal": 280,
+      "protein_g": 24,
+      "calories_per_100g": 140,
+      "protein_per_100g": 12,
+      "carbs_per_100g": 20,
+      "fat_per_100g": 10,
+      "fiber_per_100g": 2,
+      "sugar_per_100g": 2,
       "restrictions": []
     }
   ],
@@ -2239,6 +2552,499 @@
         false
       ],
       "id": "uxrqF1SFkRk"
+    },
+    {
+      "userId": "e9vvnrmqq",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "cIN3odVzJyU"
+    },
+    {
+      "userId": "e9vvnrmqq",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "raNPakM606w"
+    },
+    {
+      "userId": "e9vvnrmqq",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "H0OfD8bHmjg"
+    },
+    {
+      "userId": "e9vvnrmqq",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "p-voMtnxmhI"
+    },
+    {
+      "userId": "e9vvnrmqq",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "YFHoRcut6Zw"
+    },
+    {
+      "userId": "e9vvnrmqq",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "7lxJ_YqEsds"
+    },
+    {
+      "userId": "e9vvnrmqq",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "BzPxygRta1k"
+    },
+    {
+      "userId": "e9vvnrmqq",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "Ax07iTx0bD4"
+    },
+    {
+      "userId": "e9vvnrmqq",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "IEM0BYLR9yg"
+    },
+    {
+      "userId": "e9vvnrmqq",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "Hn6ieP4jF-Q"
+    },
+    {
+      "userId": "e9vvnrmqq",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "n42plfFklRE"
+    },
+    {
+      "userId": "e9vvnrmqq",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "uwOobZClrB4"
+    },
+    {
+      "userId": "e9vvnrmqq",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "SvNOwCX41_g"
+    },
+    {
+      "userId": "e9vvnrmqq",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "Z-erb2aJcTc"
+    },
+    {
+      "userId": "e9vvnrmqq",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "tKwBRHrsPd0"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "tR-uKGe4EDs"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "Cke71XPs5Js"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "qjvyyHm6CLI"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "iiDQtI4HT3w"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "fuvfLc8uCPU"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "kppvu5PEYfA"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "1ELVAAjUL3I"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "SWnA1G7im34"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "RW8ME9cWvRg"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "6X9XWEggoPA"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "EXsd1Ju9gl8"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "9xekKtGToZM"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "UfNBM22-Hw8"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "hpctG3nQD2g"
     }
   ],
   "daily-balance": [
@@ -2355,157 +3161,143 @@
   "recommendation-cards": [
     {
       "id": "rc-1",
-      "name": "Chicken and Cucumber Salad",
-      "description": "Refreshing · High in protein · Hydrating",
-      "kcal": 320,
-      "protein": "P 32g",
       "badge": "Light",
       "weather_type": "HOT",
       "travel_city": null,
-      "card_type": "weather"
+      "card_type": "weather",
+      "food_id": 12,
+      "description": "Refreshing · High in protein · Hydrating",
+      "description_es": "Refrescante · Alto en proteína · Hidratante"
     },
     {
       "id": "rc-2",
-      "name": "Hake ceviche",
-      "description": "Peruvian dish · Fresh and high in protein",
-      "kcal": 280,
-      "protein": "P 38g",
       "badge": "Light",
       "weather_type": "HOT",
       "travel_city": null,
-      "card_type": "weather"
+      "card_type": "weather",
+      "food_id": 13,
+      "description": "Peruvian dish · Fresh and high in protein",
+      "description_es": "Plato peruano · Fresco y alto en proteína"
     },
     {
       "id": "rc-3",
-      "name": "Gazpacho with wholemeal toast",
-      "description": "Cold soup · Filling without making you feel hot",
-      "kcal": 210,
-      "protein": "P 6g",
       "badge": "Light",
       "weather_type": "HOT",
       "travel_city": null,
-      "card_type": "weather"
+      "card_type": "weather",
+      "food_id": 14,
+      "description": "Cold soup · Filling without making you feel hot",
+      "description_es": "Sopa fría · Reconfortante sin dar calor"
     },
     {
       "id": "rc-4",
-      "name": "Lentil soup with bread",
-      "description": "High in iron and plant-based protein",
-      "kcal": 420,
-      "protein": "P 22g",
       "badge": "H. Calories",
       "weather_type": "COLD",
       "travel_city": null,
-      "card_type": "weather"
+      "card_type": "weather",
+      "food_id": 15,
+      "description": "High in iron and plant-based protein",
+      "description_es": "Alto en hierro y proteína vegetal"
     },
     {
       "id": "rc-5",
-      "name": "Beef stew with sweet potato",
-      "description": "Comfort food · High in protein",
-      "kcal": 280,
-      "protein": "P 38g",
       "badge": "Light",
       "weather_type": "COLD",
       "travel_city": null,
-      "card_type": "weather"
+      "card_type": "weather",
+      "food_id": 16,
+      "description": "Comfort food · High in protein",
+      "description_es": "Reconfortante · Alto en proteína"
     },
     {
       "id": "rc-6",
-      "name": "Tacu tacu with beans",
-      "description": "Peruvian dish · Comfort food",
-      "kcal": 210,
-      "protein": "P 18g",
       "badge": "Light",
       "weather_type": "COLD",
       "travel_city": null,
-      "card_type": "weather"
+      "card_type": "weather",
+      "food_id": 17,
+      "description": "Peruvian dish · Comfort food",
+      "description_es": "Plato peruano · Reconfortante"
     },
     {
       "id": "rc-10",
-      "name": "Quinoa soup",
-      "description": "Andean soup · High in plant protein",
-      "kcal": 380,
-      "protein": "P 22g",
       "badge": "Local",
       "weather_type": null,
       "travel_city": "Cusco",
-      "card_type": "travel"
+      "card_type": "travel",
+      "food_id": 18,
+      "description": "Andean soup · High in plant protein",
+      "description_es": "Sopa andina · Alto en proteína vegetal"
     },
     {
       "id": "rc-11",
-      "name": "Cusco-style chicken broth",
-      "description": "Restorative · Low in fat",
-      "kcal": 190,
-      "protein": "P 28g",
       "badge": "Local",
       "weather_type": null,
       "travel_city": "Cusco",
-      "card_type": "travel"
+      "card_type": "travel",
+      "food_id": 19,
+      "description": "Restorative · Low in fat",
+      "description_es": "Restaurador · Bajo en grasa"
     },
     {
       "id": "rc-12",
-      "name": "Chicken-stuffed causa",
-      "description": "Cold dish · Lactose-free",
-      "kcal": 420,
-      "protein": "P 18g",
       "badge": "Local",
       "weather_type": null,
       "travel_city": "Cusco",
-      "card_type": "travel"
+      "card_type": "travel",
+      "food_id": 20,
+      "description": "Cold dish · Lactose-free",
+      "description_es": "Plato frío · Sin lactosa"
     },
     {
       "id": "rc-16",
-      "name": "Rocoto relleno",
-      "description": "Stuffed pepper · Traditional Arequipa dish",
-      "kcal": 340,
-      "protein": "P 18g",
       "badge": "Local",
       "weather_type": null,
       "travel_city": "Arequipa",
-      "card_type": "travel"
+      "card_type": "travel",
+      "food_id": 21,
+      "description": "Stuffed pepper · Traditional Arequipa dish",
+      "description_es": "Pimiento relleno · Plato tradicional arequipeño"
     },
     {
       "id": "rc-17",
-      "name": "Chupe de camarones",
-      "description": "Shrimp soup · Andean comfort food",
-      "kcal": 280,
-      "protein": "P 22g",
       "badge": "Local",
       "weather_type": null,
       "travel_city": "Arequipa",
-      "card_type": "travel"
+      "card_type": "travel",
+      "food_id": 22,
+      "description": "Shrimp soup · Andean comfort food",
+      "description_es": "Sopa de camarones · Comfort food andino"
     },
     {
       "id": "rc-18",
-      "name": "Adobo arequipeño",
-      "description": "Marinated pork · Local specialty",
-      "kcal": 420,
-      "protein": "P 32g",
       "badge": "Local",
       "weather_type": null,
       "travel_city": "Arequipa",
-      "card_type": "travel"
+      "card_type": "travel",
+      "food_id": 23,
+      "description": "Marinated pork · Local specialty",
+      "description_es": "Cerdo marinado · Especialidad local"
     },
     {
       "id": "rc-20",
-      "name": "Grilled chicken with steamed vegetables",
-      "description": "Simple · High protein · Compatible with your deficit",
-      "kcal": 380,
-      "protein": "P 42g",
       "badge": "Easy start",
       "weather_type": null,
       "travel_city": null,
-      "card_type": "preventive"
+      "card_type": "preventive",
+      "food_id": 24,
+      "description": "Simple · High protein · Compatible with your deficit",
+      "description_es": "Simple · Alto en proteína · Compatible con tu déficit"
     },
     {
       "id": "rc-21",
-      "name": "Simple egg bowl with toast",
-      "description": "Low effort · Nutritionally complete · Quick to prepare",
-      "kcal": 280,
-      "protein": "P 24g",
       "badge": "Day 1",
       "weather_type": null,
       "travel_city": null,
-      "card_type": "intervention"
+      "card_type": "intervention",
+      "food_id": 25,
+      "description": "Low effort · Nutritionally complete · Quick to prepare",
+      "description_es": "Poco esfuerzo · Nutricionalmente completo · Rápido de preparar"
     }
   ],
   "recommendation-sessions": [
