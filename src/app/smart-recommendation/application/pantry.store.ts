@@ -1,4 +1,5 @@
 import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../iam/application/iam.store';
 import { NutritionStore } from '../../nutrition-tracking/application/nutrition.store';
 import { DomainEventBus } from '../../shared/application/domain-event-bus';
@@ -24,6 +25,7 @@ export class PantryStore {
   private iamStore        = inject(IamStore);
   private nutritionStore  = inject(NutritionStore);
   private eventBus        = inject(DomainEventBus);
+  private translate       = inject(TranslateService);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
@@ -93,6 +95,11 @@ export class PantryStore {
           this._refreshSuggestions();
         }
       });
+    });
+    this.translate.onLangChange.subscribe(() => {
+      if (this.iamStore.currentUser() && this._pantryItems().length > 0) {
+        this._refreshSuggestions();
+      }
     });
   }
 
