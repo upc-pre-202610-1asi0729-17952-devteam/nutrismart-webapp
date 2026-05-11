@@ -150,6 +150,5 @@ export class AnalyticsDashboardComponent implements OnInit {
 
   public onReportGenerated(): void {
     this._showExportPdfModal.set(false);
-    console.log('PDF report generation initiated successfully!');
   }
 }
