@@ -6,7 +6,7 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
  * @author Espinoza Cruz, Angela Milagros
  */
 export interface BodyMetricResource extends BaseResource {
-  user_id: number;
+  user_id: number | string;
   weight_kg: number;
   height_cm: number;
   logged_at: string;
@@ -20,7 +20,7 @@ export interface BodyMetricResource extends BaseResource {
  * @author Espinoza Cruz, Angela Milagros
  */
 export interface BodyCompositionResource extends BaseResource {
-  user_id: number;
+  user_id: number | string;
   waist_cm: number;
   neck_cm?: number;
   height_cm: number;

@@ -5,6 +5,7 @@ export const environment = {
   nutritionLogEndpointPath: '/nutrition-log',
   foodSearchEndpointPath: '/foods',
   bodyMetricsEndpointPath: '/body-metrics',
+  bodyCompositionsEndpointPath: '/body-compositions',
   analyticsEndpointPath: '/analytics',
   recommendationsEndpointPath: '/recommendations',
   pantryEndpointPath: '/pantry',

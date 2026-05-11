@@ -291,6 +291,9 @@ export class Onboarding {
     }
 
     if (step === 5) {
+      const weight = this.bodyForm.value.weight!;
+      await this.metabolicStore.logWeight(weight);
+      await this.metabolicStore.applyInitialTarget(this.selectedGoal());
       this.router.navigate(['/subscription']);
     }
   }

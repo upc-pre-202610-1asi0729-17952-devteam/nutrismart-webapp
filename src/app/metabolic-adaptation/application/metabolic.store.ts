@@ -177,6 +177,15 @@ export class MetabolicStore {
       });
     });
 
+    if (this.isMuscleGain()) {
+      await new Promise<void>(resolve => {
+        this.api.getComposition(user.id).subscribe(comp => {
+          this._composition.set(comp);
+          resolve();
+        });
+      });
+    }
+
     this._loading.set(false);
   }
 

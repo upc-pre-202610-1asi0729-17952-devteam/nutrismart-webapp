@@ -1,152 +1,139 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { EMPTY, Observable } from 'rxjs';
+import { map, retry, switchMap } from 'rxjs/operators';
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { BodyMetric } from '../domain/model/body-metric.entity';
 import { BodyComposition } from '../domain/model/body-composition.entity';
-import { NutritionPlan } from '../domain/model/nutrition-plan.entity';
+import { BodyMetricEndpoint, BodyCompositionEndpoint } from './metabolic-api-endpoint';
 
 /**
  * Application-facing API façade for the Metabolic Adaptation bounded context.
  *
- * All methods return mock data — a real implementation would replace the
- * `of(...)` calls with HTTP endpoint calls via concrete BaseApiEndpoint
- * subclasses. Provided in root so a single instance is shared across
- * the application.
+ * All methods delegate to concrete {@link BaseApiEndpoint} subclasses backed
+ * by the json-server REST API. Provided in root so a single instance is shared
+ * across the application.
  *
  * @author Espinoza Cruz, Angela Milagros
  */
 @Injectable({ providedIn: 'root' })
 export class MetabolicApi extends BaseApi {
+  private http          = inject(HttpClient);
+  private metricEp      = new BodyMetricEndpoint(this.http);
+  private compositionEp = new BodyCompositionEndpoint(this.http);
 
   /**
    * Records a new weight entry for the authenticated user.
-   *
-   * @param userId   - The user's numeric ID.
-   * @param weightKg - New weight in kilograms.
-   * @param heightCm - Current height in centimetres.
-   * @returns Observable emitting the created {@link BodyMetric}.
    */
-  logWeight(userId: number, weightKg: number, heightCm: number): Observable<BodyMetric> {
-    return of(new BodyMetric({
-      id:        Date.now(),
-      userId,
-      weightKg,
-      heightCm,
+  logWeight(userId: number | string, weightKg: number, heightCm: number): Observable<BodyMetric> {
+    return this.metricEp.create(new BodyMetric({
+      id: 0, userId: userId as number, weightKg, heightCm,
       loggedAt: new Date().toISOString(),
-    }));
+    })).pipe(retry(2));
   }
 
   /**
-   * Updates the user's height and triggers a BMI recalculation.
-   *
-   * @param userId   - The user's numeric ID.
-   * @param heightCm - New height in centimetres.
-   * @param weightKg - Current weight used for BMI recalculation.
-   * @returns Observable emitting the updated {@link BodyMetric}.
+   * Updates the user's height by logging a new metric entry.
    */
-  updateHeight(userId: number, heightCm: number, weightKg: number): Observable<BodyMetric> {
-    return of(new BodyMetric({
-      id:       Date.now(),
-      userId,
-      weightKg,
-      heightCm,
+  updateHeight(userId: number | string, heightCm: number, weightKg: number): Observable<BodyMetric> {
+    return this.metricEp.create(new BodyMetric({
+      id: 0, userId: userId as number, weightKg, heightCm,
       loggedAt: new Date().toISOString(),
-    }));
+    })).pipe(retry(2));
   }
 
   /**
-   * Fetches the weight-entry history for the user.
-   *
-   * @param userId  - The user's numeric ID.
-   * @param days    - Number of past days to include (7, 30, or 90).
-   * @returns Observable emitting an array of {@link BodyMetric} entries
-   *          ordered from oldest to most recent.
+   * Fetches weight-entry history for the user within the last `days` days,
+   * ordered from oldest to most recent.
    */
-  getMetricsHistory(userId: number, days: 7 | 30 | 90): Observable<BodyMetric[]> {
-    const now    = new Date();
-    const count  = days === 7 ? 6 : days === 30 ? 8 : 12;
-    const step   = Math.floor(days / count);
-    const base   = 70.5;
-
-    const entries: BodyMetric[] = Array.from({ length: count }, (_, i) => {
-      const date = new Date(now);
-      date.setDate(date.getDate() - (count - i - 1) * step);
-      const weight = Math.round((base - i * 0.15) * 10) / 10;
-      return new BodyMetric({
-        id:       i + 1,
-        userId,
-        weightKg: weight,
-        heightCm: 163,
-        loggedAt: date.toISOString(),
-      });
-    });
-
-    return of(entries);
+  getMetricsHistory(userId: number | string, days: 7 | 30 | 90): Observable<BodyMetric[]> {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    return this.metricEp.getByUserId(userId).pipe(
+      map(metrics =>
+        metrics
+          .filter(m => new Date(m.loggedAt) >= cutoff)
+          .sort((a, b) => new Date(a.loggedAt).getTime() - new Date(b.loggedAt).getTime())
+      ),
+    );
   }
 
   /**
-   * Sets the target weight for the user and returns the updated metric.
-   *
-   * @param userId         - The user's numeric ID.
-   * @param targetWeightKg - Target weight in kilograms.
-   * @returns Observable emitting the updated current {@link BodyMetric}.
+   * Returns the most recent body metric for the user, or `null` when no
+   * entries exist yet.
    */
-  setTargetWeight(userId: number, targetWeightKg: number): Observable<BodyMetric> {
-    const metric = new BodyMetric({
-      id: 1, userId,
-      weightKg: 70.2, heightCm: 163,
-      loggedAt: new Date().toISOString(),
-      targetWeightKg,
-    });
-    // Use domain method: |currentWeight − target| / 0.25 kg/week
-    metric.projectedAchievementDate = metric.calculateProjectedDate(targetWeightKg).toISOString();
-    return of(metric);
+  getMetabolicTargets(userId: number | string): Observable<BodyMetric | null> {
+    return this.metricEp.getByUserId(userId).pipe(
+      map(metrics => {
+        if (!metrics.length) return null;
+        return [...metrics].sort(
+          (a, b) => new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime(),
+        )[0];
+      }),
+    );
   }
 
   /**
-   * Returns the current metabolic targets (BMR, TDEE) for the user.
-   *
-   * @param userId - The user's numeric ID.
-   * @returns Observable emitting the current {@link BodyMetric} with calculated targets.
+   * Sets the target weight on the user's latest metric and persists the
+   * updated projected achievement date.
    */
-  getMetabolicTargets(userId: number): Observable<BodyMetric> {
-    const metric = new BodyMetric({
-      id: 1, userId,
-      weightKg: 70.2, heightCm: 163,
-      loggedAt: new Date().toISOString(),
-      targetWeightKg: 65,
-    });
-    // Use domain method: (70.2 − 65) / 0.25 kg/week = 20.8 weeks ≈ 146 days
-    metric.projectedAchievementDate = metric.calculateProjectedDate(65).toISOString();
-    return of(metric);
+  setTargetWeight(userId: number | string, targetWeightKg: number): Observable<BodyMetric> {
+    return this.metricEp.getByUserId(userId).pipe(
+      switchMap(metrics => {
+        const current = [...metrics].sort(
+          (a, b) => new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime(),
+        )[0];
+        if (!current) return EMPTY;
+        const updated = new BodyMetric({
+          id:                       current.id,
+          userId:                   current.userId,
+          weightKg:                 current.weightKg,
+          heightCm:                 current.heightCm,
+          loggedAt:                 current.loggedAt,
+          targetWeightKg,
+          projectedAchievementDate: current.calculateProjectedDate(targetWeightKg).toISOString(),
+        });
+        return this.metricEp.update(updated, String(current.id) as unknown as number).pipe(retry(2));
+      }),
+    );
   }
 
   /**
    * Saves a body composition measurement via direct cm input or a pre-calculated
-   * body fat percentage override (pant-size or visual-range estimation).
-   *
-   * @param userId                  - The user's numeric ID.
-   * @param weightKg                - Current weight in kilograms.
-   * @param heightCm                - Height in centimetres.
-   * @param waistCm                 - Waist circumference in cm (modes A and B).
-   * @param overrideBodyFatPercent  - Direct body fat % estimate (mode C).
-   * @returns Observable emitting the updated {@link BodyComposition}.
+   * body fat percentage override. Creates a new record when none exists for the
+   * user; otherwise replaces the existing one.
    */
   setComposition(
-    userId:                 number,
-    weightKg:               number,
-    heightCm:               number,
-    waistCm?:               number,
+    userId:                  number | string,
+    weightKg:                number,
+    heightCm:                number,
+    waistCm?:                number,
     overrideBodyFatPercent?: number,
   ): Observable<BodyComposition> {
-    return of(new BodyComposition({
-      id:                    Date.now(),
-      userId,
-      waistCm:               waistCm ?? 0,
-      heightCm,
-      weightKg,
-      measuredAt:            new Date().toISOString(),
-      overrideBodyFatPercent,
-    }));
+    return this.compositionEp.getLatestByUserId(userId).pipe(
+      switchMap(existing => {
+        const comp = new BodyComposition({
+          id:                    (existing?.id ?? 0) as number,
+          userId:                userId as number,
+          waistCm:               waistCm ?? existing?.waistCm ?? 0,
+          heightCm,
+          weightKg,
+          measuredAt:            new Date().toISOString(),
+          overrideBodyFatPercent,
+        });
+        if (existing?.id) {
+          return this.compositionEp.update(comp, String(existing.id) as unknown as number).pipe(retry(2));
+        }
+        return this.compositionEp.create(comp).pipe(retry(2));
+      }),
+    );
+  }
+
+  /**
+   * Returns the most recent body composition for the user, or `null` when
+   * none exists.
+   */
+  getComposition(userId: number | string): Observable<BodyComposition | null> {
+    return this.compositionEp.getLatestByUserId(userId);
   }
 }

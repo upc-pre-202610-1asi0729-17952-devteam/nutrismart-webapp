@@ -24,7 +24,7 @@
       "consecutiveMisses": 0,
       "birthday": "1998-03-15",
       "biologicalSex": "female",
-      "createdAt": "2026-04-01"
+      "createdAt": "2026-05-01"
     },
     {
       "id": "Mv9paKyK60k",
@@ -32,11 +32,20 @@
       "lastName": "Villarreal",
       "email": "a@gmail.com",
       "goal": "WEIGHT_LOSS",
-      "weight": 150,
+      "weight": 70,
       "height": 165,
       "activityLevel": "SEDENTARY",
       "plan": "PREMIUM",
-      "restrictions": [],
+      "restrictions": [
+        "LACTOSE_FREE",
+        "GLUTEN_FREE",
+        "VEGAN",
+        "VEGETARIAN",
+        "NUT_FREE",
+        "SEAFOOD_FREE",
+        "KOSHER",
+        "HALAL"
+      ],
       "medicalConditions": [
         "TYPE_2_DIABETES",
         "HIGH_BLOOD_PRESSURE",
@@ -45,16 +54,16 @@
         "KIDNEY_DISEASE",
         "GOUT"
       ],
-      "dailyCalorieTarget": 2544,
-      "proteinTarget": 240,
-      "carbsTarget": 236,
-      "fatTarget": 71,
+      "dailyCalorieTarget": 1584,
+      "proteinTarget": 112,
+      "carbsTarget": 185,
+      "fatTarget": 44,
       "fiberTarget": 25,
       "streak": 0,
       "consecutiveMisses": 0,
       "birthday": "2005-02-19",
       "biologicalSex": "female",
-      "createdAt": "2026-04-15"
+      "createdAt": ""
     },
     {
       "id": "81P8BYgebrM",
@@ -78,6 +87,52 @@
       "birthday": "2005-02-19",
       "biologicalSex": "male",
       "createdAt": "2026-05-01"
+    },
+    {
+      "id": "ozdURzTkhPE",
+      "firstName": "Angel",
+      "lastName": "Villarreal Bazan",
+      "email": "b@gmail.com",
+      "goal": "MUSCLE_GAIN",
+      "weight": 70,
+      "height": 170,
+      "activityLevel": "SEDENTARY",
+      "plan": "BASIC",
+      "restrictions": [],
+      "medicalConditions": [],
+      "dailyCalorieTarget": 2222,
+      "proteinTarget": 140,
+      "carbsTarget": 276,
+      "fatTarget": 62,
+      "fiberTarget": 25,
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "birthday": "2005-02-19",
+      "biologicalSex": "male",
+      "createdAt": "2026-05-11"
+    },
+    {
+      "id": "ATAs1HP14XE",
+      "firstName": "A",
+      "lastName": "Villarreal",
+      "email": "c@gmail.com",
+      "goal": "MUSCLE_GAIN",
+      "weight": 70,
+      "height": 170,
+      "activityLevel": "MODERATE",
+      "plan": "PREMIUM",
+      "restrictions": [],
+      "medicalConditions": [],
+      "dailyCalorieTarget": 2502,
+      "proteinTarget": 140,
+      "carbsTarget": 328,
+      "fatTarget": 70,
+      "fiberTarget": 25,
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "birthday": "2005-05-11",
+      "biologicalSex": "male",
+      "createdAt": "2026-05-11"
     }
   ],
   "nutrition-log": [
@@ -208,6 +263,74 @@
       "sugar": 0.4,
       "loggedAt": "2026-05-09T15:11:21.219Z",
       "userId": "81P8BYgebrM"
+    },
+    {
+      "id": "gWKarJMDUak",
+      "foodItemId": 0,
+      "foodItemName": "Grilled chicken breast",
+      "foodItemNameEs": "Pechuga de pollo a la plancha",
+      "mealType": "LUNCH",
+      "quantity": 2,
+      "unit": "g",
+      "calories": 3.4,
+      "protein": 0.6,
+      "carbs": 0,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-10T22:54:19.085Z",
+      "userId": "Mv9paKyK60k"
+    },
+    {
+      "id": "TPWbWJACgdA",
+      "foodItemId": 0,
+      "foodItemName": "White rice",
+      "foodItemNameEs": "Arroz blanco",
+      "mealType": "LUNCH",
+      "quantity": 180,
+      "unit": "g",
+      "calories": 234,
+      "protein": 4,
+      "carbs": 52,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-10T22:54:19.085Z",
+      "userId": "Mv9paKyK60k"
+    },
+    {
+      "id": "OBt_7nqrEw4",
+      "foodItemId": 0,
+      "foodItemName": "Mixed salad",
+      "foodItemNameEs": "Ensalada mixta",
+      "mealType": "LUNCH",
+      "quantity": 80,
+      "unit": "g",
+      "calories": 45,
+      "protein": 2,
+      "carbs": 8,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-10T22:54:19.085Z",
+      "userId": "Mv9paKyK60k"
+    },
+    {
+      "id": "ngy2XKH2Dlk",
+      "foodItemId": 0,
+      "foodItemName": "Hake ceviche",
+      "foodItemNameEs": "Ceviche de merluza",
+      "mealType": "LUNCH",
+      "quantity": 1,
+      "unit": "serving",
+      "calories": 280,
+      "protein": 38,
+      "carbs": 12,
+      "fat": 8,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-10T22:54:40.459Z",
+      "userId": "Mv9paKyK60k"
     }
   ],
   "foods": [
@@ -385,58 +508,88 @@
   ],
   "body-metrics": [
     {
-      "id": "1",
-      "userId": 1,
-      "date": "2026-05-07",
-      "weight": 70.2,
-      "bmi": 26.4,
-      "bmr": 1480,
-      "tdee": 2035
+      "id": "bm-1-1",
+      "user_id": "1",
+      "weight_kg": 71.5,
+      "height_cm": 163,
+      "logged_at": "2026-04-02T08:00:00.000Z",
+      "target_weight_kg": 65,
+      "projected_achievement_date": "2027-04-02T08:00:00.000Z"
     },
     {
-      "id": "2",
-      "userId": 1,
-      "date": "2026-04-30",
-      "weight": 70.5,
-      "bmi": 26.5,
-      "bmr": 1482,
-      "tdee": 2037
+      "id": "bm-1-2",
+      "user_id": "1",
+      "weight_kg": 71.2,
+      "height_cm": 163,
+      "logged_at": "2026-04-09T08:00:00.000Z",
+      "target_weight_kg": 65,
+      "projected_achievement_date": "2027-03-31T08:00:00.000Z"
     },
     {
-      "id": "3",
-      "userId": 1,
-      "date": "2026-04-23",
-      "weight": 70.8,
-      "bmi": 26.6,
-      "bmr": 1484,
-      "tdee": 2040
+      "id": "bm-1-3",
+      "user_id": "1",
+      "weight_kg": 70.9,
+      "height_cm": 163,
+      "logged_at": "2026-04-16T08:00:00.000Z",
+      "target_weight_kg": 65,
+      "projected_achievement_date": "2027-03-29T08:00:00.000Z"
     },
     {
-      "id": "4",
-      "userId": 1,
-      "date": "2026-04-16",
-      "weight": 71,
-      "bmi": 26.7,
-      "bmr": 1486,
-      "tdee": 2042
+      "id": "bm-1-4",
+      "user_id": "1",
+      "weight_kg": 70.7,
+      "height_cm": 163,
+      "logged_at": "2026-04-23T08:00:00.000Z",
+      "target_weight_kg": 65,
+      "projected_achievement_date": "2027-03-25T08:00:00.000Z"
     },
     {
-      "id": "5",
-      "userId": 1,
-      "date": "2026-04-09",
-      "weight": 71.3,
-      "bmi": 26.8,
-      "bmr": 1488,
-      "tdee": 2044
+      "id": "bm-1-5",
+      "user_id": "1",
+      "weight_kg": 70.5,
+      "height_cm": 163,
+      "logged_at": "2026-04-30T08:00:00.000Z",
+      "target_weight_kg": 65,
+      "projected_achievement_date": "2027-03-21T08:00:00.000Z"
     },
     {
-      "id": "6",
-      "userId": 1,
-      "date": "2026-04-02",
-      "weight": 71.5,
-      "bmi": 26.9,
-      "bmr": 1490,
-      "tdee": 2046
+      "id": "bm-1-6",
+      "user_id": "1",
+      "weight_kg": 70.2,
+      "height_cm": 163,
+      "logged_at": "2026-05-07T08:00:00.000Z",
+      "target_weight_kg": 65,
+      "projected_achievement_date": "2027-03-12T08:00:00.000Z"
+    },
+    {
+      "id": "bm-b-1",
+      "user_id": "ozdURzTkhPE",
+      "weight_kg": 70,
+      "height_cm": 170,
+      "logged_at": "2026-04-27T08:00:00.000Z"
+    },
+    {
+      "id": "bm-b-2",
+      "user_id": "ozdURzTkhPE",
+      "weight_kg": 70.3,
+      "height_cm": 170,
+      "logged_at": "2026-05-04T08:00:00.000Z"
+    },
+    {
+      "id": "bm-b-3",
+      "user_id": "ozdURzTkhPE",
+      "weight_kg": 70.5,
+      "height_cm": 170,
+      "logged_at": "2026-05-11T08:00:00.000Z"
+    },
+    {
+      "user_id": "ATAs1HP14XE",
+      "weight_kg": 70,
+      "height_cm": 170,
+      "logged_at": "2026-05-11T10:28:30.681Z",
+      "target_weight_kg": 0,
+      "projected_achievement_date": "",
+      "id": "11cHERuab3A"
     }
   ],
   "analytics": [
@@ -524,33 +677,53 @@
   "pantry": [
     {
       "id": "1",
-      "userId": 1,
-      "ingredientName": "White rice",
-      "category": "Grain"
+      "name": "White rice",
+      "name_key": "white_rice",
+      "category": "Grain",
+      "quantity_grams": 500,
+      "calories_per_100g": 130,
+      "user_id": 1,
+      "added_at": "2026-05-01T08:00:00.000Z"
     },
     {
       "id": "2",
-      "userId": 1,
-      "ingredientName": "Chicken breast",
-      "category": "Animal protein"
+      "name": "Chicken breast",
+      "name_key": "chicken_breast",
+      "category": "Animal protein",
+      "quantity_grams": 400,
+      "calories_per_100g": 165,
+      "user_id": 1,
+      "added_at": "2026-05-01T08:00:00.000Z"
     },
     {
       "id": "3",
-      "userId": 1,
-      "ingredientName": "Lemon",
-      "category": "Fruit"
+      "name": "Lemon",
+      "name_key": "lemon",
+      "category": "Fruit",
+      "quantity_grams": 100,
+      "calories_per_100g": 29,
+      "user_id": 1,
+      "added_at": "2026-05-01T08:00:00.000Z"
     },
     {
       "id": "4",
-      "userId": 1,
-      "ingredientName": "Onion",
-      "category": "Vegetable"
+      "name": "Onion",
+      "name_key": "onion",
+      "category": "Vegetable",
+      "quantity_grams": 200,
+      "calories_per_100g": 40,
+      "user_id": 1,
+      "added_at": "2026-05-01T08:00:00.000Z"
     },
     {
       "id": "5",
-      "userId": 1,
-      "ingredientName": "Garlic",
-      "category": "Seasoning"
+      "name": "Garlic",
+      "name_key": "garlic",
+      "category": "Seasoning",
+      "quantity_grams": 50,
+      "calories_per_100g": 149,
+      "user_id": 1,
+      "added_at": "2026-05-01T08:00:00.000Z"
     }
   ],
   "ingredient-catalog": [
@@ -770,6 +943,37 @@
       "daily_goal": 3150,
       "consumed": 0,
       "active": 400
+    }
+  ],
+  "body-compositions": [
+    {
+      "id": "bc-b-1",
+      "user_id": "ozdURzTkhPE",
+      "waist_cm": 82,
+      "neck_cm": 37,
+      "height_cm": 170,
+      "weight_kg": 70.5,
+      "measured_at": "2026-05-11T08:00:00.000Z"
+    },
+    {
+      "user_id": "M36g8sOKwsI",
+      "waist_cm": 87,
+      "neck_cm": 36,
+      "height_cm": 170,
+      "weight_kg": 70,
+      "measured_at": "2026-05-11T07:26:23.752Z",
+      "previous_body_fat_percent": 0,
+      "id": "qM3JphNk6no"
+    },
+    {
+      "user_id": "ATAs1HP14XE",
+      "waist_cm": 81,
+      "neck_cm": 36,
+      "height_cm": 170,
+      "weight_kg": 70,
+      "measured_at": "2026-05-11T10:28:28.596Z",
+      "previous_body_fat_percent": 0,
+      "id": "_CpxISwRvp8"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

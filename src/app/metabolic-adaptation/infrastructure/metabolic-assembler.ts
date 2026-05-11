@@ -20,7 +20,7 @@ export class BodyMetricAssembler
   toEntityFromResource(r: BodyMetricResource): BodyMetric {
     return new BodyMetric({
       id:                       r.id,
-      userId:                   r.user_id,
+      userId:                   r.user_id as number,
       weightKg:                 r.weight_kg,
       heightCm:                 r.height_cm,
       loggedAt:                 r.logged_at,
@@ -58,7 +58,7 @@ export class BodyCompositionAssembler
   toEntityFromResource(r: BodyCompositionResource): BodyComposition {
     return new BodyComposition({
       id:                       r.id,
-      userId:                   r.user_id,
+      userId:                   r.user_id as number,
       waistCm:                  r.waist_cm,
       neckCm:                   r.neck_cm,
       heightCm:                 r.height_cm,
