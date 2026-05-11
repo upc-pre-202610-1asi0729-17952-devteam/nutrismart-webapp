@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { MealType } from '../../nutrition-tracking/domain/model/meal-type.enum';
 import { DietaryRestriction } from '../../iam/domain/model/dietary-restriction.enum';
+import { MacronutrientDistribution } from '../../nutrition-tracking/domain/model/macronutrient-distribution.value-object';
 import { ScanResult } from '../domain/model/scan-result.entity';
 import { MenuAnalysis } from '../domain/model/menu-analysis.entity';
 import { ScannedFoodItem } from '../domain/model/scanned-food-item.entity';
@@ -66,9 +67,9 @@ export class SmartScanApi extends BaseApi {
       status: 'success',
       imageBase64,
       detectedItems: [
-        new ScannedFoodItem({ id: 1, name: this._t('food_items', 'grilled_chicken_breast', 'Grilled chicken breast'), nameKey: 'grilled_chicken_breast', quantityGrams: 150, calories: 248, protein: 47, carbs: 0, fat: 5, restrictions: [], isEdited: false }),
-        new ScannedFoodItem({ id: 2, name: this._t('food_items', 'white_rice',             'White rice'),             nameKey: 'white_rice',             quantityGrams: 180, calories: 234, protein: 4,  carbs: 52, fat: 0, restrictions: [], isEdited: false }),
-        new ScannedFoodItem({ id: 3, name: this._t('food_items', 'mixed_salad',            'Mixed salad'),            nameKey: 'mixed_salad',            quantityGrams: 80,  calories: 45,  protein: 2,  carbs: 8,  fat: 0, restrictions: [], isEdited: false }),
+        new ScannedFoodItem({ id: 1, name: this._t('food_items', 'grilled_chicken_breast', 'Grilled chicken breast'), nameKey: 'grilled_chicken_breast', quantityGrams: 150, macros: new MacronutrientDistribution({ calories: 248, protein: 47, carbs: 0,  fat: 5, fiber: 0, sugar: 0 }), restrictions: [], isEdited: false }),
+        new ScannedFoodItem({ id: 2, name: this._t('food_items', 'white_rice',             'White rice'),             nameKey: 'white_rice',             quantityGrams: 180, macros: new MacronutrientDistribution({ calories: 234, protein: 4,  carbs: 52, fat: 0, fiber: 0, sugar: 0 }), restrictions: [], isEdited: false }),
+        new ScannedFoodItem({ id: 3, name: this._t('food_items', 'mixed_salad',            'Mixed salad'),            nameKey: 'mixed_salad',            quantityGrams: 80,  macros: new MacronutrientDistribution({ calories: 45,  protein: 2,  carbs: 8,  fat: 0, fiber: 0, sugar: 0 }), restrictions: [], isEdited: false }),
       ],
       mealType:  MealType.LUNCH,
       source:    'Google Cloud Vision API · Open Food Facts',

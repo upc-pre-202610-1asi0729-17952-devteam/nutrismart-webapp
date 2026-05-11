@@ -1,6 +1,7 @@
 import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { DietaryRestriction } from '../../iam/domain/model/dietary-restriction.enum';
 import { MealType } from '../../nutrition-tracking/domain/model/meal-type.enum';
+import { MacronutrientDistribution } from '../../nutrition-tracking/domain/model/macronutrient-distribution.value-object';
 import { ScannedFoodItem } from '../domain/model/scanned-food-item.entity';
 import { ScanResult } from '../domain/model/scan-result.entity';
 import {
@@ -33,10 +34,10 @@ export class ScanResultAssembler
         name:          item.name,
         nameKey:       item.name_key ?? null,
         quantityGrams: item.quantity_grams,
-        calories:      item.calories,
-        protein:       item.protein,
-        carbs:         item.carbs,
-        fat:           item.fat,
+        macros: new MacronutrientDistribution({
+          calories: item.calories, protein: item.protein,
+          carbs: item.carbs, fat: item.fat, fiber: 0, sugar: 0,
+        }),
         restrictions:  item.restrictions.map(s => s as DietaryRestriction),
         isEdited:      item.is_edited,
       })),

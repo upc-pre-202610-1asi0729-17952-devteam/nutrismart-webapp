@@ -1,41 +1,23 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 import { DietaryRestriction } from '../../../iam/domain/model/dietary-restriction.enum';
+import { MacronutrientDistribution } from '../../../nutrition-tracking/domain/model/macronutrient-distribution.value-object';
 
-/**
- * Constructor DTO for creating a {@link ScannedFoodItem} instance.
- *
- * @author Del Aguila Del Aguila, Olenka Priscilla
- */
 export interface ScannedFoodItemProps {
   id: number;
   name: string;
   nameKey: string | null;
   quantityGrams: number;
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
+  macros: MacronutrientDistribution;
   restrictions: DietaryRestriction[];
   isEdited: boolean;
 }
 
-/**
- * Domain entity representing a single food item detected from a meal photo.
- *
- * Non-anemic: encapsulates business logic for macro scaling when quantity
- * changes ({@link rescaleForQuantity}) and restriction conflict checks.
- *
- * @author Del Aguila Del Aguila, Olenka Priscilla
- */
 export class ScannedFoodItem implements BaseEntity {
   private _id: number;
   private _name: string;
   private _nameKey: string | null;
   private _quantityGrams: number;
-  private _calories: number;
-  private _protein: number;
-  private _carbs: number;
-  private _fat: number;
+  private _macros: MacronutrientDistribution;
   private _restrictions: DietaryRestriction[];
   private _isEdited: boolean;
 
@@ -44,10 +26,7 @@ export class ScannedFoodItem implements BaseEntity {
     this._name          = props.name;
     this._nameKey       = props.nameKey ?? null;
     this._quantityGrams = props.quantityGrams;
-    this._calories      = props.calories;
-    this._protein       = props.protein;
-    this._carbs         = props.carbs;
-    this._fat           = props.fat;
+    this._macros        = props.macros;
     this._restrictions  = [...props.restrictions];
     this._isEdited      = props.isEdited;
   }
@@ -65,17 +44,12 @@ export class ScannedFoodItem implements BaseEntity {
   get quantityGrams(): number { return this._quantityGrams; }
   set quantityGrams(v: number) { this._quantityGrams = v; }
 
-  get calories(): number { return this._calories; }
-  set calories(v: number) { this._calories = v; }
+  get macros(): MacronutrientDistribution { return this._macros; }
 
-  get protein(): number { return this._protein; }
-  set protein(v: number) { this._protein = v; }
-
-  get carbs(): number { return this._carbs; }
-  set carbs(v: number) { this._carbs = v; }
-
-  get fat(): number { return this._fat; }
-  set fat(v: number) { this._fat = v; }
+  get calories(): number { return this._macros.calories; }
+  get protein(): number  { return this._macros.protein; }
+  get carbs(): number    { return this._macros.carbs; }
+  get fat(): number      { return this._macros.fat; }
 
   get restrictions(): DietaryRestriction[] { return [...this._restrictions]; }
   set restrictions(v: DietaryRestriction[]) { this._restrictions = [...v]; }
@@ -85,40 +59,18 @@ export class ScannedFoodItem implements BaseEntity {
 
   // ─── Domain Behaviour ─────────────────────────────────────────────────────
 
-  /**
-   * Returns a compact macro label for display in the scan result list.
-   *
-   * @returns e.g. "P47 C0 G5"
-   */
   get macroLabel(): string {
-    return `P${this._protein} C${this._carbs} G${this._fat}`;
+    return `P${Math.round(this._macros.protein)} C${Math.round(this._macros.carbs)} G${Math.round(this._macros.fat)}`;
   }
 
-  /**
-   * Rescales all macros proportionally to a new quantity.
-   *
-   * The original base quantity is used as the scaling denominator so the
-   * entity remains consistent after the user edits the gram value.
-   *
-   * @param newQuantityGrams - Desired serving size in grams.
-   */
   rescaleForQuantity(newQuantityGrams: number): void {
     if (this._quantityGrams === 0) return;
     const ratio = newQuantityGrams / this._quantityGrams;
-    this._calories = Math.round(this._calories * ratio * 10) / 10;
-    this._protein  = Math.round(this._protein  * ratio * 10) / 10;
-    this._carbs    = Math.round(this._carbs    * ratio * 10) / 10;
-    this._fat      = Math.round(this._fat      * ratio * 10) / 10;
+    this._macros = this._macros.scale(ratio);
     this._quantityGrams = newQuantityGrams;
     this._isEdited = true;
   }
 
-  /**
-   * Checks whether this item conflicts with any of the user's active restrictions.
-   *
-   * @param activeRestrictions - The user's current dietary restrictions.
-   * @returns `true` if at least one restriction matches.
-   */
   isRestrictedFor(activeRestrictions: DietaryRestriction[]): boolean {
     return this._restrictions.some(r => activeRestrictions.includes(r));
   }
