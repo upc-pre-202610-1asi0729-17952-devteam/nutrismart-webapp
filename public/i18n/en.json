@@ -486,7 +486,18 @@
     "aria_more_info": "More information",
     "aria_edit_goal": "Edit goal weight",
     "aria_confirm": "Confirm",
-    "aria_cancel": "Cancel"
+    "aria_cancel": "Cancel",
+    "goal_lock_title": "Goal commitment active",
+    "goal_lock_desc": "You committed to this goal on {{date}}. You can switch goals in {{days}} days ({{unlockDate}}).",
+    "goal_lock_badge": "{{days}} days remaining",
+    "goal_locked_switch_disabled": "Goal locked — {{days}} days until you can switch",
+    "goal_selection_locked_note": "Your current goal is locked until {{unlockDate}}. Switching resets your metabolic cycle.",
+    "goal_switch_confirm_title": "Switch your goal?",
+    "goal_switch_confirm_desc": "Switching to {{goal}} will start a new 28-day commitment and reset your metabolic progress cycle. Your weight history is preserved.",
+    "goal_switch_confirm_btn": "Yes, switch goal",
+    "goal_switch_cancel_btn": "Cancel",
+    "goal_name_weight_loss": "Weight Loss",
+    "goal_name_muscle_gain": "Muscle Gain"
   },
   "my_plan": {
     "page_title": "Subscription and billing",

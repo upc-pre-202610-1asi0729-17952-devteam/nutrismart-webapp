@@ -486,7 +486,18 @@
     "aria_more_info": "Más información",
     "aria_edit_goal": "Editar peso objetivo",
     "aria_confirm": "Confirmar",
-    "aria_cancel": "Cancelar"
+    "aria_cancel": "Cancelar",
+    "goal_lock_title": "Compromiso de objetivo activo",
+    "goal_lock_desc": "Te comprometiste con este objetivo el {{date}}. Puedes cambiar de objetivo en {{days}} días ({{unlockDate}}).",
+    "goal_lock_badge": "{{days}} días restantes",
+    "goal_locked_switch_disabled": "Objetivo bloqueado — {{days}} días hasta que puedas cambiar",
+    "goal_selection_locked_note": "Tu objetivo actual está bloqueado hasta el {{unlockDate}}. Cambiar reinicia tu ciclo metabólico.",
+    "goal_switch_confirm_title": "¿Cambiar tu objetivo?",
+    "goal_switch_confirm_desc": "Cambiar a {{goal}} iniciará un nuevo compromiso de 28 días y reiniciará tu ciclo de progreso metabólico. Tu historial de peso se conserva.",
+    "goal_switch_confirm_btn": "Sí, cambiar objetivo",
+    "goal_switch_cancel_btn": "Cancelar",
+    "goal_name_weight_loss": "Pérdida de peso",
+    "goal_name_muscle_gain": "Ganancia muscular"
   },
   "my_plan": {
     "page_title": "Suscripción y facturación",
