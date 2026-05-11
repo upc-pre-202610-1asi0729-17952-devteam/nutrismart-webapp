@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RecommendationsStore } from '../../../application/recommendations.store';
+import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
 
@@ -109,11 +110,9 @@ export class RecommendationsView implements OnInit {
 
   onAcceptSimplifiedPlan(): void {
     this.store.setAdherenceStatus(AdherenceStatus.ON_TRACK);
-    this.demoAdherence.set('on_track');
   }
 
   onLogPreventiveNow(): void {
     this.store.setAdherenceStatus(AdherenceStatus.ON_TRACK);
-    this.demoAdherence.set('on_track');
   }
 }
