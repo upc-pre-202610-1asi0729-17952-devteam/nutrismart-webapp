@@ -35,7 +35,7 @@ export class BodyProgressView implements OnInit {
   // ─── Inline goal weight editing ───────────────────────────────────────────
 
   protected isEditingGoal  = signal<boolean>(false);
-  protected goalInputModel = '';
+  protected goalInputModel = signal<string>('');
   protected goalInputError = signal<string>('');
 
   // ─── Composition update modal ─────────────────────────────────────────────
@@ -100,18 +100,14 @@ export class BodyProgressView implements OnInit {
     return this.weightInput().trim().length > 0 && (isNaN(raw) || raw <= 0 || raw > 500);
   });
 
-  /**
-   * Validates the inline goal weight input.
-   * Getter (not signal) because it reads the plain `goalInputModel` property.
-   */
-  protected get goalInputInvalid(): boolean {
-    const raw     = parseFloat(this.goalInputModel);
+  protected readonly goalInputInvalid = computed(() => {
+    const val     = this.goalInputModel();
+    const raw     = parseFloat(val);
     const current = this.store.currentMetric()?.weightKg ?? 0;
-    if (!this.goalInputModel.trim()) return false;
+    if (!val.trim()) return false;
     if (isNaN(raw) || raw <= 0) return true;
-    if (raw >= current) return true;
-    return false;
-  }
+    return raw >= current;
+  });
 
   protected formattedProjectedDate = computed(() => {
     const date = this.store.currentMetric()?.projectedAchievementDate;
@@ -250,26 +246,26 @@ export class BodyProgressView implements OnInit {
 
   onStartEditGoal(): void {
     const target = this.store.currentMetric()?.targetWeightKg;
-    this.goalInputModel = target && target > 0 ? target.toString() : '';
+    this.goalInputModel.set(target && target > 0 ? target.toString() : '');
     this.goalInputError.set('');
     this.isEditingGoal.set(true);
   }
 
   onCancelGoalInline(): void {
     this.isEditingGoal.set(false);
-    this.goalInputModel = '';
+    this.goalInputModel.set('');
     this.goalInputError.set('');
   }
 
   async onSaveGoalInline(): Promise<void> {
-    const val     = parseFloat(this.goalInputModel);
+    const raw     = parseFloat(this.goalInputModel());
     const current = this.store.currentMetric()?.weightKg ?? 0;
 
-    if (!this.goalInputModel.trim() || isNaN(val) || val <= 0) {
+    if (!this.goalInputModel().trim() || isNaN(raw) || raw <= 0) {
       this.goalInputError.set(this.translate.instant('body_progress.error_weight_invalid'));
       return;
     }
-    if (val >= current) {
+    if (raw >= current) {
       this.goalInputError.set(
         this.translate.instant('body_progress.error_goal_below_current', { current }),
       );
@@ -277,12 +273,13 @@ export class BodyProgressView implements OnInit {
     }
 
     this.goalInputError.set('');
-    await this.store.setTargetWeight(val);
+    await this.store.setTargetWeight(raw);
     this.isEditingGoal.set(false);
-    this.goalInputModel = '';
+    this.goalInputModel.set('');
   }
 
-  onGoalModelChange(): void {
+  onGoalModelChange(value: string): void {
+    this.goalInputModel.set(value);
     this.goalInputError.set('');
   }
 
