@@ -55,7 +55,7 @@ const wearableRoutes = () =>
 
 /** Lazy-loads the analytics child routes. */
 const analyticsRoutes = () =>
-  import('./analytics/presentation/analytics.routes').then((m) => m.analyticsRoutes);
+  import('./analytics/presentation/analytics.routes').then((m) => m.ANALYTICS_ROUTES);
 
 /** Lazy-loads the subscriptions child routes (post-onboarding gate). */
 const subscriptionsRoutes = () =>

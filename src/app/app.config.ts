@@ -37,9 +37,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideTranslateService(),
     provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),
-    // Provide the mock implementation for AnalyticsApi
     { provide: AnalyticsApi, useClass: AnalyticsApiMockService },
-  ]
     {
       provide: APP_INITIALIZER,
       useFactory: initLanguage,
