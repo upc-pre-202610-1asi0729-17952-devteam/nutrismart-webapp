@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, inject, Output } from '@angular/core';
+import { Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { DietaryRestriction } from '../../../../iam/domain/model/dietary-restriction.enum';
@@ -31,15 +31,16 @@ export class FoodSearchPanelComponent {
   /** Emitted when the user clicks a non-restricted food result. */
   @Output() foodSelected = new EventEmitter<FoodItem>();
 
+  /** Whether the selected date already has at least one record (drives the first-meal hint). */
+  readonly hasRecords = input<boolean>(false);
+
   /** User's active dietary restrictions. */
   private userRestrictions = computed(() =>
     this.iamStore.currentUser()?.restrictions as DietaryRestriction[] ?? []
   );
 
-  /** True when no meal records exist for any meal window today. */
-  protected hasNoRecords = computed(() =>
-    Object.values(this.nutritionStore.recordsByMealType()).every(arr => arr.length === 0)
-  );
+  /** True when the selected date has no meal records yet. */
+  protected hasNoRecords = computed(() => !this.hasRecords());
 
   /** Whether any search result conflicts with the user's restrictions. */
   protected hasAnyRestriction = computed(() =>

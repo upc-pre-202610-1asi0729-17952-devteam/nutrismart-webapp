@@ -35,6 +35,12 @@ export class AddFoodDialogComponent implements OnInit {
   /** Pre-selected meal type (from the "+ Add food to X" button). */
   targetMealType = input<MealType>(MealType.LUNCH);
 
+  /** Calories already consumed for the selected date — used for impact indicator. */
+  currentConsumed = input<number>(0);
+
+  /** User's daily calorie goal — used for impact indicator. */
+  dailyGoal = input<number>(1800);
+
   /** Emitted with the full payload when the user confirms. */
   @Output() confirm = new EventEmitter<AddFoodPayload>();
 
@@ -63,6 +69,21 @@ export class AddFoodDialogComponent implements OnInit {
   protected nutrients = computed(() =>
     this.food().getNutrientsForQuantity(this.quantity())
   );
+
+  /** Projected % of daily goal after adding this food (capped at 150%). */
+  protected impactPercent = computed(() => {
+    const goal = this.dailyGoal();
+    if (goal <= 0) return 0;
+    return Math.min(Math.round(((this.currentConsumed() + this.nutrients().calories) / goal) * 100), 150);
+  });
+
+  /** Impact level: 'safe' < 80%, 'warning' 80–99%, 'danger' ≥ 100%. */
+  protected impactLevel = computed((): 'safe' | 'warning' | 'danger' => {
+    const p = this.impactPercent();
+    if (p >= 100) return 'danger';
+    if (p >= 80) return 'warning';
+    return 'safe';
+  });
 
   ngOnInit(): void {
     this.quantity.set(this.food().servingSize > 0 ? this.food().servingSize : 100);

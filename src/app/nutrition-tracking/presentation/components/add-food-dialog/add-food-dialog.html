@@ -72,6 +72,20 @@
       </div>
     </div>
 
+    <!-- Calorie impact indicator -->
+    <div class="impact-bar" [class.impact-bar--warning]="impactLevel() === 'warning'" [class.impact-bar--danger]="impactLevel() === 'danger'">
+      <div class="impact-track">
+        <div class="impact-fill" [style.width.%]="impactPercent()"></div>
+      </div>
+      <span class="impact-label">
+        @if (impactLevel() === 'danger') {
+          {{ 'nutrition.impact_exceeded' | translate: { percent: impactPercent() } }}
+        } @else {
+          {{ 'nutrition.impact_approaching' | translate: { percent: impactPercent() } }}
+        }
+      </span>
+    </div>
+
     <!-- Actions -->
     <div class="dialog-actions">
       <button class="btn btn--outline" (click)="cancel.emit()">{{ 'common.cancel' | translate }}</button>

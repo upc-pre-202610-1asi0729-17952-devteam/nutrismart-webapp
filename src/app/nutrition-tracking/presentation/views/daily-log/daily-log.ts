@@ -55,6 +55,9 @@ export class DailyLog implements OnInit {
   /** Food blocked due to restriction — drives the Restricted Item dialog. */
   protected blockedFood = signal<FoodItem | null>(null);
 
+  /** Whether the food search modal is open. */
+  protected showFoodSearchModal = signal(false);
+
   /** Demo state: which meals are marked as skipped (T21). */
   private skippedMeals = signal<MealType[]>([]);
 
@@ -122,7 +125,7 @@ export class DailyLog implements OnInit {
 
   // ─── Filtered Records ─────────────────────────────────────────────────────
 
-  private filteredRecords = computed(() => {
+  protected filteredRecords = computed(() => {
     const selectedDateStr = this.selectedDate().toDateString();
     return this.nutritionStore.mealRecords().filter(
       (r) => new Date(r.loggedAt).toDateString() === selectedDateStr,
@@ -154,6 +157,11 @@ export class DailyLog implements OnInit {
   );
 
   // ─── Computed ─────────────────────────────────────────────────────────────
+
+  /** Daily calorie goal from the intake record or user profile fallback. */
+  protected dailyGoalTarget = computed(() =>
+    this.nutritionStore.dailyIntake()?.dailyGoal ?? this.iamStore.currentUser()?.dailyCalorieTarget ?? 1800
+  );
 
   /** Whether the daily goal has been exceeded for the selected date (T22). */
   protected isDailyGoalExceeded = computed(() => {
@@ -286,6 +294,18 @@ export class DailyLog implements OnInit {
 
   // ─── Event Handlers ───────────────────────────────────────────────────────
 
+  /** Opens the food search modal. */
+  openFoodSearch(): void {
+    this.showFoodSearchModal.set(true);
+    this.nutritionStore.clearSearch();
+  }
+
+  /** Closes the food search modal. */
+  closeFoodSearch(): void {
+    this.showFoodSearchModal.set(false);
+    this.nutritionStore.clearSearch();
+  }
+
   /** Opens the meal entry detail dialog. */
   onViewEntry(record: MealRecord): void {
     this.selectedEntry.set(record);
@@ -303,6 +323,7 @@ export class DailyLog implements OnInit {
   onFoodSelected(food: FoodItem): void {
     const user = this.iamStore.currentUser();
     if (!user) return;
+    this.showFoodSearchModal.set(false);
     if (food.isRestrictedFor(user.restrictions as DietaryRestriction[])) {
       this.blockedFood.set(food);
     } else {

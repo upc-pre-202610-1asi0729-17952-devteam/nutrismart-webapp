@@ -6,6 +6,11 @@
       <h1 class="page-title">{{ 'nutrition.page_title' | translate }}</h1>
       <p class="page-subtitle">{{ 'nutrition.page_subtitle' | translate }}</p>
     </div>
+    @if (isEditable()) {
+      <button class="add-food-btn" (click)="openFoodSearch()" type="button">
+        + {{ 'nutrition.add_food_btn' | translate }}
+      </button>
+    }
   </header>
 
   <!-- ── Date Navigator ────────────────────────────────────── -->
@@ -99,22 +104,37 @@
       }
     </main>
 
-    <!-- ── RIGHT: Search + Balance ─────────────────────────── -->
+    <!-- ── RIGHT: Balance ────────────────────────────────────── -->
     <aside class="right-col">
-      <app-food-search-panel
-        (foodSelected)="onFoodSelected($event)">
-      </app-food-search-panel>
-
       <app-daily-balance-panel [consumed]="filteredTotals().calories"></app-daily-balance-panel>
     </aside>
 
   </div>
+
+  <!-- ── Food Search Modal ────────────────────────────────────── -->
+  @if (showFoodSearchModal()) {
+    <div class="search-modal-backdrop" (click)="closeFoodSearch()" role="dialog" aria-modal="true" [attr.aria-label]="'nutrition.search_modal_title' | translate">
+      <div class="search-modal" (click)="$event.stopPropagation()">
+        <div class="search-modal-header">
+          <h2 class="search-modal-title">{{ 'nutrition.search_modal_title' | translate }}</h2>
+          <span class="search-modal-date">{{ formattedDate() }}</span>
+          <button class="search-modal-close" (click)="closeFoodSearch()" type="button" [attr.aria-label]="'common.close' | translate">✕</button>
+        </div>
+        <app-food-search-panel
+          [hasRecords]="filteredRecords().length > 0"
+          (foodSelected)="onFoodSelected($event)">
+        </app-food-search-panel>
+      </div>
+    </div>
+  }
 
   <!-- ── Add Food Dialog - T20 ───────────────────────────────── -->
   @if (selectedFood()) {
     <app-add-food-dialog
       [food]="selectedFood()!"
       [targetMealType]="targetMealType()"
+      [currentConsumed]="filteredTotals().calories"
+      [dailyGoal]="dailyGoalTarget()"
       (confirm)="onConfirmAdd($event)"
       (cancel)="onCancelAdd()">
     </app-add-food-dialog>
