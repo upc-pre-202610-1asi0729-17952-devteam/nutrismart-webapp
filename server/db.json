@@ -114,28 +114,54 @@
       "createdAt": "2026-05-11"
     },
     {
-      "id": "ATAs1HP14XE",
+      "id": "1kw0egk4a",
       "firstName": "A",
-      "lastName": "Villarreal",
+      "lastName": "C",
       "email": "c@gmail.com",
-      "goal": "WEIGHT_LOSS",
+      "goal": "MUSCLE_GAIN",
       "weight": 70,
       "height": 170,
-      "activityLevel": "MODERATE",
+      "activityLevel": "SEDENTARY",
       "plan": "PREMIUM",
       "restrictions": [],
       "medicalConditions": [],
-      "dailyCalorieTarget": 1902,
-      "proteinTarget": 112,
-      "carbsTarget": 244,
-      "fatTarget": 53,
+      "dailyCalorieTarget": 2222,
+      "proteinTarget": 140,
+      "carbsTarget": 276,
+      "fatTarget": 62,
       "fiberTarget": 25,
       "streak": 0,
       "consecutiveMisses": 0,
-      "birthday": "2005-05-11",
+      "birthday": "2005-02-19",
       "biologicalSex": "male",
-      "createdAt": "",
-      "home_city": ""
+      "createdAt": "2026-05-11",
+      "home_city": "",
+      "goal_started_at": "2026-05-11"
+    },
+    {
+      "id": "2aux86td0",
+      "firstName": "A",
+      "lastName": "C",
+      "email": "d@gmail.com",
+      "goal": "WEIGHT_LOSS",
+      "weight": 70,
+      "height": 150,
+      "activityLevel": "SEDENTARY",
+      "plan": "PREMIUM",
+      "restrictions": [],
+      "medicalConditions": [],
+      "dailyCalorieTarget": 1472,
+      "proteinTarget": 112,
+      "carbsTarget": 164,
+      "fatTarget": 41,
+      "fiberTarget": 25,
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "birthday": "2005-02-19",
+      "biologicalSex": "female",
+      "createdAt": "2026-05-11",
+      "home_city": "",
+      "goal_started_at": "2026-05-11"
     }
   ],
   "nutrition-log": [
@@ -602,6 +628,24 @@
       "target_weight_kg": 0,
       "projected_achievement_date": "",
       "id": "ipOtrP9522k"
+    },
+    {
+      "user_id": "1kw0egk4a",
+      "weight_kg": 70,
+      "height_cm": 170,
+      "logged_at": "2026-05-11T12:36:33.058Z",
+      "target_weight_kg": 0,
+      "projected_achievement_date": "",
+      "id": "Z-IAYEpCvPE"
+    },
+    {
+      "id": "SqxO7UkyJnA",
+      "user_id": "2aux86td0",
+      "weight_kg": 70,
+      "height_cm": 150,
+      "logged_at": "2026-05-11T12:41:40.550Z",
+      "target_weight_kg": 56,
+      "projected_achievement_date": "2027-06-07T12:41:40.576Z"
     }
   ],
   "analytics": [
@@ -986,6 +1030,16 @@
       "measured_at": "2026-05-11T10:28:28.596Z",
       "previous_body_fat_percent": 0,
       "id": "_CpxISwRvp8"
+    },
+    {
+      "user_id": "1kw0egk4a",
+      "waist_cm": 81,
+      "neck_cm": 36,
+      "height_cm": 170,
+      "weight_kg": 70,
+      "measured_at": "2026-05-11T12:36:31.439Z",
+      "previous_body_fat_percent": 0,
+      "id": "9KIzvmKfSns"
     }
   ],
   "user-location-snapshots": [
