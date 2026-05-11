@@ -315,7 +315,8 @@
     "retry": "Reintentar",
     "view_daily_log_btn": "Ver registro diario",
     "net_balance_desc": "kcal neto hoy",
-    "meal_more": "+{{count}} más"
+    "meal_more": "+{{count}} más",
+    "weekly_completion": "completado esta semana"
   },
   "nutrition": {
     "page_title": "Registro Diario",

@@ -63,6 +63,7 @@ interface DashboardVm {
   streakClass: string;
   weekDots: boolean[];
   todayIndex: number;
+  weeklyCompletionRate: number;
   showNoMealsLoggedBlock: boolean;
   noMealsDays: number;
 }
@@ -147,7 +148,8 @@ export class BehavioralDashboard implements OnInit {
     const consecutiveMisses = progress?.consecutiveMisses ?? 0;
     const weekDots = progress?.weekDots ?? [false, false, false, false, false, false, false];
     const todayIndex = (new Date().getDay() + 6) % 7;
-    const streakMilestone = Math.ceil((streak + 1) / 7) * 7;
+    const streakMilestone = progress?.nextStreakMilestone ?? Math.ceil((streak + 1) / 7) * 7;
+    const weeklyCompletionRate = progress?.weeklyCompletionRate ?? 0;
 
     const intake = this.nutritionStore.getDailyIntakeFor(new Date());
     const totals = this.nutritionStore.dailyTotals();
@@ -176,7 +178,7 @@ export class BehavioralDashboard implements OnInit {
       badgeLabelKey: this.badgeKeyFor(status),
       badgeLabelParams: this.badgeParamsFor(status, streak, consecutiveMisses),
       badgeClass: this.badgeClassFor(status),
-      showAlert: status !== AdherenceStatus.ON_TRACK,
+      showAlert: progress?.hasAlert() ?? status !== AdherenceStatus.ON_TRACK,
       ...this.alertVmFor(status, consecutiveMisses),
       consumedCalories,
       targetCalories,
@@ -195,6 +197,7 @@ export class BehavioralDashboard implements OnInit {
       ...this.streakVmFor(status, streak, consecutiveMisses, streakMilestone),
       weekDots,
       todayIndex,
+      weeklyCompletionRate,
       showNoMealsLoggedBlock: status === AdherenceStatus.DROPPED,
       noMealsDays: status === AdherenceStatus.DROPPED ? consecutiveMisses : 0,
     };

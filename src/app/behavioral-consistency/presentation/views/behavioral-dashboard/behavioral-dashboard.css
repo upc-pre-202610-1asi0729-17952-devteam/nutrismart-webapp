@@ -580,6 +580,13 @@
   text-align: right;
 }
 
+.weekly-rate {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  opacity: .75;
+}
+
 .week-dots {
   display: flex;
   gap: 6px;

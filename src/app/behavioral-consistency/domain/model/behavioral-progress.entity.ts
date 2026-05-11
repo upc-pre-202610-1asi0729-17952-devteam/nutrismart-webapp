@@ -139,6 +139,24 @@ export class BehavioralProgress implements BaseEntity {
   }
 
   /**
+   * Whether the dashboard should display an alert banner for this status.
+   *
+   * @returns `true` for any status other than ON_TRACK.
+   */
+  hasAlert(): boolean {
+    return this._adherenceStatus !== AdherenceStatus.ON_TRACK;
+  }
+
+  /**
+   * Next streak milestone expressed as a multiple of 7 days.
+   *
+   * @returns The next 7-day boundary above the current streak.
+   */
+  get nextStreakMilestone(): number {
+    return Math.ceil((this._streak + 1) / 7) * 7;
+  }
+
+  /**
    * Marks today's behavioral goal as completed.
    *
    * Increases the streak, resets missed days, updates the last goal date,

@@ -315,7 +315,8 @@
     "retry": "Retry",
     "view_daily_log_btn": "View daily log",
     "net_balance_desc": "kcal net today",
-    "meal_more": "+{{count}} more"
+    "meal_more": "+{{count}} more",
+    "weekly_completion": "weekly completion"
   },
   "nutrition": {
     "page_title": "Daily Log",
