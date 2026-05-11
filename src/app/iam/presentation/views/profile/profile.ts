@@ -51,7 +51,7 @@ interface PanelNavItem {
 export class Profile implements OnInit {
   iamStore = inject(IamStore);
 
-  private metabolicStore  = inject(MetabolicStore);
+  protected metabolicStore = inject(MetabolicStore);
   private cityLookupApi   = inject(CityLookupApi);
   private translate       = inject(TranslateService);
 
@@ -124,7 +124,6 @@ export class Profile implements OnInit {
    * Reactive form for physical details.
    */
   physicalForm = this.fb.group({
-    weight: [this.iamStore.currentUser()?.weight ?? 70, Validators.required],
     height: [this.iamStore.currentUser()?.height ?? 170, Validators.required],
   });
 
@@ -208,6 +207,9 @@ export class Profile implements OnInit {
     this.cityLookupApi.getKnownCities().subscribe({
       next: cities => this.knownCities.set(cities),
     });
+    if (!this.metabolicStore.currentMetric()) {
+      void this.metabolicStore.initialise();
+    }
   }
 
   setPanel(panel: ProfilePanel): void {
@@ -279,8 +281,9 @@ export class Profile implements OnInit {
   }
 
   private commitPhysical(): void {
-    const { weight, height } = this.physicalForm.value;
-    this.iamStore.updatePhysicalDetails(weight!, height!, this.selectedActivity());
+    const { height } = this.physicalForm.value;
+    const currentWeight = this.iamStore.currentUser()?.weight ?? 70;
+    this.iamStore.updatePhysicalDetails(currentWeight, height!, this.selectedActivity());
     this.iamStore.changeGoal(this.selectedGoal());
     this.physicalSaved.set(true);
     setTimeout(() => this.physicalSaved.set(false), 2500);
