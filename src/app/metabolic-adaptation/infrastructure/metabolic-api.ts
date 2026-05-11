@@ -33,24 +33,33 @@ export class MetabolicApi extends BaseApi {
     );
   }
 
-  getMetricsHistory(userId: number | string, days: 7 | 30 | 90): Observable<BodyMetric[]> {
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - days);
+  getMetricsHistory(
+    userId: number | string,
+    days: number,
+    goalStartedAt?: string,
+  ): Observable<BodyMetric[]> {
+    const daysCutoff = new Date();
+    daysCutoff.setDate(daysCutoff.getDate() - days);
+    const goalCutoff   = goalStartedAt ? new Date(goalStartedAt) : null;
+    const effectiveCutoff = goalCutoff && goalCutoff > daysCutoff ? goalCutoff : daysCutoff;
     return this.metricEp.getByUserId(userId).pipe(
       map(metrics =>
         metrics
-          .filter(m => new Date(m.loggedAt) >= cutoff)
+          .filter(m => new Date(m.loggedAt) >= effectiveCutoff)
           .sort((a, b) => new Date(a.loggedAt).getTime() - new Date(b.loggedAt).getTime()),
       ),
       catchError(err => throwError(() => err)),
     );
   }
 
-  getMetabolicTargets(userId: number | string): Observable<BodyMetric | null> {
+  getMetabolicTargets(userId: number | string, goalStartedAt?: string): Observable<BodyMetric | null> {
     return this.metricEp.getByUserId(userId).pipe(
       map(metrics => {
-        if (!metrics.length) return null;
-        return [...metrics].sort(
+        const scoped = goalStartedAt
+          ? metrics.filter(m => new Date(m.loggedAt) >= new Date(goalStartedAt))
+          : metrics;
+        if (!scoped.length) return null;
+        return [...scoped].sort(
           (a, b) => new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime(),
         )[0];
       }),
@@ -58,10 +67,13 @@ export class MetabolicApi extends BaseApi {
     );
   }
 
-  setTargetWeight(userId: number | string, targetWeightKg: number): Observable<BodyMetric> {
+  setTargetWeight(userId: number | string, targetWeightKg: number, goalStartedAt?: string): Observable<BodyMetric> {
     return this.metricEp.getByUserId(userId).pipe(
       switchMap(metrics => {
-        const current = [...metrics].sort(
+        const scoped = goalStartedAt
+          ? metrics.filter(m => new Date(m.loggedAt) >= new Date(goalStartedAt))
+          : metrics;
+        const current = [...scoped].sort(
           (a, b) => new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime(),
         )[0];
         if (!current) return EMPTY;

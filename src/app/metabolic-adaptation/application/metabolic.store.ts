@@ -162,14 +162,15 @@ export class MetabolicStore {
   async initialise(): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
+    const goalStartedAt = user.goalStartedAt || undefined;
     this._loading.set(true);
     this._error.set(null);
     try {
-      const metric = await firstValueFrom(this.api.getMetabolicTargets(user.id));
+      const metric = await firstValueFrom(this.api.getMetabolicTargets(user.id, goalStartedAt));
       this._currentMetric.set(metric);
       const [history, stagnationHistory] = await Promise.all([
-        firstValueFrom(this.api.getMetricsHistory(user.id, 7)),
-        firstValueFrom(this.api.getMetricsHistory(user.id, STAGNATION_WINDOW_DAYS)),
+        firstValueFrom(this.api.getMetricsHistory(user.id, 7, goalStartedAt)),
+        firstValueFrom(this.api.getMetricsHistory(user.id, STAGNATION_WINDOW_DAYS, goalStartedAt)),
       ]);
       this._metricsHistory.set(history);
       this._stagnationHistory.set(stagnationHistory);
@@ -222,12 +223,13 @@ export class MetabolicStore {
   async setTargetWeight(targetWeightKg: number): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
+    const goalStartedAt = user.goalStartedAt || undefined;
     this._loading.set(true);
     this._error.set(null);
     try {
       // defaultValue: null handles the EMPTY case when no current metric exists yet.
       const metric = await firstValueFrom(
-        this.api.setTargetWeight(user.id, targetWeightKg),
+        this.api.setTargetWeight(user.id, targetWeightKg, goalStartedAt),
         { defaultValue: null },
       );
       if (!metric) return;
@@ -255,11 +257,12 @@ export class MetabolicStore {
   async loadHistory(days: 7 | 30 | 90): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
+    const goalStartedAt = user.goalStartedAt || undefined;
     this._selectedDays.set(days);
     this._loading.set(true);
     this._error.set(null);
     try {
-      const history = await firstValueFrom(this.api.getMetricsHistory(user.id, days));
+      const history = await firstValueFrom(this.api.getMetricsHistory(user.id, days, goalStartedAt));
       this._metricsHistory.set(history);
     } catch {
       this._error.set('body_progress.error_load_failed');
