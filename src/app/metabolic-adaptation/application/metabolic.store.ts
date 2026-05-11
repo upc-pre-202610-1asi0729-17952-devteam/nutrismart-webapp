@@ -5,6 +5,10 @@ import { BodyMetric } from '../domain/model/body-metric.entity';
 import { BodyComposition } from '../domain/model/body-composition.entity';
 import { IamStore } from '../../iam/application/iam.store';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
+import { DomainEventBus } from '../../shared/application/domain-event-bus';
+import { WeightLogged } from '../../shared/domain/weight-logged.event';
+import { TargetWeightSet } from '../../shared/domain/target-weight-set.event';
+import { GoalSwitched } from '../../shared/domain/goal-switched.event';
 
 const STALE_DAYS_THRESHOLD     = 14;
 const STAGNATION_WINDOW_DAYS   = 14;
@@ -26,6 +30,7 @@ const MIN_GOAL_COMMITMENT_DAYS = 28;
 export class MetabolicStore {
   private api      = inject(MetabolicApi);
   private iamStore = inject(IamStore);
+  private eventBus = inject(DomainEventBus);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
@@ -105,9 +110,7 @@ export class MetabolicStore {
   readonly hasStagnated = computed(() => {
     const history = this._stagnationHistory();
     if (history.length < 3) return false;
-    const first = history[0].weightKg;
-    const last  = history[history.length - 1].weightKg;
-    return this.isMuscleGain() ? last <= first : last >= first;
+    return !history[history.length - 1].isProgressingToward(this.isMuscleGain(), history[0].weightKg);
   });
 
   /** Last 3 entries from metricsHistory for the Log History table. */
@@ -115,9 +118,7 @@ export class MetabolicStore {
     const history = [...this._metricsHistory()].reverse().slice(0, 3);
     return history.map((m, i, arr) => ({
       metric: m,
-      delta: i < arr.length - 1
-        ? Math.round((m.weightKg - arr[i + 1].weightKg) * 10) / 10
-        : 0,
+      delta:  i < arr.length - 1 ? m.calculateDelta(arr[i + 1]) : 0,
     }));
   });
 
@@ -200,6 +201,7 @@ export class MetabolicStore {
       );
       this._currentMetric.set(metric);
       this._metricsHistory.update(h => [...h, metric]);
+      this.eventBus.publish(new WeightLogged(user.id, weightKg, metric.bmi()));
     } catch {
       this._error.set('body_progress.error_save_failed');
     } finally {
@@ -234,6 +236,7 @@ export class MetabolicStore {
           projectedAchievementDate: metric.projectedAchievementDate,
         });
       });
+      this.eventBus.publish(new TargetWeightSet(user.id, targetWeightKg, metric.projectedAchievementDate));
     } catch {
       this._error.set('body_progress.error_save_failed');
     } finally {
@@ -291,6 +294,18 @@ export class MetabolicStore {
    *
    * @param goal - The goal the user confirmed.
    */
+  /**
+   * Orchestrates a goal change: persists the new goal to IAM, sets the
+   * initial target weight for WEIGHT_LOSS goals, and publishes {@link GoalSwitched}.
+   */
+  async switchGoal(goal: UserGoal): Promise<void> {
+    const user = this.iamStore.currentUser();
+    if (!user) return;
+    this.iamStore.changeGoal(goal);
+    await this.applyInitialTarget(goal);
+    this.eventBus.publish(new GoalSwitched(user.id, goal));
+  }
+
   async applyInitialTarget(goal: UserGoal): Promise<void> {
     if (goal === UserGoal.MUSCLE_GAIN) return;
     const user = this.iamStore.currentUser();

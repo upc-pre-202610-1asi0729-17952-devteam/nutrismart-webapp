@@ -189,4 +189,27 @@ export class BodyMetric implements BaseEntity {
   isValidWeightLossTarget(target: number): boolean {
     return target > 0 && target < this.#weightKg;
   }
+
+  /**
+   * Returns the weight delta between this entry and a previous one,
+   * rounded to one decimal place.
+   *
+   * @param previous - The earlier metric to compare against.
+   */
+  calculateDelta(previous: BodyMetric): number {
+    return Math.round((this.#weightKg - previous.weightKg) * 10) / 10;
+  }
+
+  /**
+   * Returns `true` when this metric shows progress toward the active goal
+   * relative to a starting weight.
+   *
+   * @param isGainingMuscle - `true` for MUSCLE_GAIN goals, `false` for WEIGHT_LOSS.
+   * @param startWeightKg   - The reference weight at the start of the window.
+   */
+  isProgressingToward(isGainingMuscle: boolean, startWeightKg: number): boolean {
+    return isGainingMuscle
+      ? this.#weightKg > startWeightKg
+      : this.#weightKg < startWeightKg;
+  }
 }

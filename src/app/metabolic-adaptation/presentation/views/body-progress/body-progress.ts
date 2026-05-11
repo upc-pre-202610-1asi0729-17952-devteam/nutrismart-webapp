@@ -69,7 +69,7 @@ export class BodyProgressView implements OnInit {
     { key: 'onboarding.visual_obese',      rangeKey: 'onboarding.visual_range_obese',      override: 32.0 },
   ];
 
-  protected get compositionValid(): boolean {
+  protected compositionValid = computed(() => {
     const mode = this.compositionMode();
     if (mode === 'A') {
       const v = parseFloat(this.compositionWaistCm());
@@ -77,7 +77,7 @@ export class BodyProgressView implements OnInit {
     }
     if (mode === 'B') return this.compositionPantSize() !== null;
     return this.compositionVisualLevel() !== null;
-  }
+  });
 
   // ─── Tooltip state ────────────────────────────────────────────────────────
 
@@ -243,8 +243,8 @@ export class BodyProgressView implements OnInit {
     this.weightError.set('');
   }
 
-  onWeightInputChange(value: string): void {
-    this.weightInput.set(value);
+  onWeightInputChange(event: Event): void {
+    this.weightInput.set((event.target as HTMLInputElement).value);
     this.weightError.set('');
   }
 
@@ -301,6 +301,10 @@ export class BodyProgressView implements OnInit {
 
   onCloseCompositionModal(): void {
     this.showCompositionModal.set(false);
+    this.compositionMode.set('A');
+    this.compositionWaistCm.set('');
+    this.compositionPantSize.set(null);
+    this.compositionVisualLevel.set(null);
   }
 
   selectCompositionMode(mode: 'A' | 'B' | 'C'): void {

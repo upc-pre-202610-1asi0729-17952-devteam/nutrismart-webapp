@@ -18,9 +18,7 @@ export class WeightHistoryView implements OnInit {
     const all = this.store.allHistory();
     return all.map((metric, i) => ({
       metric,
-      delta: i < all.length - 1
-        ? Math.round((metric.weightKg - all[i + 1].weightKg) * 10) / 10
-        : null,
+      delta: i < all.length - 1 ? metric.calculateDelta(all[i + 1]) : null,
     }));
   });
 

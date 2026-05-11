@@ -1,11 +1,9 @@
 import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { BodyMetric } from '../domain/model/body-metric.entity';
 import { BodyComposition } from '../domain/model/body-composition.entity';
-import { NutritionPlan } from '../domain/model/nutrition-plan.entity';
 import {
   BodyMetricResource, BodyMetricsResponse,
   BodyCompositionResource, BodyCompositionResponse,
-  NutritionPlanResource, NutritionPlanResponse,
 } from './metabolic-resource';
 
 /**
@@ -88,44 +86,3 @@ export class BodyCompositionAssembler
   }
 }
 
-/**
- * Assembler for {@link NutritionPlan} — maps between the nutrition-plan API DTO
- * and the domain entity.
- *
- * @author Espinoza Cruz, Angela Milagros
- */
-export class NutritionPlanAssembler
-  implements BaseAssembler<NutritionPlan, NutritionPlanResource, NutritionPlanResponse> {
-
-  toEntityFromResource(r: NutritionPlanResource): NutritionPlan {
-    return new NutritionPlan({
-      id:                 r.id,
-      userId:             r.user_id,
-      dailyCalorieTarget: r.daily_calorie_target,
-      proteinTargetG:     r.protein_target_g,
-      carbsTargetG:       r.carbs_target_g,
-      fatTargetG:         r.fat_target_g,
-      fiberTargetG:       r.fiber_target_g,
-      isActive:           r.is_active,
-      createdAt:          r.created_at,
-    });
-  }
-
-  toResourceFromEntity(e: NutritionPlan): NutritionPlanResource {
-    return {
-      id:                    e.id,
-      user_id:               e.userId,
-      daily_calorie_target:  e.dailyCalorieTarget,
-      protein_target_g:      e.proteinTargetG,
-      carbs_target_g:        e.carbsTargetG,
-      fat_target_g:          e.fatTargetG,
-      fiber_target_g:        e.fiberTargetG,
-      is_active:             e.isActive,
-      created_at:            e.createdAt,
-    };
-  }
-
-  toEntitiesFromResponse(response: NutritionPlanResponse): NutritionPlan[] {
-    return [this.toEntityFromResource(response.plan)];
-  }
-}

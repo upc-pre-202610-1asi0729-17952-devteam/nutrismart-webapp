@@ -38,6 +38,7 @@ export class MetabolicApi extends BaseApi {
           .filter(m => new Date(m.loggedAt) >= effectiveCutoff)
           .sort((a, b) => new Date(a.loggedAt).getTime() - new Date(b.loggedAt).getTime()),
       ),
+      retry(2),
       catchError(err => throwError(() => err)),
     );
   }
@@ -53,6 +54,7 @@ export class MetabolicApi extends BaseApi {
           (a, b) => new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime(),
         )[0];
       }),
+      retry(2),
       catchError(err => throwError(() => err)),
     );
   }
@@ -117,12 +119,14 @@ export class MetabolicApi extends BaseApi {
           : metrics;
         return scoped.sort((a, b) => new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime());
       }),
+      retry(2),
       catchError(err => throwError(() => err)),
     );
   }
 
   getComposition(userId: number | string): Observable<BodyComposition | null> {
     return this.compositionEp.getLatestByUserId(userId).pipe(
+      retry(2),
       catchError(err => throwError(() => err)),
     );
   }
