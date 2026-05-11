@@ -32,20 +32,11 @@
       "lastName": "Villarreal",
       "email": "a@gmail.com",
       "goal": "WEIGHT_LOSS",
-      "weight": 70,
+      "weight": 150,
       "height": 165,
       "activityLevel": "SEDENTARY",
       "plan": "PREMIUM",
-      "restrictions": [
-        "LACTOSE_FREE",
-        "GLUTEN_FREE",
-        "VEGAN",
-        "VEGETARIAN",
-        "NUT_FREE",
-        "SEAFOOD_FREE",
-        "KOSHER",
-        "HALAL"
-      ],
+      "restrictions": [],
       "medicalConditions": [
         "TYPE_2_DIABETES",
         "HIGH_BLOOD_PRESSURE",
@@ -54,10 +45,10 @@
         "KIDNEY_DISEASE",
         "GOUT"
       ],
-      "dailyCalorieTarget": 1584,
-      "proteinTarget": 112,
-      "carbsTarget": 185,
-      "fatTarget": 44,
+      "dailyCalorieTarget": 2544,
+      "proteinTarget": 240,
+      "carbsTarget": 236,
+      "fatTarget": 71,
       "fiberTarget": 25,
       "streak": 0,
       "consecutiveMisses": 0,
@@ -560,6 +551,112 @@
       "userId": 1,
       "ingredientName": "Garlic",
       "category": "Seasoning"
+    }
+  ],
+  "ingredient-catalog": [
+    {
+      "id": "1",
+      "name_key": "white_rice",
+      "category": "Grain"
+    },
+    {
+      "id": "2",
+      "name_key": "chicken_breast",
+      "category": "Animal protein"
+    },
+    {
+      "id": "3",
+      "name_key": "lemon",
+      "category": "Fruit"
+    },
+    {
+      "id": "4",
+      "name_key": "onion",
+      "category": "Vegetable"
+    },
+    {
+      "id": "5",
+      "name_key": "garlic",
+      "category": "Seasoning"
+    },
+    {
+      "id": "6",
+      "name_key": "quinoa",
+      "category": "Grain"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "1",
+      "name": "Chicken breast with quinoa",
+      "name_key": "chicken_quinoa",
+      "calories": 540,
+      "protein": 52,
+      "carbs": 38,
+      "fat": 12,
+      "ingredients": [
+        "chicken_breast",
+        "quinoa",
+        "garlic",
+        "lemon"
+      ],
+      "goal_type": "MUSCLE_GAIN",
+      "prep_time_minutes": 30,
+      "covers_macro_pct": 43
+    },
+    {
+      "id": "2",
+      "name": "Rice and chicken bowl",
+      "name_key": "rice_chicken_bowl",
+      "calories": 480,
+      "protein": 38,
+      "carbs": 52,
+      "fat": 8,
+      "ingredients": [
+        "white_rice",
+        "chicken_breast",
+        "onion",
+        "garlic"
+      ],
+      "goal_type": "MUSCLE_GAIN",
+      "prep_time_minutes": 25,
+      "covers_macro_pct": 32
+    },
+    {
+      "id": "3",
+      "name": "Chicken and salad",
+      "name_key": "chicken_salad",
+      "calories": 480,
+      "protein": 18,
+      "carbs": 22,
+      "fat": 8,
+      "ingredients": [
+        "chicken_breast",
+        "onion",
+        "garlic",
+        "lemon"
+      ],
+      "goal_type": "WEIGHT_LOSS",
+      "prep_time_minutes": 15,
+      "covers_macro_pct": 25
+    },
+    {
+      "id": "4",
+      "name": "Lemon garlic rice",
+      "name_key": "lemon_garlic_rice",
+      "calories": 340,
+      "protein": 6,
+      "carbs": 64,
+      "fat": 4,
+      "ingredients": [
+        "white_rice",
+        "lemon",
+        "garlic",
+        "onion"
+      ],
+      "goal_type": "WEIGHT_LOSS",
+      "prep_time_minutes": 20,
+      "covers_macro_pct": 20
     }
   ],
   "subscriptions": [
