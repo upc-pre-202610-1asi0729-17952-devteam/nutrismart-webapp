@@ -381,6 +381,11 @@ export class BodyProgressView implements OnInit {
     this.editWeightError.set('');
   }
 
+  onEditWeightInput(event: Event): void {
+    this.editWeightInput.set((event.target as HTMLInputElement).value);
+    this.editWeightError.set('');
+  }
+
   onCancelEditMetric(): void {
     this.editingMetricId.set(null);
     this.editWeightInput.set('');
