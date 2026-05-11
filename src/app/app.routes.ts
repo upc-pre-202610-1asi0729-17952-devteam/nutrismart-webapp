@@ -95,7 +95,7 @@ export const routes: Routes = [
     loadChildren: bodyProgressRoutes,
     canActivate: [authGuard, subscriptionGuard],
   },
-  { path: 'pantry', loadChildren: pantryRoutes, canActivate: [authGuard, subscriptionGuard] },
+
   { path: 'wearable', loadChildren: wearableRoutes, canActivate: [authGuard, subscriptionGuard] },
   { path: 'analytics', loadChildren: analyticsRoutes, canActivate: [authGuard, subscriptionGuard] },
   { path: 'subscription', loadChildren: subscriptionsRoutes, canActivate: [authGuard] },
