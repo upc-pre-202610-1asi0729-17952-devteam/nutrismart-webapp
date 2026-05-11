@@ -350,6 +350,7 @@
     "remaining": "Remaining",
     "exceeded": "Exceeded",
     "percent_consumed": "{{ percent }}% of your goal consumed",
+    "daily_balance": "Daily Balance",
     "calorie_limit_exceeded": "Calorie limit exceeded",
     "exceeded_warning": "You have exceeded your goal. Consider a lighter dinner.",
     "restrictions_warning": "Some results contain ingredients that match your active restrictions: {{ restrictions }}",

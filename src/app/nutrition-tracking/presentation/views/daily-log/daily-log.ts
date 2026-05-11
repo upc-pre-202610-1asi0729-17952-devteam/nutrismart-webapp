@@ -139,7 +139,7 @@ export class DailyLog implements OnInit {
     };
   });
 
-  private filteredTotals = computed(() =>
+  protected filteredTotals = computed(() =>
     this.filteredRecords().reduce(
       (acc, r) => ({
         calories: Math.round((acc.calories + r.calories) * 10) / 10,

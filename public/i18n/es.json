@@ -350,6 +350,7 @@
     "remaining": "Restante",
     "exceeded": "Excedido",
     "percent_consumed": "{{ percent }}% de tu meta consumida",
+    "daily_balance": "Balance Diario",
     "calorie_limit_exceeded": "Límite calórico superado",
     "exceeded_warning": "Has superado tu meta. Considera una cena más ligera.",
     "restrictions_warning": "Algunos resultados contienen ingredientes que coinciden con tus restricciones activas: {{ restrictions }}",
