@@ -314,7 +314,8 @@
     "load_error": "Could not load your data. Please try again.",
     "retry": "Retry",
     "view_daily_log_btn": "View daily log",
-    "net_balance_desc": "kcal net today"
+    "net_balance_desc": "kcal net today",
+    "meal_more": "+{{count}} more"
   },
   "nutrition": {
     "page_title": "Daily Log",

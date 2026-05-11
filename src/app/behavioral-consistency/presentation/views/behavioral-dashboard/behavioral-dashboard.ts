@@ -78,12 +78,12 @@ export class BehavioralDashboard implements OnInit {
   private readonly router = inject(Router);
   private readonly translateService = inject(TranslateService);
 
-  protected readonly iamStore = inject(IamStore);
-  protected readonly behavioralStore = inject(BehavioralConsistencyStore);
-  protected readonly nutritionStore = inject(NutritionStore);
+  private readonly iamStore = inject(IamStore);
+  private readonly behavioralStore = inject(BehavioralConsistencyStore);
+  private readonly nutritionStore = inject(NutritionStore);
 
-  protected readonly currentUser = this.iamStore.currentUser;
-  protected readonly currentProgress = this.behavioralStore.currentProgress;
+  private readonly currentUser = this.iamStore.currentUser;
+  private readonly currentProgress = this.behavioralStore.currentProgress;
 
   protected readonly isLoading = computed(() =>
     this.behavioralStore.loading() || this.nutritionStore.loading(),
@@ -253,10 +253,10 @@ export class BehavioralDashboard implements OnInit {
       minute: '2-digit',
       hour12: locale !== 'es-ES',
     });
-    const description =
-      todayRecords.length === 1
-        ? `${foodName} · ${time}`
-        : `${foodName} +${todayRecords.length - 1} more · ${time}`;
+    const more = todayRecords.length > 1
+      ? ' ' + this.translateService.instant('dashboard.meal_more', { count: todayRecords.length - 1 })
+      : '';
+    const description = `${foodName}${more} · ${time}`;
     return {
       nameKey,
       description,

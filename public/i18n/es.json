@@ -314,7 +314,8 @@
     "load_error": "No se pudieron cargar tus datos. Inténtalo de nuevo.",
     "retry": "Reintentar",
     "view_daily_log_btn": "Ver registro diario",
-    "net_balance_desc": "kcal neto hoy"
+    "net_balance_desc": "kcal neto hoy",
+    "meal_more": "+{{count}} más"
   },
   "nutrition": {
     "page_title": "Registro Diario",
