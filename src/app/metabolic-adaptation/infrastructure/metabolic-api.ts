@@ -130,4 +130,33 @@ export class MetabolicApi extends BaseApi {
       catchError(err => throwError(() => err)),
     );
   }
+
+  updateWeight(metric: BodyMetric, newWeightKg: number): Observable<BodyMetric> {
+    const projectedDate = metric.targetWeightKg > 0
+      ? new BodyMetric({
+          id: 0, userId: metric.userId, weightKg: newWeightKg,
+          heightCm: metric.heightCm, loggedAt: metric.loggedAt,
+        }).calculateProjectedDate(metric.targetWeightKg).toISOString()
+      : '';
+    const updated = new BodyMetric({
+      id:                       metric.id,
+      userId:                   metric.userId,
+      weightKg:                 newWeightKg,
+      heightCm:                 metric.heightCm,
+      loggedAt:                 metric.loggedAt,
+      targetWeightKg:           metric.targetWeightKg,
+      projectedAchievementDate: projectedDate,
+    });
+    return this.metricEp.update(updated, String(metric.id) as unknown as number).pipe(
+      retry(2),
+      catchError(err => throwError(() => err)),
+    );
+  }
+
+  deleteWeight(metricId: number | string): Observable<void> {
+    return this.metricEp.delete(String(metricId) as unknown as number).pipe(
+      retry(2),
+      catchError(err => throwError(() => err)),
+    );
+  }
 }

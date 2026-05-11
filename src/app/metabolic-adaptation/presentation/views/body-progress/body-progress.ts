@@ -79,6 +79,12 @@ export class BodyProgressView implements OnInit {
     return this.compositionVisualLevel() !== null;
   });
 
+  // ─── History entry edit state ─────────────────────────────────────────────
+
+  protected editingMetricId  = signal<number | string | null>(null);
+  protected editWeightInput  = signal<string>('');
+  protected editWeightError  = signal<string>('');
+
   // ─── Tooltip state ────────────────────────────────────────────────────────
 
   protected activeTooltip = signal<'bmi' | 'bmr' | 'tdee' | 'body_fat' | 'lean_mass' | 'lean_bulk' | null>(null);
@@ -360,5 +366,40 @@ export class BodyProgressView implements OnInit {
 
   isDeltaPositive(delta: number): boolean {
     return delta > 0;
+  }
+
+  // ─── History entry edit / delete ─────────────────────────────────────────
+
+  isWithin7Days(isoDate: string): boolean {
+    const diffDays = Math.floor((Date.now() - new Date(isoDate).getTime()) / 86_400_000);
+    return diffDays < 7;
+  }
+
+  onStartEditMetric(metric: BodyMetric): void {
+    this.editingMetricId.set(metric.id);
+    this.editWeightInput.set(metric.weightKg.toString());
+    this.editWeightError.set('');
+  }
+
+  onCancelEditMetric(): void {
+    this.editingMetricId.set(null);
+    this.editWeightInput.set('');
+    this.editWeightError.set('');
+  }
+
+  async onSaveEditMetric(metric: BodyMetric): Promise<void> {
+    const raw = parseFloat(this.editWeightInput());
+    if (isNaN(raw) || raw <= 0 || raw > WEIGHT_MAX_KG) {
+      this.editWeightError.set(this.translate.instant('body_progress.error_weight_invalid'));
+      return;
+    }
+    this.editWeightError.set('');
+    await this.store.updateWeight(metric, raw);
+    this.editingMetricId.set(null);
+    this.editWeightInput.set('');
+  }
+
+  async onDeleteMetric(metricId: number | string): Promise<void> {
+    await this.store.deleteWeight(metricId);
   }
 }

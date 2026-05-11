@@ -103,6 +103,12 @@ export class MetabolicStore {
     this.iamStore.currentUser()?.goal === UserGoal.MUSCLE_GAIN
   );
 
+  /** True when the user has already logged a weight entry for today. */
+  readonly hasLoggedToday = computed(() => {
+    const todayStr = new Date().toDateString();
+    return this._metricsHistory().some(m => new Date(m.loggedAt).toDateString() === todayStr);
+  });
+
   /**
    * True when the user has logged weight consistently over the last
    * {@link STAGNATION_WINDOW_DAYS} days but shows no progress toward their goal.
@@ -184,6 +190,18 @@ export class MetabolicStore {
         const comp = await firstValueFrom(this.api.getComposition(user.id));
         this._composition.set(comp);
       }
+      // Auto-maintenance: if the loaded metric already meets the weight-loss target,
+      // reset the target to current weight so the goal always reflects real state.
+      const current = this._currentMetric();
+      if (
+        current &&
+        user.goal === UserGoal.WEIGHT_LOSS &&
+        current.targetWeightKg > 0 &&
+        current.weightKg <= current.targetWeightKg
+      ) {
+        await this.setTargetWeight(current.weightKg);
+        this.eventBus.publish(new WeightGoalAchieved(user.id, current.weightKg));
+      }
     } catch {
       this._error.set('body_progress.error_load_failed');
     } finally {
@@ -195,23 +213,31 @@ export class MetabolicStore {
     const user = this.iamStore.currentUser();
     if (!user) return;
 
-    // Capture target before overwriting _currentMetric with the new entry
-    // (logWeight API returns a metric without target — target lives on previous snapshot).
     const previousTarget = this._currentMetric()?.targetWeightKg ?? 0;
+    const todayStr       = new Date().toDateString();
+    const todayEntry     = this._metricsHistory()
+      .find(m => new Date(m.loggedAt).toDateString() === todayStr);
 
     this._loading.set(true);
     this._error.set(null);
     try {
-      const metric = await firstValueFrom(
-        this.api.logWeight(user.id, weightKg, this._currentMetric()?.heightCm ?? user.height),
-      );
+      let metric: BodyMetric;
+      if (todayEntry) {
+        // One-per-day: update the existing entry instead of creating a duplicate.
+        metric = await firstValueFrom(this.api.updateWeight(todayEntry, weightKg));
+        this._metricsHistory.update(h => h.map(m => m.id === todayEntry.id ? metric : m));
+        this._stagnationHistory.update(h => h.map(m => m.id === todayEntry.id ? metric : m));
+      } else {
+        metric = await firstValueFrom(
+          this.api.logWeight(user.id, weightKg, this._currentMetric()?.heightCm ?? user.height),
+        );
+        this._metricsHistory.update(h => [...h, metric]);
+        this._stagnationHistory.update(h => [...h, metric]);
+      }
       this._currentMetric.set(metric);
-      this._metricsHistory.update(h => [...h, metric]);
       this.eventBus.publish(new WeightLogged(user.id, weightKg, metric.bmi()));
 
-      // Auto-maintenance: when the user reaches or drops below their WEIGHT_LOSS
-      // target, reset the target to their current weight (maintenance mode) and
-      // recalculate the projected date to today.
+      // Auto-maintenance: reset target to current weight when goal is reached.
       if (
         user.goal === UserGoal.WEIGHT_LOSS &&
         previousTarget > 0 &&
@@ -331,6 +357,41 @@ export class MetabolicStore {
     const h      = user.height / 100;
     const target = Math.round(24.9 * h * h * 10) / 10;
     await this.setTargetWeight(target);
+  }
+
+  async updateWeight(metric: BodyMetric, newWeightKg: number): Promise<void> {
+    this._loading.set(true);
+    this._error.set(null);
+    try {
+      const updated = await firstValueFrom(this.api.updateWeight(metric, newWeightKg));
+      this._metricsHistory.update(h => h.map(m => m.id === metric.id ? updated : m));
+      this._stagnationHistory.update(h => h.map(m => m.id === metric.id ? updated : m));
+      if (this._currentMetric()?.id === metric.id) {
+        this._currentMetric.set(updated);
+      }
+    } catch {
+      this._error.set('body_progress.error_save_failed');
+    } finally {
+      this._loading.set(false);
+    }
+  }
+
+  async deleteWeight(metricId: number | string): Promise<void> {
+    this._loading.set(true);
+    this._error.set(null);
+    try {
+      await firstValueFrom(this.api.deleteWeight(metricId));
+      this._metricsHistory.update(h => h.filter(m => m.id !== metricId));
+      this._stagnationHistory.update(h => h.filter(m => m.id !== metricId));
+      if (this._currentMetric()?.id === metricId) {
+        const remaining = this._metricsHistory();
+        this._currentMetric.set(remaining.length > 0 ? remaining[remaining.length - 1] : null);
+      }
+    } catch {
+      this._error.set('body_progress.error_save_failed');
+    } finally {
+      this._loading.set(false);
+    }
   }
 
   async loadAllHistory(): Promise<void> {

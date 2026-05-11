@@ -577,7 +577,13 @@
     "history_title": "Historial de peso completo",
     "history_subtitle": "Todos los registros del ciclo de objetivo actual",
     "history_empty": "Aún no hay registros de peso para este ciclo.",
-    "back_to_progress": "← Volver al progreso"
+    "back_to_progress": "← Volver al progreso",
+    "aria_edit_entry": "Editar registro de peso",
+    "aria_delete_entry": "Eliminar registro de peso",
+    "aria_save_edit": "Guardar",
+    "aria_cancel_edit": "Cancelar",
+    "today_entry_updated": "Registro de hoy actualizado.",
+    "error_already_logged_today": "Ya tienes un registro de hoy. Se actualizará."
   },
   "smart_scan": {
     "page_title": "Smart Scan",

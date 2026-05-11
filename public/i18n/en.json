@@ -577,7 +577,13 @@
     "history_title": "Full Weight History",
     "history_subtitle": "All entries for the current goal cycle",
     "history_empty": "No weight entries yet for this goal cycle.",
-    "back_to_progress": "← Back to progress"
+    "back_to_progress": "← Back to progress",
+    "aria_edit_entry": "Edit weight entry",
+    "aria_delete_entry": "Delete weight entry",
+    "aria_save_edit": "Save",
+    "aria_cancel_edit": "Cancel",
+    "today_entry_updated": "Today's entry updated.",
+    "error_already_logged_today": "You already have an entry for today. It will be updated."
   },
   "smart_scan": {
     "page_title": "Smart Scan",
