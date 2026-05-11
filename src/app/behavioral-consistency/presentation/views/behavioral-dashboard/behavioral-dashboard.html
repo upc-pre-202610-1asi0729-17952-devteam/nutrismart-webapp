@@ -68,11 +68,10 @@
       <article class="metric-card">
         <span class="metric-label">{{ 'dashboard.net_balance_label' | translate }}</span>
         <strong>{{ vm.netBalance }}</strong>
+        <p>{{ 'dashboard.net_balance_desc' | translate }}</p>
 
         @if (vm.googleFitCalories !== null) {
           <span class="fit-badge">{{ 'dashboard.fit_badge' | translate: { calories: vm.googleFitCalories } }}</span>
-        } @else if (vm.netBalanceSubtitleKey) {
-          <p>{{ vm.netBalanceSubtitleKey | translate }}</p>
         }
       </article>
     </section>

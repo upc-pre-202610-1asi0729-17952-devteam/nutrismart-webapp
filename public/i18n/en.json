@@ -313,7 +313,8 @@
     "loading_progress": "Loading your dashboard…",
     "load_error": "Could not load your data. Please try again.",
     "retry": "Retry",
-    "view_daily_log_btn": "View daily log"
+    "view_daily_log_btn": "View daily log",
+    "net_balance_desc": "kcal net today"
   },
   "nutrition": {
     "page_title": "Daily Log",

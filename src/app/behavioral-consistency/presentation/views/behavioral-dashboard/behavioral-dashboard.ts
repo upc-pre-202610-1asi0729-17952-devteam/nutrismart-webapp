@@ -53,7 +53,6 @@ interface DashboardVm {
   progressPercent: number;
   topAccentClass: string;
   googleFitCalories: number | null;
-  netBalanceSubtitleKey: string | null;
   meals: DashboardMealVm[];
   macros: DashboardMacroVm[];
   streak: number;
@@ -164,7 +163,7 @@ export class BehavioralDashboard implements OnInit {
     const progressPercent = intake
       ? intake.percentConsumed
       : Math.min(Math.round((consumedCalories / targetCalories) * 100), 100);
-    const netBalance = intake ? intake.remaining : targetCalories - consumedCalories;
+    const netBalance = consumedCalories - activeCalories;
 
     const proteinTarget = user?.proteinTarget ?? 120;
     const carbsTarget = user?.carbsTarget ?? 220;
@@ -186,10 +185,6 @@ export class BehavioralDashboard implements OnInit {
       progressPercent,
       topAccentClass: this.accentFor(status),
       googleFitCalories: activeCalories > 0 ? activeCalories : null,
-      netBalanceSubtitleKey:
-        status === AdherenceStatus.AT_RISK && activeCalories === 0
-          ? 'dashboard.no_activity_synced'
-          : null,
       meals: status === AdherenceStatus.DROPPED ? [] : this.buildMealsVm(locale),
       macros: [
         { nameKey: 'dashboard.macro_protein', consumed: Math.round(totals.protein), target: proteinTarget, colorClass: 'macro-teal' },
