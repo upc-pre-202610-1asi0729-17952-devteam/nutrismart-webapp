@@ -2,6 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MetabolicStore } from '../../../application/metabolic.store';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { BmiCategory } from '../../../domain/model/body-metric.entity';
@@ -25,13 +26,14 @@ import { BmiCategory } from '../../../domain/model/body-metric.entity';
  */
 @Component({
   selector: 'app-body-progress',
-  imports: [DecimalPipe, NgClass, FormsModule, MatButtonToggleGroup, MatButtonToggle],
+  imports: [DecimalPipe, NgClass, FormsModule, MatButtonToggleGroup, MatButtonToggle, TranslatePipe],
   templateUrl: './body-progress.html',
   styleUrl: './body-progress.css',
 })
 export class BodyProgressView implements OnInit {
-  protected store    = inject(MetabolicStore);
-  protected iamStore = inject(IamStore);
+  protected store     = inject(MetabolicStore);
+  protected iamStore  = inject(IamStore);
+  private translate   = inject(TranslateService);
 
   // ─── Right panel state ────────────────────────────────────────────────────
 
@@ -133,18 +135,21 @@ export class BodyProgressView implements OnInit {
   /** Formatted projected achievement date (e.g. "August 14, 2026"). */
   protected formattedProjectedDate = computed(() => {
     const date = this.store.currentMetric()?.projectedAchievementDate;
-    if (!date) return 'Not set';
-    return new Date(date).toLocaleDateString('en-US', {
+    if (!date) return this.translate.instant('body_progress.not_set');
+    const lang = this.translate.currentLang ?? 'en';
+    return new Date(date).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', {
       month: 'long', day: 'numeric', year: 'numeric',
     });
   });
 
   /** Short label shown inside the BMI badge pill (e.g. "Normal", not "Normal weight"). */
   protected bmiBadgeLabel = computed(() => {
-    if (this.bmiOutdated()) return 'Outdated';
+    if (this.bmiOutdated()) return this.translate.instant('body_progress.bmi_outdated');
     const cat = this.store.currentMetric()?.bmiCategory();
     if (!cat) return '';
-    return cat === BmiCategory.NORMAL ? 'Normal' : cat;
+    return cat === BmiCategory.NORMAL
+      ? this.translate.instant('body_progress.bmi_normal')
+      : cat;
   });
 
   /** CSS class for the BMI WHO-category badge. */
@@ -190,11 +195,11 @@ export class BodyProgressView implements OnInit {
     const val = parseFloat(this.weightInput());
 
     if (!this.weightInput().trim() || isNaN(val) || val <= 0) {
-      this.weightError.set('Weight must be a positive value greater than 0.');
+      this.weightError.set(this.translate.instant('body_progress.error_weight_positive'));
       return;
     }
     if (val > 500) {
-      this.weightError.set('Please enter a valid weight (max 500 kg).');
+      this.weightError.set(this.translate.instant('body_progress.error_weight_max'));
       return;
     }
 
@@ -270,13 +275,13 @@ export class BodyProgressView implements OnInit {
     const current = this.store.currentMetric()?.weightKg ?? 0;
 
     if (!this.goalWeightInputModel.trim() || isNaN(val) || val <= 0) {
-      this.goalWeightError.set('Please enter a valid weight.');
+      this.goalWeightError.set(this.translate.instant('body_progress.error_weight_invalid'));
       return;
     }
 
     if (!this.store.isMuscleGain() && val >= current) {
       this.goalWeightError.set(
-        `Goal weight must be lower than your current weight (${current} kg).`,
+        this.translate.instant('body_progress.error_goal_below_current', { current }),
       );
       return;
     }
@@ -306,12 +311,15 @@ export class BodyProgressView implements OnInit {
   // ─── History formatting ───────────────────────────────────────────────────
 
   formatHistoryDate(isoDate: string): string {
-    const d     = new Date(isoDate);
-    const today = new Date();
+    const d      = new Date(isoDate);
+    const today  = new Date();
+    const lang   = this.translate.currentLang ?? 'en';
+    const locale = lang === 'es' ? 'es-ES' : 'en-US';
+    const formatted = d.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
     if (d.toDateString() === today.toDateString()) {
-      return `Today, ${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+      return `${this.translate.instant('nutrition.date_today')}, ${formatted}`;
     }
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return formatted;
   }
 
   formatDelta(delta: number): string {

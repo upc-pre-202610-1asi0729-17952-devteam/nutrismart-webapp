@@ -3,14 +3,14 @@
   <!-- ── Page header ─────────────────────────────────────────── -->
   <header class="page-header">
     <div class="header-left">
-      <h1 class="page-title">Recommendations</h1>
+      <h1 class="page-title">{{ 'recommendations.page_title' | translate }}</h1>
       <p class="page-subtitle">
         @if (store.isTravelMode()) {
-          Your current location is different from your usual area.
+          {{ 'recommendations.subtitle_travel' | translate }}
         } @else if (!isPro()) {
-          Upgrade your plan to access context-sensitive recommendations
+          {{ 'recommendations.subtitle_upgrade' | translate }}
         } @else {
-          Personalised recommendations based on your current location and weather
+          {{ 'recommendations.subtitle_pro' | translate }}
         }
       </p>
     </div>
@@ -24,12 +24,9 @@
   @if (!isPro()) {
     <div class="plan-gate">
       <div class="plan-gate-icon">📍</div>
-      <h2 class="plan-gate-title">Contextual recommendations — Pro or Premium plan</h2>
-      <p class="plan-gate-desc">
-        Weather-based suggestions, Automatic Travel Mode and the personalised recommendation engine
-        are available from the Pro plan onwards.
-      </p>
-      <a routerLink="/subscription" class="btn btn--primary">Check subscription</a>
+      <h2 class="plan-gate-title">{{ 'recommendations.gate_title' | translate }}</h2>
+      <p class="plan-gate-desc">{{ 'recommendations.gate_desc' | translate }}</p>
+      <a routerLink="/subscription" class="btn btn--primary">{{ 'recommendations.gate_cta' | translate }}</a>
     </div>
   }
 
@@ -37,31 +34,31 @@
 
     <!-- ── Demo bar ─────────────────────────────────────────── -->
     <div class="demo-bar">
-      <span class="demo-label">Demo:</span>
+      <span class="demo-label">{{ 'recommendations.demo_label' | translate }}</span>
 
       <div class="demo-group">
-        <span class="demo-group-label">Weather</span>
+        <span class="demo-group-label">{{ 'recommendations.demo_weather' | translate }}</span>
         <button class="demo-btn" [class.demo-btn--active]="demoWeather() === 'hot'"
-                (click)="setDemoWeather('hot')">☀ Hot</button>
+                (click)="setDemoWeather('hot')">{{ 'recommendations.demo_hot' | translate }}</button>
         <button class="demo-btn" [class.demo-btn--active]="demoWeather() === 'cold'"
-                (click)="setDemoWeather('cold')">❄ Cold</button>
+                (click)="setDemoWeather('cold')">{{ 'recommendations.demo_cold' | translate }}</button>
       </div>
 
       <div class="demo-group">
-        <span class="demo-group-label">Adherence</span>
+        <span class="demo-group-label">{{ 'recommendations.demo_adherence' | translate }}</span>
         <button class="demo-btn" [class.demo-btn--active]="demoAdherence() === 'on_track'"
-                (click)="setDemoAdherence('on_track')">On track</button>
+                (click)="setDemoAdherence('on_track')">{{ 'recommendations.demo_on_track' | translate }}</button>
         <button class="demo-btn demo-btn--warn" [class.demo-btn--active]="demoAdherence() === 'at_risk'"
-                (click)="setDemoAdherence('at_risk')">AT_RISK</button>
+                (click)="setDemoAdherence('at_risk')">{{ 'recommendations.demo_at_risk' | translate }}</button>
         <button class="demo-btn demo-btn--danger" [class.demo-btn--active]="demoAdherence() === 'dropped'"
-                (click)="setDemoAdherence('dropped')">DROPPED</button>
+                (click)="setDemoAdherence('dropped')">{{ 'recommendations.demo_dropped' | translate }}</button>
       </div>
 
       <div class="demo-group">
-        <span class="demo-group-label">Travel</span>
+        <span class="demo-group-label">{{ 'recommendations.demo_travel' | translate }}</span>
         <button class="demo-btn" [class.demo-btn--active]="demoTravel()"
                 (click)="toggleDemoTravel()">
-          {{ demoTravel() ? '✓ Travel ON' : 'Travel OFF' }}
+          {{ demoTravel() ? ('recommendations.demo_travel_on' | translate) : ('recommendations.demo_travel_off' | translate) }}
         </button>
       </div>
     </div>
@@ -70,11 +67,8 @@
     @if (store.locationDenied() && !store.isTravelMode()) {
       <div class="location-banner">
         <span class="location-banner-icon">📍</span>
-        <span class="location-banner-text">
-          We don't have access to your location. Enable it to get weather-based recommendations and
-          Travel Mode, or enter your city manually in the side panel.
-        </span>
-        <button class="btn btn--primary btn--sm" (click)="store.allowLocation()">Enable location</button>
+        <span class="location-banner-text">{{ 'recommendations.location_denied_msg' | translate }}</span>
+        <button class="btn btn--primary btn--sm" (click)="store.allowLocation()">{{ 'recommendations.enable_location' | translate }}</button>
       </div>
     }
 
@@ -87,26 +81,26 @@
         <div class="banner-body">
           @if (store.isTravelMode()) {
             <strong>Travel mode active — {{ store.travelContext()?.locationLabel() }}, {{ store.weatherContext()?.temperatureCelsius }}°C</strong>
-            <p>Your current location is different from your usual area. We're showing you typical dishes from {{ travelCity() }} that match your profile and dietary restrictions.</p>
+            <p>{{ 'recommendations.banner_travel_desc' | translate:{ city: travelCity() } }}</p>
           } @else {
             <strong>
-              {{ store.weatherContext()?.isHot() ? 'It\'s hot' : 'It\'s cold' }} in
+              {{ store.weatherContext()?.isHot() ? ('recommendations.its_hot' | translate) : ('recommendations.its_cold' | translate) }} in
               {{ store.weatherContext()?.city }} —
               {{ store.weatherContext()?.temperatureCelsius }}°C ·
               {{ store.weatherContext()?.condition }}
             </strong>
             <p>
               @if (store.weatherContext()?.isHot()) {
-                Location detected automatically. We've suggested light, refreshing and hydrating options that match your profile.
+                {{ 'recommendations.banner_hot_desc' | translate }}
               } @else {
-                Your location has been detected automatically. We've suggested some warming and comforting options that match your profile.
+                {{ 'recommendations.banner_cold_desc' | translate }}
               }
             </p>
           }
         </div>
         <div class="banner-updated">
           @if (store.isTravelMode()) {
-            Detected automatically
+            {{ 'recommendations.detected_auto' | translate }}
           } @else {
             {{ store.weatherContext()?.updatedAgo() }}
           }
@@ -124,13 +118,11 @@
         @if (store.showInterventionCard() && store.interventionCard()) {
           <div class="alert-card alert-card--red">
             <div class="alert-card-header">
-              <span class="alert-badge alert-badge--red">❤ Reactivation plan</span>
+              <span class="alert-badge alert-badge--red">{{ 'recommendations.intervention_badge' | translate }}</span>
             </div>
-            <h3 class="alert-card-title">Start small — day 1 of your return</h3>
+            <h3 class="alert-card-title">{{ 'recommendations.intervention_title' | translate }}</h3>
             <p class="alert-card-desc">
-              We noticed you haven't been following your plan for {{ session()?.consecutiveMisses ?? 5 }} days.
-              For days 1–3, we're reducing your target to
-              <strong>{{ session()?.simplifiedKcalTarget ?? 1400 }} kcal</strong> to make it easier to return.
+              {{ 'recommendations.intervention_desc' | translate:{ days: session()?.consecutiveMisses ?? 5, kcal: session()?.simplifiedKcalTarget ?? 1400 } }}
             </p>
             <div class="alert-card-meal">
               <span class="meal-name">{{ store.interventionCard()!.name }}</span>
@@ -140,7 +132,7 @@
             </div>
             <p class="event-label">{{ session()?.interventionEventLabel() }}</p>
             <button class="btn btn--red btn--full" (click)="onAcceptSimplifiedPlan()">
-              Accept simplified plan
+              {{ 'recommendations.accept_simplified' | translate }}
             </button>
           </div>
         }
@@ -149,12 +141,11 @@
         @if (store.showPreventiveCard() && store.preventiveCard()) {
           <div class="alert-card alert-card--orange">
             <div class="alert-card-header">
-              <span class="alert-badge alert-badge--orange">⚠ Adherence alert</span>
+              <span class="alert-badge alert-badge--orange">{{ 'recommendations.preventive_badge' | translate }}</span>
             </div>
-            <h3 class="alert-card-title">A simple option for today</h3>
+            <h3 class="alert-card-title">{{ 'recommendations.preventive_title' | translate }}</h3>
             <p class="alert-card-desc">
-              Your last {{ session()?.consecutiveMisses ?? 2 }} day(s) were below your caloric target.
-              Here's a simple suggestion to help you get back on track today.
+              {{ 'recommendations.preventive_desc' | translate:{ days: session()?.consecutiveMisses ?? 2 } }}
             </p>
             <div class="alert-card-meal">
               <span class="meal-name">{{ store.preventiveCard()!.name }}</span>
@@ -164,7 +155,7 @@
             </div>
             <p class="event-label">{{ session()?.preventiveEventLabel() }}</p>
             <button class="btn btn--orange btn--full" (click)="onLogPreventiveNow()">
-              Log this now
+              {{ 'recommendations.log_now' | translate }}
             </button>
           </div>
         }
@@ -191,14 +182,14 @@
               </div>
             </div>
             <button class="btn btn--primary btn--add" (click)="onAddToLog(card.id)">
-              + Add to log
+              {{ 'common.add_to_log' | translate }}
             </button>
           </div>
         }
 
         @if (store.activeCards().length === 0 && !store.loading()) {
           <div class="empty-state">
-            <p>No recommendations available. Adjust your filters or try a different location.</p>
+            <p>{{ 'recommendations.empty_state' | translate }}</p>
           </div>
         }
 
@@ -209,8 +200,8 @@
 
         <!-- Active filters -->
         <div class="panel">
-          <h3 class="panel-title">Active filters</h3>
-          <p class="panel-subtitle">Applied to all suggestions</p>
+          <h3 class="panel-title">{{ 'recommendations.filters_title' | translate }}</h3>
+          <p class="panel-subtitle">{{ 'recommendations.filters_subtitle' | translate }}</p>
           @if (store.activeFilters().length > 0) {
             <div class="filter-tags">
               @for (f of store.activeFilters(); track f) {
@@ -218,23 +209,23 @@
               }
             </div>
           } @else {
-            <p class="panel-empty">No active dietary restrictions.</p>
+            <p class="panel-empty">{{ 'recommendations.filters_empty' | translate }}</p>
           }
         </div>
 
         <!-- Daily balance -->
         <div class="panel">
-          <h3 class="panel-title">Daily balance</h3>
+          <h3 class="panel-title">{{ 'recommendations.balance_title' | translate }}</h3>
           <div class="balance-row">
-            <span class="balance-label">Target</span>
+            <span class="balance-label">{{ 'recommendations.balance_target' | translate }}</span>
             <span class="balance-value">{{ dailyTarget() }} kcal</span>
           </div>
           <div class="balance-row">
-            <span class="balance-label">Consumed</span>
+            <span class="balance-label">{{ 'recommendations.balance_consumed' | translate }}</span>
             <span class="balance-value">{{ dailyConsumed() }} kcal</span>
           </div>
           <div class="balance-row">
-            <span class="balance-label">Remaining</span>
+            <span class="balance-label">{{ 'recommendations.balance_remaining' | translate }}</span>
             <span class="balance-value balance-value--accent">{{ dailyRemaining() }} kcal</span>
           </div>
         </div>
@@ -242,7 +233,7 @@
         <!-- Travel mode panel (T36) -->
         <div class="panel">
           <div class="travel-toggle-row">
-            <h3 class="panel-title" style="margin:0">Travel Mode</h3>
+            <h3 class="panel-title" style="margin:0">{{ 'recommendations.travel_panel_title' | translate }}</h3>
             <mat-slide-toggle
               color="primary"
               [checked]="store.isTravelMode()"
@@ -251,14 +242,14 @@
           </div>
 
           @if (store.isTravelMode()) {
-            <p class="panel-subtitle">Your current location has been detected outside your usual area.</p>
+            <p class="panel-subtitle">{{ 'recommendations.travel_panel_subtitle' | translate }}</p>
 
             <!-- Detected city badge -->
             @if (store.travelContext()?.city) {
               <div class="travel-active-row">
                 <div class="travel-city-info">
                   <span class="travel-city-name">{{ store.travelContext()?.city }}{{ store.travelContext()?.country ? ', ' + store.travelContext()?.country : '' }}</span>
-                  <span class="travel-city-sub">{{ store.travelContext()?.isManual ? 'Entered manually' : 'Detected automatically' }}</span>
+                  <span class="travel-city-sub">{{ store.travelContext()?.isManual ? ('recommendations.entered_manually' | translate) : ('recommendations.detected_auto' | translate) }}</span>
                 </div>
               </div>
             }
@@ -266,7 +257,7 @@
             <!-- Unrecognized city fallback (T36) -->
             @if (store.unrecognizedCity()) {
               <div class="unrecognized-city-msg">
-                <span>⚠ City not recognized. Try a nearby major city like</span>
+                <span>{{ 'recommendations.unrecognized_city' | translate }}</span>
                 <button class="link-btn" (click)="manualCity.set('Cusco'); onConfirmManualCity()">Cusco</button>
                 or
                 <button class="link-btn" (click)="manualCity.set('Arequipa'); onConfirmManualCity()">Arequipa</button>.
@@ -277,7 +268,7 @@
             <div class="travel-input-row" style="margin-top:10px;">
               <input class="travel-input"
                      type="text"
-                     placeholder="E.g.: Cusco, Arequipa..."
+                     [placeholder]="'recommendations.city_placeholder' | translate"
                      [value]="manualCity()"
                      (input)="manualCity.set($any($event.target).value)"
                      (keyup.enter)="onConfirmManualCity()" />
@@ -285,11 +276,11 @@
             </div>
 
           } @else {
-            <p class="panel-subtitle">No location access. Enter your city to receive local recommendations.</p>
+            <p class="panel-subtitle">{{ 'recommendations.travel_no_location' | translate }}</p>
             <div class="travel-input-row">
               <input class="travel-input"
                      type="text"
-                     placeholder="E.g.: Cusco, Arequipa..."
+                     [placeholder]="'recommendations.city_placeholder' | translate"
                      [value]="manualCity()"
                      (input)="manualCity.set($any($event.target).value)"
                      (keyup.enter)="onConfirmManualCity()" />

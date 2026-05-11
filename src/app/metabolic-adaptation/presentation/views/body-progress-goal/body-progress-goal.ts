@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgClass } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { UserGoal } from '../../../../iam/domain/model/user-goal.enum';
 import { MetabolicStore } from '../../../application/metabolic.store';
@@ -22,7 +23,7 @@ import { MetabolicStore } from '../../../application/metabolic.store';
  */
 @Component({
   selector: 'app-body-progress-goal',
-  imports: [NgClass],
+  imports: [NgClass, TranslatePipe],
   templateUrl: './body-progress-goal.html',
   styleUrl: './body-progress-goal.css',
 })

@@ -3,12 +3,12 @@
   <!-- ── Page header ─────────────────────────────────────────── -->
   <header class="page-header">
     <div class="header-left">
-      <h1 class="page-title">Body Progress</h1>
-      <p class="page-subtitle">Weight, metrics, and body composition tracking</p>
+      <h1 class="page-title">{{ 'body_progress.page_title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'body_progress.page_subtitle' | translate }}</p>
     </div>
     <div class="header-actions">
-      <button class="btn btn--outline" (click)="onOpenUpdateHeight()">Update height</button>
-      <button class="btn btn--primary" (click)="onOpenLogWeight()">+ Log weight</button>
+      <button class="btn btn--outline" (click)="onOpenUpdateHeight()">{{ 'body_progress.update_height_btn' | translate }}</button>
+      <button class="btn btn--primary" (click)="onOpenLogWeight()">{{ 'body_progress.log_weight_btn' | translate }}</button>
     </div>
   </header>
 
@@ -17,10 +17,9 @@
     <div class="stale-banner" role="alert">
       <span class="stale-banner-icon">⚠</span>
       <span class="stale-banner-text">
-        Your last weight entry was {{ store.currentMetric()?.updatedLabel() }}.
-        For accurate metrics, we recommend logging your current weight.
+        {{ 'body_progress.stale_banner' | translate:{ date: store.currentMetric()?.updatedLabel() } }}
       </span>
-      <button class="btn btn--primary btn--sm" (click)="onOpenLogWeight()">Log now</button>
+      <button class="btn btn--primary btn--sm" (click)="onOpenLogWeight()">{{ 'body_progress.log_now' | translate }}</button>
     </div>
   }
 
@@ -29,7 +28,7 @@
 
     <!-- Current Weight -->
     <div class="metric-card" [class.metric-card--stale]="store.isStale()">
-      <div class="metric-card-label">CURRENT WEIGHT</div>
+      <div class="metric-card-label">{{ 'body_progress.metric_weight' | translate }}</div>
       <div class="metric-card-value">
         {{ store.currentMetric()?.weightKg | number:'1.1-1' }}
         <span class="metric-card-unit">kg</span>
@@ -41,7 +40,7 @@
 
     <!-- BMI -->
     <div class="metric-card" [class.metric-card--stale]="bmiOutdated()">
-      <div class="metric-card-label">IMC</div>
+      <div class="metric-card-label">{{ 'body_progress.metric_bmi' | translate }}</div>
       <div class="metric-card-header-row">
         @if (store.currentMetric()) {
           <span class="metric-badge" [ngClass]="bmiCategoryClass()">
@@ -51,49 +50,49 @@
       </div>
       <div class="metric-card-value">{{ store.currentMetric()?.bmi() | number:'1.1-1' }}</div>
       <div class="metric-card-sub" [class.metric-card-sub--warn]="bmiOutdated()">
-        {{ bmiOutdated() ? 'May be inaccurate' : store.currentMetric()?.bmiCategory() }}
+        {{ bmiOutdated() ? ('body_progress.bmi_may_inaccurate' | translate) : store.currentMetric()?.bmiCategory() }}
       </div>
     </div>
 
     <!-- Card 3: BMR (WA_BP_LOSS) · % BODY FAT (WA_BP_GAIN) -->
     @if (store.isMuscleGain()) {
       <div class="metric-card">
-        <div class="metric-card-label">% BODY FAT</div>
+        <div class="metric-card-label">{{ 'body_progress.metric_body_fat' | translate }}</div>
         <div class="metric-card-value">
           {{ store.composition()?.bodyFatPercent() | number:'1.1-1' }}
           <span class="metric-card-unit">%</span>
         </div>
-        <div class="metric-card-sub">US Navy Estimate</div>
+        <div class="metric-card-sub">{{ 'body_progress.us_navy' | translate }}</div>
       </div>
     } @else {
       <div class="metric-card">
-        <div class="metric-card-label">BMR</div>
+        <div class="metric-card-label">{{ 'body_progress.metric_bmr' | translate }}</div>
         <div class="metric-card-value">
           {{ store.currentMetric()?.bmr() | number:'1.0-0' }}
           <span class="metric-card-unit">kcal/day</span>
         </div>
-        <div class="metric-card-sub">Basal metabolic rate</div>
+        <div class="metric-card-sub">{{ 'body_progress.basal_metabolic_rate' | translate }}</div>
       </div>
     }
 
     <!-- Card 4: TDEE (WA_BP_LOSS) · LEAN MASS (WA_BP_GAIN) -->
     @if (store.isMuscleGain()) {
       <div class="metric-card">
-        <div class="metric-card-label">LEAN MASS</div>
+        <div class="metric-card-label">{{ 'body_progress.metric_lean_mass' | translate }}</div>
         <div class="metric-card-value">
           {{ store.composition()?.leanMassKg() | number:'1.1-1' }}
           <span class="metric-card-unit">kg</span>
         </div>
-        <div class="metric-card-sub">Muscle + bone + water</div>
+        <div class="metric-card-sub">{{ 'body_progress.lean_mass_desc' | translate }}</div>
       </div>
     } @else {
       <div class="metric-card">
-        <div class="metric-card-label">TDEE</div>
+        <div class="metric-card-label">{{ 'body_progress.metric_tdee' | translate }}</div>
         <div class="metric-card-value">
           {{ store.currentMetric()?.tdee() | number:'1.0-0' }}
           <span class="metric-card-unit">kcal/day</span>
         </div>
-        <div class="metric-card-sub">With moderate activity</div>
+        <div class="metric-card-sub">{{ 'body_progress.tdee_desc' | translate }}</div>
       </div>
     }
 
@@ -108,16 +107,16 @@
       <!-- Weight Evolution chart (T39) -->
       <div class="chart-card">
         <div class="chart-header">
-          <h2 class="chart-title">Weight Evolution</h2>
+          <h2 class="chart-title">{{ 'body_progress.chart_title' | translate }}</h2>
 
           <!-- MatButtonToggleGroup — 3-period toggle (T39) -->
           <mat-button-toggle-group
             [value]="store.selectedDays()"
             (change)="selectDays($any($event.value))"
             class="day-toggle-mat">
-            <mat-button-toggle [value]="7">7 days</mat-button-toggle>
-            <mat-button-toggle [value]="30">30 days</mat-button-toggle>
-            <mat-button-toggle [value]="90">90 days</mat-button-toggle>
+            <mat-button-toggle [value]="7">{{ 'body_progress.days_7' | translate }}</mat-button-toggle>
+            <mat-button-toggle [value]="30">{{ 'body_progress.days_30' | translate }}</mat-button-toggle>
+            <mat-button-toggle [value]="90">{{ 'body_progress.days_90' | translate }}</mat-button-toggle>
           </mat-button-toggle-group>
         </div>
 
@@ -168,14 +167,14 @@
           </div>
         } @else {
           <div class="chart-empty">
-            <p>Not enough data. Log at least 2 weight entries to see the chart.</p>
+            <p>{{ 'body_progress.chart_empty' | translate }}</p>
           </div>
         }
 
         <!-- Stale note -->
         @if (store.isStale()) {
           <div class="chart-stale-note">
-            Chart based on the last recorded data. Update your weight to see the correct trend.
+            {{ 'body_progress.chart_stale' | translate }}
           </div>
         }
 
@@ -183,29 +182,28 @@
         @if (!store.isMuscleGain()) {
         <div class="chart-goal-row">
           <div class="chart-goal-left">
-            <span class="chart-goal-label">Goal weight</span>
+            <span class="chart-goal-label">{{ 'body_progress.goal_weight' | translate }}</span>
             <span class="chart-goal-value">
               {{ store.currentMetric()?.targetWeightKg
                   ? (store.currentMetric()!.targetWeightKg | number:'1.1-1') + ' kg'
-                  : 'Not set' }}
+                  : ('body_progress.not_set' | translate) }}
             </span>
           </div>
           <div class="chart-goal-right">
-            <span class="chart-goal-label">Estimated achievement date</span>
+            <span class="chart-goal-label">{{ 'body_progress.projected_date_label' | translate }}</span>
             <strong class="chart-goal-date">~{{ formattedProjectedDate() }}</strong>
-            <!-- Clicking "Edit goal →" opens the Set goal weight right panel (T40 / WA_BP_Error) -->
-            <button class="link-btn" (click)="onOpenGoalPanel()">Edit goal →</button>
+            <button class="link-btn" (click)="onOpenGoalPanel()">{{ 'body_progress.edit_goal' | translate }}</button>
           </div>
         </div>
-        } <!-- end @if (!store.isMuscleGain()) -->
+        }
       </div>
 
       <!-- Log History table (T40) — WEIGHT_LOSS only (WA_BP_LOSS) -->
       @if (!store.isMuscleGain()) {
       <div class="history-card">
         <div class="history-header">
-          <h2 class="history-title">Log History</h2>
-          <button class="link-btn">View all →</button>
+          <h2 class="history-title">{{ 'body_progress.log_history' | translate }}</h2>
+          <button class="link-btn">{{ 'common.view_all' | translate }}</button>
         </div>
         <table class="history-table">
           <tbody>
@@ -223,7 +221,7 @@
           </tbody>
         </table>
       </div>
-      } <!-- end @if (!store.isMuscleGain()) -->
+      }
 
 
       <!-- Body Composition section — MUSCLE_GAIN only (WA_BP_GAIN) -->
@@ -231,35 +229,32 @@
         @if (store.composition()?.hasFatIncreaseAlert()) {
           <div class="fat-alert-banner" role="alert">
             <span class="fat-alert-icon">⚠</span>
-            <span>
-              Body fat has increased by more than 1.5% over the last two weeks.
-              Consider reducing your caloric surplus to avoid excessive fat gain.
-            </span>
+            <span>{{ 'body_progress.fat_alert' | translate }}</span>
           </div>
         }
         <div class="composition-card">
           <div class="composition-header">
-            <h2 class="composition-title">Body Composition</h2>
-            <button class="link-btn">Update measurements →</button>
+            <h2 class="composition-title">{{ 'body_progress.composition_title' | translate }}</h2>
+            <button class="link-btn">{{ 'body_progress.update_measurements' | translate }}</button>
           </div>
           <div class="composition-grid">
             <div class="composition-item">
-              <span class="composition-item-label">Lean mass</span>
+              <span class="composition-item-label">{{ 'body_progress.lean_mass' | translate }}</span>
               <strong class="composition-item-value">{{ store.composition()?.leanMassKg() | number:'1.1-1' }} kg</strong>
               <span class="composition-item-sub">+1.2 kg vs. start</span>
             </div>
             <div class="composition-item">
-              <span class="composition-item-label">Fat mass</span>
+              <span class="composition-item-label">{{ 'body_progress.fat_mass' | translate }}</span>
               <strong class="composition-item-value">{{ store.composition()?.fatMassKg() | number:'1.1-1' }} kg</strong>
               <span class="composition-item-sub">+0.3 kg vs. start</span>
             </div>
             <div class="composition-item">
-              <span class="composition-item-label">Fat %</span>
+              <span class="composition-item-label">{{ 'body_progress.fat_percent' | translate }}</span>
               <strong class="composition-item-value">{{ store.composition()?.bodyFatPercent() | number:'1.1-1' }}%</strong>
               <span class="composition-item-sub">Healthy range</span>
             </div>
             <div class="composition-item">
-              <span class="composition-item-label">Lean bulk</span>
+              <span class="composition-item-label">{{ 'body_progress.lean_bulk' | translate }}</span>
               <strong class="composition-item-value">{{ store.composition()?.leanBulkStatus() }}</strong>
               <span class="composition-item-sub"
                     [class.composition-item-sub--good]="!store.composition()?.hasFatIncreaseAlert()">
@@ -276,13 +271,9 @@
     <aside class="right-col">
 
       <!-- ── Log weight panel (always visible) ─────────────── -->
-      <!--
-        WA_BP_Registrar_peso: shows preview banner + Cancel when typing.
-        WA_BP_Error: shows red border + inline error when value is invalid.
-      -->
       <div class="panel" [class.panel--error]="weightError()">
-        <h3 class="panel-title">Log weight</h3>
-        <label class="panel-label">Current weight (kg)</label>
+        <h3 class="panel-title">{{ 'body_progress.log_weight_panel' | translate }}</h3>
+        <label class="panel-label">{{ 'body_progress.current_weight_label' | translate }}</label>
 
         <input class="panel-input"
                [class.panel-input--error]="weightError()"
@@ -300,20 +291,20 @@
         <!-- Live BMI / TDEE preview (WA_BP_Registrar_peso) -->
         @if (isWeightTyping() && weightPreview() && !weightError()) {
           <div class="weight-preview">
-            Preview: BMI → {{ weightPreview()!.bmi | number:'1.1-1' }} · TDEE → {{ weightPreview()!.tdee | number:'1.0-0' }} kcal/day
+            {{ 'body_progress.weight_preview' | translate:{ bmi: (weightPreview()!.bmi | number:'1.1-1'), tdee: (weightPreview()!.tdee | number:'1.0-0') } }}
           </div>
         }
 
         <button class="btn btn--primary btn--full"
                 [disabled]="weightInputInvalid()"
                 (click)="onSaveWeight()">
-          Save entry
+          {{ 'body_progress.save_entry' | translate }}
         </button>
 
         <!-- Cancel button — only shown while typing (WA_BP_Registrar_peso) -->
         @if (isWeightTyping()) {
           <button class="btn btn--outline btn--full" (click)="onCancelWeight()">
-            Cancel
+            {{ 'common.cancel' | translate }}
           </button>
         }
       </div>
@@ -321,28 +312,26 @@
       <!-- ── MUSCLE_GAIN: Update body composition (WA_BP_GAIN right panel) ── -->
       @if (store.isMuscleGain()) {
         <div class="panel">
-          <h3 class="panel-title">Update body composition</h3>
+          <h3 class="panel-title">{{ 'body_progress.composition_panel' | translate }}</h3>
 
-          <label class="panel-label">Waist (cm)</label>
+          <label class="panel-label">{{ 'body_progress.waist_label' | translate }}</label>
           <input class="panel-input"
                  type="number"
-                 placeholder="E.g.: 163"
+                 [placeholder]="'E.g.: 163'"
                  [(ngModel)]="waistInputModel"
                  min="30" max="200" step="0.5" />
 
-          <label class="panel-label">Neck (cm)</label>
+          <label class="panel-label">{{ 'body_progress.neck_label' | translate }}</label>
           <input class="panel-input"
                  type="number"
-                 placeholder="E.g.: 163"
+                 [placeholder]="'E.g.: 163'"
                  [(ngModel)]="neckInputModel"
                  min="20" max="80" step="0.5" />
 
-          <p class="panel-hint">
-            The system will estimate your body fat % using the US Navy method
-          </p>
+          <p class="panel-hint">{{ 'body_progress.composition_hint' | translate }}</p>
 
           <button class="btn btn--primary btn--full" (click)="onCalculateComposition()">
-            Calculate composition
+            {{ 'body_progress.calculate_btn' | translate }}
           </button>
         </div>
       }
@@ -352,8 +341,8 @@
 
         @if (activeSecondaryPanel() === 'height') {
           <div class="panel">
-            <h3 class="panel-title">Update height</h3>
-            <label class="panel-label">Current height (cm)</label>
+            <h3 class="panel-title">{{ 'body_progress.height_panel' | translate }}</h3>
+            <label class="panel-label">{{ 'body_progress.height_label' | translate }}</label>
             <input class="panel-input"
                    type="number"
                    [placeholder]="'E.g.: ' + store.currentMetric()?.heightCm"
@@ -361,21 +350,21 @@
                    (input)="heightInput.set($any($event.target).value)"
                    min="50" max="300" step="1" />
             <p class="panel-hint">
-              Current height: {{ store.currentMetric()?.heightCm }} cm · BMI is automatically recalculated
+              {{ 'body_progress.height_hint' | translate:{ height: store.currentMetric()?.heightCm } }}
             </p>
-            <button class="btn btn--outline btn--full" (click)="onUpdateHeight()">Update height</button>
+            <button class="btn btn--outline btn--full" (click)="onUpdateHeight()">{{ 'body_progress.update_height_btn' | translate }}</button>
           </div>
         }
 
         @if (activeSecondaryPanel() === 'goal') {
           <div class="panel" [class.panel--error]="goalWeightError()">
-            <h3 class="panel-title">Set goal weight</h3>
-            <label class="panel-label">Goal weight (kg)</label>
+            <h3 class="panel-title">{{ 'body_progress.goal_panel' | translate }}</h3>
+            <label class="panel-label">{{ 'body_progress.goal_weight_label' | translate }}</label>
 
             <input class="panel-input"
                    [class.panel-input--error]="goalWeightError()"
                    type="number"
-                   placeholder="E.g.: 65"
+                   [placeholder]="'E.g.: 65'"
                    [(ngModel)]="goalWeightInputModel"
                    (ngModelChange)="onGoalModelChange()"
                    min="0.1" max="500" step="0.1" />
@@ -391,10 +380,10 @@
             <button class="btn btn--primary btn--full"
                     [disabled]="goalInputInvalid || !goalWeightInputModel.trim()"
                     (click)="onSaveGoal()">
-              Save goal
+              {{ 'body_progress.save_goal_btn' | translate }}
             </button>
 
-            <button class="btn btn--outline btn--full" (click)="onCancelGoal()">Cancel</button>
+            <button class="btn btn--outline btn--full" (click)="onCancelGoal()">{{ 'common.cancel' | translate }}</button>
           </div>
         }
 

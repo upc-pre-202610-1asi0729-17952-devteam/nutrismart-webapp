@@ -2,6 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RecommendationsStore } from '../../../application/recommendations.store';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
@@ -10,7 +11,7 @@ import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
 
 @Component({
   selector: 'app-recommendations',
-  imports: [RouterLink, NgClass, MatSlideToggle],
+  imports: [RouterLink, NgClass, MatSlideToggle, TranslatePipe],
   templateUrl: './recommendations.html',
   styleUrl: './recommendations.css',
 })
@@ -18,6 +19,7 @@ export class RecommendationsView implements OnInit {
   protected store      = inject(RecommendationsStore);
   protected iamStore   = inject(IamStore);
   private nutStore     = inject(NutritionStore);
+  private translate    = inject(TranslateService);
 
   protected manualCity = signal<string>('');
   protected rightPanel = signal<'none'>('none');
@@ -55,29 +57,41 @@ export class RecommendationsView implements OnInit {
   protected travelCity = computed(() => this.store.travelContext()?.city ?? '');
 
   protected sectionTitle = computed(() => {
-    if (this.store.isTravelMode()) return `Traditional dishes from ${this.travelCity()}`;
+    if (this.store.isTravelMode()) {
+      return this.translate.instant('recommendations.section_travel', { city: this.travelCity() });
+    }
     const w = this.store.weatherContext();
-    if (!w) return 'Recommendations';
-    return w.isHot() ? 'Recommendations for hot weather' : 'Recommendations for cold weather';
+    if (!w) return this.translate.instant('recommendations.section_default');
+    return w.isHot()
+      ? this.translate.instant('recommendations.section_hot')
+      : this.translate.instant('recommendations.section_cold');
   });
 
   protected sectionSubtitle = computed(() => {
-    const w = this.store.weatherContext();
+    const w    = this.store.weatherContext();
     const user = this.iamStore.currentUser();
-    const goalLabel = user?.goal?.toLowerCase()?.replace('_', ' ') ?? 'your profile';
+    const goalLabel = user?.goal?.toLowerCase()?.replace('_', ' ') ?? '';
 
     if (this.store.isTravelMode()) {
-      const travel = this.store.travelContext();
-      return `Filtered by your profile · Local weather: ${w?.temperatureCelsius ?? '?'}°C · Travel mode active`;
+      return this.translate.instant('recommendations.subtitle_travel_filtered', {
+        temp: w?.temperatureCelsius ?? '?',
+      });
     }
-    return `Filtered by your ${goalLabel} profile and active restrictions · ${w?.city ?? ''}, ${w?.country ?? ''}`;
+    return this.translate.instant('recommendations.subtitle_filtered', {
+      goal:    goalLabel,
+      city:    w?.city ?? '',
+      country: w?.country ?? '',
+    });
   });
 
   protected headerBadgeLabel = computed(() => {
     if (this.store.isTravelMode()) {
       const t = this.store.travelContext();
       const w = this.store.weatherContext();
-      return `Travel Mode · ${t?.city ?? ''} · ${w?.temperatureCelsius ?? '?'}°C`;
+      return this.translate.instant('recommendations.header_badge_travel', {
+        city: t?.city ?? '',
+        temp: w?.temperatureCelsius ?? '?',
+      });
     }
     return this.store.weatherContext()?.formattedLabel() ?? '';
   });
