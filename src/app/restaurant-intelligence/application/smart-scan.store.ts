@@ -1,5 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { TranslateService, TranslateStore } from '@ngx-translate/core';
+import { DomainEventBus } from '../../shared/application/domain-event-bus';
+import { RestaurantMealAnalyzed } from '../domain/events/restaurant-meal-analyzed.event';
 import { IamStore } from '../../iam/application/iam.store';
 import { DietaryRestriction } from '../../iam/domain/model/dietary-restriction.enum';
 import { MealType } from '../../nutrition-tracking/domain/model/meal-type.enum';
@@ -38,11 +40,12 @@ export interface MacroAlert {
 export class SmartScanStore {
   private static readonly WARNING_THRESHOLD = 0.8;
   private static readonly DANGER_THRESHOLD  = 1.0;
-  private smartScanApi   = inject(SmartScanApi);
-  private iamStore       = inject(IamStore);
-  private nutritionStore = inject(NutritionStore);
-  private translate      = inject(TranslateService);
-  private translateStore = inject(TranslateStore);
+  private smartScanApi    = inject(SmartScanApi);
+  private iamStore        = inject(IamStore);
+  private nutritionStore  = inject(NutritionStore);
+  private translate       = inject(TranslateService);
+  private translateStore  = inject(TranslateStore);
+  private domainEventBus  = inject(DomainEventBus);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
@@ -243,6 +246,9 @@ export class SmartScanStore {
         };
         await this.nutritionStore.recordMeal(new MealRecord(props));
       }
+      this.domainEventBus.publish(new RestaurantMealAnalyzed(
+        user.id, mealType, result.totalCalories, 'plate',
+      ));
       this._loading.set(false);
       this.reset();
     } catch {
@@ -287,6 +293,9 @@ export class SmartScanStore {
 
     try {
       await this.nutritionStore.recordMeal(new MealRecord(props));
+      this.domainEventBus.publish(new RestaurantMealAnalyzed(
+        user.id, mealType, dish.calories, 'menu',
+      ));
       this._loading.set(false);
       this.reset();
     } catch {
