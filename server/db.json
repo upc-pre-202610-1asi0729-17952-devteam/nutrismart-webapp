@@ -507,6 +507,40 @@
       "loggedAt": "2026-05-11T20:08:32.129Z",
       "userId": "e9vvnrmqq",
       "id": "hq7jWDxm7fQ"
+    },
+    {
+      "foodItemId": "4",
+      "foodItemName": "Arroz al limón con ajo",
+      "foodItemNameEs": "",
+      "mealType": "LUNCH",
+      "quantity": 100,
+      "unit": "g",
+      "calories": 340,
+      "protein": 6,
+      "carbs": 64,
+      "fat": 4,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-11T21:47:27.242Z",
+      "userId": "2aux86td0",
+      "id": "gqraVL9-CYg"
+    },
+    {
+      "foodItemId": "3",
+      "foodItemName": "Pollo con ensalada",
+      "foodItemNameEs": "",
+      "mealType": "LUNCH",
+      "quantity": 150,
+      "unit": "g",
+      "calories": 720,
+      "protein": 27,
+      "carbs": 33,
+      "fat": 12,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-11T21:48:43.712Z",
+      "userId": "2aux86td0",
+      "id": "oq49GBrfTs0"
     }
   ],
   "foods": [
@@ -1208,6 +1242,16 @@
       "calories_per_100g": 100,
       "user_id": "2aux86td0",
       "added_at": "2026-05-11T21:28:37.169Z"
+    },
+    {
+      "id": "TW_LeHRjs34",
+      "name": "Pechuga de pollo",
+      "name_key": "chicken_breast",
+      "category": "Animal protein",
+      "quantity_grams": 100,
+      "calories_per_100g": 165,
+      "user_id": "2aux86td0",
+      "added_at": "2026-05-11T21:48:26.484Z"
     }
   ],
   "ingredient-catalog": [
@@ -3344,6 +3388,23 @@
         false
       ],
       "id": "dSDwtcu2f74"
+    },
+    {
+      "userId": "2aux86td0",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "6Q6qfo1Qbh0"
     }
   ],
   "daily-balance": [
