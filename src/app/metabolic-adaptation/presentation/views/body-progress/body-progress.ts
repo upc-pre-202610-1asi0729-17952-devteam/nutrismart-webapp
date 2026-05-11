@@ -1,6 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MetabolicStore } from '../../../application/metabolic.store';
@@ -34,6 +35,7 @@ export class BodyProgressView implements OnInit {
   protected store     = inject(MetabolicStore);
   protected iamStore  = inject(IamStore);
   private translate   = inject(TranslateService);
+  private router      = inject(Router);
 
   // ─── Right panel state ────────────────────────────────────────────────────
 
@@ -166,6 +168,10 @@ export class BodyProgressView implements OnInit {
 
   /** Whether BMI may be inaccurate due to stale data. */
   protected bmiOutdated = computed(() => this.store.isStale());
+
+  onChangeGoal(): void {
+    this.router.navigate(['/body-progress', 'change-goal']);
+  }
 
   async ngOnInit(): Promise<void> {
     await this.store.initialise();

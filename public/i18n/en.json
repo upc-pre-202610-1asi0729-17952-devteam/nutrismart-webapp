@@ -419,7 +419,8 @@
     "tag_caloric_surplus": "Caloric surplus",
     "tag_high_protein": "High protein",
     "tag_hypertrophy": "Hypertrophy",
-    "continue_btn": "Continue"
+    "continue_btn": "Continue",
+    "change_goal_btn": "Change goal"
   },
   "my_plan": {
     "page_title": "Subscription and billing",

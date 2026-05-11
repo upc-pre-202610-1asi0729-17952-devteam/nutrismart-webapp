@@ -1,14 +1,18 @@
-/**
- * Body progress routes (metabolic-adaptation context).
- *
- * ─ ''         → GoalSelectionScreen  (first view when tapping Body Progress in the nav)
- * ─ 'progress' → BodyProgressView     (WA_BP_LOSS or WA_BP_GAIN based on selected goal)
- */
 import { Routes } from '@angular/router';
+import { bodyProgressGoalGuard } from '../application/body-progress-goal.guard';
 
 export const bodyProgressRoutes: Routes = [
   {
     path: '',
+    canActivate: [bodyProgressGoalGuard],
+    loadComponent: () =>
+      import('./views/body-progress-goal/body-progress-goal').then(
+        m => m.GoalSelectionScreen,
+      ),
+    title: 'NutriSmart - Body Progress',
+  },
+  {
+    path: 'change-goal',
     loadComponent: () =>
       import('./views/body-progress-goal/body-progress-goal').then(
         m => m.GoalSelectionScreen,

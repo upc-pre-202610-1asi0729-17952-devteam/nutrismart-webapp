@@ -419,7 +419,8 @@
     "tag_caloric_surplus": "Superávit calórico",
     "tag_high_protein": "Alta proteína",
     "tag_hypertrophy": "Hipertrofia",
-    "continue_btn": "Continuar"
+    "continue_btn": "Continuar",
+    "change_goal_btn": "Cambiar objetivo"
   },
   "my_plan": {
     "page_title": "Suscripción y facturación",
