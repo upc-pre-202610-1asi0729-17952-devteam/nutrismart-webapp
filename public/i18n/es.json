@@ -374,7 +374,13 @@
     "header_badge_travel": "Modo Viaje · {{ city }} · {{ temp }}°C",
     "travel_auto_detected": "Detectado automáticamente · fuera de casa",
     "travel_disable": "Desactivar modo viaje",
-    "travel_at_home": "Las recomendaciones se adaptan automáticamente cuando viajas fuera de {{homeCity}}"
+    "travel_at_home": "Las recomendaciones se adaptan automáticamente cuando viajas fuera de {{homeCity}}",
+    "location_search_title": "¿Dónde estás?",
+    "location_search_subtitle": "Ingresa tu ciudad para recibir recomendaciones locales.",
+    "location_search_placeholder": "Ej.: Cusco, Arequipa...",
+    "location_search_confirm": "Confirmar",
+    "location_search_back": "Volver",
+    "location_search_quick": "Selección rápida"
   },
   "body_progress": {
     "page_title": "Progreso Corporal",

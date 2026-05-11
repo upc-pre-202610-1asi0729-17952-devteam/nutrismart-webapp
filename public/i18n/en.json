@@ -374,7 +374,13 @@
     "header_badge_travel": "Travel Mode · {{ city }} · {{ temp }}°C",
     "travel_auto_detected": "Detected automatically · away from home",
     "travel_disable": "Disable travel mode",
-    "travel_at_home": "Recommendations adapt automatically when you travel away from {{homeCity}}"
+    "travel_at_home": "Recommendations adapt automatically when you travel away from {{homeCity}}",
+    "location_search_title": "Where are you?",
+    "location_search_subtitle": "Enter your city to receive local food recommendations.",
+    "location_search_placeholder": "E.g.: Cusco, Arequipa...",
+    "location_search_confirm": "Confirm",
+    "location_search_back": "Back",
+    "location_search_quick": "Quick select"
   },
   "body_progress": {
     "page_title": "Body Progress",

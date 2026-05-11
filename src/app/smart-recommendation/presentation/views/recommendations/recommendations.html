@@ -52,7 +52,9 @@
       <div class="location-banner">
         <span class="location-banner-icon">📍</span>
         <span class="location-banner-text">{{ 'recommendations.location_denied_msg' | translate }}</span>
-        <button class="btn btn--primary btn--sm" (click)="store.allowLocation()">{{ 'recommendations.enable_location' | translate }}</button>
+        <a routerLink="/recommendations/location-search" class="btn btn--primary btn--sm">
+          {{ 'recommendations.enable_location' | translate }}
+        </a>
       </div>
     }
 
