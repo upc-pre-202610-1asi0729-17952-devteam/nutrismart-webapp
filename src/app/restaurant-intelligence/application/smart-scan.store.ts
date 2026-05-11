@@ -6,8 +6,8 @@ import { MealType } from '../../nutrition-tracking/domain/model/meal-type.enum';
 import { MealRecord, MealRecordProps } from '../../nutrition-tracking/domain/model/meal-record.entity';
 import { NutritionStore } from '../../nutrition-tracking/application/nutrition.store';
 import { ScanResult } from '../domain/model/scan-result.entity';
-import { MenuAnalysis, RankedDish } from '../domain/model/menu-analysis.entity';
-import { SmartScanApi } from '../infrastructure/smart-scan-api';
+import { MenuAnalysis, RankedDish, RestrictedDish } from '../domain/model/menu-analysis.entity';
+import { RawMenuDish, RawMenuScan, SmartScanApi } from '../infrastructure/smart-scan-api';
 
 /** Active view within the Smart Scan feature. */
 export type SmartScanView = 'landing' | 'analyzing-plate' | 'plate-result' | 'plate-invalid' | 'analyzing-menu' | 'menu-result';
@@ -46,21 +46,56 @@ export class SmartScanStore {
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
-  private _view             = signal<SmartScanView>('landing');
-  private _scanResult       = signal<ScanResult | null>(null);
-  private _menuAnalysis     = signal<MenuAnalysis | null>(null);
-  private _loading          = signal<boolean>(false);
-  private _error            = signal<string | null>(null);
+  private _view                 = signal<SmartScanView>('landing');
+  private _scanResult           = signal<ScanResult | null>(null);
+  private _rawMenuDishes        = signal<RawMenuDish[] | null>(null);
+  private _menuScanMeta         = signal<{ id: number; scannedAt: string; restaurantName: string } | null>(null);
+  private _loading              = signal<boolean>(false);
+  private _error                = signal<string | null>(null);
   private _uploadedImagePreview = signal<string | null>(null);
 
   // ─── Public Read-only Signals ─────────────────────────────────────────────
 
   readonly view                 = this._view.asReadonly();
   readonly scanResult           = this._scanResult.asReadonly();
-  readonly menuAnalysis         = this._menuAnalysis.asReadonly();
   readonly loading              = this._loading.asReadonly();
   readonly error                = this._error.asReadonly();
   readonly uploadedImagePreview = this._uploadedImagePreview.asReadonly();
+
+  /**
+   * Reactively computed menu analysis.
+   *
+   * Re-evaluates whenever the user's restrictions change, so removing or adding
+   * a restriction instantly moves dishes between compatible and restricted lists
+   * without requiring a re-scan.
+   */
+  readonly menuAnalysis = computed<MenuAnalysis | null>(() => {
+    const dishes = this._rawMenuDishes();
+    const meta   = this._menuScanMeta();
+    if (!dishes || !meta) return null;
+
+    const activeRestrictions = new Set(this.iamStore.currentUser()?.restrictions ?? []);
+
+    const restrictedDishes: RestrictedDish[] = [];
+    const compatibleDishes: RankedDish[]     = [];
+
+    for (const dish of dishes) {
+      const conflict = dish.conflictingRestrictions.find(r => activeRestrictions.has(r));
+      if (conflict) {
+        restrictedDishes.push({ name: dish.name, nameKey: dish.nameKey, restriction: conflict });
+      } else {
+        compatibleDishes.push(dish);
+      }
+    }
+
+    return new MenuAnalysis({
+      id:              meta.id,
+      scannedAt:       meta.scannedAt,
+      restaurantName:  meta.restaurantName,
+      rankedDishes:    compatibleDishes.map((d, i) => ({ ...d, rank: i + 1 })),
+      restrictedDishes,
+    });
+  });
 
   // ─── Computed Signals ─────────────────────────────────────────────────────
 
@@ -111,7 +146,7 @@ export class SmartScanStore {
   readonly menuDishAlertsByRank = computed<Record<number, MacroAlert[]>>(() => {
     const user   = this.iamStore.currentUser();
     const totals = this.nutritionStore.dailyTotals();
-    const dishes = this._menuAnalysis()?.rankedDishes ?? [];
+    const dishes = this.menuAnalysis()?.rankedDishes ?? [];
     if (!user || dishes.length === 0) return {};
 
     const result: Record<number, MacroAlert[]> = {};
@@ -131,7 +166,8 @@ export class SmartScanStore {
   reset(): void {
     this._view.set('landing');
     this._scanResult.set(null);
-    this._menuAnalysis.set(null);
+    this._rawMenuDishes.set(null);
+    this._menuScanMeta.set(null);
     this._error.set(null);
     this._uploadedImagePreview.set(null);
   }
@@ -172,8 +208,9 @@ export class SmartScanStore {
 
     return new Promise((resolve) => {
       this.smartScanApi.scanMenuPhoto(imageBase64).subscribe({
-        next: (analysis) => {
-          this._menuAnalysis.set(analysis);
+        next: (raw: RawMenuScan) => {
+          this._rawMenuDishes.set(raw.allDishes);
+          this._menuScanMeta.set({ id: raw.id, scannedAt: raw.scannedAt, restaurantName: raw.restaurantName });
           this._view.set('menu-result');
           this._loading.set(false);
           resolve();
@@ -300,24 +337,8 @@ export class SmartScanStore {
     this._scanResult.set(this._cloneScanResult(result));
   }
 
-  async rankAndFilterMenuDishes(menuAnalysisId: number): Promise<void> {
-    const restrictions = (this.iamStore.currentUser()?.restrictions ?? []) as DietaryRestriction[];
-    this._loading.set(true);
-
-    return new Promise((resolve) => {
-      this.smartScanApi.rankMenuDishes(menuAnalysisId, restrictions).subscribe({
-        next: (analysis) => {
-          this._menuAnalysis.set(analysis);
-          this._loading.set(false);
-          resolve();
-        },
-        error: () => {
-          this._error.set('Failed to rank menu dishes.');
-          this._loading.set(false);
-          resolve();
-        },
-      });
-    });
+  async rankAndFilterMenuDishes(_menuAnalysisId: number): Promise<void> {
+    // Filtering is now handled reactively in the menuAnalysis computed signal.
   }
 
   // ─── Private helpers ──────────────────────────────────────────────────────
