@@ -170,15 +170,15 @@
 
         @if (store.metricsHistory().length >= 2) {
           <div class="chart-wrap">
-            <svg viewBox="0 0 600 140" class="chart-svg" preserveAspectRatio="none">
+            <svg viewBox="0 0 800 140" class="chart-svg">
               @if (store.currentMetric()?.targetWeightKg) {
                 <line
-                  x1="0" [attr.y1]="store.chartPoints().targetY + 10"
-                  x2="600" [attr.y2]="store.chartPoints().targetY + 10"
+                  x1="0" [attr.y1]="store.chartPoints().targetY"
+                  x2="800" [attr.y2]="store.chartPoints().targetY"
                   stroke="#f9a8d4" stroke-width="1.5" stroke-dasharray="6,4" />
               }
               <polygon
-                [attr.points]="'0,130 ' + store.chartPoints().points + ' 560,130'"
+                [attr.points]="'0,130 ' + store.chartPoints().points + ' 780,130'"
                 fill="rgba(45,158,143,0.08)" />
               <polyline
                 [attr.points]="store.chartPoints().points"

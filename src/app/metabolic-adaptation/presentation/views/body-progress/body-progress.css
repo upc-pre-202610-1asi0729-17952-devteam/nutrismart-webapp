@@ -212,9 +212,9 @@
 
 .chart-svg {
   width: 100%;
-  height: 140px;
+  height: auto;
   display: block;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .chart-y-labels {

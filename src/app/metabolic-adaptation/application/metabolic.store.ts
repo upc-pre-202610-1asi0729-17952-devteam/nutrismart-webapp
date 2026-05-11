@@ -116,14 +116,19 @@ export class MetabolicStore {
     if (history.length < 2) return { points: '', minW: 0, maxW: 0, dates: [] as string[], targetY: 0 };
 
     const weights = history.map(m => m.weightKg);
-    const rawMin  = Math.min(...weights);
-    const rawMax  = Math.max(...weights);
-    const range   = rawMax - rawMin;
-    const pad     = Math.max(range * 0.025, 0.5);
-    const minW    = rawMin - pad;
-    const maxW    = rawMax + pad;
-    const chartH  = 120;
-    const chartW  = 560;
+    const target  = this._currentMetric()?.targetWeightKg ?? 0;
+
+    // Include the goal weight in the Y scale so the reference line always
+    // stays within the chart area even when the target is far from current weight.
+    const allWeights = target > 0 ? [...weights, target] : weights;
+    const rawMin     = Math.min(...allWeights);
+    const rawMax     = Math.max(...allWeights);
+    const range      = rawMax - rawMin;
+    const pad        = Math.max(range * 0.025, 0.5);
+    const minW       = rawMin - pad;
+    const maxW       = rawMax + pad;
+    const chartH     = 120;
+    const chartW     = 780;
 
     const toY = (w: number) =>
       Math.round(chartH - ((w - minW) / (maxW - minW)) * chartH);
@@ -136,7 +141,6 @@ export class MetabolicStore {
       })
       .join(' ');
 
-    const target  = this._currentMetric()?.targetWeightKg ?? 0;
     const targetY = target > 0 ? toY(target) : chartH;
 
     // Return raw ISO dates — the component formats them using the current UI locale.
