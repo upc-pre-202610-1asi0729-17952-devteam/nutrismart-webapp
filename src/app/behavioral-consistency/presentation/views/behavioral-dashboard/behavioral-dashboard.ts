@@ -2,8 +2,9 @@ import { Component, computed, DestroyRef, inject, OnInit } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslatePipe } from '@ngx-translate/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs/operators';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { BehavioralConsistencyStore } from '../../../application/behavioral-consistency.store';
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
@@ -77,6 +78,7 @@ interface DashboardVm {
 export class BehavioralDashboard implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
+  private readonly translateService = inject(TranslateService);
 
   protected readonly iamStore = inject(IamStore);
   protected readonly behavioralStore = inject(BehavioralConsistencyStore);
@@ -97,11 +99,19 @@ export class BehavioralDashboard implements OnInit {
 
   protected readonly weekLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
-  protected readonly dateLabel = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+  private readonly activeLang = toSignal(
+    this.translateService.onLangChange.pipe(map((e) => e.lang)),
+    { initialValue: this.translateService.currentLang ?? 'en' },
+  );
+
+  protected readonly dateLabel = computed(() => {
+    const locale = this.activeLang() === 'es' ? 'es-ES' : 'en-US';
+    return new Date().toLocaleDateString(locale, {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
   });
 
   protected readonly donutArcs = computed<{ protein: DonutArcVm; carbs: DonutArcVm; fat: DonutArcVm }>(() => {

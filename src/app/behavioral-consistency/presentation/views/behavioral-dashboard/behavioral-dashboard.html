@@ -79,7 +79,12 @@
 
     <section class="middle-grid">
       <article class="panel today-log-panel">
-        <h2>{{ 'dashboard.todays_log' | translate }}</h2>
+        <div class="panel-header">
+          <h2>{{ 'dashboard.todays_log' | translate }}</h2>
+          <button type="button" class="view-log-button" (click)="onLogMeal()">
+            {{ 'dashboard.view_daily_log_btn' | translate }}
+          </button>
+        </div>
 
         @if (vm.showNoMealsLoggedBlock) {
           <div class="no-meals-logged-block">
@@ -113,8 +118,6 @@
                 <strong class="meal-kcal" [class.muted-kcal]="meal.notLogged">
                   {{ meal.caloriesLabel }}
                 </strong>
-
-                <button type="button" class="add-button" (click)="onLogMeal()">+</button>
               </div>
             }
           </div>

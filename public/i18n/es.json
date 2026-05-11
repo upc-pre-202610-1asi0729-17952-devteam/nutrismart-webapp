@@ -312,7 +312,8 @@
     "streak_recovered_footer": "Estás de vuelta en camino",
     "loading_progress": "Cargando tu panel…",
     "load_error": "No se pudieron cargar tus datos. Inténtalo de nuevo.",
-    "retry": "Reintentar"
+    "retry": "Reintentar",
+    "view_daily_log_btn": "Ver registro diario"
   },
   "nutrition": {
     "page_title": "Registro Diario",

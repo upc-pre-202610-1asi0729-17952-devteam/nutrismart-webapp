@@ -312,7 +312,8 @@
     "streak_recovered_footer": "You're back on track",
     "loading_progress": "Loading your dashboard…",
     "load_error": "Could not load your data. Please try again.",
-    "retry": "Retry"
+    "retry": "Retry",
+    "view_daily_log_btn": "View daily log"
   },
   "nutrition": {
     "page_title": "Daily Log",
