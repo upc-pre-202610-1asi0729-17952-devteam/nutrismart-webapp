@@ -72,10 +72,10 @@
     <button
       type="button"
       class="btn-continue"
-      [class.btn-continue--active]="hasSelection()"
-      [disabled]="!hasSelection()"
+      [class.btn-continue--active]="hasSelection() && !submitting()"
+      [disabled]="!hasSelection() || submitting()"
       (click)="onContinue()">
-      {{ 'body_progress.continue_btn' | translate }}
+      {{ (submitting() ? 'body_progress.continuing' : 'body_progress.continue_btn') | translate }}
     </button>
   </div>
 

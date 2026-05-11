@@ -7,11 +7,19 @@
       <p class="page-subtitle">{{ 'body_progress.page_subtitle' | translate }}</p>
     </div>
     <div class="header-actions">
-      <button class="btn btn--primary" (click)="onOpenLogModal()">
+      <button class="btn btn--primary" [disabled]="store.loading()" (click)="onOpenLogModal()">
         {{ 'body_progress.log_weight_btn' | translate }}
       </button>
     </div>
   </header>
+
+  <!-- ── Error banner ──────────────────────────────────────── -->
+  @if (store.error()) {
+    <div class="error-banner" role="alert">
+      <span class="material-icons error-banner-icon">error_outline</span>
+      <span>{{ store.error()! | translate }}</span>
+    </div>
+  }
 
   <!-- ── No-data banner: last log > 14 days ─────────────────── -->
   @if (store.isStale()) {
@@ -440,7 +448,9 @@
         <button class="btn btn--outline" (click)="onCloseCompositionModal()">
           {{ 'common.cancel' | translate }}
         </button>
-        <button class="btn btn--primary" [disabled]="!compositionValid" (click)="onSaveComposition()">
+        <button class="btn btn--primary"
+                [disabled]="!compositionValid || store.loading()"
+                (click)="onSaveComposition()">
           {{ 'common.save' | translate }}
         </button>
       </div>
@@ -490,7 +500,7 @@
           {{ 'common.cancel' | translate }}
         </button>
         <button class="btn btn--primary"
-                [disabled]="weightInputInvalid()"
+                [disabled]="weightInputInvalid() || store.loading()"
                 (click)="onSaveWeight()">
           {{ 'body_progress.save_entry' | translate }}
         </button>

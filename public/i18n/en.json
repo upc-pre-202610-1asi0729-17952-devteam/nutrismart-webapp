@@ -32,7 +32,8 @@
     "add_to_log": "+ Add to log",
     "view_all": "View all →",
     "upgrade": "Upgrade",
-    "required": "This field is required"
+    "required": "This field is required",
+    "close": "Close"
   },
   "auth": {
     "login_title": "Welcome back",
@@ -465,7 +466,15 @@
     "tooltip_lean_mass": "Lean mass is your total body weight minus fat — it includes muscle, bone, organs, and water.",
     "tooltip_lean_bulk": "Lean bulk means gaining muscle while keeping fat gain minimal (typically below 1.5% per cycle). It requires a moderate caloric surplus with high protein intake.",
     "stagnation_banner_loss": "You've been logging consistently but your weight hasn't trended downward in this period. Consider reviewing your caloric deficit or nutrition quality.",
-    "stagnation_banner_gain": "You've been logging consistently but your weight hasn't trended upward in this period. Consider reviewing your caloric surplus or training load."
+    "stagnation_banner_gain": "You've been logging consistently but your weight hasn't trended upward in this period. Consider reviewing your caloric surplus or training load.",
+    "error_save_failed": "Could not save. Please try again.",
+    "error_load_failed": "Could not load data. Please try again.",
+    "continuing": "Saving...",
+    "loading_chart": "Loading chart data",
+    "aria_more_info": "More information",
+    "aria_edit_goal": "Edit goal weight",
+    "aria_confirm": "Confirm",
+    "aria_cancel": "Cancel"
   },
   "my_plan": {
     "page_title": "Subscription and billing",

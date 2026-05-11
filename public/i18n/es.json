@@ -32,7 +32,8 @@
     "add_to_log": "+ Agregar al registro",
     "view_all": "Ver todo →",
     "upgrade": "Mejorar plan",
-    "required": "Este campo es obligatorio"
+    "required": "Este campo es obligatorio",
+    "close": "Cerrar"
   },
   "auth": {
     "login_title": "Bienvenido de vuelta",
@@ -465,7 +466,15 @@
     "tooltip_lean_mass": "La masa magra es tu peso total menos la grasa — incluye músculo, hueso, órganos y agua.",
     "tooltip_lean_bulk": "El lean bulk (volumen limpio) consiste en ganar músculo manteniendo la ganancia de grasa al mínimo (menos del 1.5% por ciclo). Requiere un superávit calórico moderado con alta ingesta de proteínas.",
     "stagnation_banner_loss": "Has estado registrando tu peso de forma constante, pero no ha bajado en este período. Considera revisar tu déficit calórico o la calidad de tu nutrición.",
-    "stagnation_banner_gain": "Has estado registrando tu peso de forma constante, pero no ha subido en este período. Considera revisar tu superávit calórico o la carga de entrenamiento."
+    "stagnation_banner_gain": "Has estado registrando tu peso de forma constante, pero no ha subido en este período. Considera revisar tu superávit calórico o la carga de entrenamiento.",
+    "error_save_failed": "No se pudo guardar. Inténtalo de nuevo.",
+    "error_load_failed": "No se pudieron cargar los datos. Inténtalo de nuevo.",
+    "continuing": "Guardando...",
+    "loading_chart": "Cargando datos del gráfico",
+    "aria_more_info": "Más información",
+    "aria_edit_goal": "Editar peso objetivo",
+    "aria_confirm": "Confirmar",
+    "aria_cancel": "Cancelar"
   },
   "my_plan": {
     "page_title": "Suscripción y facturación",

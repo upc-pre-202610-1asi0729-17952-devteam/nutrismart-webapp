@@ -43,8 +43,8 @@ export class GoalSelectionScreen {
     this.iamStore.currentUser()?.goal ?? null,
   );
 
-  /** Enables the Continue button only when a card has been selected. */
   protected hasSelection = computed(() => this.selectedGoal() !== null);
+  protected submitting   = signal<boolean>(false);
 
   /**
    * Returns `true` when the given goal matches the current selection.
@@ -73,22 +73,19 @@ export class GoalSelectionScreen {
    */
   async onContinue(): Promise<void> {
     const goal = this.selectedGoal();
-    if (!goal) return;
-
-    // 1. Persist to user profile (async, background)
-    this.iamStore.changeGoal(goal);
-
-    // 2. Write to MetabolicStore via a fresh primitive signal BEFORE navigating.
-    //    IamStore.changeGoal() mutates the User in place — same object reference —
-    //    so Angular's signal equality check (Object.is) never notifies MetabolicStore
-    //    subscribers. setSessionGoal() writes a new primitive value to a separate
-    //    signal, guaranteeing that isMuscleGain() is correct when the view mounts.
-    this.metabolicStore.setSessionGoal(goal);
-
-    // 3. Auto-calculate and persist the initial target weight based on the goal.
-    //    WEIGHT_LOSS → BMI 24.9 target. MUSCLE_GAIN → no target (skipped).
-    await this.metabolicStore.applyInitialTarget(goal);
-
-    this.router.navigate(['/body-progress', 'progress']);
+    if (!goal || this.submitting()) return;
+    this.submitting.set(true);
+    try {
+      // IamStore.changeGoal() mutates the User in place — same object reference —
+      // so Angular's signal equality check (Object.is) never notifies MetabolicStore
+      // subscribers. setSessionGoal() writes a new primitive value to a separate
+      // signal, guaranteeing that isMuscleGain() is correct when the view mounts.
+      this.iamStore.changeGoal(goal);
+      this.metabolicStore.setSessionGoal(goal);
+      await this.metabolicStore.applyInitialTarget(goal);
+      this.router.navigate(['/body-progress', 'progress']);
+    } finally {
+      this.submitting.set(false);
+    }
   }
 }
