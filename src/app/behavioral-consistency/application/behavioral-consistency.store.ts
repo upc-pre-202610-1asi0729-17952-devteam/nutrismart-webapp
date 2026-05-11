@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { AdherenceStatus } from '../domain/model/adherence-status.enum';
 import {
   BehavioralProgress,
@@ -87,29 +87,6 @@ export class BehavioralConsistencyStore {
   );
 
   // ─── Loading / initialization ──────────────────────────────────────────────
-
-  /**
-   * Loads the behavioral progress record for a specific user.
-   *
-   * @param userId - Numeric identifier of the user.
-   * @returns Observable emitting the loaded progress or `undefined` if not found.
-   */
-  loadByUserId(userId: number): Observable<BehavioralProgress | undefined> {
-    this._loading.set(true);
-    this._error.set(null);
-
-    return this.behavioralConsistencyApi.getBehavioralProgressByUserId(userId).pipe(
-      tap(progress => {
-        this._currentProgress.set(progress ?? null);
-        this._loading.set(false);
-      }),
-      catchError(err => {
-        this._loading.set(false);
-        this._error.set(err.message);
-        return throwError(() => err);
-      })
-    );
-  }
 
   /**
    * Loads the behavioral progress for a user, creating an initial record
@@ -201,51 +178,6 @@ export class BehavioralConsistencyStore {
   }
 
   /**
-   * Replaces the weekly completion dots and recalculates the adherence status.
-   *
-   * @param weekDots - New weekly completion flags.
-   */
-  updateWeekDots(weekDots: boolean[]): void {
-    const progress = this._currentProgress();
-    if (!progress) return;
-
-    progress.weekDots = weekDots;
-    progress.recalculateAdherenceStatus();
-    this._currentProgress.set(progress);
-    this.persist();
-  }
-
-  /**
-   * Replaces the streak value and recalculates the adherence status.
-   *
-   * @param streak - New streak value.
-   */
-  updateStreak(streak: number): void {
-    const progress = this._currentProgress();
-    if (!progress) return;
-
-    progress.streak = streak;
-    progress.recalculateAdherenceStatus();
-    this._currentProgress.set(progress);
-    this.persist();
-  }
-
-  /**
-   * Replaces the consecutive misses value and recalculates the adherence status.
-   *
-   * @param consecutiveMisses - New consecutive misses value.
-   */
-  updateConsecutiveMisses(consecutiveMisses: number): void {
-    const progress = this._currentProgress();
-    if (!progress) return;
-
-    progress.consecutiveMisses = consecutiveMisses;
-    progress.recalculateAdherenceStatus();
-    this._currentProgress.set(progress);
-    this.persist();
-  }
-
-  /**
    * Manually sets the adherence status and persists the change.
    *
    * Prefer using `markGoalMet`, `markGoalMissed`, or
@@ -260,28 +192,6 @@ export class BehavioralConsistencyStore {
     progress.adherenceStatus = status;
     this._currentProgress.set(progress);
     this.persist();
-  }
-
-  /**
-   * Loads local preview data without calling the backend.
-   *
-   * Useful while developing the Behavioral Consistency UI independently
-   * from authentication and API availability.
-   */
-  loadPreviewProgress(): void {
-    const previewProgress = new BehavioralProgress({
-      id: 1,
-      userId: 1,
-      adherenceStatus: AdherenceStatus.ON_TRACK,
-      streak: 5,
-      consecutiveMisses: 0,
-      lastGoalMetDate: '2026-05-06',
-      weekDots: [true, true, true, true, true, false, false],
-    });
-
-    this._currentProgress.set(previewProgress);
-    this._loading.set(false);
-    this._error.set(null);
   }
 
   // ─── Private helpers ───────────────────────────────────────────────────────
