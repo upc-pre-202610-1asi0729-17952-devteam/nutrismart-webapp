@@ -52,8 +52,8 @@ export class SmartScan implements OnInit {
 
   protected readonly MealType = MealType;
 
-  protected selectedMealType     = MealType.LUNCH;
-  protected selectedMenuMealType = MealType.LUNCH;
+  protected selectedMealType     = this.defaultMealType();
+  protected selectedMenuMealType = this.defaultMealType();
   protected plateDragActive      = signal(false);
   protected menuDragActive       = signal(false);
   protected quantityErrors       = signal<Map<number, string>>(new Map());
@@ -68,12 +68,21 @@ export class SmartScan implements OnInit {
     return user?.plan === SubscriptionPlan.PREMIUM;
   });
 
-  protected readonly mealTypes = [
-    { value: MealType.BREAKFAST, labelKey: 'nutrition.breakfast' },
-    { value: MealType.LUNCH,     labelKey: 'nutrition.lunch' },
-    { value: MealType.DINNER,    labelKey: 'nutrition.dinner' },
-    { value: MealType.SNACK,     labelKey: 'nutrition.snack' },
-  ];
+  protected readonly availableMealTypes = computed(() => {
+    const hour = new Date().getHours();
+    const types = [{ value: MealType.BREAKFAST, labelKey: 'nutrition.breakfast' }];
+    if (hour >= 11) types.push({ value: MealType.LUNCH, labelKey: 'nutrition.lunch' });
+    types.push({ value: MealType.SNACK, labelKey: 'nutrition.snack' });
+    if (hour >= 17) types.push({ value: MealType.DINNER, labelKey: 'nutrition.dinner' });
+    return types;
+  });
+
+  private defaultMealType(): MealType {
+    const hour = new Date().getHours();
+    if (hour >= 17) return MealType.DINNER;
+    if (hour >= 11) return MealType.LUNCH;
+    return MealType.BREAKFAST;
+  }
 
   constructor() {
     // Reset and refresh nutrition data when navigating to /smart-scan so that

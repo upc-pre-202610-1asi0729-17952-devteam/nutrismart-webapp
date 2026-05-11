@@ -210,7 +210,7 @@
         <mat-form-field appearance="outline" class="meal-type-field">
           <mat-label>{{ 'smart_scan.select_meal_type' | translate }}</mat-label>
           <mat-select [value]="selectedMealType" (valueChange)="selectedMealType = $event">
-            @for (opt of mealTypes; track opt.value) {
+            @for (opt of availableMealTypes(); track opt.value) {
               <mat-option [value]="opt.value">{{ opt.labelKey | translate }}</mat-option>
             }
           </mat-select>
@@ -411,7 +411,7 @@
         <mat-form-field appearance="outline" class="meal-type-field">
           <mat-label>{{ 'smart_scan.select_meal_type' | translate }}</mat-label>
           <mat-select [value]="selectedMenuMealType" (valueChange)="selectedMenuMealType = $event">
-            @for (opt of mealTypes; track opt.value) {
+            @for (opt of availableMealTypes(); track opt.value) {
               <mat-option [value]="opt.value">{{ opt.labelKey | translate }}</mat-option>
             }
           </mat-select>
