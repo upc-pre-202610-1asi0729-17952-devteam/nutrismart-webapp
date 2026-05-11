@@ -497,7 +497,11 @@
     "goal_switch_confirm_btn": "Sí, cambiar objetivo",
     "goal_switch_cancel_btn": "Cancelar",
     "goal_name_weight_loss": "Pérdida de peso",
-    "goal_name_muscle_gain": "Ganancia muscular"
+    "goal_name_muscle_gain": "Ganancia muscular",
+    "history_title": "Historial de peso completo",
+    "history_subtitle": "Todos los registros del ciclo de objetivo actual",
+    "history_empty": "Aún no hay registros de peso para este ciclo.",
+    "back_to_progress": "← Volver al progreso"
   },
   "my_plan": {
     "page_title": "Suscripción y facturación",

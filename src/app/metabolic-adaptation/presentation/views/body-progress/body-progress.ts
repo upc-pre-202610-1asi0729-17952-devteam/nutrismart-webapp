@@ -1,4 +1,5 @@
 import { Component, computed, HostListener, inject, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
@@ -21,7 +22,7 @@ import { BodyMetric, BmiCategory } from '../../../domain/model/body-metric.entit
  */
 @Component({
   selector: 'app-body-progress',
-  imports: [DecimalPipe, NgClass, FormsModule, MatButtonToggleGroup, MatButtonToggle, TranslatePipe],
+  imports: [RouterLink, DecimalPipe, NgClass, FormsModule, MatButtonToggleGroup, MatButtonToggle, TranslatePipe],
   templateUrl: './body-progress.html',
   styleUrl: './body-progress.css',
 })

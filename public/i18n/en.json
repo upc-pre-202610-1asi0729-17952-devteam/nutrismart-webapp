@@ -497,7 +497,11 @@
     "goal_switch_confirm_btn": "Yes, switch goal",
     "goal_switch_cancel_btn": "Cancel",
     "goal_name_weight_loss": "Weight Loss",
-    "goal_name_muscle_gain": "Muscle Gain"
+    "goal_name_muscle_gain": "Muscle Gain",
+    "history_title": "Full Weight History",
+    "history_subtitle": "All entries for the current goal cycle",
+    "history_empty": "No weight entries yet for this goal cycle.",
+    "back_to_progress": "← Back to progress"
   },
   "my_plan": {
     "page_title": "Subscription and billing",

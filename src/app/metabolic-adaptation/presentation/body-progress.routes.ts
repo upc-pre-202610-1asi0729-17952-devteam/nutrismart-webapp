@@ -25,4 +25,10 @@ export const bodyProgressRoutes: Routes = [
       import('./views/body-progress/body-progress').then(m => m.BodyProgressView),
     title: 'NutriSmart - Body Progress',
   },
+  {
+    path: 'history',
+    loadComponent: () =>
+      import('./views/weight-history/weight-history').then(m => m.WeightHistoryView),
+    title: 'NutriSmart - Weight History',
+  },
 ];

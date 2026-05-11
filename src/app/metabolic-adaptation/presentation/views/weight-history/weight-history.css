@@ -1,0 +1,121 @@
+.history-page {
+  padding: 28px 32px;
+  min-height: 100vh;
+  background: var(--nutrismart-bg);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ── Header ── */
+.history-header { margin-bottom: 24px; }
+
+.back-link {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--nutrismart-primary);
+  text-decoration: none;
+  margin-bottom: 12px;
+}
+
+.back-link:hover { text-decoration: underline; }
+
+.history-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+  margin: 0 0 4px;
+}
+
+.history-subtitle {
+  font-size: 13px;
+  color: var(--nutrismart-text-light);
+  margin: 0;
+}
+
+/* ── Card ── */
+.history-card {
+  background: var(--nutrismart-white);
+  border: 1px solid var(--nutrismart-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ── Table ── */
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.history-table thead tr {
+  background: var(--nutrismart-bg);
+  border-bottom: 1px solid var(--nutrismart-border);
+}
+
+.history-table th {
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--nutrismart-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  text-align: left;
+}
+
+.col-weight, .col-delta { text-align: right; }
+
+.history-table tbody tr {
+  border-bottom: 1px solid var(--nutrismart-border);
+  transition: background 0.12s;
+}
+
+.history-table tbody tr:last-child { border-bottom: none; }
+.history-table tbody tr:hover { background: var(--nutrismart-bg); }
+
+.cell-date, .cell-weight, .cell-delta {
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+.cell-date   { color: var(--nutrismart-text-mid); }
+.cell-weight { text-align: right; font-weight: 600; color: var(--nutrismart-text-dark); }
+.cell-delta  { text-align: right; font-weight: 600; color: var(--nutrismart-text-light); }
+
+.delta--neg { color: var(--nutrismart-primary); }
+.delta--pos { color: #ef4444; }
+
+/* ── Loading skeleton ── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 4px;
+  height: 14px;
+}
+
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--nutrismart-border);
+}
+
+.skeleton--date   { flex: 2; }
+.skeleton--weight { flex: 1; }
+.skeleton--delta  { flex: 1; }
+
+/* ── Empty ── */
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--nutrismart-text-light);
+  font-size: 14px;
+  background: var(--nutrismart-white);
+  border: 1px solid var(--nutrismart-border);
+  border-radius: 12px;
+}
