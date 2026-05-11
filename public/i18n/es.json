@@ -359,6 +359,7 @@
     "empty_state": "Sin recomendaciones disponibles. Ajusta los filtros o prueba con una ubicación diferente.",
     "filters_title": "Filtros activos",
     "filters_subtitle": "Aplicados a todas las sugerencias",
+    "filters_from_profile": "Aplicados desde la configuración de tu perfil",
     "filters_empty": "Sin restricciones alimentarias activas.",
     "balance_title": "Balance diario",
     "balance_target": "Objetivo",

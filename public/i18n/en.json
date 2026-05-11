@@ -359,6 +359,7 @@
     "empty_state": "No recommendations available. Adjust your filters or try a different location.",
     "filters_title": "Active filters",
     "filters_subtitle": "Applied to all suggestions",
+    "filters_from_profile": "Applied from your profile settings",
     "filters_empty": "No active dietary restrictions.",
     "balance_title": "Daily balance",
     "balance_target": "Target",
