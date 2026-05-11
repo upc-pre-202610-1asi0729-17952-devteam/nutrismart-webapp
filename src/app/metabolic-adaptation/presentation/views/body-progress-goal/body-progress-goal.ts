@@ -1,26 +1,11 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgClass } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { UserGoal } from '../../../../iam/domain/model/user-goal.enum';
 import { MetabolicStore } from '../../../application/metabolic.store';
 
-/**
- * Goal Selection screen — first view shown when the user navigates to /body-progress.
- *
- * Presents two selectable cards ("Lose weight" / "Gain muscle"). On confirm it
- * calls {@link IamStore.changeGoal}, which synchronously updates the goal signal
- * (and persists to the API in the background), then navigates to
- * /body-progress/progress. The BodyProgressView at that route reads
- * `MetabolicStore.isMuscleGain()` and renders either the WA_BP_LOSS layout
- * (BMR · TDEE · Weight Evolution · Log History) or the WA_BP_GAIN layout
- * (% Body Fat · Lean Mass · Body Composition) automatically.
- *
- * Component name: GoalSelectionScreen (per task spec)
- *
- * @author Espinoza Cruz, Angela Milagros
- */
 @Component({
   selector: 'app-body-progress-goal',
   imports: [NgClass, TranslatePipe],
@@ -31,47 +16,62 @@ export class GoalSelectionScreen {
   private iamStore       = inject(IamStore);
   private metabolicStore = inject(MetabolicStore);
   private router         = inject(Router);
+  private translate      = inject(TranslateService);
 
-  /** Expose enum to the template. */
   readonly UserGoal = UserGoal;
 
-  /**
-   * Currently highlighted goal. Pre-filled from the authenticated user's existing
-   * goal so returning users see their prior selection highlighted on entry.
-   */
   protected selectedGoal = signal<UserGoal | null>(
     this.iamStore.currentUser()?.goal ?? null,
   );
 
-  protected hasSelection = computed(() => this.selectedGoal() !== null);
-  protected submitting   = signal<boolean>(false);
+  protected hasSelection  = computed(() => this.selectedGoal() !== null);
+  protected submitting    = signal<boolean>(false);
+  protected showConfirm   = signal<boolean>(false);
 
-  /**
-   * Returns `true` when the given goal matches the current selection.
-   *
-   * @param goal - The goal to test against the current selection.
-   */
+  protected currentGoal     = computed(() => this.iamStore.currentUser()?.goal ?? null);
+  protected isLocked        = computed(() => this.metabolicStore.isGoalLocked());
+  protected daysLeft        = computed(() => this.metabolicStore.daysUntilUnlock());
+  protected unlockDate      = computed(() => this.metabolicStore.unlockDate());
+  protected goalStartedAt   = computed(() => this.iamStore.currentUser()?.goalStartedAt ?? '');
+
+  protected goalName(goal: UserGoal | null): string {
+    if (!goal) return '';
+    return goal === UserGoal.WEIGHT_LOSS
+      ? this.translate.instant('body_progress.goal_name_weight_loss')
+      : this.translate.instant('body_progress.goal_name_muscle_gain');
+  }
+
   protected isSelected(goal: UserGoal): boolean {
     return this.selectedGoal() === goal;
   }
 
-  /**
-   * Highlights the tapped card. Tapping the same card a second time deselects it.
-   *
-   * @param goal - The goal the user tapped.
-   */
   selectGoal(goal: UserGoal): void {
     this.selectedGoal.set(this.selectedGoal() === goal ? null : goal);
   }
 
-  /**
-   * Applies the selected goal and navigates to the body-progress dashboard.
-   * changeGoal() creates a new User instance, so signal equality detects the
-   * change and MetabolicStore.isMuscleGain() re-evaluates correctly on load.
-   */
   async onContinue(): Promise<void> {
     const goal = this.selectedGoal();
     if (!goal || this.submitting()) return;
+    if (this.isLocked() && goal !== this.currentGoal()) {
+      this.showConfirm.set(true);
+      return;
+    }
+    await this.commitGoal(goal);
+  }
+
+  async onConfirmSwitch(): Promise<void> {
+    const goal = this.selectedGoal();
+    if (!goal) return;
+    this.showConfirm.set(false);
+    await this.commitGoal(goal);
+  }
+
+  onCancelSwitch(): void {
+    this.showConfirm.set(false);
+    this.selectedGoal.set(this.currentGoal());
+  }
+
+  private async commitGoal(goal: UserGoal): Promise<void> {
     this.submitting.set(true);
     try {
       this.iamStore.changeGoal(goal);
