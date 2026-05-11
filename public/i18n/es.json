@@ -213,6 +213,16 @@
     "KIDNEY_DISEASE": "Enfermedad renal",
     "GOUT": "Gota"
   },
+  "allergens": {
+    "LACTOSE_FREE": "lactosa",
+    "GLUTEN_FREE": "gluten",
+    "VEGAN": "productos de origen animal",
+    "VEGETARIAN": "carne",
+    "NUT_FREE": "frutos secos",
+    "SEAFOOD_FREE": "mariscos",
+    "KOSHER": "ingredientes no kosher",
+    "HALAL": "ingredientes no halal"
+  },
   "restrictions": {
     "LACTOSE_FREE": "Sin lactosa",
     "GLUTEN_FREE": "Sin gluten",
@@ -295,6 +305,111 @@
     "quantity_unit": "Cantidad ({{ unit }})",
     "meal_type": "Tipo de comida"
   },
+  "smart_scan": {
+    "page_title": "Smart Scan",
+    "page_subtitle": "Fotografía una comida o un menú de restaurante para registrar al instante",
+    "paywall_title": "Smart Scan requiere plan Pro o Premium",
+    "paywall_desc": "Analiza fotos de platos de comida para registrar comidas al instante. Disponible desde $14.99/mes.",
+    "paywall_cta": "Mejorar a Pro",
+    "plate_card_title": "Escanear plato",
+    "plate_card_desc": "Toma o sube una foto de tu plato para obtener un desglose nutricional estimado",
+    "menu_card_title": "Escanear menú de restaurante",
+    "menu_card_desc": "Esta opción te permite escanear el menú de cualquier restaurante que elijas.",
+    "drop_hint": "Arrastra y suelta o usa los botones de abajo",
+    "plan_premium_badge": "Plan Premium",
+    "analyzing_plate": "Analizando tu comida...",
+    "analyzing_menu": "Analizando menú...",
+    "api_source": "Google Cloud Vision API · Open Food Facts",
+    "result_title": "Resultado del escaneo",
+    "result_subtitle": "Revisa y confirma los alimentos antes de registrar",
+    "total_estimated": "Total estimado:",
+    "select_meal_type": "Selecciona tipo de comida",
+    "quantities_note": "Las cantidades son estimadas. Ajusta si es necesario antes de confirmar.",
+    "confirm_log": "Confirmar y registrar",
+    "cancel_result": "← Cancelar",
+    "invalid_title": "No se detectaron alimentos",
+    "invalid_desc": "La imagen puede estar borrosa o no contiene alimentos reconocibles. Intenta de nuevo o regístralo manualmente.",
+    "try_again": "Intentar de nuevo",
+    "log_manually": "Registrar manualmente →",
+    "menu_title": "Análisis de menú",
+    "menu_subtitle": "Filtrado por tus restricciones · Ordenado por compatibilidad con tus macros restantes",
+    "best_match": "Mejor opción",
+    "log_dish": "Registrar este plato →",
+    "compatibility": "Compatibilidad:",
+    "restricted_dishes": "🚫 Platos restringidos ({{ count }} ocultos)",
+    "contains": "contiene",
+    "back_to_scan": "← Volver al escaneo",
+    "impact_title": "Impacto nutricional",
+    "impact_best_dish_note": "Impacto calculado para el plato recomendado",
+    "impact_approaching": "Alcanzará el {{ percent }}% de tu objetivo diario",
+    "impact_exceeded": "Superará tu objetivo diario ({{ percent }}%)",
+    "qty_error_min": "La cantidad mínima es 1 g",
+    "qty_error_max": "La cantidad máxima es 2000 g"
+  },
+  "menu_dishes": {
+    "hake_ceviche": "Ceviche de merluza",
+    "hake_ceviche_justification": "Cubre 38g de tu objetivo proteico restante · Dentro de tu presupuesto calórico · Sin ingredientes restringidos",
+    "chicken_cucumber_salad": "Ensalada de pollo y pepino",
+    "chicken_cucumber_salad_justification": "Alto contenido proteico, dentro del presupuesto",
+    "gazpacho_wholemeal_toast": "Gazpacho con tostadas integrales",
+    "gazpacho_wholemeal_toast_justification": "Opción ligera dentro del presupuesto calórico",
+    "cheese_pizza": "Pizza de queso",
+    "seafood_paella": "Paella de mariscos"
+  },
+  "ingredient_categories": {
+    "grain":          "Cereal",
+    "animal_protein": "Proteína animal",
+    "vegetable":      "Verdura",
+    "fruit":          "Fruta",
+    "dairy":          "Lácteo",
+    "legume":         "Legumbre",
+    "seasoning":      "Condimento",
+    "other":          "Otro"
+  },
+  "pantry_items": {
+    "white_rice":      "Arroz blanco",
+    "chicken_breast":  "Pechuga de pollo",
+    "lemon":           "Limón",
+    "onion":           "Cebolla",
+    "garlic":          "Ajo",
+    "quinoa":          "Quinoa"
+  },
+  "recipes": {
+    "chicken_quinoa":    "Pechuga de pollo con quinoa",
+    "rice_chicken_bowl": "Bowl de arroz con pollo",
+    "chicken_salad":     "Pollo con ensalada",
+    "lemon_garlic_rice": "Arroz al limón con ajo"
+  },
+  "food_items": {
+    "grilled_chicken_breast": "Pechuga de pollo a la plancha",
+    "white_rice": "Arroz blanco",
+    "mixed_salad": "Ensalada mixta"
+  },
+  "pantry": {
+    "page_title": "Despensa",
+    "page_subtitle": "Administra tus ingredientes y obtén sugerencias de recetas personalizadas",
+    "my_ingredients": "Mis ingredientes",
+    "add_placeholder": "Agregar ingrediente...",
+    "go_btn": "Ir",
+    "empty_title": "Tu despensa está vacía",
+    "empty_desc": "Agrega ingredientes para obtener sugerencias de recetas personalizadas según lo que tienes en casa.",
+    "daily_goal": "Meta diaria:",
+    "consumed": "Consumido:",
+    "remaining_label": "Restante:",
+    "deficit_hint": "Las recetas sugeridas respetan tu déficit restante",
+    "protein_hint": "Proteína restante: {{ remaining }}g de {{ total }}g · Recetas ordenadas por contenido proteico",
+    "recipes_title": "Recetas sugeridas con lo que tienes en tu despensa",
+    "recipes_based_on": "Basado en tus ingredientes",
+    "recipes_filtered_deficit": "Filtrado por tu déficit calórico restante de {{ kcal }} kcal",
+    "recipes_ranked_protein": "Ordenado por contenido proteico · Cubre tu déficit de proteína",
+    "empty_recipes": "Agrega al menos un ingrediente para ver sugerencias de recetas.",
+    "goal_weight_loss": "Pérdida de peso",
+    "goal_muscle_gain": "Ganancia muscular",
+    "no_results": "No se encontraron ingredientes",
+    "no_matching_recipes": "Ninguna receta coincide con tus ingredientes actuales. Intenta agregar más.",
+    "recipe_impact_warning": "Añadir esto llegaría al {{ percent }}% de tu meta diaria",
+    "recipe_impact_danger": "Añadir esto superaría tu meta diaria ({{ percent }}%)"
+  },
   "my_plan": {
     "page_title": "Suscripción y facturación",
     "page_subtitle": "Administra tu plan y consulta tu historial de pagos",
@@ -325,5 +440,10 @@
     "effective_date": "Efectivo: {{ date }}",
     "confirm_downgrade": "Confirmar degradación",
     "processing": "Procesando..."
+  },
+  "units": {
+    "g": "g",
+    "ml": "ml",
+    "serving": "porción"
   }
 }

@@ -1,5 +1,5 @@
 import { APP_INITIALIZER, ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withRouterConfig } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -8,10 +8,13 @@ import { firstValueFrom } from 'rxjs';
 import { routes } from './app.routes';
 
 function initLanguage(translate: TranslateService) {
-  return () => {
+  return async () => {
     const saved = localStorage.getItem('lang') ?? 'en';
     translate.setDefaultLang('en');
-    return firstValueFrom(translate.use(saved));
+    await firstValueFrom(translate.use(saved));
+    const other = saved === 'es' ? 'en' : 'es';
+    const otherTranslations = await firstValueFrom(translate.currentLoader.getTranslation(other));
+    translate.setTranslation(other, otherTranslations);
   };
 }
 
@@ -27,7 +30,7 @@ function initLanguage(translate: TranslateService) {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes),
+    provideRouter(routes, withRouterConfig({ onSameUrlNavigation: 'reload' })),
     provideHttpClient(),
     provideTranslateService(),
     provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),

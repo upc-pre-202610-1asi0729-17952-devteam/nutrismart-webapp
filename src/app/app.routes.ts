@@ -35,7 +35,7 @@ const smartScanRoutes = () =>
 
 /** Lazy-loads the recommendations child routes (smart-recommendation context). */
 const recommendationsRoutes = () =>
-  import('./smart-recommendation/recommendations/presentation/recommendations.routes').then(
+  import('./smart-recommendation/presentation/recommendations.routes').then(
     (m) => m.recommendationsRoutes,
   );
 
@@ -47,7 +47,7 @@ const bodyProgressRoutes = () =>
 
 /** Lazy-loads the pantry child routes (smart-recommendation context). */
 const pantryRoutes = () =>
-  import('./smart-recommendation/pantry/presentation/pantry.routes').then((m) => m.pantryRoutes);
+  import('./smart-recommendation/presentation/pantry.routes').then((m) => m.pantryRoutes);
 
 /** Lazy-loads the wearable child routes (metabolic-adaptation context). */
 const wearableRoutes = () =>

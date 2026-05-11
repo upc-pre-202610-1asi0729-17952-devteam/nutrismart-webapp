@@ -82,6 +82,7 @@ export class IamStore {
       consecutiveMisses: user.consecutiveMisses,
       birthday: user.birthday,
       biologicalSex: user.biologicalSex,
+      createdAt: user.createdAt,
     };
     localStorage.setItem(SESSION_KEY, JSON.stringify(props));
   }
