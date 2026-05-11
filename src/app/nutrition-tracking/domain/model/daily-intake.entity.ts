@@ -1,4 +1,5 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
+import { MacronutrientDistribution } from './macronutrient-distribution.value-object';
 
 /**
  * Constructor DTO for creating a {@link DailyIntake} instance.
@@ -118,5 +119,26 @@ export class DailyIntake implements BaseEntity {
     return this.exceeded
       ? `Exceeded by ${this.netCalories} kcal`
       : `${this.percentConsumed}% of your goal consumed`;
+  }
+
+  /**
+   * Validates whether the consumed macros stay within the user's daily targets.
+   *
+   * Each key is `true` when the consumed value is within the target (not exceeded).
+   *
+   * @param consumed - Actual macros consumed for the day.
+   * @param targets  - User's macro targets (protein, carbs, fat, fiber in grams).
+   */
+  validateMacronutrients(
+    consumed: MacronutrientDistribution,
+    targets: { protein: number; carbs: number; fat: number; fiber: number },
+  ): { calories: boolean; protein: boolean; carbs: boolean; fat: boolean; fiber: boolean } {
+    return {
+      calories: consumed.calories <= this._dailyGoal,
+      protein:  consumed.protein  <= targets.protein,
+      carbs:    consumed.carbs    <= targets.carbs,
+      fat:      consumed.fat      <= targets.fat,
+      fiber:    consumed.fiber    <= targets.fiber,
+    };
   }
 }
