@@ -196,17 +196,23 @@ export class DailyLog implements OnInit {
 
   // ─── Computed ─────────────────────────────────────────────────────────────
 
-  /** Daily calorie goal from the intake record or user profile fallback. */
+  /** DailyIntake record for the selected date, null when no backend record exists. */
+  private readonly selectedDailyIntake = computed(() =>
+    this.nutritionStore.getDailyIntakeFor(this.selectedDate())
+  );
+
+  /** Active (burned) calories for the selected date — 0 when no record exists. */
+  protected readonly selectedActive = computed(() => this.selectedDailyIntake()?.active ?? 0);
+
+  /** Daily calorie goal for the selected date, falling back to user profile then 1800. */
   protected dailyGoalTarget = computed(() =>
-    this.nutritionStore.dailyIntake()?.dailyGoal ?? this.iamStore.currentUser()?.dailyCalorieTarget ?? 1800
+    this.selectedDailyIntake()?.dailyGoal ?? this.iamStore.currentUser()?.dailyCalorieTarget ?? 1800
   );
 
   /** Whether the daily goal has been exceeded for the selected date (T22). */
-  protected isDailyGoalExceeded = computed(() => {
-    const intake = this.nutritionStore.dailyIntake();
-    if (!intake) return false;
-    return this.filteredTotals().calories > intake.dailyGoal;
-  });
+  protected isDailyGoalExceeded = computed(() =>
+    this.filteredTotals().calories > this.dailyGoalTarget()
+  );
 
   /** Whether all 4 meal windows are logged for the selected date (T22). */
   protected allMealsLogged = computed(() =>
@@ -214,11 +220,9 @@ export class DailyLog implements OnInit {
   );
 
   /** Kilocalories consumed beyond the daily goal (T22). */
-  protected exceededBy = computed(() => {
-    const intake = this.nutritionStore.dailyIntake();
-    if (!intake) return 0;
-    return Math.abs(this.filteredTotals().calories - intake.dailyGoal);
-  });
+  protected exceededBy = computed(() =>
+    Math.abs(this.filteredTotals().calories - this.dailyGoalTarget())
+  );
 
   /** Summary bar macro descriptors. */
   protected summaryMacros = computed(() => {

@@ -27,7 +27,7 @@ export class NutritionStore {
 
   private _foodItems = signal<FoodItem[]>([]);
   private _mealRecords = signal<MealRecord[]>([]);
-  private _dailyIntake = signal<DailyIntake | null>(null);
+  private _dailyIntakes = signal<DailyIntake[]>([]);
   private _loading     = signal<boolean>(false);
   private _error       = signal<string | null>(null);
   private _searchQuery = signal<string>('');
@@ -43,8 +43,8 @@ export class NutritionStore {
   /** All meal records for the current day. */
   readonly mealRecords = this._mealRecords.asReadonly();
 
-  /** Daily caloric balance entity. */
-  readonly dailyIntake = this._dailyIntake.asReadonly();
+  /** All daily caloric balance records for the current user. */
+  readonly dailyIntakes = this._dailyIntakes.asReadonly();
 
   /** Whether an async operation is in flight. */
   readonly loading = this._loading.asReadonly();
@@ -83,9 +83,9 @@ export class NutritionStore {
     ),
   );
 
-  /** Whether consumed calories exceed the daily goal (DailyGoalExceeded event). */
+  /** Whether today's consumed calories exceed today's daily goal (DailyGoalExceeded event). */
   readonly isDailyGoalExceeded = computed(() => {
-    const intake = this._dailyIntake();
+    const intake = this.getDailyIntakeFor(new Date());
     if (!intake) return false;
     return this.dailyTotals().calories > intake.dailyGoal;
   });
@@ -259,17 +259,7 @@ export class NutritionStore {
       this.nutritionApi.getDailyBalance().subscribe({
         next: (balances) => {
           const userId = String(user.id);
-          const userBalance = balances.find((b) => String(b.userId) === userId);
-          this._dailyIntake.set(
-            userBalance ?? new DailyIntake({
-              id: 0,
-              userId: user.id,
-              date: new Date().toISOString().slice(0, 10),
-              dailyGoal: user.dailyCalorieTarget,
-              consumed: 0,
-              active: 0,
-            })
-          );
+          this._dailyIntakes.set(balances.filter((b) => String(b.userId) === userId));
           this._loading.set(false);
           resolve();
         },
@@ -280,5 +270,14 @@ export class NutritionStore {
         },
       });
     });
+  }
+
+  /**
+   * Returns the {@link DailyIntake} record for the given date, or null if none exists.
+   * Callers should apply their own fallback (e.g. user.dailyCalorieTarget).
+   */
+  getDailyIntakeFor(date: Date): DailyIntake | null {
+    const dateStr = date.toISOString().slice(0, 10);
+    return this._dailyIntakes().find((b) => b.date === dateStr) ?? null;
   }
 }

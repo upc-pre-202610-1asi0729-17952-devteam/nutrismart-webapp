@@ -1,7 +1,6 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
-import { NutritionStore } from '../../../application/nutrition.store';
 
 /**
  * Daily balance card shown in the right column of the Daily Log.
@@ -19,13 +18,13 @@ import { NutritionStore } from '../../../application/nutrition.store';
 })
 export class DailyBalancePanelComponent {
 
-  private nutritionStore = inject(NutritionStore);
-
   /** Calories consumed for the currently selected date — provided by the parent. */
-  readonly consumed = input<number>(0);
+  readonly consumed  = input<number>(0);
+  /** User's daily calorie goal for the selected date — provided by the parent. */
+  readonly dailyGoal = input<number>(1800);
+  /** Active calories burned for the selected date — provided by the parent. */
+  readonly active    = input<number>(0);
 
-  protected readonly dailyGoal       = computed(() => this.nutritionStore.dailyIntake()?.dailyGoal ?? 1800);
-  protected readonly active          = computed(() => this.nutritionStore.dailyIntake()?.active ?? 0);
   protected readonly exceeded        = computed(() => this.consumed() > this.dailyGoal());
   protected readonly percentConsumed = computed(() => {
     const net = this.dailyGoal() + this.active();

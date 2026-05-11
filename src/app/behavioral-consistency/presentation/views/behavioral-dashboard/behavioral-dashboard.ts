@@ -149,7 +149,7 @@ export class BehavioralDashboard implements OnInit {
     const todayIndex = (new Date().getDay() + 6) % 7;
     const streakMilestone = Math.ceil((streak + 1) / 7) * 7;
 
-    const intake = this.nutritionStore.dailyIntake();
+    const intake = this.nutritionStore.getDailyIntakeFor(new Date());
     const totals = this.nutritionStore.dailyTotals();
     const user = this.currentUser();
     const locale = this.activeLang() === 'es' ? 'es-ES' : 'en-US';

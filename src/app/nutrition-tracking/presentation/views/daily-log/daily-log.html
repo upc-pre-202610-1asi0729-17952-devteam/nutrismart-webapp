@@ -120,7 +120,11 @@
 
     <!-- ── RIGHT: Balance ────────────────────────────────────── -->
     <aside class="right-col">
-      <app-daily-balance-panel [consumed]="filteredTotals().calories"></app-daily-balance-panel>
+      <app-daily-balance-panel
+        [consumed]="filteredTotals().calories"
+        [dailyGoal]="dailyGoalTarget()"
+        [active]="selectedActive()">
+      </app-daily-balance-panel>
     </aside>
 
   </div>
