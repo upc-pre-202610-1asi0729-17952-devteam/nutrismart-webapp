@@ -351,6 +351,8 @@
     "exceeded": "Excedido",
     "percent_consumed": "{{ percent }}% de tu meta consumida",
     "daily_balance": "Balance Diario",
+    "no_meals_banner_title": "Aún no hay comidas registradas",
+    "no_meals_banner_desc": "Empieza agregando tu primera comida del día.",
     "add_food_btn": "Agregar alimento",
     "search_modal_title": "Agregar alimento a tu registro",
     "impact_approaching": "Alcanzará el {{percent}}% de tu meta diaria",

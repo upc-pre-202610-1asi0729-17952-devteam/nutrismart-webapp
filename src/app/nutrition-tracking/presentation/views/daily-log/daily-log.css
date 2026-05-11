@@ -28,6 +28,66 @@
 }
 .add-food-btn:hover { background: #248a7c; }
 
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(45, 158, 143, 0.55); }
+  70%  { box-shadow: 0 0 0 10px rgba(45, 158, 143, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(45, 158, 143, 0); }
+}
+
+.add-food-btn--pulse {
+  animation: pulse-ring 1.6s ease-out infinite;
+}
+
+/* ── Empty-day banner ────────────────────────────────────────────── */
+.no-meals-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background: #f0faf8;
+  border: 1.5px solid #2d9e8f;
+}
+
+.no-meals-banner__icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.no-meals-banner__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.no-meals-banner__body strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.no-meals-banner__body span {
+  font-size: 13px;
+  color: #4b7a74;
+}
+
+.no-meals-banner__cta {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #2d9e8f;
+  color: #fff;
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s;
+}
+.no-meals-banner__cta:hover { background: #248a7c; }
+
 /* ── Food Search Modal ───────────────────────────────────────────── */
 .search-modal-backdrop {
   position: fixed;

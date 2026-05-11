@@ -351,6 +351,8 @@
     "exceeded": "Exceeded",
     "percent_consumed": "{{ percent }}% of your goal consumed",
     "daily_balance": "Daily Balance",
+    "no_meals_banner_title": "No meals logged yet",
+    "no_meals_banner_desc": "Start by adding your first meal for this day.",
     "add_food_btn": "Add food",
     "search_modal_title": "Add food to your log",
     "impact_approaching": "Will reach {{percent}}% of your daily goal",

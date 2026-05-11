@@ -7,11 +7,28 @@
       <p class="page-subtitle">{{ 'nutrition.page_subtitle' | translate }}</p>
     </div>
     @if (isEditable()) {
-      <button class="add-food-btn" (click)="openFoodSearch()" type="button">
+      <button class="add-food-btn"
+              [class.add-food-btn--pulse]="filteredRecords().length === 0"
+              (click)="openFoodSearch()"
+              type="button">
         + {{ 'nutrition.add_food_btn' | translate }}
       </button>
     }
   </header>
+
+  <!-- ── Empty-day banner ─────────────────────────────────── -->
+  @if (filteredRecords().length === 0 && isEditable()) {
+    <div class="no-meals-banner" role="status">
+      <span class="no-meals-banner__icon">🍽</span>
+      <div class="no-meals-banner__body">
+        <strong>{{ 'nutrition.no_meals_banner_title' | translate }}</strong>
+        <span>{{ 'nutrition.no_meals_banner_desc' | translate }}</span>
+      </div>
+      <button class="no-meals-banner__cta" (click)="openFoodSearch()" type="button">
+        {{ 'nutrition.add_food_btn' | translate }}
+      </button>
+    </div>
+  }
 
   <!-- ── Date Navigator ────────────────────────────────────── -->
   <div class="date-nav">
