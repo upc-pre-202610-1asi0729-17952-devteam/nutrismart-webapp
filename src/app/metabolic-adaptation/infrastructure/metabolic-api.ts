@@ -154,4 +154,3 @@ export class MetabolicApi extends BaseApi {
   }
 
 }
-}

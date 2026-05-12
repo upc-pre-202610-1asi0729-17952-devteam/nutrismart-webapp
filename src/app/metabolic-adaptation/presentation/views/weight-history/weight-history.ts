@@ -1,6 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DecimalPipe, NgClass } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MetabolicStore } from '../../../application/metabolic.store';
@@ -10,7 +10,7 @@ const WEIGHT_MAX_KG = 500;
 
 @Component({
   selector: 'app-weight-history',
-  imports: [RouterLink, DecimalPipe, NgClass, FormsModule, TranslatePipe],
+  imports: [RouterLink, DecimalPipe, FormsModule, TranslatePipe],
   templateUrl: './weight-history.html',
   styleUrl: './weight-history.css',
 })
