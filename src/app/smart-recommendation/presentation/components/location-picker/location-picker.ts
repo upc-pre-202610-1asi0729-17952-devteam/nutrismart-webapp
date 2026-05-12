@@ -31,13 +31,16 @@ export class LocationPicker {
     return this.demoTemperature ?? this.locations.find(l => l.city === this.selectedCity)?.temperatureCelsius ?? 20;
   }
 
-  onFocus(): void {
+  onInputFocus(): void {
     this.searchQuery.set('');
     this.isOpen.set(true);
   }
 
-  onBlur(): void {
-    setTimeout(() => this.isOpen.set(false), 160);
+  onWrapperFocusOut(event: FocusEvent): void {
+    const wrapper = event.currentTarget as HTMLElement;
+    if (!wrapper.contains(event.relatedTarget as Node)) {
+      this.isOpen.set(false);
+    }
   }
 
   onQueryChange(event: Event): void {
