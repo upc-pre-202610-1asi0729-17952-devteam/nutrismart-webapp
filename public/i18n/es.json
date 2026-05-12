@@ -541,7 +541,13 @@
     "location_picker_title": "Tu ubicación",
     "location_picker_temp": "Temperatura (demo)",
     "location_picker_close": "Cerrar",
-    "travel_chip": "Viajando a {{ city }}"
+    "travel_chip": "Viajando a {{ city }}",
+    "context_adjustment": {
+      "travel": "Ajuste por modo viaje",
+      "weather": "Ajuste por clima",
+      "calorie_adjusted": "Objetivo calórico ajustado a {{ kcal }} kcal",
+      "factor": "Factor {{ factor }}× aplicado al objetivo base"
+    }
   },
   "body_progress": {
     "page_title": "Progreso Corporal",

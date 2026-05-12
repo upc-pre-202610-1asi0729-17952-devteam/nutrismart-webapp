@@ -1,5 +1,6 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 import { AdherenceStatus } from './adherence-status.enum';
+import { ContextualTargetAdjustment } from './contextual-target-adjustment.value-object';
 
 export interface RecommendationSessionProps {
   id: number;
@@ -19,6 +20,7 @@ export class RecommendationSession implements BaseEntity {
   #simplifiedKcalTarget: number;
   #createdAt: string;
   #isActive: boolean;
+  #contextualAdjustment: ContextualTargetAdjustment | null = null;
 
   constructor(props: RecommendationSessionProps) {
     this.#id                   = props.id;
@@ -51,6 +53,19 @@ export class RecommendationSession implements BaseEntity {
   get isActive(): boolean { return this.#isActive; }
   set isActive(v: boolean) { this.#isActive = v; }
 
+  /** The active contextual adjustment, or null if none has been applied. */
+  get contextualAdjustment(): ContextualTargetAdjustment | null { return this.#contextualAdjustment; }
+
+  /**
+   * Calorie target after applying the active contextual adjustment.
+   * Falls back to {@link simplifiedKcalTarget} when no adjustment is set.
+   */
+  get adjustedKcalTarget(): number {
+    return this.#contextualAdjustment
+      ? this.#contextualAdjustment.apply(this.#simplifiedKcalTarget)
+      : this.#simplifiedKcalTarget;
+  }
+
   // ─── Domain Behaviour ─────────────────────────────────────────────────────
 
   requiresPreventiveRecommendation(): boolean {
@@ -71,5 +86,17 @@ export class RecommendationSession implements BaseEntity {
 
   interventionEventLabel(): string {
     return `InterventionRecommendationGenerated · Day 1 of ${this.#consecutiveMisses}-day recovery`;
+  }
+
+  /**
+   * Applies a contextual calorie adjustment to this session.
+   *
+   * Replaces any previously stored adjustment; the new adjusted target is
+   * available immediately via {@link adjustedKcalTarget}.
+   *
+   * @param adjustment - The contextual adjustment derived from travel or weather.
+   */
+  applyContextualAdjustment(adjustment: ContextualTargetAdjustment): void {
+    this.#contextualAdjustment = adjustment;
   }
 }

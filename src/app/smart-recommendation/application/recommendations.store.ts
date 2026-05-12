@@ -14,6 +14,8 @@ import { ConsistencyRecovered } from '../../shared/domain/consistency-recovered.
 import { NutritionalAbandonmentRisk } from '../../shared/domain/nutritional-abandonment-risk.event';
 import { StrategyMismatchDetected } from '../../shared/domain/strategy-mismatch-detected.event';
 import { CompatibleDishesRanked } from '../../shared/domain/compatible-dishes-ranked.event';
+import { ContextualTargetAdjusted } from '../../shared/domain/contextual-target-adjusted.event';
+import { ContextualTargetAdjustment } from '../domain/model/contextual-target-adjustment.value-object';
 
 @Injectable({ providedIn: 'root' })
 export class RecommendationsStore {
@@ -67,6 +69,9 @@ export class RecommendationsStore {
   // ─── Computed Signals ─────────────────────────────────────────────────────
 
   readonly isTravelMode = computed(() => this._travelContext()?.isTravelActive() ?? false);
+
+  /** Calorie target for the active session after contextual adjustment (travel or weather). */
+  readonly adjustedKcalTarget = computed(() => this._session()?.adjustedKcalTarget ?? 0);
 
   readonly showPreventiveCard = computed(() =>
     this._session()?.requiresPreventiveRecommendation() ?? false
@@ -144,6 +149,13 @@ export class RecommendationsStore {
       }
 
       await this.syncAdherenceFromBehavioralContext(user.id, userId);
+
+      const travelCtx = this._travelContext();
+      if (travelCtx?.isTravelActive()) {
+        this.applyAdjustmentToSession(travelCtx.calorieAdjustmentFactor());
+      } else if (weather) {
+        this.applyAdjustmentToSession(weather.calorieAdjustmentFactor());
+      }
     } catch {
       this._error.set('recommendations.error_load_failed');
     } finally {
@@ -217,6 +229,8 @@ export class RecommendationsStore {
       } else {
         this._travelCards.set(cards);
       }
+
+      this.applyAdjustmentToSession(ctx.calorieAdjustmentFactor());
     } catch {
       this._error.set('recommendations.error_load_failed');
     } finally {
@@ -235,7 +249,10 @@ export class RecommendationsStore {
       this._travelCards.set([]);
       this._demoTemperature.set(null);
       const weather = await firstValueFrom(this.api.getCurrentWeather(this._homeCity()));
-      if (weather) this._weatherContext.set(weather);
+      if (weather) {
+        this._weatherContext.set(weather);
+        this.applyAdjustmentToSession(weather.calorieAdjustmentFactor());
+      }
     } catch {
       this._error.set('recommendations.error_load_failed');
     } finally {
@@ -253,6 +270,33 @@ export class RecommendationsStore {
 
   allowLocation(): void {
     this._locationDenied.set(false);
+  }
+
+  /**
+   * Applies a contextual calorie adjustment to the active session and
+   * publishes {@link ContextualTargetAdjusted} when the factor differs from 1.
+   *
+   * Travel adjustment takes precedence over weather when both are active.
+   *
+   * @param adjustment - Adjustment derived from the active travel or weather context.
+   */
+  private applyAdjustmentToSession(adjustment: ContextualTargetAdjustment): void {
+    const session = this._session();
+    const user    = this.iamStore.currentUser();
+    if (!session || !user) return;
+
+    session.applyContextualAdjustment(adjustment);
+    this._session.set(session);
+
+    if (adjustment.isActive()) {
+      this.eventBus.publish(new ContextualTargetAdjusted(
+        user.id,
+        adjustment.source,
+        adjustment.factor,
+        session.simplifiedKcalTarget,
+        session.adjustedKcalTarget,
+      ));
+    }
   }
 
   /** Resolves a city name to its weather-snapshot ID for querying recommendation-cards. */

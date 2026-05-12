@@ -1,5 +1,6 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 import { WeatherType } from './weather-type.enum';
+import { ContextualTargetAdjustment } from './contextual-target-adjustment.value-object';
 
 export interface WeatherContextProps {
   id: number;
@@ -76,4 +77,20 @@ export class WeatherContext implements BaseEntity {
     return `${this.#city} · ${this.#temperatureCelsius}°C`;
   }
 
+  /**
+   * Returns the calorie adjustment factor for this weather context.
+   *
+   * Extreme heat (≥ 35 °C) suppresses appetite slightly (−3 %).
+   * Extreme cold (≤ 5 °C) increases thermogenic expenditure (+5 %).
+   * All other conditions produce no adjustment (factor = 1).
+   */
+  calorieAdjustmentFactor(): ContextualTargetAdjustment {
+    let factor = 1;
+    if (this.#temperatureCelsius >= 35) {
+      factor = 0.97;
+    } else if (this.#temperatureCelsius <= 5) {
+      factor = 1.05;
+    }
+    return new ContextualTargetAdjustment(factor, 'recommendations.context_adjustment.weather', 'WEATHER');
+  }
 }

@@ -1,4 +1,5 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
+import { ContextualTargetAdjustment } from './contextual-target-adjustment.value-object';
 
 export interface TravelContextProps {
   id: number;
@@ -70,5 +71,20 @@ export class TravelContext implements BaseEntity {
     this.#isActive = false;
     this.#city     = '';
     this.#country  = '';
+  }
+
+  /**
+   * Returns the calorie adjustment factor for this travel context.
+   *
+   * Manual trips (user-entered city) are assumed to involve active tourism (+10 %).
+   * Auto-detected trips (business travel heuristic) apply a sedentary discount (−5 %).
+   * Returns 1 when travel is not active.
+   */
+  calorieAdjustmentFactor(): ContextualTargetAdjustment {
+    if (!this.isTravelActive()) {
+      return new ContextualTargetAdjustment(1, 'recommendations.context_adjustment.travel', 'TRAVEL');
+    }
+    const factor = this.#isManual ? 1.10 : 0.95;
+    return new ContextualTargetAdjustment(factor, 'recommendations.context_adjustment.travel', 'TRAVEL');
   }
 }
