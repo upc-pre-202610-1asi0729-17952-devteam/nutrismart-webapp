@@ -465,7 +465,11 @@
     "condition_cold": "Cold",
     "condition_mild": "Partly cloudy",
     "updated_just_now": "Just updated",
-    "updated_mins_ago": "Updated {{ mins }} min ago"
+    "updated_mins_ago": "Updated {{ mins }} min ago",
+    "location_picker_title": "Your location",
+    "location_picker_temp": "Temperature (demo)",
+    "location_picker_close": "Close",
+    "travel_chip": "Traveling to {{ city }}"
   },
   "body_progress": {
     "page_title": "Body Progress",

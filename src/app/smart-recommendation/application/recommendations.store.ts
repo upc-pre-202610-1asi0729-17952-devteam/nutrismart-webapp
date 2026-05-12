@@ -36,9 +36,11 @@ export class RecommendationsStore {
   private _travelCards      = signal<RecommendationCard[]>([]);
   private _preventiveCard   = signal<RecommendationCard | null>(null);
   private _interventionCard = signal<RecommendationCard | null>(null);
-  private _loading          = signal<boolean>(false);
-  private _locationDenied   = signal<boolean>(false);
-  private _error            = signal<string | null>(null);
+  private _loading            = signal<boolean>(false);
+  private _locationDenied     = signal<boolean>(false);
+  private _error              = signal<string | null>(null);
+  private _availableLocations = signal<WeatherContext[]>([]);
+  private _demoTemperature    = signal<number | null>(null);
 
   // ─── Public Read-only Signals ─────────────────────────────────────────────
 
@@ -49,10 +51,12 @@ export class RecommendationsStore {
   readonly travelCards      = this._travelCards.asReadonly();
   readonly preventiveCard   = this._preventiveCard.asReadonly();
   readonly interventionCard = this._interventionCard.asReadonly();
-  readonly loading          = this._loading.asReadonly();
-  readonly locationDenied   = this._locationDenied.asReadonly();
-  readonly unrecognizedCity = this._unrecognizedCity.asReadonly();
-  readonly error            = this._error.asReadonly();
+  readonly loading            = this._loading.asReadonly();
+  readonly locationDenied     = this._locationDenied.asReadonly();
+  readonly unrecognizedCity   = this._unrecognizedCity.asReadonly();
+  readonly error              = this._error.asReadonly();
+  readonly availableLocations = this._availableLocations.asReadonly();
+  readonly demoTemperature    = this._demoTemperature.asReadonly();
 
   // ─── Computed Signals ─────────────────────────────────────────────────────
 
@@ -87,11 +91,13 @@ export class RecommendationsStore {
       const userId   = String(user.id);
       const homeCity = user.homeCity ?? '';
 
-      const [snapshot, existingTravel, session] = await Promise.all([
+      const [snapshot, existingTravel, session, locations] = await Promise.all([
         firstValueFrom(this.api.getLatestLocationSnapshot(userId)),
         firstValueFrom(this.api.getTravelContext(userId)),
         firstValueFrom(this.api.getRecommendationSession(userId)),
+        firstValueFrom(this.api.getAvailableLocations()),
       ]);
+      this._availableLocations.set(locations);
 
       this._session.set(session ?? new RecommendationSession({
         id: 0, userId: user.id, adherenceStatus: AdherenceStatus.ON_TRACK,
@@ -232,6 +238,10 @@ export class RecommendationsStore {
     } finally {
       this._loading.set(false);
     }
+  }
+
+  setDemoTemperature(temp: number | null): void {
+    this._demoTemperature.set(temp);
   }
 
   denyLocation(): void {

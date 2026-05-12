@@ -162,6 +162,31 @@
       "createdAt": "2026-05-11",
       "home_city": "",
       "goal_started_at": "2026-05-11"
+    },
+    {
+      "id": "k1b4s43nx",
+      "firstName": "b",
+      "lastName": "c",
+      "email": "dc@gmail.com",
+      "goal": "WEIGHT_LOSS",
+      "weight": 75,
+      "height": 170,
+      "activityLevel": "SEDENTARY",
+      "plan": "PREMIUM",
+      "restrictions": [],
+      "medicalConditions": [],
+      "dailyCalorieTarget": 1682,
+      "proteinTarget": 120,
+      "carbsTarget": 195,
+      "fatTarget": 47,
+      "fiberTarget": 25,
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "birthday": "2005-02-19",
+      "biologicalSex": "male",
+      "createdAt": "2026-05-12",
+      "home_city": "",
+      "goal_started_at": "2026-05-12"
     }
   ],
   "nutrition-log": [
@@ -513,6 +538,23 @@
       "loggedAt": "2026-05-11T21:48:43.712Z",
       "userId": "2aux86td0",
       "id": "oq49GBrfTs0"
+    },
+    {
+      "foodItemId": "5",
+      "foodItemName": "White rice cooked",
+      "foodItemNameEs": "Arroz blanco cocido",
+      "mealType": "DINNER",
+      "quantity": 180,
+      "unit": "g",
+      "calories": 234,
+      "protein": 4.3,
+      "carbs": 50.4,
+      "fat": 0.4,
+      "fiber": 0.7,
+      "sugar": 0,
+      "loggedAt": "2026-05-12T02:41:02.035Z",
+      "userId": "k1b4s43nx",
+      "id": "z6WQw9TDX_Y"
     }
   ],
   "foods": [
@@ -1077,6 +1119,15 @@
       "logged_at": "2026-05-11T22:50:46.719Z",
       "target_weight_kg": 56,
       "projected_achievement_date": "2029-09-25T00:19:39.084Z"
+    },
+    {
+      "id": "gVBC6Y2B4FA",
+      "user_id": "k1b4s43nx",
+      "weight_kg": 75,
+      "height_cm": 170,
+      "logged_at": "2026-05-12T02:17:11.028Z",
+      "target_weight_kg": 72,
+      "projected_achievement_date": "2026-08-04T02:17:11.070Z"
     }
   ],
   "analytics": [
@@ -16391,6 +16442,210 @@
         false
       ],
       "id": "QP5RhCIwf1c"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "QilQvH_sX7U"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "i2zWiDch-LU"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "VS7mrRcojBw"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "P5Yb6XoUgPk"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "rAP6_cvIjqg"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "DNEJfkHqOw8"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "HjxjqRyUwD4"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "6ZAPiFv2Lec"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "CCIZsa-RNCY"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "qxbJVqIOCtY"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "s4iTgTkO2Go"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "NJzYl6ea5IM"
     }
   ],
   "daily-balance": [
@@ -16661,6 +16916,69 @@
     {
       "id": "tc-1",
       "user_id": "1",
+      "city": "",
+      "country": "",
+      "is_active": false,
+      "is_manual": false,
+      "activated_at": ""
+    },
+    {
+      "id": "tc-2",
+      "user_id": "Mv9paKyK60k",
+      "city": "",
+      "country": "",
+      "is_active": false,
+      "is_manual": false,
+      "activated_at": ""
+    },
+    {
+      "id": "tc-3",
+      "user_id": "81P8BYgebrM",
+      "city": "",
+      "country": "",
+      "is_active": false,
+      "is_manual": false,
+      "activated_at": ""
+    },
+    {
+      "id": "tc-4",
+      "user_id": "ozdURzTkhPE",
+      "city": "",
+      "country": "",
+      "is_active": false,
+      "is_manual": false,
+      "activated_at": ""
+    },
+    {
+      "id": "tc-5",
+      "user_id": "1kw0egk4a",
+      "city": "",
+      "country": "",
+      "is_active": false,
+      "is_manual": false,
+      "activated_at": ""
+    },
+    {
+      "id": "tc-6",
+      "user_id": "2aux86td0",
+      "city": "",
+      "country": "",
+      "is_active": false,
+      "is_manual": false,
+      "activated_at": ""
+    },
+    {
+      "id": "tc-7",
+      "user_id": "e9vvnrmqq",
+      "city": "",
+      "country": "",
+      "is_active": false,
+      "is_manual": false,
+      "activated_at": ""
+    },
+    {
+      "id": "tc-8",
+      "user_id": "k1b4s43nx",
       "city": "",
       "country": "",
       "is_active": false,

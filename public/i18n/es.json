@@ -465,7 +465,11 @@
     "condition_cold": "Frío",
     "condition_mild": "Parcialmente nublado",
     "updated_just_now": "Recién actualizado",
-    "updated_mins_ago": "Actualizado hace {{ mins }} min"
+    "updated_mins_ago": "Actualizado hace {{ mins }} min",
+    "location_picker_title": "Tu ubicación",
+    "location_picker_temp": "Temperatura (demo)",
+    "location_picker_close": "Cerrar",
+    "travel_chip": "Viajando a {{ city }}"
   },
   "body_progress": {
     "page_title": "Progreso Corporal",

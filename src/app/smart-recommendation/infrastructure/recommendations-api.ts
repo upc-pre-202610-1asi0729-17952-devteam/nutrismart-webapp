@@ -46,6 +46,16 @@ export class RecommendationsApi extends BaseApi {
   private travelAssembler       = new TravelContextAssembler();
   private sessionAssembler      = new RecommendationSessionAssembler();
 
+  getAvailableLocations(): Observable<WeatherContext[]> {
+    return this.http
+      .get<WeatherContextResource[]>(`${BASE}${environment.weatherSnapshotsEndpointPath}`)
+      .pipe(
+        map(list => list.map(r => this.weatherAssembler.toEntityFromResource(r))),
+        retry(2),
+        catchError(err => throwError(() => err)),
+      );
+  }
+
   getLatestLocationSnapshot(userId: string): Observable<LocationSnapshot | null> {
     const params = new HttpParams()
       .set('user_id', userId)
