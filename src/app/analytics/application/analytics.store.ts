@@ -58,11 +58,13 @@ export class AnalyticsStore {
 
     return apiCall.pipe(
       tap(rawData => {
-        const assembled = this.analyticsAssembler.assembleAnalyticsData(
-          rawData,
-          period,
-          user.goal as 'WEIGHT_LOSS' | 'MUSCLE_GAIN',
-        );
+        const assembled = rawData
+          ? this.analyticsAssembler.assembleAnalyticsData(
+              rawData,
+              period,
+              user.goal as 'WEIGHT_LOSS' | 'MUSCLE_GAIN',
+            )
+          : null;
         this._currentAnalyticsData.set(assembled);
         this._loading.set(false);
       }),
