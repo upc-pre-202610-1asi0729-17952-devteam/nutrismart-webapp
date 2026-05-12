@@ -1,4 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { LowerCasePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SubscriptionsStore } from '../../../application/subscriptions.store';
@@ -26,7 +27,7 @@ interface PlanCard {
 @Component({
   selector: 'app-subscription-plans',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, LowerCasePipe],
   templateUrl: './subscription-plans.html',
   styleUrl: './subscription-plans.css',
 })

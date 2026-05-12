@@ -44,7 +44,7 @@ export class SubscriptionApi {
    * @returns Observable emitting the created entity.
    */
   createSubscription(subscription: Subscription): Observable<Subscription> {
-    const { id, ...body } = assembler.toResourceFromEntity(subscription) as Record<string, unknown>;
+    const { id, ...body } = assembler.toResourceFromEntity(subscription) as unknown as Record<string, unknown>;
     void id;
     return this.http
       .post<SubscriptionResource>(this.baseUrl, body)
