@@ -8,6 +8,7 @@ import { IamStore } from '../../../../iam/application/iam.store';
 import { BehavioralConsistencyStore } from '../../../application/behavioral-consistency.store';
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
 import { MacroWarningBanner } from '../../../../shared/presentation/components/macro-warning-banner/macro-warning-banner';
+import { ReEngagementCard } from '../../components/re-engagement-card/re-engagement-card';
 import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
 import { MealType } from '../../../../nutrition-tracking/domain/model/meal-type.enum';
 import { MealRecord } from '../../../../nutrition-tracking/domain/model/meal-record.entity';
@@ -40,16 +41,6 @@ interface GreetingVm {
   badgeLabelParams: Record<string, unknown>;
   badgeClass: string;
   topAccentClass: string;
-}
-
-interface AlertVm {
-  show: boolean;
-  icon: string;
-  titleKey: string;
-  titleParams: Record<string, unknown>;
-  descKey: string;
-  btnKey: string;
-  btnClass: string;
 }
 
 interface CaloriesVm {
@@ -85,7 +76,7 @@ interface StreakVm {
 
 @Component({
   selector: 'app-behavioral-dashboard',
-  imports: [NgClass, TranslatePipe, MacroWarningBanner],
+  imports: [NgClass, TranslatePipe, MacroWarningBanner, ReEngagementCard],
   templateUrl: './behavioral-dashboard.html',
   styleUrl: './behavioral-dashboard.css',
 })
@@ -100,6 +91,9 @@ export class BehavioralDashboard implements OnInit {
 
   private readonly currentUser = this.iamStore.currentUser;
   private readonly currentProgress = this.behavioralStore.currentProgress;
+
+  /** Active recovery plan, forwarded to {@link ReEngagementCard}. */
+  protected readonly activeRecoveryPlan = this.behavioralStore.activeRecoveryPlan;
 
   protected readonly isLoading = computed(() =>
     this.behavioralStore.loading() || this.nutritionStore.loading(),
@@ -156,7 +150,7 @@ export class BehavioralDashboard implements OnInit {
     };
   });
 
-  private readonly status = computed(() =>
+  protected readonly status = computed(() =>
     this.currentProgress()?.adherenceStatus ?? AdherenceStatus.ON_TRACK,
   );
 
@@ -178,14 +172,6 @@ export class BehavioralDashboard implements OnInit {
       badgeClass: this.badgeClassFor(status),
       topAccentClass: this.accentFor(status),
     };
-  });
-
-  protected readonly alertVm = computed<AlertVm>(() => {
-    const status = this.status();
-    const misses = this.consecutiveMisses();
-    const progress = this.currentProgress();
-    const show = progress?.hasAlert() ?? status !== AdherenceStatus.ON_TRACK;
-    return { show, ...this.alertVmFor(status, misses) };
   });
 
   protected readonly caloriesVm = computed<CaloriesVm>(() => {
@@ -277,6 +263,7 @@ export class BehavioralDashboard implements OnInit {
       .ensureProgressForUser(user.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
+    this.behavioralStore.loadRecoveryPlan(user.id);
     void this.nutritionStore.loadMealHistory();
     void this.nutritionStore.loadDailyBalance();
   }
@@ -346,41 +333,6 @@ export class BehavioralDashboard implements OnInit {
       case AdherenceStatus.AT_RISK: return 'accent-orange';
       case AdherenceStatus.DROPPED: return 'accent-red';
       default: return 'accent-teal';
-    }
-  }
-
-  private alertVmFor(
-    status: AdherenceStatus,
-    misses: number,
-  ): Omit<AlertVm, 'show'> {
-    switch (status) {
-      case AdherenceStatus.AT_RISK:
-        return {
-          icon: '⚠️',
-          titleKey: 'dashboard.alert_at_risk_title',
-          titleParams: { days: misses },
-          descKey: 'dashboard.alert_at_risk_desc',
-          btnKey: 'dashboard.alert_at_risk_btn',
-          btnClass: 'risk-button-orange',
-        };
-      case AdherenceStatus.DROPPED:
-        return {
-          icon: '💙',
-          titleKey: 'dashboard.alert_dropped_title',
-          titleParams: { days: misses },
-          descKey: 'dashboard.alert_dropped_desc',
-          btnKey: 'dashboard.alert_dropped_btn',
-          btnClass: 'risk-button-red',
-        };
-      default:
-        return {
-          icon: '',
-          titleKey: '',
-          titleParams: {},
-          descKey: '',
-          btnKey: '',
-          btnClass: '',
-        };
     }
   }
 

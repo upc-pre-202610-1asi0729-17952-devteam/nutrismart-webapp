@@ -9,8 +9,13 @@ import {
 import { EatingBehaviorPattern } from '../domain/model/eating-behavior-pattern.entity';
 import { BehaviorPatternType } from '../domain/model/behavior-pattern-type.enum';
 import { BehaviorPatternAnalyzed } from '../domain/events/behavior-pattern-analyzed.event';
+import { AdherenceDropTrigger } from '../domain/model/adherence-drop-trigger.enum';
+import { RecoveryPlan } from '../domain/model/recovery-plan.entity';
+import { RecoveryPlanActivated } from '../domain/events/recovery-plan-activated.event';
+import { RecoveryPlanCompleted } from '../domain/events/recovery-plan-completed.event';
 import { BehavioralConsistencyApi } from '../infrastructure/behavioral-consistency-api';
 import { EatingBehaviorPatternApi } from '../infrastructure/eating-behavior-pattern-api';
+import { RecoveryPlanApi } from '../infrastructure/recovery-plan-api';
 import { DomainEventBus } from '../../shared/application/domain-event-bus';
 import { BehavioralDropDetected } from '../../shared/domain/behavioral-drop-detected.event';
 import { ConsistencyRecovered } from '../../shared/domain/consistency-recovered.event';
@@ -32,11 +37,14 @@ import { MetabolicTargetSet } from '../../shared/domain/metabolic-target-set.eve
 export class BehavioralConsistencyStore {
   private behavioralConsistencyApi  = inject(BehavioralConsistencyApi);
   private eatingBehaviorPatternApi  = inject(EatingBehaviorPatternApi);
+  private recoveryPlanApi           = inject(RecoveryPlanApi);
   private eventBus                  = inject(DomainEventBus);
 
   constructor() {
     this.subscribeToDailyGoalMet();
     this.subscribeToMetabolicTargetSet();
+    this.subscribeToBehavioralDropEvents();
+    this.subscribeToConsistencyRecovered();
   }
 
   /** Current behavioral progress for the active user, or `null` if not loaded. */
@@ -44,6 +52,9 @@ export class BehavioralConsistencyStore {
 
   /** Latest eating behavior pattern for the active user, or `null` if not analysed yet. */
   private _currentPattern = signal<EatingBehaviorPattern | null>(null);
+
+  /** Active adherence recovery plan, or `null` when the user is on track. */
+  private _activeRecoveryPlan = signal<RecoveryPlan | null>(null);
 
   /** Whether an async operation is in flight. */
   private _loading = signal<boolean>(false);
@@ -58,6 +69,9 @@ export class BehavioralConsistencyStore {
 
   /** Read-only signal exposing the latest {@link EatingBehaviorPattern}, or `null`. */
   readonly currentPattern = this._currentPattern.asReadonly();
+
+  /** Read-only signal exposing the current active {@link RecoveryPlan}, or `null`. */
+  readonly activeRecoveryPlan = this._activeRecoveryPlan.asReadonly();
 
   /** Read-only signal indicating whether an async operation is in progress. */
   readonly loading = this._loading.asReadonly();
@@ -354,6 +368,67 @@ export class BehavioralConsistencyStore {
     return 30;
   }
 
+  // ─── Recovery plan ────────────────────────────────────────────────────────
+
+  /**
+   * Loads the active recovery plan for the given user from the backend.
+   *
+   * Should be called during session initialisation alongside
+   * {@link ensureProgressForUser}.
+   *
+   * @param userId - Numeric identifier of the user.
+   */
+  loadRecoveryPlan(userId: number): void {
+    this.recoveryPlanApi.getActiveByUserId(userId).subscribe({
+      next: plan => this._activeRecoveryPlan.set(plan ?? null),
+    });
+  }
+
+  /**
+   * Creates and persists a new recovery plan triggered by a drop event.
+   *
+   * If an active plan already exists for the user, no new plan is created.
+   *
+   * @param userId  - Target user.
+   * @param trigger - Drop event type that initiated the plan.
+   */
+  private async activateRecoveryPlan(userId: number, trigger: AdherenceDropTrigger): Promise<void> {
+    if (this._activeRecoveryPlan()?.isActive()) return;
+
+    const plan = RecoveryPlan.create(userId, trigger);
+
+    try {
+      const persisted = await firstValueFrom(this.recoveryPlanApi.create(plan));
+      this._activeRecoveryPlan.set(persisted);
+      this.eventBus.publish(new RecoveryPlanActivated(userId, persisted.id, trigger));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Recovery plan activation failed.';
+      this._error.set(message);
+    }
+  }
+
+  /**
+   * Completes the current active recovery plan when consistency is recovered.
+   *
+   * @param userId - Target user.
+   */
+  private async completeRecoveryPlan(userId: number): Promise<void> {
+    const plan = this._activeRecoveryPlan();
+    if (!plan || !plan.isActive() || plan.userId !== userId) return;
+
+    plan.complete();
+    this._activeRecoveryPlan.set(plan);
+
+    try {
+      const updated = await firstValueFrom(this.recoveryPlanApi.update(plan));
+      this._activeRecoveryPlan.set(updated);
+      this.eventBus.publish(new RecoveryPlanCompleted(userId, updated.id));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Recovery plan completion failed.';
+      this._error.set(message);
+    }
+  }
+
   /** Reacts to DailyGoalMet events published by Nutrition Tracking. */
   private subscribeToDailyGoalMet(): void {
     this.eventBus.events$
@@ -383,6 +458,40 @@ export class BehavioralConsistencyStore {
             new StrategyMismatchDetected(event.userId, progress.weeklyCompletionRate, event.dailyCalorieTarget),
           );
         }
+      });
+  }
+
+  /** Activates a recovery plan when a behavioral drop or abandonment risk is detected. */
+  private subscribeToBehavioralDropEvents(): void {
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof BehavioralDropDetected || e instanceof NutritionalAbandonmentRisk || e instanceof StrategyMismatchDetected))
+      .subscribe((e) => {
+        let userId:  number;
+        let trigger: AdherenceDropTrigger;
+
+        if (e instanceof StrategyMismatchDetected) {
+          userId  = e.userId;
+          trigger = AdherenceDropTrigger.STRATEGY_MISMATCH;
+        } else if (e instanceof NutritionalAbandonmentRisk) {
+          userId  = e.userId;
+          trigger = AdherenceDropTrigger.NUTRITIONAL_ABANDONMENT;
+        } else {
+          const drop = e as BehavioralDropDetected;
+          userId  = drop.userId;
+          trigger = AdherenceDropTrigger.BEHAVIORAL_DROP;
+        }
+
+        void this.activateRecoveryPlan(userId, trigger);
+      });
+  }
+
+  /** Completes the active recovery plan when consistency is fully recovered. */
+  private subscribeToConsistencyRecovered(): void {
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof ConsistencyRecovered))
+      .subscribe((e) => {
+        const event = e as ConsistencyRecovered;
+        void this.completeRecoveryPlan(event.userId);
       });
   }
 }

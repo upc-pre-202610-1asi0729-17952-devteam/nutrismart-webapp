@@ -405,108 +405,6 @@
       "loggedAt": "2026-05-12T12:44:56.594Z",
       "userId": "pca8q2h0s",
       "id": "xTKEY3i1iJ0"
-    },
-    {
-      "foodItemId": "5",
-      "foodItemName": "White rice cooked",
-      "foodItemNameEs": "Arroz blanco cocido",
-      "mealType": "BREAKFAST",
-      "quantity": 180,
-      "unit": "g",
-      "calories": 234,
-      "protein": 4.3,
-      "carbs": 50.4,
-      "fat": 0.4,
-      "fiber": 0.7,
-      "sugar": 0,
-      "loggedAt": "2026-05-12T14:13:46.787Z",
-      "userId": "vgsdgwm02",
-      "id": "w1bTbeaRCSw"
-    },
-    {
-      "foodItemId": 0,
-      "foodItemName": "Grilled chicken breast",
-      "foodItemNameEs": "Pechuga de pollo a la plancha",
-      "mealType": "BREAKFAST",
-      "quantity": 150,
-      "unit": "g",
-      "calories": 248,
-      "protein": 47,
-      "carbs": 0,
-      "fat": 5,
-      "fiber": 0,
-      "sugar": 0,
-      "loggedAt": "2026-05-12T14:14:27.845Z",
-      "userId": "vgsdgwm02",
-      "id": "epXn3uRvFts"
-    },
-    {
-      "foodItemId": 0,
-      "foodItemName": "White rice",
-      "foodItemNameEs": "Arroz blanco",
-      "mealType": "BREAKFAST",
-      "quantity": 180,
-      "unit": "g",
-      "calories": 234,
-      "protein": 4,
-      "carbs": 52,
-      "fat": 0,
-      "fiber": 0,
-      "sugar": 0,
-      "loggedAt": "2026-05-12T14:14:27.845Z",
-      "userId": "vgsdgwm02",
-      "id": "CcSiI8LqkU0"
-    },
-    {
-      "foodItemId": 0,
-      "foodItemName": "Mixed salad",
-      "foodItemNameEs": "Ensalada mixta",
-      "mealType": "BREAKFAST",
-      "quantity": 80,
-      "unit": "g",
-      "calories": 45,
-      "protein": 2,
-      "carbs": 8,
-      "fat": 0,
-      "fiber": 0,
-      "sugar": 0,
-      "loggedAt": "2026-05-12T14:14:27.845Z",
-      "userId": "vgsdgwm02",
-      "id": "F2zV9vCcABI"
-    },
-    {
-      "foodItemId": 0,
-      "foodItemName": "Hake ceviche",
-      "foodItemNameEs": "Ceviche de merluza",
-      "mealType": "BREAKFAST",
-      "quantity": 1,
-      "unit": "serving",
-      "calories": 280,
-      "protein": 38,
-      "carbs": 12,
-      "fat": 8,
-      "fiber": 0,
-      "sugar": 0,
-      "loggedAt": "2026-05-12T14:15:02.819Z",
-      "userId": "vgsdgwm02",
-      "id": "suvyXkwez_c"
-    },
-    {
-      "foodItemId": "2",
-      "foodItemName": "Bowl de arroz con pollo",
-      "foodItemNameEs": "",
-      "mealType": "SNACK",
-      "quantity": 100,
-      "unit": "g",
-      "calories": 480,
-      "protein": 38,
-      "carbs": 52,
-      "fat": 8,
-      "fiber": 0,
-      "sugar": 0,
-      "loggedAt": "2026-05-12T14:17:14.565Z",
-      "userId": "vgsdgwm02",
-      "id": "aRI3HfEkN_o"
     }
   ],
   "foods": [
@@ -9665,9 +9563,95 @@
         false
       ],
       "id": "RCud36XBC74"
+    },
+    {
+      "userId": "vgsdgwm02",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "4j9P9enkiac"
+    },
+    {
+      "userId": "vgsdgwm02",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "5QIN62BN1wI"
+    },
+    {
+      "userId": "vgsdgwm02",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "KGfeTJALzds"
+    },
+    {
+      "userId": "vgsdgwm02",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "u7VjCODE6nA"
+    },
+    {
+      "userId": "vgsdgwm02",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "FIAtpGZNgB4"
     }
   ],
   "eating-behavior-patterns": [],
+  "recovery-plans": [],
   "daily-balance": [
     {
       "id": "1",

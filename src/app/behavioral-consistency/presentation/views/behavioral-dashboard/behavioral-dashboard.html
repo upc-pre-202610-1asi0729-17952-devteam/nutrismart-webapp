@@ -11,7 +11,6 @@
   </div>
 } @else if (hasProgress()) {
   @let greeting = greetingVm();
-  @let alert = alertVm();
   @let calories = caloriesVm();
   @let meals = mealsVm();
   @let macros = macrosVm();
@@ -30,20 +29,11 @@
       </span>
     </header>
 
-    @if (alert.show) {
-      <section class="risk-banner" [ngClass]="greeting.topAccentClass">
-        <div class="risk-icon">{{ alert.icon }}</div>
-
-        <div class="risk-content">
-          <strong>{{ alert.titleKey | translate: alert.titleParams }}</strong>
-          <p>{{ alert.descKey | translate }}</p>
-        </div>
-
-        <button type="button" class="risk-button" [ngClass]="alert.btnClass" (click)="onLogMeal()">
-          {{ alert.btnKey | translate }}
-        </button>
-      </section>
-    }
+    <app-re-engagement-card
+      [status]="status()"
+      [plan]="activeRecoveryPlan()"
+      (actionAccepted)="onLogMeal()">
+    </app-re-engagement-card>
 
     <section class="top-cards">
       <article class="metric-card">

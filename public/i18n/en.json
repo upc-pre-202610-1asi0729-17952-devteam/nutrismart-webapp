@@ -360,6 +360,27 @@
       "label": "Habit pattern"
     }
   },
+  "behavioral": {
+    "reengagement": {
+      "icon_at_risk": "⚠️",
+      "icon_dropped": "🚀",
+      "title_at_risk": "Don't lose momentum!",
+      "title_dropped": "Time to restart",
+      "desc_at_risk": "You've missed a couple of logs. Complete one small action today to protect your streak.",
+      "desc_dropped": "You've been inactive for a while. Restart with a simple goal: log your next meal.",
+      "btn_at_risk": "Log now",
+      "btn_dropped": "Get back on track"
+    },
+    "recovery": {
+      "plan_title": "Your recovery plan",
+      "action": {
+        "reduce_calorie_target": "Reduce your daily calorie target to a more reachable level.",
+        "focus_single_meal": "Focus on logging just one meal per day consistently.",
+        "simplify_tracking": "Simplify your tracking — just log the main meals for now.",
+        "log_any_meal": "Log any meal today, no matter how small. Just start."
+      }
+    }
+  },
   "nutrition": {
     "page_title": "Daily Log",
     "page_subtitle": "Log your meals and track your macros in real time",

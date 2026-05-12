@@ -360,6 +360,27 @@
       "label": "Patrón de hábito"
     }
   },
+  "behavioral": {
+    "reengagement": {
+      "icon_at_risk": "⚠️",
+      "icon_dropped": "🚀",
+      "title_at_risk": "¡No pierdas el impulso!",
+      "title_dropped": "Es momento de reiniciar",
+      "desc_at_risk": "Has faltado a un par de registros. Completa una acción pequeña hoy para proteger tu racha.",
+      "desc_dropped": "Llevas un tiempo sin actividad. Reinicia con una meta simple: registra tu siguiente comida.",
+      "btn_at_risk": "Registrar ahora",
+      "btn_dropped": "Volver al plan"
+    },
+    "recovery": {
+      "plan_title": "Tu plan de recuperación",
+      "action": {
+        "reduce_calorie_target": "Reduce tu objetivo calórico diario a un nivel más alcanzable.",
+        "focus_single_meal": "Enfócate en registrar solo una comida al día de forma constante.",
+        "simplify_tracking": "Simplifica tu seguimiento — registra solo las comidas principales por ahora.",
+        "log_any_meal": "Registra cualquier comida hoy, sin importar lo pequeña que sea. Solo empieza."
+      }
+    }
+  },
   "nutrition": {
     "page_title": "Registro Diario",
     "page_subtitle": "Registra tus comidas y sigue tus macros en tiempo real",
