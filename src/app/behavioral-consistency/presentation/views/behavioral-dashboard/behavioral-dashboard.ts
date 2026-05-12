@@ -7,7 +7,6 @@ import { map } from 'rxjs/operators';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { BehavioralConsistencyStore } from '../../../application/behavioral-consistency.store';
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
-import { WearableStore } from '../../../../metabolic-adaptation/application/wearable.store';
 import { MacroWarningBanner } from '../../../../shared/presentation/components/macro-warning-banner/macro-warning-banner';
 import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
 import { MealType } from '../../../../nutrition-tracking/domain/model/meal-type.enum';
@@ -95,10 +94,9 @@ export class BehavioralDashboard implements OnInit {
   private readonly router = inject(Router);
   private readonly translateService = inject(TranslateService);
 
-  private readonly iamStore = inject(IamStore);
+  private readonly iamStore        = inject(IamStore);
   private readonly behavioralStore = inject(BehavioralConsistencyStore);
-  private readonly nutritionStore = inject(NutritionStore);
-  private readonly wearableStore = inject(WearableStore);
+  private readonly nutritionStore  = inject(NutritionStore);
 
   private readonly currentUser = this.iamStore.currentUser;
   private readonly currentProgress = this.behavioralStore.currentProgress;
@@ -191,13 +189,13 @@ export class BehavioralDashboard implements OnInit {
   });
 
   protected readonly caloriesVm = computed<CaloriesVm>(() => {
-    const intake = this.nutritionStore.getDailyIntakeFor(new Date());
-    const totals = this.nutritionStore.dailyTotals();
-    const user = this.currentUser();
+    const intake         = this.nutritionStore.getDailyIntakeFor(new Date());
+    const totals         = this.nutritionStore.dailyTotals();
+    const user           = this.currentUser();
     const targetCalories = intake?.dailyGoal ?? user?.dailyCalorieTarget ?? 1800;
     const consumedCalories = Math.round(totals.calories);
-    const activeCalories = this.wearableStore.netCalorieAdjustment();
-    const net = targetCalories + activeCalories;
+    const activeCalories = intake?.active ?? 0;
+    const net            = targetCalories + activeCalories;
     const remainingCalories = net - consumedCalories;
     const progressPercent = net > 0 ? Math.min(Math.round((consumedCalories / net) * 100), 100) : 0;
     return {
@@ -248,28 +246,9 @@ export class BehavioralDashboard implements OnInit {
     };
   });
 
-  private readonly macroProgress = computed(() => {
-    const totals = this.nutritionStore.dailyTotals();
-    const u = this.currentUser();
-    const calories = this.caloriesVm();
-    return [
-      { key: 'nutrition.calories',      pct: calories.target > 0 ? (calories.consumed / calories.target) * 100 : 0 },
-      { key: 'nutrition.protein',       pct: (u?.proteinTarget ?? 120) > 0 ? (Math.round(totals.protein) / (u?.proteinTarget ?? 120)) * 100 : 0 },
-      { key: 'nutrition.carbohydrates', pct: (u?.carbsTarget   ?? 220) > 0 ? (Math.round(totals.carbs)   / (u?.carbsTarget   ?? 220)) * 100 : 0 },
-      { key: 'nutrition.fats',          pct: (u?.fatTarget     ?? 65)  > 0 ? (Math.round(totals.fat)     / (u?.fatTarget     ?? 65))  * 100 : 0 },
-      { key: 'nutrition.fiber',         pct: (u?.fiberTarget   ?? 25)  > 0 ? (Math.round(totals.fiber ?? 0) / (u?.fiberTarget ?? 25)) * 100 : 0 },
-    ];
-  });
-
-  /** i18n keys of macros between 80% and 99% of their daily target. */
-  protected readonly approachingMacros = computed(() =>
-    this.macroProgress().filter(m => m.pct >= 80 && m.pct < 100).map(m => m.key),
-  );
-
-  /** i18n keys of macros at or above 100% of their daily target. */
-  protected readonly exceededMacros = computed(() =>
-    this.macroProgress().filter(m => m.pct >= 100).map(m => m.key),
-  );
+  /** Warning signals delegated to the domain via {@link NutritionStore.todayMacroWarnings}. */
+  protected readonly approachingMacros = computed(() => this.nutritionStore.todayMacroWarnings().approaching);
+  protected readonly exceededMacros    = computed(() => this.nutritionStore.todayMacroWarnings().exceeded);
 
   ngOnInit(): void {
     this.loadData();
@@ -300,7 +279,6 @@ export class BehavioralDashboard implements OnInit {
       .subscribe();
     void this.nutritionStore.loadMealHistory();
     void this.nutritionStore.loadDailyBalance();
-    void this.wearableStore.load();
   }
 
   private buildMealsVm(locale: string): DashboardMealVm[] {

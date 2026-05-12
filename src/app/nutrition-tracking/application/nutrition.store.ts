@@ -15,7 +15,9 @@ import { MealType } from '../domain/model/meal-type.enum';
 import { FoodItem } from '../domain/model/food-item.entity';
 import { MealRecord } from '../domain/model/meal-record.entity';
 import { DailyIntake } from '../domain/model/daily-intake.entity';
+import { MacroName } from '../domain/model/macro-warning.value-object';
 import { NutritionApi } from '../infrastructure/nutrition-api';
+import { WearableStore } from '../../metabolic-adaptation/application/wearable.store';
 
 /**
  * Central state store for the Nutrition Tracking bounded context.
@@ -32,11 +34,21 @@ import { NutritionApi } from '../infrastructure/nutrition-api';
  *
  * @author Mora Rivera, Joel Fernando
  */
+/** Maps domain {@link MacroName} to the i18n key used in the presentation layer. */
+const MACRO_I18N: Record<MacroName, string> = {
+  calories:      'nutrition.calories',
+  protein:       'nutrition.protein',
+  carbohydrates: 'nutrition.carbohydrates',
+  fats:          'nutrition.fats',
+  fiber:         'nutrition.fiber',
+};
+
 @Injectable({ providedIn: 'root' })
 export class NutritionStore {
-  private readonly nutritionApi = inject(NutritionApi);
-  private readonly iamStore     = inject(IamStore);
-  private readonly eventBus     = inject(DomainEventBus);
+  private readonly nutritionApi  = inject(NutritionApi);
+  private readonly iamStore      = inject(IamStore);
+  private readonly eventBus      = inject(DomainEventBus);
+  private readonly wearableStore = inject(WearableStore);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
@@ -116,6 +128,30 @@ export class NutritionStore {
     return Object.values(groups).every((arr) => arr.length > 0);
   });
 
+  /**
+   * Macro warnings for today derived from domain logic in {@link DailyIntake.checkWarnings}.
+   *
+   * Returns i18n keys ready for the presentation layer — the mapping from
+   * {@link MacroName} to key lives here in the application layer, not in the domain.
+   */
+  readonly todayMacroWarnings = computed((): { approaching: string[]; exceeded: string[] } => {
+    const intake = this.getDailyIntakeFor(new Date());
+    if (!intake) return { approaching: [], exceeded: [] };
+    const totals = this.dailyTotals();
+    const user   = this.iamStore.currentUser();
+    const targets = {
+      protein: user?.proteinTarget ?? 120,
+      carbs:   user?.carbsTarget   ?? 200,
+      fat:     user?.fatTarget     ?? 55,
+      fiber:   user?.fiberTarget   ?? 25,
+    };
+    const warnings = intake.checkWarnings(totals, targets);
+    return {
+      approaching: warnings.filter(w => w.isApproaching).map(w => MACRO_I18N[w.macro]),
+      exceeded:    warnings.filter(w => w.isExceeded).map(w => MACRO_I18N[w.macro]),
+    };
+  });
+
   constructor() {
     this._searchSubject
       .pipe(
@@ -169,7 +205,7 @@ export class NutritionStore {
       const today = new Date().toISOString().slice(0, 10);
       this._dailyIntakes.update(intakes => intakes.map(i => {
         if (i.userId === e.userId && i.date === today) {
-          i.updateActive(e.activeCaloriesAdded);
+          i.updateActive(i.active + e.activeCaloriesAdded);
         }
         return i;
       }));
@@ -320,8 +356,17 @@ export class NutritionStore {
     this._loading.set(true);
     this._error.set(null);
     try {
-      const balances = await firstValueFrom(this.nutritionApi.getDailyBalance());
-      this._dailyIntakes.set(balances.filter(b => b.userId === user.id));
+      const [balances] = await Promise.all([
+        firstValueFrom(this.nutritionApi.getDailyBalance()),
+        this.wearableStore.load(),
+      ]);
+      const userBalances = balances.filter(b => b.userId === user.id);
+      const today       = new Date().toISOString().slice(0, 10);
+      const todayActive = this.wearableStore.netCalorieAdjustment();
+      this._dailyIntakes.set(userBalances.map(b => {
+        if (b.date === today) b.updateActive(todayActive);
+        return b;
+      }));
     } catch {
       this._error.set('Failed to load daily balance.');
     } finally {

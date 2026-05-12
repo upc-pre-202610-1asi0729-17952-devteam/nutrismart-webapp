@@ -1,5 +1,7 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 import { MacronutrientDistribution } from './macronutrient-distribution.value-object';
+import { MacroThreshold } from './macro-threshold';
+import { MacroWarning, MacroName } from './macro-warning.value-object';
 
 /**
  * Constructor DTO for creating a {@link DailyIntake} instance.
@@ -137,6 +139,39 @@ export class DailyIntake implements BaseEntity {
     return this.exceeded
       ? `Exceeded by ${this.netCalories} kcal`
       : `${this.percentConsumed}% of your goal consumed`;
+  }
+
+  /**
+   * Evaluates all macros against their daily targets and returns any that have
+   * crossed the {@link MacroThreshold.APPROACHING} (80%) or {@link MacroThreshold.EXCEEDED} (100%) boundary.
+   *
+   * Calories are checked against the entity's own `dailyGoal`; all other macros
+   * use the provided `targets` map.
+   *
+   * @param consumed - Snapshot of nutrients consumed so far today.
+   * @param targets  - User's macro targets in grams (protein, carbs, fat, fiber).
+   * @returns Ordered list of {@link MacroWarning} value objects, one per affected macro.
+   */
+  checkWarnings(
+    consumed: { calories: number; protein: number; carbs: number; fat: number; fiber: number },
+    targets: { protein: number; carbs: number; fat: number; fiber: number },
+  ): MacroWarning[] {
+    const checks: Array<{ macro: MacroName; value: number; target: number }> = [
+      { macro: 'calories',      value: consumed.calories, target: this._dailyGoal },
+      { macro: 'protein',       value: consumed.protein,  target: targets.protein },
+      { macro: 'carbohydrates', value: consumed.carbs,    target: targets.carbs },
+      { macro: 'fats',          value: consumed.fat,      target: targets.fat },
+      { macro: 'fiber',         value: consumed.fiber,    target: targets.fiber },
+    ];
+
+    return checks
+      .filter(c => c.target > 0)
+      .flatMap(c => {
+        const ratio = c.value / c.target;
+        if (ratio >= MacroThreshold.EXCEEDED)    return [new MacroWarning(c.macro, 'exceeded',    ratio * 100)];
+        if (ratio >= MacroThreshold.APPROACHING) return [new MacroWarning(c.macro, 'approaching', ratio * 100)];
+        return [];
+      });
   }
 
   /**

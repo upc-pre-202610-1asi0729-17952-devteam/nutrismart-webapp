@@ -5,7 +5,6 @@ import { map } from 'rxjs/operators';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { DietaryRestriction } from '../../../../iam/domain/model/dietary-restriction.enum';
 import { NutritionStore } from '../../../application/nutrition.store';
-import { WearableStore } from '../../../../metabolic-adaptation/application/wearable.store';
 import { MealType } from '../../../domain/model/meal-type.enum';
 import { FoodItem, FoodItemProps } from '../../../domain/model/food-item.entity';
 import { MealRecord, MealRecordProps } from '../../../domain/model/meal-record.entity';
@@ -50,7 +49,6 @@ export class DailyLog implements OnInit {
   private iamStore = inject(IamStore);
   private translate = inject(TranslateService);
   protected nutritionStore = inject(NutritionStore);
-  private wearableStore = inject(WearableStore);
 
   /** Food selected from the search panel — drives the Add Food dialog. */
   protected selectedFood = signal<FoodItem | null>(null);
@@ -200,18 +198,8 @@ export class DailyLog implements OnInit {
     this.nutritionStore.getDailyIntakeFor(this.selectedDate())
   );
 
-  /**
-   * Active (burned) calories for the selected date.
-   *
-   * For today, reads directly from WearableStore so the balance updates
-   * immediately when an activity is logged — no persistence round-trip needed.
-   * For past dates, falls back to the stored value in DailyIntake.
-   */
-  protected readonly selectedActive = computed(() =>
-    this.isToday()
-      ? this.wearableStore.netCalorieAdjustment()
-      : (this.selectedDailyIntake()?.active ?? 0),
-  );
+  /** Active (burned) calories for the selected date, sourced from {@link DailyIntake}. */
+  protected readonly selectedActive = computed(() => this.selectedDailyIntake()?.active ?? 0);
 
   /**
    * Always-non-null DailyIntake for the selected date.
@@ -243,27 +231,9 @@ export class DailyLog implements OnInit {
     Object.values(this.filteredByMealType()).every((arr) => arr.length > 0),
   );
 
-  private readonly macroProgress = computed(() => {
-    const t = this.filteredTotals();
-    const u = this.iamStore.currentUser();
-    return [
-      { key: 'nutrition.calories',      pct: this.dailyGoalTarget() > 0 ? (t.calories / this.dailyGoalTarget()) * 100 : 0 },
-      { key: 'nutrition.protein',       pct: (u?.proteinTarget ?? 120) > 0 ? (t.protein / (u?.proteinTarget ?? 120)) * 100 : 0 },
-      { key: 'nutrition.carbohydrates', pct: (u?.carbsTarget   ?? 200) > 0 ? (t.carbs   / (u?.carbsTarget   ?? 200)) * 100 : 0 },
-      { key: 'nutrition.fats',          pct: (u?.fatTarget     ?? 55)  > 0 ? (t.fat     / (u?.fatTarget     ?? 55))  * 100 : 0 },
-      { key: 'nutrition.fiber',         pct: (u?.fiberTarget   ?? 25)  > 0 ? (t.fiber   / (u?.fiberTarget   ?? 25))  * 100 : 0 },
-    ];
-  });
-
-  /** i18n keys of macros between 80% and 99% of their daily target — drives the yellow banner. */
-  protected readonly approachingMacros = computed(() =>
-    this.macroProgress().filter(m => m.pct >= 80 && m.pct < 100).map(m => m.key),
-  );
-
-  /** i18n keys of macros at or above 100% of their daily target — drives the red banner. */
-  protected readonly exceededMacros = computed(() =>
-    this.macroProgress().filter(m => m.pct >= 100).map(m => m.key),
-  );
+  /** Warning signals delegated to the domain via {@link NutritionStore.todayMacroWarnings}. */
+  protected readonly approachingMacros = computed(() => this.nutritionStore.todayMacroWarnings().approaching);
+  protected readonly exceededMacros    = computed(() => this.nutritionStore.todayMacroWarnings().exceeded);
 
   /** Summary bar macro descriptors. */
   protected summaryMacros = computed(() => {
@@ -365,7 +335,6 @@ export class DailyLog implements OnInit {
     await Promise.all([
       this.nutritionStore.loadMealHistory(),
       this.nutritionStore.loadDailyBalance(),
-      this.wearableStore.load(),
     ]);
     this._preloadRecipeFromState();
   }
