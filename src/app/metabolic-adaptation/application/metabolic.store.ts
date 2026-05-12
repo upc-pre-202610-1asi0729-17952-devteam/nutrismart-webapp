@@ -422,6 +422,20 @@ export class MetabolicStore {
     this.eventBus.publish(new GoalSwitched(updated.id, goal));
   }
 
+  /**
+   * Recalculates macro targets for the given goal using the current user's
+   * physical data and publishes {@link MetabolicTargetSet}.
+   *
+   * Used during onboarding when the goal changes after physical data is set,
+   * since {@link subscribeToProfileUpdated} only reacts to physical-field changes.
+   */
+  recalculateForGoal(goal: UserGoal): void {
+    const user = this.iamStore.currentUser();
+    if (!user) return;
+    const targets = MetabolicTargets.calculate(user.weight, user.height, user.activityLevel, goal);
+    this.publishMetabolicTargetSet(user.id, targets);
+  }
+
   async applyInitialTarget(goal: UserGoal): Promise<void> {
     if (goal === UserGoal.MUSCLE_GAIN) return;
     const user = this.iamStore.currentUser();

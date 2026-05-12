@@ -304,6 +304,7 @@ export class Onboarding implements OnInit {
 
     if (step === 2) {
       this.iamStore.changeGoal(this.selectedGoal());
+      this.metabolicStore.recalculateForGoal(this.selectedGoal());
       this.currentStep.set(isMuscle ? 3 : 4);
       return;
     }
