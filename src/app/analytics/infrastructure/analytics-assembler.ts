@@ -91,8 +91,8 @@ export class AnalyticsAssembler {
     ];
 
     const weightEvolution = [...raw.weightEntries]
-      .sort((a, b) => a.loggedAt.localeCompare(b.loggedAt))
-      .map(e => ({ date: e.loggedAt.split('T')[0], weight: e.weightKg }));
+      .sort((a, b) => (a.loggedAt ?? '').localeCompare(b.loggedAt ?? ''))
+      .map(e => ({ date: (e.loggedAt ?? '').split('T')[0], weight: e.weightKg }));
 
     let weightChange = 0;
     let weightChangeDirection: WeightChangeDirection = 'none';
