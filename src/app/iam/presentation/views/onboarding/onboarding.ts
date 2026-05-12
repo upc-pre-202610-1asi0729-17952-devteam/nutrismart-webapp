@@ -155,6 +155,7 @@ export class Onboarding {
     biologicalSex: ['', Validators.required],
     weight:        [null as number | null, [Validators.required, Validators.min(30), Validators.max(300)]],
     height:        [null as number | null, [Validators.required, Validators.min(100), Validators.max(250)]],
+    homeCity:      ['', Validators.required],
   });
 
   // ─── Step 2 state ─────────────────────────────────────────────────────────
@@ -263,8 +264,8 @@ export class Onboarding {
 
     if (step === 1) {
       if (this.bodyForm.invalid) { this.bodyForm.markAllAsTouched(); return; }
-      const { birthday, biologicalSex, weight, height } = this.bodyForm.value;
-      this.iamStore.updateProfile({ birthday: birthday!, biologicalSex: biologicalSex! });
+      const { birthday, biologicalSex, weight, height, homeCity } = this.bodyForm.value;
+      this.iamStore.updateProfile({ birthday: birthday!, biologicalSex: biologicalSex!, homeCity: homeCity! });
       this.iamStore.updatePhysicalDetails(weight!, height!, this.selectedActivity());
       this.currentStep.update(s => s + 1);
       return;
