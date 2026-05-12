@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './iam/application/auth.guard';
 import { onboardingGuard } from './iam/application/onboarding.guard';
 import { subscriptionGuard } from './iam/application/subscription.guard';
+import { planGuard } from './iam/application/plan.guard';
 
 /**
  * Lazy-loads the PageNotFound standalone component.
@@ -81,11 +82,11 @@ export const routes: Routes = [
   { path: 'dashboard', loadChildren: dashboardRoutes, canActivate: [authGuard, subscriptionGuard] },
   { path: 'nutrition', loadChildren: nutritionRoutes, canActivate: [authGuard, subscriptionGuard] },
   { path: 'smart-scan', loadChildren: smartScanRoutes, canActivate: [authGuard, subscriptionGuard] },
-  { path: 'recommendations', loadChildren: recommendationsRoutes, canActivate: [authGuard, subscriptionGuard] },
+  { path: 'recommendations', loadChildren: recommendationsRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
   { path: 'body-progress', loadChildren: bodyProgressRoutes, canActivate: [authGuard, subscriptionGuard] },
-  { path: 'pantry', loadChildren: pantryRoutes, canActivate: [authGuard, subscriptionGuard] },
-  { path: 'wearable', loadChildren: wearableRoutes, canActivate: [authGuard, subscriptionGuard] },
-  { path: 'analytics', loadChildren: analyticsRoutes, canActivate: [authGuard, subscriptionGuard] },
+  { path: 'pantry', loadChildren: pantryRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
+  { path: 'wearable', loadChildren: wearableRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
+  { path: 'analytics', loadChildren: analyticsRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
   { path: 'subscription', loadChildren: subscriptionsRoutes, canActivate: [authGuard] },
   { path: 'my-plan', loadChildren: myPlanRoutes, canActivate: [authGuard, subscriptionGuard] },
   { path: '', redirectTo: '/auth/login', pathMatch: 'full' },

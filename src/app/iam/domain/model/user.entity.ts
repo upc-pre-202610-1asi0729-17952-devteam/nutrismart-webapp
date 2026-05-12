@@ -366,6 +366,15 @@ export class User implements BaseEntity {
   }
 
   /**
+   * Determines whether the user is on the top-tier PREMIUM plan.
+   *
+   * @returns `true` only for PREMIUM; `false` for PRO and BASIC.
+   */
+  isPremium(): boolean {
+    return this._plan === SubscriptionPlan.PREMIUM;
+  }
+
+  /**
    * Determines whether the user can upgrade their subscription tier.
    *
    * @returns `true` if the user has no plan yet or is not already on PREMIUM.
