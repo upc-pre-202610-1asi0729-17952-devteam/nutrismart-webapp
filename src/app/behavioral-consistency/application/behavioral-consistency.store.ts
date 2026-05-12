@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { AdherenceStatus } from '../domain/model/adherence-status.enum';
 import {
   BehavioralProgress,
@@ -10,6 +10,11 @@ import { BehavioralConsistencyApi } from '../infrastructure/behavioral-consisten
 import { DomainEventBus } from '../../shared/application/domain-event-bus';
 import { BehavioralDropDetected } from '../../shared/domain/behavioral-drop-detected.event';
 import { ConsistencyRecovered } from '../../shared/domain/consistency-recovered.event';
+import { NutritionalAbandonmentRisk } from '../../shared/domain/nutritional-abandonment-risk.event';
+import { StreakMilestoneReached } from '../../shared/domain/streak-milestone-reached.event';
+import { StrategyMismatchDetected } from '../../shared/domain/strategy-mismatch-detected.event';
+import { DailyGoalMet } from '../../shared/domain/daily-goal-met.event';
+import { MetabolicTargetSet } from '../../shared/domain/metabolic-target-set.event';
 
 /**
  * Central state store for the Behavioral Consistency bounded context.
@@ -23,6 +28,11 @@ import { ConsistencyRecovered } from '../../shared/domain/consistency-recovered.
 export class BehavioralConsistencyStore {
   private behavioralConsistencyApi = inject(BehavioralConsistencyApi);
   private eventBus                 = inject(DomainEventBus);
+
+  constructor() {
+    this.subscribeToDailyGoalMet();
+    this.subscribeToMetabolicTargetSet();
+  }
 
   /** Current behavioral progress for the active user, or `null` if not loaded. */
   private _currentProgress = signal<BehavioralProgress | null>(null);
@@ -163,13 +173,23 @@ export class BehavioralConsistencyStore {
     const progress = this._currentProgress();
     if (!progress) return;
 
-    const wasDegraded = progress.adherenceStatus !== AdherenceStatus.ON_TRACK;
+    if (progress.lastGoalMetDate === date) return;
+
+    const prevStreak    = progress.streak;
+    const wasDegraded   = progress.adherenceStatus !== AdherenceStatus.ON_TRACK;
+    const prevMilestone = progress.nextStreakMilestone;
+
     progress.markGoalMet(date);
     this._currentProgress.set(progress);
     this.persist();
 
     if (wasDegraded && progress.isOnTrack()) {
       this.eventBus.publish(new ConsistencyRecovered(progress.userId));
+    }
+
+    if (progress.streak >= prevMilestone && prevStreak < prevMilestone) {
+      const milestone = this.clampMilestone(prevMilestone);
+      this.eventBus.publish(new StreakMilestoneReached(progress.userId, progress.streak, milestone));
     }
   }
 
@@ -181,7 +201,9 @@ export class BehavioralConsistencyStore {
     this._currentProgress.set(progress);
     this.persist();
 
-    if (progress.consecutiveMisses >= 2) {
+    if (progress.consecutiveMisses >= 7) {
+      this.eventBus.publish(new NutritionalAbandonmentRisk(progress.userId, progress.consecutiveMisses));
+    } else if (progress.consecutiveMisses >= 3) {
       this.eventBus.publish(new BehavioralDropDetected(progress.userId, progress.consecutiveMisses));
     }
   }
@@ -254,5 +276,45 @@ export class BehavioralConsistencyStore {
    */
   private todayIsoDate(): string {
     return new Date().toISOString().split('T')[0];
+  }
+
+  /** Clamps an arbitrary milestone value to the nearest allowed literal. */
+  private clampMilestone(value: number): 7 | 14 | 21 | 30 {
+    if (value <= 7)  return 7;
+    if (value <= 14) return 14;
+    if (value <= 21) return 21;
+    return 30;
+  }
+
+  /** Reacts to DailyGoalMet events published by Nutrition Tracking. */
+  private subscribeToDailyGoalMet(): void {
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof DailyGoalMet))
+      .subscribe((e) => {
+        const event = e as DailyGoalMet;
+        const progress = this._currentProgress();
+        if (progress?.userId === event.userId) {
+          this.markGoalMet(event.date);
+        }
+      });
+  }
+
+  /** Reacts to MetabolicTargetSet events; publishes StrategyMismatchDetected when targets are aggressive. */
+  private subscribeToMetabolicTargetSet(): void {
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof MetabolicTargetSet))
+      .subscribe((e) => {
+        const event    = e as MetabolicTargetSet;
+        const progress = this._currentProgress();
+        if (!progress || progress.userId !== event.userId) return;
+
+        const lowAdherence     = progress.weeklyCompletionRate < 50;
+        const aggressiveTarget = event.dailyCalorieTarget > 2000;
+        if (lowAdherence && aggressiveTarget) {
+          this.eventBus.publish(
+            new StrategyMismatchDetected(event.userId, progress.weeklyCompletionRate, event.dailyCalorieTarget),
+          );
+        }
+      });
   }
 }

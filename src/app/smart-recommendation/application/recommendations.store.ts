@@ -172,10 +172,9 @@ export class RecommendationsStore {
 
   private mapBcAdherenceStatus(bcStatus: BcAdherenceStatus): AdherenceStatus {
     switch (bcStatus) {
-      case BcAdherenceStatus.DROPPED:   return AdherenceStatus.DROPPED;
-      case BcAdherenceStatus.AT_RISK:
-      case BcAdherenceStatus.OFF_TRACK: return AdherenceStatus.AT_RISK;
-      default:                          return AdherenceStatus.ON_TRACK;
+      case BcAdherenceStatus.DROPPED:  return AdherenceStatus.DROPPED;
+      case BcAdherenceStatus.AT_RISK:  return AdherenceStatus.AT_RISK;
+      default:                         return AdherenceStatus.ON_TRACK;
     }
   }
 

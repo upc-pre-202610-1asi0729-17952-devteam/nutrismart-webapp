@@ -26,7 +26,7 @@ export class AdherenceStatusCard {
         return '✓ ON_TRACK';
       case AdherenceStatus.AT_RISK:
         return '⚠ AT_RISK';
-      case AdherenceStatus.OFF_TRACK:
+      case AdherenceStatus.DROPPED:
         return '✖ DROPPED';
       default:
         return 'Status Unknown';
@@ -42,7 +42,7 @@ export class AdherenceStatusCard {
         return 'Keep it up! Your consistency is stable. Continue logging your daily meals.';
       case AdherenceStatus.AT_RISK:
         return 'Nutritional adherence at risk. You have missed 3 consecutive logs. Let\'s get back on track!';
-      case AdherenceStatus.OFF_TRACK:
+      case AdherenceStatus.DROPPED:
         return 'Behavioral drop detected. 7 days of inactivity. Access your reactivation plan to recover your streak.';
       default:
         return 'Please log your first meal of the day to update your status.';

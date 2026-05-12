@@ -28,7 +28,7 @@ export class ReEngagementCard {
           btnText: 'Registrar ahora',
           icon: '⚠️'
         };
-      case AdherenceStatus.OFF_TRACK:
+      case AdherenceStatus.DROPPED:
         return {
           title: 'Es momento de reiniciar',
           desc: 'Llevas un tiempo sin actividad. Reinicia con una meta simple: registra tu siguiente comida.',

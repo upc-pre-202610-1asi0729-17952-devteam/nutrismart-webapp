@@ -170,7 +170,7 @@ export class BehavioralDashboard implements OnInit {
     const streak = this.streak();
     const misses = this.consecutiveMisses();
     return {
-      greetingKey: status === AdherenceStatus.RECOVERED ? 'dashboard.greeting_back' : 'dashboard.greeting',
+      greetingKey: 'dashboard.greeting',
       greetingParams: { name: this.firstName },
       badgeLabelKey: this.badgeKeyFor(status),
       badgeLabelParams: this.badgeParamsFor(status, streak, misses),
@@ -317,7 +317,6 @@ export class BehavioralDashboard implements OnInit {
     switch (status) {
       case AdherenceStatus.AT_RISK: return 'dashboard.status_at_risk';
       case AdherenceStatus.DROPPED: return 'dashboard.status_dropped';
-      case AdherenceStatus.RECOVERED: return 'dashboard.status_recovered';
       default: return 'dashboard.status_on_track';
     }
   }
@@ -334,7 +333,6 @@ export class BehavioralDashboard implements OnInit {
     switch (status) {
       case AdherenceStatus.AT_RISK: return 'status-at-risk';
       case AdherenceStatus.DROPPED: return 'status-dropped';
-      case AdherenceStatus.RECOVERED: return 'status-recovered';
       default: return 'status-on-track';
     }
   }
@@ -343,7 +341,6 @@ export class BehavioralDashboard implements OnInit {
     switch (status) {
       case AdherenceStatus.AT_RISK: return 'accent-orange';
       case AdherenceStatus.DROPPED: return 'accent-red';
-      case AdherenceStatus.RECOVERED: return 'accent-green';
       default: return 'accent-teal';
     }
   }
@@ -370,15 +367,6 @@ export class BehavioralDashboard implements OnInit {
           descKey: 'dashboard.alert_dropped_desc',
           btnKey: 'dashboard.alert_dropped_btn',
           btnClass: 'risk-button-red',
-        };
-      case AdherenceStatus.RECOVERED:
-        return {
-          icon: '🎉',
-          titleKey: 'dashboard.alert_recovered_title',
-          titleParams: {},
-          descKey: 'dashboard.alert_recovered_desc',
-          btnKey: 'dashboard.alert_recovered_btn',
-          btnClass: 'risk-button-green',
         };
       default:
         return {
@@ -414,14 +402,6 @@ export class BehavioralDashboard implements OnInit {
           footerKey: 'dashboard.streak_dropped_footer',
           footerParams: {},
           streakClass: 'streak-dropped',
-        };
-      case AdherenceStatus.RECOVERED:
-        return {
-          descKey: 'dashboard.streak_recovered_desc',
-          descParams: {},
-          footerKey: 'dashboard.streak_recovered_footer',
-          footerParams: {},
-          streakClass: 'streak-recovered',
         };
       default:
         return {

@@ -135,7 +135,7 @@ export class BehavioralProgress implements BaseEntity {
    */
   needsReEngagement(): boolean {
     return this._adherenceStatus === AdherenceStatus.AT_RISK ||
-      this._adherenceStatus === AdherenceStatus.OFF_TRACK;
+      this._adherenceStatus === AdherenceStatus.DROPPED;
   }
 
   /**
@@ -189,8 +189,8 @@ export class BehavioralProgress implements BaseEntity {
    * Recalculates adherence status from the current streak and missed days.
    *
    * Rules:
-   * - OFF_TRACK: 3 or more consecutive misses.
-   * - AT_RISK: 1 or 2 consecutive misses.
+   * - DROPPED: 7 or more consecutive misses.
+   * - AT_RISK: 1–6 consecutive misses.
    * - ON_TRACK: no consecutive misses.
    */
   recalculateAdherenceStatus(): void {
