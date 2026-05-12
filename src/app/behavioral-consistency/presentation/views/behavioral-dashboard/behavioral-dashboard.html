@@ -76,7 +76,10 @@
         <p>{{ 'dashboard.net_balance_desc' | translate }}</p>
 
         @if (calories.googleFitCalories !== null) {
-          <span class="fit-badge">{{ 'dashboard.fit_badge' | translate: { calories: calories.googleFitCalories } }}</span>
+          <span class="fit-badge">
+            <span class="material-icons fit-badge__icon">directions_run</span>
+            {{ 'dashboard.fit_badge' | translate: { calories: calories.googleFitCalories } }}
+          </span>
         }
       </article>
     </section>

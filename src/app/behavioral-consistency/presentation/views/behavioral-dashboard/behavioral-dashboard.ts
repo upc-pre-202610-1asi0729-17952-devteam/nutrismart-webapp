@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { BehavioralConsistencyStore } from '../../../application/behavioral-consistency.store';
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
+import { WearableStore } from '../../../../metabolic-adaptation/application/wearable.store';
 import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
 import { MealType } from '../../../../nutrition-tracking/domain/model/meal-type.enum';
 import { MealRecord } from '../../../../nutrition-tracking/domain/model/meal-record.entity';
@@ -96,6 +97,7 @@ export class BehavioralDashboard implements OnInit {
   private readonly iamStore = inject(IamStore);
   private readonly behavioralStore = inject(BehavioralConsistencyStore);
   private readonly nutritionStore = inject(NutritionStore);
+  private readonly wearableStore = inject(WearableStore);
 
   private readonly currentUser = this.iamStore.currentUser;
   private readonly currentProgress = this.behavioralStore.currentProgress;
@@ -193,11 +195,10 @@ export class BehavioralDashboard implements OnInit {
     const user = this.currentUser();
     const targetCalories = intake?.dailyGoal ?? user?.dailyCalorieTarget ?? 1800;
     const consumedCalories = Math.round(totals.calories);
-    const activeCalories = intake?.active ?? 0;
-    const remainingCalories = intake ? intake.remaining : targetCalories - consumedCalories;
-    const progressPercent = intake
-      ? intake.percentConsumed
-      : Math.min(Math.round((consumedCalories / targetCalories) * 100), 100);
+    const activeCalories = this.wearableStore.netCalorieAdjustment();
+    const net = targetCalories + activeCalories;
+    const remainingCalories = net - consumedCalories;
+    const progressPercent = net > 0 ? Math.min(Math.round((consumedCalories / net) * 100), 100) : 0;
     return {
       consumed: consumedCalories,
       target: targetCalories,
@@ -275,6 +276,7 @@ export class BehavioralDashboard implements OnInit {
       .subscribe();
     void this.nutritionStore.loadMealHistory();
     void this.nutritionStore.loadDailyBalance();
+    void this.wearableStore.load();
   }
 
   private buildMealsVm(locale: string): DashboardMealVm[] {

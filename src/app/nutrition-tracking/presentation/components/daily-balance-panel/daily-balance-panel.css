@@ -15,6 +15,17 @@
 .balance-row--total { font-weight: 600; }
 
 .balance-label { color: #6b7280; }
+
+.balance-label--active {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.balance-label__icon {
+  font-size: 14px;
+  color: #2d9e8f;
+}
 .balance-value { font-weight: 500; color: #1a1a1a; }
 
 .val--danger    { color: #ef4444 !important; font-weight: 700 !important; }

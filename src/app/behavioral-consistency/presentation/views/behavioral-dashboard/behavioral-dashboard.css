@@ -230,6 +230,8 @@
 
 .fit-badge {
   display: inline-flex;
+  align-items: center;
+  gap: 5px;
   width: fit-content;
   margin-top: 14px;
   border: 1px solid #54c7aa;
@@ -239,6 +241,10 @@
   color: #0c7b67;
   font-size: 13px;
   font-weight: 700;
+}
+
+.fit-badge__icon {
+  font-size: 15px;
 }
 
 .middle-grid {
