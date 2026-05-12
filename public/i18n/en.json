@@ -12,7 +12,9 @@
     "analytics": "Analytics",
     "subscription": "Subscription",
     "profile": "Profile",
-    "logout": "Log out"
+    "logout": "Log out",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu"
   },
   "common": {
     "save": "Save",

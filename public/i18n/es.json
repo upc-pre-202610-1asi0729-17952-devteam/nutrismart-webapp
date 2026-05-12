@@ -12,7 +12,9 @@
     "analytics": "Analítica",
     "subscription": "Suscripción",
     "profile": "Perfil",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "open_menu": "Abrir menú",
+    "close_menu": "Cerrar menú"
   },
   "common": {
     "save": "Guardar",
