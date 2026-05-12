@@ -1,0 +1,5 @@
+export enum WearableStatus {
+  DISCONNECTED = 'DISCONNECTED',
+  CONNECTED    = 'CONNECTED',
+  SYNC_FAILED  = 'SYNC_FAILED',
+}
