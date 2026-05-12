@@ -77,7 +77,7 @@ const ANT_GOAL = 1584;
 const analytics = [
   // ── ANA 7d ──────────────────────────────────────────────────────────────────
   {
-    id: 'ana-7d', userId: '1', period: '7_DAYS',
+    id: 'ana-7d', userId: 1, period: '7_DAYS',
     averageCalorieIntake: 1698, averageProteinIntake: 107,
     currentStreak: 5, weightChange: -0.4,
     dailyCaloriesHistory: buildDailyCal(7, [1820, 1650, 1900, 1780, 1340, 0, 0], ANA_GOAL),
@@ -88,7 +88,7 @@ const analytics = [
   },
   // ── ANA 30d ─────────────────────────────────────────────────────────────────
   {
-    id: 'ana-30d', userId: '1', period: '30_DAYS',
+    id: 'ana-30d', userId: 1, period: '30_DAYS',
     averageCalorieIntake: 1748, averageProteinIntake: 110,
     currentStreak: 5, weightChange: -1.7,
     dailyCaloriesHistory: buildDailyCal(30, [
@@ -105,7 +105,7 @@ const analytics = [
   },
   // ── ANA 90d ─────────────────────────────────────────────────────────────────
   {
-    id: 'ana-90d', userId: '1', period: '90_DAYS',
+    id: 'ana-90d', userId: 1, period: '90_DAYS',
     averageCalorieIntake: 1762, averageProteinIntake: 109,
     currentStreak: 5, weightChange: -4.2,
     dailyCaloriesHistory: Array.from({ length: 90 }, (_, i) => ({

@@ -10,19 +10,19 @@ export class AnalyticsApiHttpService extends AnalyticsApi {
   private readonly http = inject(HttpClient);
   private readonly base = 'http://localhost:3000';
 
-  getWeeklyHistory(userId: string): Observable<AnalyticsData> {
+  getWeeklyHistory(userId: number | string): Observable<AnalyticsData> {
     return this.fetchByPeriod(userId, '7_DAYS');
   }
 
-  getMonthlyHistory(userId: string): Observable<AnalyticsData> {
+  getMonthlyHistory(userId: number | string): Observable<AnalyticsData> {
     return this.fetchByPeriod(userId, '30_DAYS');
   }
 
-  getQuarterlyHistory(userId: string): Observable<AnalyticsData> {
+  getQuarterlyHistory(userId: number | string): Observable<AnalyticsData> {
     return this.fetchByPeriod(userId, '90_DAYS');
   }
 
-  exportPdfReport(userId: string, fromDate: string, toDate: string): Observable<Blob> {
+  exportPdfReport(userId: number | string, fromDate: string, toDate: string): Observable<Blob> {
     return this.http
       .post(`${this.base}/analytics/export`, { userId, fromDate, toDate }, { responseType: 'blob' })
       .pipe(
@@ -31,7 +31,7 @@ export class AnalyticsApiHttpService extends AnalyticsApi {
       );
   }
 
-  private fetchByPeriod(userId: string, period: string): Observable<AnalyticsData> {
+  private fetchByPeriod(userId: number | string, period: string): Observable<AnalyticsData> {
     return this.http
       .get<AnalyticsData[]>(`${this.base}/analytics`, { params: { userId, period } })
       .pipe(
