@@ -1,4 +1,8 @@
-// Placeholder for Analytics data models
+export type AnalyticsPeriod = '7_DAYS' | '30_DAYS' | '90_DAYS';
+export type WeightChangeDirection = 'up' | 'down' | 'none';
+export type WeightChangeStatus = 'positive' | 'negative' | 'neutral';
+export type AdherenceStatus = 'ON_TRACK' | 'AT_RISK' | 'DROPPED' | 'RECOVERED';
+export type MacroColorKey = 'macro-protein' | 'macro-carbs' | 'macro-fat' | 'macro-fiber';
 
 export interface DailyCaloriesHistory {
   date: string;
@@ -10,13 +14,13 @@ export interface MacroAnalysis {
   name: string;
   consumed: number;
   target: number;
-  colorClass: string;
+  colorClass: MacroColorKey;
   isAboveTarget?: boolean;
 }
 
 export interface AdherenceHistoryEntry {
   date: string;
-  status: 'ON_TRACK' | 'AT_RISK' | 'DROPPED' | 'RECOVERED';
+  status: AdherenceStatus;
 }
 
 export interface BehavioralEvent {
@@ -25,21 +29,19 @@ export interface BehavioralEvent {
 }
 
 export interface AnalyticsData {
-  period: '7_DAYS' | '30_DAYS' | '90_DAYS';
+  period: AnalyticsPeriod;
   averageCalorieIntake: number;
   averageProteinIntake: number;
   currentStreak: number;
   weightChange: number;
-  weightChangeDirection: 'up' | 'down' | 'none';
-  weightChangeStatus: 'positive' | 'negative' | 'neutral';
+  weightChangeDirection: WeightChangeDirection;
+  weightChangeStatus: WeightChangeStatus;
   dailyCaloriesHistory: DailyCaloriesHistory[];
   macroAnalysis: MacroAnalysis[];
-  daysWithCompleteLog: boolean[]; // For the 7 dots
+  daysWithCompleteLog: boolean[];
   weightEvolution: { date: string; weight: number }[];
   goalWeight?: number;
-  adherenceHistory?: AdherenceHistoryEntry[]; // Only for 30 days
-  behavioralEvents?: BehavioralEvent[]; // Only for 30 days
-  proteinCompliance?: string; // For MUSCLE_GAIN
+  adherenceHistory?: AdherenceHistoryEntry[];
+  behavioralEvents?: BehavioralEvent[];
+  proteinCompliance?: string;
 }
-
-export type AnalyticsPeriod = '7_DAYS' | '30_DAYS' | '90_DAYS';
