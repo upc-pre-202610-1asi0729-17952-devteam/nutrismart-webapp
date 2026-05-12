@@ -1,0 +1,156 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-dialog {
+  background: white;
+  border-radius: 14px;
+  padding: 24px 28px;
+  width: 400px;
+  max-width: 90vw;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--nutrismart-text-dark);
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--nutrismart-text-light);
+  padding: 2px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
+}
+
+.icon-btn .material-icons { font-size: 18px; }
+.icon-btn:hover { color: var(--nutrismart-text-dark); }
+
+/* ── Form ── */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nutrismart-text-mid);
+}
+
+.form-select,
+.form-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--nutrismart-border);
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
+  color: var(--nutrismart-text-dark);
+  background: var(--nutrismart-bg);
+  outline: none;
+}
+
+.form-select:focus,
+.form-input:focus { border-color: var(--nutrismart-primary); }
+
+.form-input--error {
+  border-color: #ef4444 !important;
+  background: #fff5f5;
+}
+
+.form-error {
+  font-size: 12px;
+  color: #ef4444;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ── Calories preview ── */
+.calories-preview {
+  background: var(--nutrismart-primary);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.calories-preview-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.calories-preview-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+}
+
+.calories-preview-meta {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Actions ── */
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.btn--primary { background: var(--nutrismart-primary); color: white; }
+.btn--primary:hover { background: var(--nutrismart-primary-dark); }
+.btn--primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn--outline {
+  background: white;
+  color: var(--nutrismart-text-dark);
+  border: 1.5px solid var(--nutrismart-border);
+}
+
+.btn--outline:hover { border-color: var(--nutrismart-primary); color: var(--nutrismart-primary); }

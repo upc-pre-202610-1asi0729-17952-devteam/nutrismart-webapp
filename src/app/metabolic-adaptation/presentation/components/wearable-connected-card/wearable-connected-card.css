@@ -1,0 +1,196 @@
+.connected-card {
+  background: var(--nutrismart-white);
+  border: 1px solid var(--nutrismart-border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Status header ── */
+.connected-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.connected-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #d1fae5;
+  border: 1px solid #6ee7b7;
+  border-radius: 20px;
+}
+
+.connected-badge-icon {
+  font-size: 16px;
+  color: #065f46;
+}
+
+.connected-badge-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: #065f46;
+}
+
+.connected-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.connected-sync-time {
+  font-size: 12px;
+  color: var(--nutrismart-text-light);
+}
+
+.link-btn--danger {
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.link-btn--danger:hover { text-decoration: underline; }
+
+/* ── Metrics grid ── */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.metric-tile {
+  background: var(--nutrismart-bg);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metric-tile-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--nutrismart-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.metric-tile-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.metric-tile-value--green { color: #16a34a; }
+
+.metric-tile-unit {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--nutrismart-text-mid);
+}
+
+.metric-tile-sub {
+  font-size: 11px;
+  color: var(--nutrismart-text-light);
+}
+
+/* ── History ── */
+.history-section {
+  border-top: 1px solid var(--nutrismart-border);
+  padding-top: 16px;
+}
+
+.history-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+  margin: 0 0 12px;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-row {
+  display: grid;
+  grid-template-columns: 40px 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.history-day {
+  font-weight: 700;
+  color: var(--nutrismart-text-mid);
+}
+
+.history-type {
+  color: var(--nutrismart-text-dark);
+  text-transform: capitalize;
+}
+
+.history-duration { color: var(--nutrismart-text-light); }
+
+.history-cal {
+  font-weight: 600;
+  color: #16a34a;
+}
+
+.history-empty {
+  font-size: 13px;
+  color: var(--nutrismart-text-light);
+  text-align: center;
+  padding: 16px 0 0;
+}
+
+/* ── Button reuse ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.btn--outline {
+  background: white;
+  color: var(--nutrismart-text-dark);
+  border: 1.5px solid var(--nutrismart-border);
+}
+
+.btn--outline:hover { border-color: var(--nutrismart-primary); color: var(--nutrismart-primary); }
+.btn--outline:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn--sm { padding: 6px 14px; font-size: 12px; }
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--nutrismart-primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}

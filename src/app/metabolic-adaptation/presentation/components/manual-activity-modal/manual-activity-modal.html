@@ -1,0 +1,82 @@
+<div class="modal-backdrop" (click)="onCancel()">
+  <div class="modal-dialog" role="dialog" aria-modal="true"
+       [attr.aria-label]="'physical_activity.modal.title' | translate"
+       (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h3 class="modal-title">{{ 'physical_activity.modal.title' | translate }}</h3>
+      <button class="icon-btn" type="button"
+              [attr.aria-label]="'common.close' | translate"
+              (click)="onCancel()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <!-- Activity type select -->
+    <div class="form-group">
+      <label class="form-label" for="activity-select">
+        {{ 'physical_activity.modal.activity_label' | translate }}
+      </label>
+      <select
+        id="activity-select"
+        class="form-select"
+        (change)="onActivityChange($event)">
+        <option value="" disabled selected>
+          {{ 'physical_activity.modal.activity_placeholder' | translate }}
+        </option>
+        @for (key of activityKeys; track key) {
+          <option [value]="key">
+            {{ ('physical_activity.activity_types.' + key) | translate }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <!-- Duration input -->
+    <div class="form-group">
+      <label class="form-label" for="duration-input">
+        {{ 'physical_activity.modal.duration_label' | translate }}
+      </label>
+      <input
+        id="duration-input"
+        class="form-input"
+        [class.form-input--error]="durationError()"
+        type="number"
+        min="1"
+        max="480"
+        step="1"
+        [placeholder]="'physical_activity.modal.duration_placeholder' | translate"
+        (input)="onDurationInput($event)" />
+      @if (durationError()) {
+        <p class="form-error">{{ durationError() | translate }}</p>
+      }
+    </div>
+
+    <!-- Live calories preview -->
+    @if (estimatedCalories() > 0) {
+      <div class="calories-preview">
+        <span class="calories-preview-label">{{ 'physical_activity.modal.estimated_calories' | translate }}</span>
+        <span class="calories-preview-value">{{ estimatedCalories() | number:'1.0-0' }} kcal</span>
+        <span class="calories-preview-meta">
+          {{ 'physical_activity.modal.based_on' | translate }}
+          {{ userWeightKg() | number:'1.1-1' }} kg
+          @if (metValue() > 0) {
+            · MET {{ metValue() | number:'1.1-1' }}
+          }
+        </span>
+      </div>
+    }
+
+    <div class="modal-actions">
+      <button class="btn btn--outline" type="button" (click)="onCancel()">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button class="btn btn--primary" type="button"
+              [disabled]="!isValid() || isLoading()"
+              (click)="onSave()">
+        {{ 'physical_activity.modal.save_btn' | translate }}
+      </button>
+    </div>
+
+  </div>
+</div>

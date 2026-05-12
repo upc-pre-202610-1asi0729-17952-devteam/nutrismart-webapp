@@ -1,0 +1,75 @@
+.pa-page {
+  padding: 28px 32px;
+  min-height: 100vh;
+  background: var(--nutrismart-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Header ── */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+  margin: 0 0 4px;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: var(--nutrismart-text-light);
+  margin: 0;
+}
+
+/* ── Error banner ── */
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fef2f2;
+  border: 1.5px solid #fecaca;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-size: 13px;
+  color: #991b1b;
+}
+
+.error-banner-icon { font-size: 18px; flex-shrink: 0; }
+
+/* ── Loading ── */
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px;
+}
+
+.loading-icon {
+  font-size: 32px;
+  color: var(--nutrismart-primary);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Two-column card row (not connected) ── */
+.cards-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+/* ── Manual log row below connected card ── */
+.manual-row {
+  max-width: 420px;
+}

@@ -1,7 +1,12 @@
-/**
- * Wearable integration routes (metabolic-adaptation context).
- *
- * Register Google Fit / wearable sync views here.
- */
 import { Routes } from '@angular/router';
-export const wearableRoutes: Routes = [];
+
+export const wearableRoutes: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./views/physical-activity/physical-activity').then(
+        m => m.PhysicalActivityView,
+      ),
+    title: 'NutriSmart - Physical Activity',
+  },
+];

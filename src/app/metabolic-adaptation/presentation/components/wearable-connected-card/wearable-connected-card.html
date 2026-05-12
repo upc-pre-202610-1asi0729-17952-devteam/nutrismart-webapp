@@ -1,0 +1,71 @@
+<div class="connected-card">
+
+  <!-- ── Status header ── -->
+  <div class="connected-header">
+    <div class="connected-badge">
+      <span class="material-icons connected-badge-icon">check_circle</span>
+      <span class="connected-badge-text">{{ 'physical_activity.connected.badge' | translate }}</span>
+    </div>
+    <div class="connected-actions">
+      <span class="connected-sync-time">
+        {{ 'physical_activity.connected.last_synced' | translate }}
+        {{ syncLabel() }}
+      </span>
+      <button class="btn btn--outline btn--sm" type="button"
+              [disabled]="isLoading()"
+              (click)="onSyncNow()">
+        {{ 'physical_activity.connected.sync_now' | translate }}
+      </button>
+      <button class="link-btn link-btn--danger" type="button"
+              (click)="onDisconnect()">
+        {{ 'physical_activity.connected.disconnect' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Metric grid 2×2 ── -->
+  <div class="metrics-grid">
+
+    <div class="metric-tile">
+      <span class="metric-tile-label">{{ 'physical_activity.connected.active_calories' | translate }}</span>
+      <span class="metric-tile-value metric-tile-value--green">
+        +{{ netCalories() | number:'1.0-0' }}
+        <span class="metric-tile-unit">kcal</span>
+      </span>
+      <span class="metric-tile-sub">{{ 'physical_activity.connected.burned_today' | translate }}</span>
+    </div>
+
+    <div class="metric-tile">
+      <span class="metric-tile-label">{{ 'physical_activity.connected.net_target' | translate }}</span>
+      <span class="metric-tile-value">
+        {{ netDailyTarget() | number:'1.0-0' }}
+        <span class="metric-tile-unit">kcal</span>
+      </span>
+      <span class="metric-tile-sub">
+        {{ baseTarget() | number:'1.0-0' }} + {{ netCalories() | number:'1.0-0' }}
+        {{ 'physical_activity.connected.active' | translate }}
+      </span>
+    </div>
+
+  </div>
+
+  <!-- ── Activity history ── -->
+  @if (weekLogs().length > 0) {
+    <div class="history-section">
+      <h4 class="history-title">{{ 'physical_activity.history.this_week' | translate }}</h4>
+      <div class="history-list">
+        @for (log of weekLogs(); track log.id) {
+          <div class="history-row">
+            <span class="history-day">{{ formatLogDate(log.timestamp) }}</span>
+            <span class="history-type">{{ ('physical_activity.activity_types.' + log.activityType) | translate }}</span>
+            <span class="history-duration">{{ log.durationMinutes }} min</span>
+            <span class="history-cal">−{{ log.caloriesBurned | number:'1.0-0' }} kcal</span>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <p class="history-empty">{{ 'physical_activity.history.empty' | translate }}</p>
+  }
+
+</div>

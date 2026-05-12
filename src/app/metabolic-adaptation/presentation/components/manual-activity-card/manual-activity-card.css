@@ -1,0 +1,62 @@
+.manual-card {
+  background: var(--nutrismart-white);
+  border: 1px solid var(--nutrismart-border);
+  border-radius: 12px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.manual-card-icon {
+  width: 48px;
+  height: 48px;
+  background: #f0fdf4;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.manual-card-icon .material-icons {
+  font-size: 26px;
+  color: #16a34a;
+}
+
+.manual-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+  margin: 0;
+}
+
+.manual-card-desc {
+  font-size: 13px;
+  color: var(--nutrismart-text-mid);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.manual-card-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--nutrismart-bg);
+  border-radius: 8px;
+}
+
+.manual-card-section-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nutrismart-text-dark);
+}
+
+.manual-card-section-hint {
+  font-size: 11px;
+  color: var(--nutrismart-text-light);
+}

@@ -1,0 +1,24 @@
+<div class="manual-card">
+  <div class="manual-card-icon" aria-hidden="true">
+    <span class="material-icons">fitness_center</span>
+  </div>
+  <h3 class="manual-card-title">{{ 'physical_activity.manual.title' | translate }}</h3>
+  <p class="manual-card-desc">{{ 'physical_activity.manual.desc' | translate }}</p>
+
+  <div class="manual-card-section">
+    <span class="manual-card-section-label">{{ 'physical_activity.manual.cardio_label' | translate }}</span>
+    <span class="manual-card-section-hint">{{ 'physical_activity.manual.cardio_hint' | translate }}</span>
+  </div>
+
+  <div class="manual-card-section">
+    <span class="manual-card-section-label">{{ 'physical_activity.manual.strength_label' | translate }}</span>
+    <span class="manual-card-section-hint">{{ 'physical_activity.manual.strength_hint' | translate }}</span>
+  </div>
+
+  <button
+    class="btn btn--outline btn--full"
+    type="button"
+    (click)="onOpenModal()">
+    {{ 'physical_activity.manual.log_btn' | translate }}
+  </button>
+</div>
