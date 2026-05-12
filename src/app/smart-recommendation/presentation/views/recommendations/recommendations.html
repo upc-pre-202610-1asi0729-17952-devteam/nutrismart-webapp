@@ -22,29 +22,15 @@
           <button class="travel-chip-close" (click)="onDisableAutoTravel()" [attr.aria-label]="'recommendations.travel_disable' | translate">✕</button>
         </div>
       }
-      <div class="header-badge-wrap">
-        <button
-          class="header-badge"
-          [class.badge--travel]="store.isTravelMode()"
-          [attr.aria-pressed]="showLocationPicker()"
-          [attr.aria-label]="'recommendations.location_picker_title' | translate"
-          (click)="onChipClick()"
-        >
-          <span class="badge-icon">{{ headerBadgeIcon() }}</span>
-          <span class="badge-text">{{ headerBadgeLabel() }}</span>
-          <span class="badge-chevron">▾</span>
-        </button>
-        @if (showLocationPicker()) {
-          <app-location-picker
-            [locations]="store.availableLocations()"
-            [selectedCity]="store.weatherContext()?.city ?? ''"
-            [demoTemperature]="store.demoTemperature()"
-            (citySelected)="onCitySelected($event)"
-            (temperatureChanged)="onTemperatureChanged($event)"
-            (closed)="onPickerClosed()"
-          />
-        }
-      </div>
+      <app-location-picker
+        [locations]="store.availableLocations()"
+        [selectedCity]="store.weatherContext()?.city ?? ''"
+        [currentLabel]="pickerLabel()"
+        [demoTemperature]="store.demoTemperature()"
+        [isTravelMode]="store.isTravelMode()"
+        (citySelected)="onCitySelected($event)"
+        (temperatureChanged)="onTemperatureChanged($event)"
+      />
     </div>
   </header>
 
@@ -86,13 +72,13 @@
         </div>
         <div class="banner-body">
           @if (store.isTravelMode()) {
-            <strong>{{ 'recommendations.banner_travel_active' | translate:{ location: store.travelContext()?.locationLabel(), temp: store.weatherContext()?.temperatureCelsius } }}</strong>
+            <strong>{{ 'recommendations.banner_travel_active' | translate:{ location: store.travelContext()?.locationLabel(), temp: displayTemperature() } }}</strong>
             <p>{{ 'recommendations.banner_travel_desc' | translate:{ city: travelCity() } }}</p>
           } @else {
             <strong>
               {{ store.weatherContext()?.isHot() ? ('recommendations.its_hot' | translate) : ('recommendations.its_cold' | translate) }} in
               {{ store.weatherContext()?.city }} —
-              {{ store.weatherContext()?.temperatureCelsius }}°C ·
+              {{ displayTemperature() }}°C ·
               {{ weatherConditionLabel() }}
             </strong>
             <p>
@@ -247,39 +233,6 @@
             <span class="balance-label">{{ 'recommendations.balance_remaining' | translate }}</span>
             <span class="balance-value balance-value--accent">{{ dailyRemaining() }} kcal</span>
           </div>
-        </div>
-
-        <!-- Travel mode panel -->
-        <div class="panel">
-          <h3 class="panel-title">{{ 'recommendations.travel_panel_title' | translate }}</h3>
-
-          @if (store.isTravelMode()) {
-            <!-- Auto-detected travel active -->
-            <div class="travel-active-row">
-              <div class="travel-city-info">
-                <span class="travel-city-name">
-                  {{ store.travelContext()?.city }}{{ store.travelContext()?.country ? ', ' + store.travelContext()?.country : '' }}
-                </span>
-                <span class="travel-city-sub">{{ 'recommendations.travel_auto_detected' | translate }}</span>
-              </div>
-            </div>
-
-            @if (store.unrecognizedCity()) {
-              <div class="unrecognized-city-msg">
-                <span>{{ 'recommendations.unrecognized_city' | translate }}</span>
-              </div>
-            }
-
-            <button class="btn btn--ghost btn--sm" style="margin-top:10px" (click)="onDisableAutoTravel()">
-              {{ 'recommendations.travel_disable' | translate }}
-            </button>
-
-          } @else {
-            <!-- At home — informational -->
-            <p class="panel-subtitle">
-              {{ 'recommendations.travel_at_home' | translate:{ homeCity: homeCity() } }}
-            </p>
-          }
         </div>
 
       </aside>

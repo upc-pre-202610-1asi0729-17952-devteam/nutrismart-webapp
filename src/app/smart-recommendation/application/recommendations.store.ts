@@ -41,6 +41,7 @@ export class RecommendationsStore {
   private _error              = signal<string | null>(null);
   private _availableLocations = signal<WeatherContext[]>([]);
   private _demoTemperature    = signal<number | null>(null);
+  private _homeCity           = signal<string>('Lima');
 
   // ─── Public Read-only Signals ─────────────────────────────────────────────
 
@@ -108,6 +109,7 @@ export class RecommendationsStore {
       const isAway = snapshot !== null && !snapshot.isHome(homeCity);
       const city   = isAway ? snapshot!.city    : homeCity || 'Lima';
       const country = isAway ? snapshot!.country : 'Peru';
+      this._homeCity.set(homeCity || 'Lima');
 
       if (isAway) {
         const travel = existingTravel ?? new TravelContext({
@@ -209,8 +211,13 @@ export class RecommendationsStore {
       const ctx = await firstValueFrom(this.api.activateTravelMode(city, country, userId));
       ctx.isManual = manual;
       this._travelContext.set(ctx);
+      this._demoTemperature.set(null);
 
-      const cards = await firstValueFrom(this.api.getTravelRecommendations(city));
+      const [cards, weather] = await Promise.all([
+        firstValueFrom(this.api.getTravelRecommendations(city)),
+        firstValueFrom(this.api.getCurrentWeather(city)),
+      ]);
+      if (weather) this._weatherContext.set(weather);
       if (cards.length === 0) {
         this._unrecognizedCity.set(true);
         this._travelCards.set([]);
@@ -233,6 +240,9 @@ export class RecommendationsStore {
       const ctx = await firstValueFrom(this.api.deactivateTravelMode(userId));
       this._travelContext.set(ctx);
       this._travelCards.set([]);
+      this._demoTemperature.set(null);
+      const weather = await firstValueFrom(this.api.getCurrentWeather(this._homeCity()));
+      if (weather) this._weatherContext.set(weather);
     } catch {
       this._error.set('recommendations.error_load_failed');
     } finally {

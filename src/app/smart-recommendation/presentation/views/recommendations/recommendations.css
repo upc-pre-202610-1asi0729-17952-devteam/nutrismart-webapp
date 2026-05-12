@@ -57,40 +57,6 @@
 }
 .travel-chip-close:hover { opacity: 1; }
 
-.header-badge-wrap {
-  position: relative;
-}
-
-.header-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 12px 8px 14px;
-  border-radius: 20px;
-  border: 1.5px solid var(--nutrismart-border);
-  background: var(--nutrismart-white);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--nutrismart-text-dark);
-  white-space: nowrap;
-  cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
-}
-.header-badge:hover { border-color: var(--nutrismart-accent); }
-.header-badge[aria-pressed="true"] {
-  border-color: var(--nutrismart-accent);
-  background: color-mix(in srgb, var(--nutrismart-accent) 6%, var(--nutrismart-white));
-}
-
-.header-badge.badge--travel {
-  border-color: #5ba99b;
-  color: #2d7a6f;
-}
-
-.badge-chevron {
-  font-size: 10px;
-  opacity: 0.6;
-}
 
 /* ── Plan gate ── */
 .plan-gate {

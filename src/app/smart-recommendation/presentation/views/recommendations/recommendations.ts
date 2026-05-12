@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -23,7 +23,9 @@ export class RecommendationsView implements OnInit {
 
   protected isPro = computed(() => this.iamStore.currentUser()?.isPro() ?? false);
 
-  protected showLocationPicker = signal<boolean>(false);
+  protected displayTemperature = computed(() =>
+    this.store.demoTemperature() ?? this.store.weatherContext()?.temperatureCelsius ?? null
+  );
 
   // ─── Daily balance ────────────────────────────────────────────────────────
 
@@ -48,8 +50,6 @@ export class RecommendationsView implements OnInit {
   });
 
   protected travelCity = computed(() => this.store.travelContext()?.city ?? '');
-
-  protected homeCity = computed(() => this.iamStore.currentUser()?.homeCity ?? 'your home city');
 
   protected sectionTitle = computed(() => {
     if (this.store.isTravelMode()) {
@@ -79,24 +79,16 @@ export class RecommendationsView implements OnInit {
     });
   });
 
-  protected headerBadgeLabel = computed(() => {
-    const demo = this.store.demoTemperature();
+  protected pickerLabel = computed(() => {
+    const temp = this.displayTemperature();
     if (this.store.isTravelMode()) {
       const t = this.store.travelContext();
-      const w = this.store.weatherContext();
-      return this.translate.instant('recommendations.header_badge_travel', {
-        city: t?.city ?? '',
-        temp: demo ?? w?.temperatureCelsius ?? '?',
-      });
+      return `${t?.city ?? ''} · ${temp ?? '?'}°C`;
     }
     const w = this.store.weatherContext();
     if (!w) return '';
-    return `${w.city} · ${demo ?? w.temperatureCelsius}°C`;
+    return `${w.city} · ${temp ?? w.temperatureCelsius}°C`;
   });
-
-  protected headerBadgeIcon = computed(() =>
-    this.store.isTravelMode() ? '📍' : this.weatherIcon()
-  );
 
   protected weatherConditionLabel = computed(() => {
     const w = this.store.weatherContext();
@@ -124,14 +116,6 @@ export class RecommendationsView implements OnInit {
 
   // ─── Location picker ──────────────────────────────────────────────────────
 
-  onChipClick(): void {
-    this.showLocationPicker.update(v => !v);
-  }
-
-  onPickerClosed(): void {
-    this.showLocationPicker.set(false);
-  }
-
   onCitySelected(loc: WeatherContext): void {
     const homeCity = this.iamStore.currentUser()?.homeCity ?? '';
     if (loc.city === homeCity) {
@@ -139,7 +123,6 @@ export class RecommendationsView implements OnInit {
     } else {
       void this.store.activateTravelMode(loc.city, loc.country, true);
     }
-    this.showLocationPicker.set(false);
   }
 
   onTemperatureChanged(temp: number): void {
@@ -150,7 +133,6 @@ export class RecommendationsView implements OnInit {
 
   onDisableAutoTravel(): void {
     void this.store.deactivateTravelMode();
-    this.showLocationPicker.set(false);
   }
 
   // TODO: wire to NutritionStore once cross-BC integration is ready

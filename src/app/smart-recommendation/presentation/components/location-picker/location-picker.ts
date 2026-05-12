@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, computed, EventEmitter, Input, Output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { WeatherContext } from '../../../domain/model/weather-context.entity';
 
@@ -9,24 +9,48 @@ import { WeatherContext } from '../../../domain/model/weather-context.entity';
   styleUrl: './location-picker.css',
 })
 export class LocationPicker {
-  @Input() locations: WeatherContext[]  = [];
-  @Input() selectedCity: string         = '';
+  @Input() locations: WeatherContext[]    = [];
+  @Input() selectedCity: string           = '';
+  @Input() currentLabel: string           = '';
   @Input() demoTemperature: number | null = null;
+  @Input() isTravelMode: boolean          = false;
 
-  @Output() citySelected        = new EventEmitter<WeatherContext>();
-  @Output() temperatureChanged  = new EventEmitter<number>();
-  @Output() closed              = new EventEmitter<void>();
+  @Output() citySelected       = new EventEmitter<WeatherContext>();
+  @Output() temperatureChanged = new EventEmitter<number>();
+
+  readonly isOpen      = signal<boolean>(false);
+  readonly searchQuery = signal<string>('');
+
+  readonly filteredLocations = computed(() => {
+    const q = this.searchQuery().toLowerCase().trim();
+    if (!q) return this.locations;
+    return this.locations.filter(l => l.city.toLowerCase().includes(q));
+  });
 
   get sliderValue(): number {
-    return this.demoTemperature ?? (this.selectedLocationTemp ?? 20);
+    return this.demoTemperature ?? this.locations.find(l => l.city === this.selectedCity)?.temperatureCelsius ?? 20;
   }
 
-  private get selectedLocationTemp(): number | null {
-    return this.locations.find(l => l.city === this.selectedCity)?.temperatureCelsius ?? null;
+  onFocus(): void {
+    this.searchQuery.set('');
+    this.isOpen.set(true);
+  }
+
+  onBlur(): void {
+    setTimeout(() => this.isOpen.set(false), 160);
+  }
+
+  onQueryChange(event: Event): void {
+    this.searchQuery.set((event.target as HTMLInputElement).value);
+  }
+
+  onSelectCity(loc: WeatherContext): void {
+    this.citySelected.emit(loc);
+    this.searchQuery.set('');
+    this.isOpen.set(false);
   }
 
   onSliderInput(event: Event): void {
-    const value = +(event.target as HTMLInputElement).value;
-    this.temperatureChanged.emit(value);
+    this.temperatureChanged.emit(+(event.target as HTMLInputElement).value);
   }
 }
