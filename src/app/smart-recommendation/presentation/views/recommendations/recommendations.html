@@ -76,13 +76,13 @@
             <p>{{ 'recommendations.banner_travel_desc' | translate:{ city: travelCity() } }}</p>
           } @else {
             <strong>
-              {{ store.weatherContext()?.isHot() ? ('recommendations.its_hot' | translate) : ('recommendations.its_cold' | translate) }} in
+              {{ isDisplayHot() ? ('recommendations.its_hot' | translate) : ('recommendations.its_cold' | translate) }} in
               {{ store.weatherContext()?.city }} —
               {{ displayTemperature() }}°C ·
               {{ weatherConditionLabel() }}
             </strong>
             <p>
-              @if (store.weatherContext()?.isHot()) {
+              @if (isDisplayHot()) {
                 {{ 'recommendations.banner_hot_desc' | translate }}
               } @else {
                 {{ 'recommendations.banner_cold_desc' | translate }}

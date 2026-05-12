@@ -37,16 +37,18 @@ export class RecommendationsView implements OnInit {
 
   // ─── Derived display helpers ──────────────────────────────────────────────
 
+  protected isDisplayHot = computed(() =>
+    (this.displayTemperature() ?? this.store.weatherContext()?.temperatureCelsius ?? 0) >= 21
+  );
+
   protected weatherIcon = computed(() => {
-    const w = this.store.weatherContext();
-    if (!w) return '◎';
-    return w.isHot() ? '☀' : '❄';
+    if (!this.store.weatherContext()) return '◎';
+    return this.isDisplayHot() ? '☀' : '❄';
   });
 
   protected weatherBannerClass = computed(() => {
-    const w = this.store.weatherContext();
-    if (!w) return 'banner--hot';
-    return w.isHot() ? 'banner--hot' : 'banner--cold';
+    if (!this.store.weatherContext()) return 'banner--hot';
+    return this.isDisplayHot() ? 'banner--hot' : 'banner--cold';
   });
 
   protected travelCity = computed(() => this.store.travelContext()?.city ?? '');
@@ -55,9 +57,8 @@ export class RecommendationsView implements OnInit {
     if (this.store.isTravelMode()) {
       return this.translate.instant('recommendations.section_travel', { city: this.travelCity() });
     }
-    const w = this.store.weatherContext();
-    if (!w) return this.translate.instant('recommendations.section_default');
-    return w.isHot()
+    if (!this.store.weatherContext()) return this.translate.instant('recommendations.section_default');
+    return this.isDisplayHot()
       ? this.translate.instant('recommendations.section_hot')
       : this.translate.instant('recommendations.section_cold');
   });
@@ -91,11 +92,10 @@ export class RecommendationsView implements OnInit {
   });
 
   protected weatherConditionLabel = computed(() => {
-    const w = this.store.weatherContext();
-    if (!w) return '';
-    if (w.isHot())  return this.translate.instant('recommendations.condition_hot');
-    if (w.isCold()) return this.translate.instant('recommendations.condition_cold');
-    return this.translate.instant('recommendations.condition_mild');
+    if (!this.store.weatherContext()) return '';
+    return this.isDisplayHot()
+      ? this.translate.instant('recommendations.condition_hot')
+      : this.translate.instant('recommendations.condition_cold');
   });
 
   protected weatherUpdatedAgo = computed(() => {

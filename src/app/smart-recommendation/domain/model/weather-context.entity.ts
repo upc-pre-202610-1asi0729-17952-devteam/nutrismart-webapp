@@ -54,15 +54,15 @@ export class WeatherContext implements BaseEntity {
   // ─── Domain Behaviour ─────────────────────────────────────────────────────
 
   isHot(): boolean {
-    return this.#weatherType === WeatherType.HOT;
+    return this.#temperatureCelsius >= 21;
   }
 
   isCold(): boolean {
-    return this.#weatherType === WeatherType.COLD;
+    return this.#temperatureCelsius < 21;
   }
 
   isMild(): boolean {
-    return this.#weatherType === WeatherType.MILD;
+    return false;
   }
 
   formattedLabel(): string {
