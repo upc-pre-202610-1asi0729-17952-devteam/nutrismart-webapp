@@ -67,6 +67,9 @@ export class BehavioralConsistencyStore {
   /** Last error message from a failed async operation, or `null`. */
   private _error = signal<string | null>(null);
 
+  /** ISO date of the last day a MealSkipped-sourced miss was registered. Prevents multiple misses per day. */
+  private _lastMissedDate = signal<string | null>(null);
+
   // ─── Public readonly signals ───────────────────────────────────────────────
 
   /** Read-only signal exposing the current {@link BehavioralProgress}. */
@@ -504,16 +507,30 @@ export class BehavioralConsistencyStore {
       });
   }
 
-  /** Registers a skipped meal window as a behavioral miss. */
+  /**
+   * Registers at most one behavioral miss per calendar day when a meal window
+   * is skipped.
+   *
+   * Guards:
+   * - Ignores events from a different user.
+   * - No-ops if the daily goal was already met today (goal takes precedence).
+   * - Fires {@link markGoalMissed} at most once per calendar day regardless of
+   *   how many meal windows were skipped.
+   */
   private subscribeToMealSkipped(): void {
     this.eventBus.events$
       .pipe(filter(e => e instanceof MealSkipped))
       .subscribe((e) => {
         const event    = e as MealSkipped;
         const progress = this._currentProgress();
-        if (progress?.userId === event.userId) {
-          this.markGoalMissed();
-        }
+        if (progress?.userId !== event.userId) return;
+
+        const today = new Date().toISOString().slice(0, 10);
+        if (progress.lastGoalMetDate === today) return;
+        if (this._lastMissedDate() === today) return;
+
+        this._lastMissedDate.set(today);
+        this.markGoalMissed();
       });
   }
 

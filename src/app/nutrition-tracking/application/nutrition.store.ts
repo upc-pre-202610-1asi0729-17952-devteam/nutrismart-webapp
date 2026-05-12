@@ -146,10 +146,15 @@ export class NutritionStore {
     return this.dailyTotals().calories > intake.dailyGoal;
   });
 
-  /** Whether all 4 meal windows have at least one entry. */
+  /**
+   * Whether the three required meal windows (breakfast, lunch, dinner) each have
+   * at least one entry logged **today**. Snack is optional and not required.
+   */
   readonly allMealsLogged = computed(() => {
-    const groups = this.recordsByMealType();
-    return Object.values(groups).every((arr) => arr.length > 0);
+    const todayRecords = this._mealRecords().filter(r => r.isFromToday);
+    return [MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER].every(
+      type => todayRecords.some(r => r.mealType === type),
+    );
   });
 
   /**
