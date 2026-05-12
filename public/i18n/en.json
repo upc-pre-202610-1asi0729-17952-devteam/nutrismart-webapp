@@ -815,9 +815,13 @@
     "google_fit": {
       "title": "Connect Google Fit",
       "desc": "Sync your physical activity. Connect your Google Fit account to automatically import your daily steps and active calories. The calorie balance on your dashboard will update in real time.",
-      "connect_btn": "Connect to Google Fit"
+      "connect_btn": "Connect to Google Fit",
+      "feature_steps": "Daily steps imported automatically",
+      "feature_calories": "Active calories added to your balance",
+      "feature_sync": "Syncs every hour in the background"
     },
     "manual": {
+      "badge": "Manual log",
       "title": "No wearable device?",
       "desc": "You can log your activity manually. The system will estimate the calories burned based on the type of exercise and your current body weight.",
       "cardio_label": "Cardio and walking",
@@ -840,12 +844,17 @@
       "badge": "Sync failed · Using last known data",
       "last_success": "Last successful sync:",
       "retry_btn": "Retry sync",
-      "desc": "Google Fit connection interrupted. Active calorie data may be outdated."
+      "desc": "Google Fit connection interrupted. Active calorie data may be outdated.",
+      "ago": "ago"
     },
     "paywall": {
       "title": "Wearable Sync requires Premium",
       "desc": "Connect Google Fit to automatically import steps and active calories. Available from $9.99/month.",
-      "upgrade_btn": "Upgrade to Premium →"
+      "upgrade_btn": "Upgrade to Premium",
+      "feature_sync": "Google Fit sync included",
+      "feature_auto": "Automatic calorie import every hour",
+      "feature_balance": "Real-time adjusted daily balance",
+      "note": "Includes Smart Scan and all premium features"
     },
     "history": {
       "this_week": "This week",
@@ -861,7 +870,8 @@
       "based_on": "Based on your weight:",
       "save_btn": "Save",
       "error_duration": "Enter a valid duration greater than 0.",
-      "error_duration_max": "Duration cannot exceed 480 minutes."
+      "error_duration_max": "Duration cannot exceed 480 minutes.",
+      "preview_hint": "Select an activity and enter duration to see estimated calories"
     },
     "activity_types": {
       "running": "Running",

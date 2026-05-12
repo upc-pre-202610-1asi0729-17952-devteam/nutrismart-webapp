@@ -1,42 +1,133 @@
-.connect-card {
+.gf-card {
   background: var(--nutrismart-white);
   border: 1px solid var(--nutrismart-border);
-  border-radius: 12px;
-  padding: 28px 24px;
+  border-radius: 16px;
+  padding: 28px 26px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
+  gap: 18px;
   height: 100%;
   box-sizing: border-box;
+  transition: box-shadow 0.2s, transform 0.2s;
+  position: relative;
+  overflow: hidden;
 }
 
-.connect-card-icon {
-  width: 48px;
-  height: 48px;
-  background: var(--nutrismart-primary-light, #e8f2f2);
-  border-radius: 12px;
+.gf-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #4285F4 0%, #34A853 35%, #FBBC05 65%, #EA4335 100%);
+  border-radius: 16px 16px 0 0;
+}
+
+.gf-card:hover {
+  box-shadow: var(--nutrismart-shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ── Top row ── */
+.gf-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gf-icon-wrap {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #e8f0fe 0%, #d2e3fc 100%);
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.connect-card-icon .material-icons {
+.gf-icon {
   font-size: 26px;
-  color: var(--nutrismart-primary);
+  color: #4285F4;
 }
 
-.connect-card-title {
-  font-size: 16px;
+.gf-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4285F4;
+  background: #e8f0fe;
+  border: 1px solid #c5d9fb;
+  border-radius: 20px;
+  padding: 3px 10px;
+  letter-spacing: 0.2px;
+}
+
+/* ── Title & desc ── */
+.gf-title {
+  font-size: 17px;
   font-weight: 700;
   color: var(--nutrismart-text-dark);
   margin: 0;
+  letter-spacing: -0.2px;
 }
 
-.connect-card-desc {
+.gf-desc {
   font-size: 13px;
   color: var(--nutrismart-text-mid);
-  line-height: 1.55;
+  line-height: 1.6;
   margin: 0;
+}
+
+/* ── Feature list ── */
+.gf-feature-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   flex: 1;
 }
+
+.gf-feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--nutrismart-text-mid);
+}
+
+.gf-feature-icon {
+  font-size: 16px;
+  color: var(--nutrismart-primary);
+  flex-shrink: 0;
+}
+
+/* ── CTA button ── */
+.gf-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 20px;
+  background: var(--nutrismart-primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: background 0.15s, transform 0.1s;
+  letter-spacing: 0.1px;
+}
+
+.gf-btn:hover {
+  background: var(--nutrismart-primary-dark);
+  transform: translateY(-1px);
+}
+
+.gf-btn:active { transform: translateY(0); }
+
+.gf-btn-icon { font-size: 17px; }

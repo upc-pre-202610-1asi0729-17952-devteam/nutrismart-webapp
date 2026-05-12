@@ -815,9 +815,13 @@
     "google_fit": {
       "title": "Conectar Google Fit",
       "desc": "Sincronizá tu actividad física. Conectá tu cuenta de Google Fit para importar automáticamente tus pasos y calorías activas del día. El balance calórico de tu panel se actualizará en tiempo real.",
-      "connect_btn": "Conectar con Google Fit"
+      "connect_btn": "Conectar con Google Fit",
+      "feature_steps": "Pasos diarios importados automáticamente",
+      "feature_calories": "Calorías activas sumadas a tu balance",
+      "feature_sync": "Sincroniza cada hora en segundo plano"
     },
     "manual": {
+      "badge": "Registro manual",
       "title": "¿No tenés dispositivo?",
       "desc": "Podés registrar tu actividad manualmente. El sistema estimará las calorías quemadas según el tipo de ejercicio y tu peso corporal actual.",
       "cardio_label": "Cardio y caminata",
@@ -840,12 +844,17 @@
       "badge": "Error de sincronización · Usando últimos datos",
       "last_success": "Última sincronización exitosa:",
       "retry_btn": "Reintentar",
-      "desc": "Conexión con Google Fit interrumpida. Los datos de calorías activas pueden estar desactualizados."
+      "desc": "Conexión con Google Fit interrumpida. Los datos de calorías activas pueden estar desactualizados.",
+      "ago": "atrás"
     },
     "paywall": {
       "title": "El Wearable Sync requiere Premium",
       "desc": "Conectá Google Fit para importar automáticamente pasos y calorías activas. Disponible desde $9.99/mes.",
-      "upgrade_btn": "Mejorar a Premium →"
+      "upgrade_btn": "Mejorar a Premium",
+      "feature_sync": "Sincronización con Google Fit incluida",
+      "feature_auto": "Importación automática de calorías cada hora",
+      "feature_balance": "Balance diario ajustado en tiempo real",
+      "note": "Incluye Smart Scan y todas las funciones premium"
     },
     "history": {
       "this_week": "Esta semana",
@@ -861,7 +870,8 @@
       "based_on": "Basado en tu peso:",
       "save_btn": "Guardar",
       "error_duration": "Ingresá una duración válida mayor a 0.",
-      "error_duration_max": "La duración no puede superar 480 minutos."
+      "error_duration_max": "La duración no puede superar 480 minutos.",
+      "preview_hint": "Seleccioná una actividad e ingresá la duración para ver las calorías estimadas"
     },
     "activity_types": {
       "running": "Correr",

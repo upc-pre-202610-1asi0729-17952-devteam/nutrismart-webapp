@@ -172,7 +172,7 @@
       "weight": 75,
       "height": 170,
       "activityLevel": "SEDENTARY",
-      "plan": "PREMIUM",
+      "plan": "PRO",
       "restrictions": [],
       "medicalConditions": [],
       "dailyCalorieTarget": 1682,
@@ -5497,6 +5497,159 @@
         false
       ],
       "id": "VgsJaoK6cw4"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "CPpzV2-daYM"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "DlqJ77ZA6b8"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "sIJtG6nwAMc"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "K6RHs-YuTY8"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "sca9nxaG1ZQ"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "2X8dCDE4MEM"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "OsNnaU-Mq5c"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "0BScQ-OSPn4"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "41VxPGOuhGg"
     }
   ],
   "daily-balance": [
@@ -5853,6 +6006,14 @@
       "status": "SYNC_FAILED",
       "last_synced_at": "2026-05-11T07:22:00.000Z",
       "authorized_at": "2026-04-28T10:15:00.000Z"
+    },
+    {
+      "user_id": "k1b4s43nx",
+      "provider": "google_fit",
+      "status": "CONNECTED",
+      "last_synced_at": "2026-05-12T04:43:06.988Z",
+      "authorized_at": "2026-05-12T04:43:06.988Z",
+      "id": "qioGFeDf4JE"
     }
   ],
   "activity-logs": [

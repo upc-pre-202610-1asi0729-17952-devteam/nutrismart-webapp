@@ -1,62 +1,148 @@
 .manual-card {
   background: var(--nutrismart-white);
   border: 1px solid var(--nutrismart-border);
-  border-radius: 12px;
-  padding: 28px 24px;
+  border-radius: 16px;
+  padding: 28px 26px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
+  gap: 18px;
   height: 100%;
   box-sizing: border-box;
+  transition: box-shadow 0.2s, transform 0.2s;
+  position: relative;
+  overflow: hidden;
 }
 
-.manual-card-icon {
-  width: 48px;
-  height: 48px;
-  background: #f0fdf4;
-  border-radius: 12px;
+.manual-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #16a34a 0%, #4ade80 100%);
+  border-radius: 16px 16px 0 0;
+}
+
+.manual-card:hover {
+  box-shadow: var(--nutrismart-shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ── Top row ── */
+.manual-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.manual-icon-wrap {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.manual-card-icon .material-icons {
+.manual-icon {
   font-size: 26px;
   color: #16a34a;
 }
 
-.manual-card-title {
-  font-size: 16px;
+.manual-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #16a34a;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+
+/* ── Title & desc ── */
+.manual-title {
+  font-size: 17px;
   font-weight: 700;
   color: var(--nutrismart-text-dark);
   margin: 0;
+  letter-spacing: -0.2px;
 }
 
-.manual-card-desc {
+.manual-desc {
   font-size: 13px;
   color: var(--nutrismart-text-mid);
-  line-height: 1.55;
+  line-height: 1.6;
   margin: 0;
 }
 
-.manual-card-section {
+/* ── Activity categories ── */
+.manual-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.manual-cat {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--nutrismart-bg);
+  border-radius: 10px;
+  border: 1px solid var(--nutrismart-border);
+}
+
+.manual-cat-icon {
+  font-size: 18px;
+  color: var(--nutrismart-primary);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.manual-cat > div {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  width: 100%;
-  padding: 10px 12px;
-  background: var(--nutrismart-bg);
-  border-radius: 8px;
 }
 
-.manual-card-section-label {
-  font-size: 12px;
+.manual-cat-label {
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--nutrismart-text-dark);
 }
 
-.manual-card-section-hint {
+.manual-cat-hint {
   font-size: 11px;
   color: var(--nutrismart-text-light);
+  line-height: 1.4;
 }
+
+/* ── CTA button ── */
+.manual-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 20px;
+  background: white;
+  color: var(--nutrismart-text-dark);
+  border: 1.5px solid var(--nutrismart-border);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.manual-btn:hover {
+  border-color: var(--nutrismart-primary);
+  color: var(--nutrismart-primary);
+  background: var(--nutrismart-primary-lighter);
+}
+
+.manual-btn-icon { font-size: 17px; }
