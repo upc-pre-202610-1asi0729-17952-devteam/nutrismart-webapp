@@ -22,4 +22,7 @@ export const environment = {
   recommendationCardsEndpointPath: '/recommendation-cards',
   recommendationSessionsEndpointPath: '/recommendation-sessions',
   travelContextsEndpointPath: '/travel-contexts',
+  wearableConnectionsEndpointPath: '/wearable-connections',
+  activityLogsEndpointPath: '/activity-logs',
+  metabolicAdaptationLogsEndpointPath: '/metabolic-adaptation-logs',
 };

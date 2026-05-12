@@ -10112,5 +10112,6 @@
       "id": "OFIUc_fgM9E"
     }
   ],
+  "metabolic-adaptation-logs": [],
   "$schema": "./node_modules/json-server/schema.json"
 }

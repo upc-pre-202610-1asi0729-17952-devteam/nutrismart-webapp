@@ -24,4 +24,5 @@ export const environment = {
   travelContextsEndpointPath: '/travel-contexts',
   wearableConnectionsEndpointPath: '/wearable-connections',
   activityLogsEndpointPath: '/activity-logs',
+  metabolicAdaptationLogsEndpointPath: '/metabolic-adaptation-logs',
 };

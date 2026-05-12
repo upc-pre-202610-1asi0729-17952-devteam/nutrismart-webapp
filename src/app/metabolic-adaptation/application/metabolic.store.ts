@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { filter, firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom, retry } from 'rxjs';
 import { DomainEventBus } from '../../shared/application/domain-event-bus';
 import { MetabolicTargetSet } from '../../shared/domain/metabolic-target-set.event';
 import { OnboardingCompleted } from '../../shared/domain/onboarding-completed.event';
@@ -13,9 +13,12 @@ import { IamStore } from '../../iam/application/iam.store';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
 import { MetabolicTargets } from '../../iam/domain/model/metabolic-targets.value-object';
 import { MetabolicApi } from '../infrastructure/metabolic-api';
+import { MetabolicAdaptationLogApi } from '../infrastructure/metabolic-adaptation-log-api';
 import { BodyMetric } from '../domain/model/body-metric.entity';
 import { BodyComposition } from '../domain/model/body-composition.entity';
 import { NutritionPlan } from '../domain/model/nutrition-plan.entity';
+import { MetabolicAdaptationLog } from '../domain/model/metabolic-adaptation-log.entity';
+import { MetabolicChangeTrigger } from '../domain/model/metabolic-change-trigger.enum';
 
 const STAGNATION_WINDOW_DAYS   = 14;
 const MIN_GOAL_COMMITMENT_DAYS = 28;
@@ -35,21 +38,23 @@ const PHYSICAL_FIELDS = new Set(['weight', 'height', 'activityLevel']);
  */
 @Injectable({ providedIn: 'root' })
 export class MetabolicStore {
-  private api      = inject(MetabolicApi);
-  private iamStore = inject(IamStore);
-  private eventBus = inject(DomainEventBus);
+  private api              = inject(MetabolicApi);
+  private adaptationLogApi = inject(MetabolicAdaptationLogApi);
+  private iamStore         = inject(IamStore);
+  private eventBus         = inject(DomainEventBus);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
-  private _currentMetric     = signal<BodyMetric | null>(null);
-  private _metricsHistory    = signal<BodyMetric[]>([]);
-  private _stagnationHistory = signal<BodyMetric[]>([]);
-  private _allHistory        = signal<BodyMetric[]>([]);
-  private _composition       = signal<BodyComposition | null>(null);
-  private _nutritionPlan     = signal<NutritionPlan | null>(null);
-  private _selectedDays      = signal<7 | 30 | 90>(7);
-  private _loading           = signal<boolean>(false);
-  private _error             = signal<string | null>(null);
+  private _currentMetric      = signal<BodyMetric | null>(null);
+  private _metricsHistory     = signal<BodyMetric[]>([]);
+  private _stagnationHistory  = signal<BodyMetric[]>([]);
+  private _allHistory         = signal<BodyMetric[]>([]);
+  private _composition        = signal<BodyComposition | null>(null);
+  private _nutritionPlan      = signal<NutritionPlan | null>(null);
+  private _selectedDays       = signal<7 | 30 | 90>(7);
+  private _loading            = signal<boolean>(false);
+  private _error              = signal<string | null>(null);
+  private _adaptationHistory  = signal<MetabolicAdaptationLog[]>([]);
 
   // ─── Public Read-only Signals ─────────────────────────────────────────────
 
@@ -75,7 +80,10 @@ export class MetabolicStore {
   readonly error          = this._error.asReadonly();
 
   /** All weight entries for the current goal cycle, newest first. */
-  readonly allHistory     = this._allHistory.asReadonly();
+  readonly allHistory        = this._allHistory.asReadonly();
+
+  /** Full audit trail of metabolic target recalculations for the current user. */
+  readonly adaptationHistory = this._adaptationHistory.asReadonly();
 
   // ─── Goal Lock Computeds ──────────────────────────────────────────────────
 
@@ -107,6 +115,11 @@ export class MetabolicStore {
   // ─── Computed Signals ─────────────────────────────────────────────────────
 
   readonly isStale = computed(() => this._currentMetric()?.isStale(STALE_DAYS_THRESHOLD) ?? false);
+
+  /** Subset of adaptation logs whose calorie delta exceeds the significance threshold. */
+  readonly significantAdaptations = computed(() =>
+    this._adaptationHistory().filter(l => l.isSignificantChange()),
+  );
 
   /** True when the user targets MUSCLE_GAIN. */
   readonly isMuscleGain = computed(() =>
@@ -188,7 +201,7 @@ export class MetabolicStore {
       .pipe(filter((e): e is OnboardingCompleted => e instanceof OnboardingCompleted))
       .subscribe((e) => {
         const targets = MetabolicTargets.calculate(e.weight, e.height, e.activityLevel, e.goal);
-        this.publishMetabolicTargetSet(e.userId, targets);
+        this.publishMetabolicTargetSet(e.userId, targets, MetabolicChangeTrigger.ONBOARDING);
       });
   }
 
@@ -207,17 +220,45 @@ export class MetabolicStore {
         if (!user) return;
         const leanMass  = this._composition()?.leanMassKg();
         const targets   = MetabolicTargets.calculate(user.weight, user.height, user.activityLevel, user.goal, leanMass);
-        this.publishMetabolicTargetSet(user.id, targets);
+        this.publishMetabolicTargetSet(user.id, targets, MetabolicChangeTrigger.PROFILE_CHANGE);
       });
   }
 
   // ─── Private helpers ──────────────────────────────────────────────────────
 
   /**
-   * Publishes {@link MetabolicTargetSet} and updates the in-memory
-   * {@link NutritionPlan} signal so the UI reflects the new targets immediately.
+   * Publishes {@link MetabolicTargetSet}, updates the in-memory {@link NutritionPlan}
+   * signal, and persists a {@link MetabolicAdaptationLog} capturing the before/after
+   * macro snapshot.
+   *
+   * @param userId   - User whose targets changed.
+   * @param targets  - Newly calculated metabolic targets.
+   * @param trigger  - Root cause of the recalculation.
    */
-  private publishMetabolicTargetSet(userId: number, targets: MetabolicTargets): void {
+  private publishMetabolicTargetSet(
+    userId:  number,
+    targets: MetabolicTargets,
+    trigger: MetabolicChangeTrigger,
+  ): void {
+    const user = this.iamStore.currentUser();
+
+    const log = MetabolicAdaptationLog.create(
+      userId,
+      trigger,
+      user?.dailyCalorieTarget ?? 0,
+      targets.dailyCalorieTarget,
+      user?.proteinTarget ?? 0,
+      targets.proteinTarget,
+      user?.carbsTarget ?? 0,
+      targets.carbsTarget,
+      user?.fatTarget ?? 0,
+      targets.fatTarget,
+    );
+
+    this.adaptationLogApi.create(log).pipe(retry(2)).subscribe(persisted => {
+      this._adaptationHistory.update(history => [persisted, ...history]);
+    });
+
     const event = new MetabolicTargetSet(
       userId,
       targets.dailyCalorieTarget,
@@ -252,10 +293,12 @@ export class MetabolicStore {
     try {
       const metric = await firstValueFrom(this.api.getMetabolicTargets(user.id, goalStartedAt));
       this._currentMetric.set(metric);
-      const [history, stagnationHistory] = await Promise.all([
+      const [history, stagnationHistory, adaptationHistory] = await Promise.all([
         firstValueFrom(this.api.getMetricsHistory(user.id, 7, goalStartedAt)),
         firstValueFrom(this.api.getMetricsHistory(user.id, STAGNATION_WINDOW_DAYS, goalStartedAt)),
+        firstValueFrom(this.adaptationLogApi.getByUserId(user.id)),
       ]);
+      this._adaptationHistory.set(adaptationHistory);
       this._metricsHistory.set(history);
       this._stagnationHistory.set(stagnationHistory);
 
@@ -420,7 +463,7 @@ export class MetabolicStore {
     await this.applyInitialTarget(goal);
     const updated = this.iamStore.currentUser()!;
     const targets = MetabolicTargets.calculate(updated.weight, updated.height, updated.activityLevel, goal);
-    this.publishMetabolicTargetSet(updated.id, targets);
+    this.publishMetabolicTargetSet(updated.id, targets, MetabolicChangeTrigger.GOAL_SWITCH);
     this.eventBus.publish(new GoalSwitched(updated.id, goal));
   }
 
@@ -436,8 +479,11 @@ export class MetabolicStore {
   recalculateForGoal(goal: UserGoal, leanMassKg?: number): void {
     const user = this.iamStore.currentUser();
     if (!user) return;
-    const targets = MetabolicTargets.calculate(user.weight, user.height, user.activityLevel, goal, leanMassKg);
-    this.publishMetabolicTargetSet(user.id, targets);
+    const targets  = MetabolicTargets.calculate(user.weight, user.height, user.activityLevel, goal, leanMassKg);
+    const trigger  = leanMassKg !== undefined
+      ? MetabolicChangeTrigger.BODY_COMPOSITION_UPDATE
+      : MetabolicChangeTrigger.PROFILE_CHANGE;
+    this.publishMetabolicTargetSet(user.id, targets, trigger);
   }
 
   async applyInitialTarget(goal: UserGoal): Promise<void> {

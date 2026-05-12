@@ -672,7 +672,20 @@
     "aria_save_edit": "Guardar",
     "aria_cancel_edit": "Cancelar",
     "today_entry_updated": "Registro de hoy actualizado.",
-    "error_already_logged_today": "Ya tienes un registro de hoy. Se actualizará."
+    "error_already_logged_today": "Ya tienes un registro de hoy. Se actualizará.",
+    "adaptation_log": {
+      "title": "Historial de adaptaciones metabólicas",
+      "no_history": "Aún no se han registrado cambios en los objetivos.",
+      "calorie_delta": "{{ delta }} kcal",
+      "trigger": {
+        "ONBOARDING":              "Configuración inicial",
+        "PROFILE_CHANGE":          "Actualización de perfil",
+        "GOAL_SWITCH":             "Cambio de objetivo",
+        "STAGNATION_RESPONSE":     "Ajuste por estancamiento",
+        "ACTIVITY_TREND":          "Tendencia de actividad",
+        "BODY_COMPOSITION_UPDATE": "Actualización de composición corporal"
+      }
+    }
   },
   "smart_scan": {
     "page_title": "Smart Scan",
