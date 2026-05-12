@@ -135,21 +135,33 @@ export class NutritionStore {
    * {@link MacroName} to key lives here in the application layer, not in the domain.
    */
   readonly todayMacroWarnings = computed((): { approaching: string[]; exceeded: string[] } => {
-    const intake = this.getDailyIntakeFor(new Date());
-    if (!intake) return { approaching: [], exceeded: [] };
-    const totals = this.dailyTotals();
-    const user   = this.iamStore.currentUser();
+    const user = this.iamStore.currentUser();
+    if (!user) return { approaching: [], exceeded: [] };
+    const totals  = this.dailyTotals();
+    const today   = new Date().toISOString().slice(0, 10);
+    const intake  = this.getDailyIntakeFor(new Date()) ?? new DailyIntake({
+      id: 0, userId: user.id,
+      date: today,
+      dailyGoal: user.dailyCalorieTarget ?? 1800,
+      consumed: 0, active: 0,
+    });
     const targets = {
-      protein: user?.proteinTarget ?? 120,
-      carbs:   user?.carbsTarget   ?? 200,
-      fat:     user?.fatTarget     ?? 55,
-      fiber:   user?.fiberTarget   ?? 25,
+      protein: user.proteinTarget ?? 120,
+      carbs:   user.carbsTarget   ?? 200,
+      fat:     user.fatTarget     ?? 55,
+      fiber:   user.fiberTarget   ?? 25,
     };
     const warnings = intake.checkWarnings(totals, targets);
     return {
       approaching: warnings.filter(w => w.isApproaching).map(w => MACRO_I18N[w.macro]),
       exceeded:    warnings.filter(w => w.isExceeded).map(w => MACRO_I18N[w.macro]),
     };
+  });
+
+  /** Active calories burned today, falling back to wearable data when no DB intake record exists. */
+  readonly todayActiveCalories = computed(() => {
+    const intake = this.getDailyIntakeFor(new Date());
+    return intake ? intake.active : this.wearableStore.netCalorieAdjustment();
   });
 
   constructor() {

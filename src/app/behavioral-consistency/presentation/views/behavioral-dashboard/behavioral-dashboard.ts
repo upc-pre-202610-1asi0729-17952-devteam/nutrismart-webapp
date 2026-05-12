@@ -194,7 +194,7 @@ export class BehavioralDashboard implements OnInit {
     const user           = this.currentUser();
     const targetCalories = intake?.dailyGoal ?? user?.dailyCalorieTarget ?? 1800;
     const consumedCalories = Math.round(totals.calories);
-    const activeCalories = intake?.active ?? 0;
+    const activeCalories = this.nutritionStore.todayActiveCalories();
     const net            = targetCalories + activeCalories;
     const remainingCalories = net - consumedCalories;
     const progressPercent = net > 0 ? Math.min(Math.round((consumedCalories / net) * 100), 100) : 0;
