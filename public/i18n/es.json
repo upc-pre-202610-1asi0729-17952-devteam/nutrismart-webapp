@@ -380,6 +380,42 @@
         "simplify_tracking": "Simplifica tu seguimiento — registra solo las comidas principales por ahora.",
         "log_any_meal": "Registra cualquier comida hoy, sin importar lo pequeña que sea. Solo empieza."
       }
+    },
+    "streak": {
+      "days_label": "Días de racha",
+      "message_danger": "¡Cuidado! Tu racha está en peligro.",
+      "message_start": "Empieza hoy tu primer registro.",
+      "message_beginning": "¡Buen comienzo! No te detengas.",
+      "message_habit": "¡Gran ritmo! Estás creando un hábito.",
+      "message_unstoppable": "¡Eres imparable! Tu constancia es clave.",
+      "missed_one": "día perdido",
+      "missed_other": "días perdidos"
+    },
+    "status": {
+      "on_track_title": "✓ En Camino",
+      "at_risk_title": "⚠ En Riesgo",
+      "dropped_title": "✖ Abandonado",
+      "on_track_message": "¡Sigue así! Tu consistencia es estable. Continúa registrando tus comidas diarias.",
+      "at_risk_message": "Adherencia nutricional en riesgo. Has perdido 3 registros consecutivos. ¡Volvamos al camino!",
+      "dropped_message": "Caída conductual detectada. 7 días de inactividad. Accede a tu plan de reactivación para recuperar tu racha.",
+      "unknown_message": "Registra tu primera comida del día para actualizar tu estado."
+    },
+    "week_strip": {
+      "title": "Actividad Semanal",
+      "aria_label": "Consistencia semanal: {{completed}} de 7 días completados"
+    },
+    "summary_card": {
+      "title": "Resumen Semanal",
+      "days_completed": "{{completed}}/7 días cumplidos",
+      "high_consistency": "Alta Consistencia",
+      "moderate_consistency": "Consistencia Moderada",
+      "at_risk_consistency": "Consistencia en Riesgo"
+    },
+    "action_panel": {
+      "title": "Acciones de Hoy",
+      "goal_met": "Meta Cumplida",
+      "skip_log": "Saltar Registro",
+      "sync_fit": "Sincronizar Fit"
     }
   },
   "nutrition": {
@@ -1044,5 +1080,18 @@
     "error_update_failed": "No se pudo actualizar tu plan. Intentá de nuevo.",
     "success_activated": "Plan activado exitosamente.",
     "success_cancelled": "Suscripción cancelada."
+  },
+  "notifications": {
+    "restricted_item": "Este alimento no es compatible con tu restricción dietética activa.",
+    "goal_exceeded": "Superaste tu objetivo calórico del día por {{kcal}} kcal.",
+    "meal_skipped_breakfast": "No registraste el desayuno. ¿Olvidaste hacerlo?",
+    "meal_skipped_lunch": "No registraste el almuerzo. ¿Olvidaste hacerlo?",
+    "meal_skipped_snack": "No registraste tu merienda. ¿Olvidaste hacerlo?",
+    "meal_skipped_dinner": "No registraste la cena. ¿Olvidaste hacerlo?",
+    "drop_detected": "Llevas {{days}} días sin cumplir tus metas. ¿Necesitas un plan más flexible?",
+    "abandonment_risk": "Te extrañamos. Tu plan nutricional te espera cuando estés listo.",
+    "consistency_recovered": "¡Bienvenido de vuelta! Cada día cuenta. Hoy es un buen día.",
+    "streak_milestone": "¡{{days}} días consecutivos! Estás construyendo un hábito real.",
+    "strategy_adjustment": "Tu cuerpo se adaptó. Te sugerimos revisar tu estrategia nutricional."
   }
 }

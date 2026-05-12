@@ -1,0 +1,23 @@
+<div
+  class="toast toast--{{ notification().type }}"
+  role="alert"
+  aria-live="polite"
+  aria-atomic="true">
+
+  <span class="toast__icon" aria-hidden="true">
+    {{ iconMap[notification().type] }}
+  </span>
+
+  <span class="toast__message">
+    {{ notification().messageKey | translate: (notification().params ?? {}) }}
+  </span>
+
+  <button
+    class="toast__close"
+    type="button"
+    (click)="dismiss()"
+    [attr.aria-label]="'common.close' | translate">
+    ✕
+  </button>
+
+</div>

@@ -29,6 +29,7 @@ import { GuardrailSeverity } from '../domain/model/guardrail-severity.enum';
 import { GuardrailType } from '../domain/model/guardrail-type.enum';
 import { NutritionApi } from '../infrastructure/nutrition-api';
 import { WearableStore } from '../../metabolic-adaptation/application/wearable.store';
+import { NotificationService } from '../../shared/application/notification.service';
 
 /**
  * Central state store for the Nutrition Tracking bounded context.
@@ -56,8 +57,9 @@ const MACRO_I18N: Record<MacroName, string> = {
 
 @Injectable({ providedIn: 'root' })
 export class NutritionStore {
-  private readonly nutritionApi  = inject(NutritionApi);
-  private readonly iamStore      = inject(IamStore);
+  private readonly nutritionApi        = inject(NutritionApi);
+  private readonly iamStore            = inject(IamStore);
+  private readonly notificationService = inject(NotificationService);
   private readonly eventBus      = inject(DomainEventBus);
   private readonly wearableStore = inject(WearableStore);
 
@@ -389,6 +391,7 @@ export class NutritionStore {
           restriction ?? blocker.type,
           new Date().toISOString().slice(0, 10),
         ));
+        this.notificationService.notify('danger', 'notifications.restricted_item');
       }
       return;
     }
@@ -506,8 +509,9 @@ export class NutritionStore {
   /**
    * Checks which meal windows have closed without a log and emits {@link MealSkipped}.
    * A Set signal deduplicates emissions so each meal type fires at most once per day.
+   * Called internally after every load and externally by {@link AppSchedulerService}.
    */
-  private checkMealWindows(): void {
+  checkMealWindows(): void {
     const user = this.iamStore.currentUser();
     if (!user) return;
 
@@ -532,10 +536,20 @@ export class NutritionStore {
       if (groups[mealType].length > 0) continue;
 
       this.eventBus.publish(new MealSkipped(user.id, mealType, windowEnd, today));
+      this.notificationService.notify('info', `notifications.meal_skipped_${mealType.toLowerCase()}`);
       emitted.add(key);
     }
 
     this._skippedMealsEmitted.set(emitted);
+  }
+
+  /**
+   * Evaluates end-of-day goal status. Called by {@link AppSchedulerService} at 23:00+.
+   * Delegates to the internal guard-protected {@link checkAndPublishDailyGoalEvents}.
+   */
+  runEndOfDayCheck(): void {
+    const user = this.iamStore.currentUser();
+    if (user) this.checkAndPublishDailyGoalEvents(user.id);
   }
 
   /**
@@ -550,6 +564,8 @@ export class NutritionStore {
     if (intake.exceeded && !this._goalExceededToday()) {
       this._goalExceededToday.set(true);
       this.eventBus.publish(new DailyGoalExceeded(userId, intake.netCalories, today));
+      const exceededBy = Math.abs(Math.round(intake.remaining));
+      this.notificationService.notify('warning', 'notifications.goal_exceeded', { kcal: exceededBy });
       return;
     }
 

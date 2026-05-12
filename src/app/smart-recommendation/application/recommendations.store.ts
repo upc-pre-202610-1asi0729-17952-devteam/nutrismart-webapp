@@ -19,14 +19,16 @@ import { BenefitsDisabled } from '../../shared/domain/benefits-disabled.event';
 import { CompatibleDishesRanked } from '../../shared/domain/compatible-dishes-ranked.event';
 import { ContextualTargetAdjusted } from '../../shared/domain/contextual-target-adjusted.event';
 import { ContextualTargetAdjustment } from '../domain/model/contextual-target-adjustment.value-object';
+import { NotificationService } from '../../shared/application/notification.service';
 
 @Injectable({ providedIn: 'root' })
 export class RecommendationsStore {
-  private api       = inject(RecommendationsApi);
-  private iamStore  = inject(IamStore);
-  private bcStore   = inject(BehavioralConsistencyStore);
-  private eventBus  = inject(DomainEventBus);
-  private translate = inject(TranslateService);
+  private api                 = inject(RecommendationsApi);
+  private iamStore            = inject(IamStore);
+  private bcStore             = inject(BehavioralConsistencyStore);
+  private eventBus            = inject(DomainEventBus);
+  private translate           = inject(TranslateService);
+  private notificationService = inject(NotificationService);
 
   constructor() {
     this.subscribeToAdherenceEvents();
@@ -361,6 +363,7 @@ export class RecommendationsStore {
     this.eventBus.events$
       .pipe(filter(e => e instanceof StagnationDetected))
       .subscribe(async () => {
+        this.notificationService.notify('warning', 'notifications.strategy_adjustment');
         await this.setAdherenceStatus(AdherenceStatus.AT_RISK);
       });
 

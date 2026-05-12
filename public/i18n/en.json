@@ -380,6 +380,42 @@
         "simplify_tracking": "Simplify your tracking — just log the main meals for now.",
         "log_any_meal": "Log any meal today, no matter how small. Just start."
       }
+    },
+    "streak": {
+      "days_label": "Streak days",
+      "message_danger": "Watch out! Your streak is at risk.",
+      "message_start": "Start your first log today.",
+      "message_beginning": "Good start! Keep going.",
+      "message_habit": "Great pace! You're building a habit.",
+      "message_unstoppable": "You're unstoppable! Consistency is key.",
+      "missed_one": "day missed",
+      "missed_other": "days missed"
+    },
+    "status": {
+      "on_track_title": "✓ On Track",
+      "at_risk_title": "⚠ At Risk",
+      "dropped_title": "✖ Dropped",
+      "on_track_message": "Keep it up! Your consistency is stable. Continue logging your daily meals.",
+      "at_risk_message": "Nutritional adherence at risk. You have missed 3 consecutive logs. Let's get back on track!",
+      "dropped_message": "Behavioral drop detected. 7 days of inactivity. Access your reactivation plan to recover your streak.",
+      "unknown_message": "Please log your first meal of the day to update your status."
+    },
+    "week_strip": {
+      "title": "Weekly Activity",
+      "aria_label": "Week consistency: {{completed}} of 7 days completed"
+    },
+    "summary_card": {
+      "title": "Weekly Summary",
+      "days_completed": "{{completed}}/7 days completed",
+      "high_consistency": "High Consistency",
+      "moderate_consistency": "Moderate Consistency",
+      "at_risk_consistency": "At-Risk Consistency"
+    },
+    "action_panel": {
+      "title": "Today's Actions",
+      "goal_met": "Goal Met",
+      "skip_log": "Skip Log",
+      "sync_fit": "Sync Fit"
     }
   },
   "nutrition": {
@@ -1044,5 +1080,18 @@
       "crossfit": "CrossFit",
       "martial_arts": "Martial arts"
     }
+  },
+  "notifications": {
+    "restricted_item": "This food is not compatible with your active dietary restriction.",
+    "goal_exceeded": "You exceeded your daily calorie goal by {{kcal}} kcal.",
+    "meal_skipped_breakfast": "You didn't log your breakfast. Did you forget?",
+    "meal_skipped_lunch": "You didn't log your lunch. Did you forget?",
+    "meal_skipped_snack": "You didn't log your snack. Did you forget?",
+    "meal_skipped_dinner": "You didn't log your dinner. Did you forget?",
+    "drop_detected": "You've been off track for {{days}} days. Need a more flexible plan?",
+    "abandonment_risk": "We've missed you. Your nutritional plan is ready whenever you are.",
+    "consistency_recovered": "Welcome back! Every day counts. Today is a great day.",
+    "streak_milestone": "{{days}} consecutive days! You're building a real habit.",
+    "strategy_adjustment": "Your body has adapted. We suggest reviewing your nutritional strategy."
   }
 }

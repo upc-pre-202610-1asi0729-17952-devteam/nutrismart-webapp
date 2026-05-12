@@ -25,6 +25,7 @@ import { DailyGoalMet } from '../../shared/domain/daily-goal-met.event';
 import { MetabolicTargetSet } from '../../shared/domain/metabolic-target-set.event';
 import { MealSkipped } from '../../shared/domain/meal-skipped.event';
 import { RestrictedItemBlocked } from '../../shared/domain/restricted-item-blocked.event';
+import { NotificationService } from '../../shared/application/notification.service';
 
 /**
  * Central state store for the Behavioral Consistency bounded context.
@@ -40,6 +41,7 @@ export class BehavioralConsistencyStore {
   private eatingBehaviorPatternApi  = inject(EatingBehaviorPatternApi);
   private recoveryPlanApi           = inject(RecoveryPlanApi);
   private eventBus                  = inject(DomainEventBus);
+  private notificationService       = inject(NotificationService);
 
   constructor() {
     this.subscribeToDailyGoalMet();
@@ -228,11 +230,13 @@ export class BehavioralConsistencyStore {
 
     if (wasDegraded && progress.isOnTrack()) {
       this.eventBus.publish(new ConsistencyRecovered(progress.userId));
+      this.notificationService.notify('success', 'notifications.consistency_recovered');
     }
 
     if (progress.streak >= prevMilestone && prevStreak < prevMilestone) {
       const milestone = this.clampMilestone(prevMilestone);
       this.eventBus.publish(new StreakMilestoneReached(progress.userId, progress.streak, milestone));
+      this.notificationService.notify('celebration', 'notifications.streak_milestone', { days: progress.streak });
     }
 
     void this.analyzePattern(progress.userId);
@@ -248,8 +252,10 @@ export class BehavioralConsistencyStore {
 
     if (progress.consecutiveMisses >= 7) {
       this.eventBus.publish(new NutritionalAbandonmentRisk(progress.userId, progress.consecutiveMisses));
+      this.notificationService.notify('danger', 'notifications.abandonment_risk');
     } else if (progress.consecutiveMisses >= 3) {
       this.eventBus.publish(new BehavioralDropDetected(progress.userId, progress.consecutiveMisses));
+      this.notificationService.notify('warning', 'notifications.drop_detected', { days: progress.consecutiveMisses });
     }
 
     void this.analyzePattern(progress.userId);

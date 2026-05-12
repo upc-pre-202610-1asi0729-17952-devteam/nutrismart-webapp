@@ -323,6 +323,14 @@ export class MetabolicStore {
     this._nutritionPlan.set(NutritionPlan.fromTargets(userId, targets));
   }
 
+  /**
+   * Triggers the stagnation check. Called by {@link AppSchedulerService} once per day.
+   * No-ops when data is not yet loaded.
+   */
+  runDailyStagnationCheck(): void {
+    if (this._currentMetric()) this.checkAndPublishStagnation();
+  }
+
   /** Publishes {@link StagnationDetected} when the stagnation window is full. Fires at most once per calendar day. */
   private checkAndPublishStagnation(): void {
     if (!this.hasStagnated()) return;
