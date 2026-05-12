@@ -22,7 +22,7 @@ export class MetabolicAdaptationLogAssembler implements BaseAssembler<
    */
   toEntityFromResource(resource: MetabolicAdaptationLogResource): MetabolicAdaptationLog {
     return new MetabolicAdaptationLog({
-      id:               resource.id ? Number(resource.id) : undefined,
+      id:               resource.id ?? undefined,
       userId:           Number(resource.userId),
       triggeredBy:      resource.triggeredBy as MetabolicChangeTrigger,
       previousCalories: resource.previousCalories,

@@ -22,7 +22,7 @@ export class EatingBehaviorPatternAssembler implements BaseAssembler<
    */
   toEntityFromResource(resource: EatingBehaviorPatternResource): EatingBehaviorPattern {
     return new EatingBehaviorPattern({
-      id:                   resource.id ? Number(resource.id) : undefined,
+      id:                   resource.id ?? undefined,
       userId:               Number(resource.userId),
       weeklyCompletionRate: resource.weeklyCompletionRate,
       currentStreak:        resource.currentStreak,

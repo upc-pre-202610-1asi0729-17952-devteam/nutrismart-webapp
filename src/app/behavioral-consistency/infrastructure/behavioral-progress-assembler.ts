@@ -26,7 +26,7 @@ export class BehavioralProgressAssembler implements BaseAssembler<
    */
   toEntityFromResource(resource: BehavioralProgressResource): BehavioralProgress {
     return new BehavioralProgress({
-      id: resource.id ? Number(resource.id) : undefined,
+      id: resource.id ?? undefined,
       userId: Number(resource.userId),
       adherenceStatus: resource.adherenceStatus as AdherenceStatus,
       streak: resource.streak,
