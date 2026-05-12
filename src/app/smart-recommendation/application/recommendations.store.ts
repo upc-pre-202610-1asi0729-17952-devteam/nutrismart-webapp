@@ -298,7 +298,7 @@ export class RecommendationsStore {
           name:        event.bestDishName,
           description: `${event.bestDishCalories} kcal · P${event.bestDishProtein}g · C${event.bestDishCarbs}g · G${event.bestDishFat}g`,
           kcal:        event.bestDishCalories,
-          protein:     event.bestDishProtein,
+          protein:     `${event.bestDishProtein}g`,
           badge:       'restaurant',
         });
       });
