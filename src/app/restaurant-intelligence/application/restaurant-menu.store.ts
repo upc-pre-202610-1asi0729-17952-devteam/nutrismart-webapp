@@ -60,7 +60,7 @@ export class RestaurantMenuStore {
   });
 
   /** True when the user has a Premium subscription. */
-  readonly canScanMenu = computed(() => this.iamStore.currentUser()?.plan === 'PREMIUM');
+  readonly canScanMenu = computed(() => this.iamStore.currentUser()?.isPremium() ?? false);
 
   /**
    * Projects the nutritional impact of logging each ranked dish from the current
