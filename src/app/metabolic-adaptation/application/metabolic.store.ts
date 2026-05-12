@@ -19,6 +19,7 @@ import { BodyComposition } from '../domain/model/body-composition.entity';
 import { NutritionPlan } from '../domain/model/nutrition-plan.entity';
 import { MetabolicAdaptationLog } from '../domain/model/metabolic-adaptation-log.entity';
 import { MetabolicChangeTrigger } from '../domain/model/metabolic-change-trigger.enum';
+import { ActivityTrendDetected } from '../domain/events/activity-trend-detected.event';
 
 const STAGNATION_WINDOW_DAYS   = 14;
 const MIN_GOAL_COMMITMENT_DAYS = 28;
@@ -190,6 +191,7 @@ export class MetabolicStore {
   constructor() {
     this.subscribeToOnboardingCompleted();
     this.subscribeToProfileUpdated();
+    this.subscribeToActivityTrendDetected();
   }
 
   /**
@@ -202,6 +204,35 @@ export class MetabolicStore {
       .subscribe((e) => {
         const targets = MetabolicTargets.calculate(e.weight, e.height, e.activityLevel, e.goal);
         this.publishMetabolicTargetSet(e.userId, targets, MetabolicChangeTrigger.ONBOARDING);
+      });
+  }
+
+  /**
+   * Reacts to {@link ActivityTrendDetected}: adds the recommended TDEE
+   * adjustment on top of the current targets and persists a
+   * {@link MetabolicAdaptationLog} with trigger {@link MetabolicChangeTrigger.ACTIVITY_TREND}.
+   */
+  private subscribeToActivityTrendDetected(): void {
+    this.eventBus.events$
+      .pipe(filter((e): e is ActivityTrendDetected => e instanceof ActivityTrendDetected))
+      .subscribe((e) => {
+        const user = this.iamStore.currentUser();
+        if (!user) return;
+
+        const currentTargets = MetabolicTargets.calculate(
+          user.weight,
+          user.height,
+          user.activityLevel,
+          user.goal,
+          this._composition()?.leanMassKg(),
+        );
+
+        const adjusted = MetabolicTargets.withActivityAdjustment(
+          currentTargets,
+          e.recommendedTdeeAdjustment,
+        );
+
+        this.publishMetabolicTargetSet(user.id, adjusted, MetabolicChangeTrigger.ACTIVITY_TREND);
       });
   }
 

@@ -691,6 +691,12 @@
         "ACTIVITY_TREND":          "Tendencia de actividad",
         "BODY_COMPOSITION_UPDATE": "Actualización de composición corporal"
       }
+    },
+    "activity_trend": {
+      "detected":          "Tendencia de actividad alta detectada",
+      "average_burned":    "Promedio de {{ kcal }} kcal/día quemadas en los últimos 7 días",
+      "tdee_adjusted":     "Objetivo calórico diario ajustado en +{{ delta }} kcal",
+      "threshold_reached": "Umbral de actividad alcanzado (≥ 300 kcal/día promedio)"
     }
   },
   "smart_scan": {

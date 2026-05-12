@@ -9,6 +9,7 @@ import { ActivityType } from '../domain/model/activity-type.value-object';
 import { WearableConnected } from '../domain/events/wearable-connected.event';
 import { ManualActivityImported } from '../domain/events/manual-activity-imported.event';
 import { CaloricTargetAdjusted } from '../domain/events/caloric-target-adjusted.event';
+import { ActivityTrendDetected } from '../domain/events/activity-trend-detected.event';
 
 @Injectable({ providedIn: 'root' })
 export class WearableStore {
@@ -18,11 +19,12 @@ export class WearableStore {
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
-  private _connection        = signal<WearableConnection | null>(null);
-  private _activityLogs      = signal<ActivityLog[]>([]);
-  private _estimatedCalories = signal<number>(0);
-  private _loading           = signal<boolean>(false);
-  private _error             = signal<string | null>(null);
+  private _connection           = signal<WearableConnection | null>(null);
+  private _activityLogs         = signal<ActivityLog[]>([]);
+  private _estimatedCalories    = signal<number>(0);
+  private _loading              = signal<boolean>(false);
+  private _error                = signal<string | null>(null);
+  private _lastTrendDetectedAt  = signal<string | null>(null);
 
   // ─── Public Read-only Signals ─────────────────────────────────────────────
 
@@ -128,11 +130,52 @@ export class WearableStore {
     try {
       const updated = await firstValueFrom(this.api.syncNow(connection));
       this._connection.set(updated);
+      this.analyzeWeeklyTrend();
     } catch {
       this._error.set('physical_activity.error_sync');
     } finally {
       this._loading.set(false);
     }
+  }
+
+  // ─── Manual Activity ──────────────────────────────────────────────────────
+
+  // ─── Trend Analysis ───────────────────────────────────────────────────────
+
+  /**
+   * Analyses the last 7 days of activity logs and publishes
+   * {@link ActivityTrendDetected} when the daily average exceeds 300 kcal.
+   *
+   * A 24-hour cooldown prevents duplicate events when multiple activities
+   * are logged on the same day.
+   */
+  private analyzeWeeklyTrend(): void {
+    const user = this.iamStore.currentUser();
+    if (!user) return;
+
+    const lastDetected = this._lastTrendDetectedAt();
+    if (lastDetected) {
+      const hoursSinceLast = (Date.now() - new Date(lastDetected).getTime()) / 3_600_000;
+      if (hoursSinceLast < 24) return;
+    }
+
+    const logs            = this.weekLogs();
+    const totalBurned     = logs.reduce((sum, l) => sum + l.caloriesBurned, 0);
+    const averagePerDay   = Math.round(totalBurned / 7);
+    const TREND_THRESHOLD = 300;
+
+    if (averagePerDay < TREND_THRESHOLD) return;
+
+    const recommendedTdeeAdjustment = Math.round(averagePerDay * 0.5);
+    const detectedAt                = new Date().toISOString();
+
+    this.eventBus.publish(new ActivityTrendDetected(
+      user.id,
+      averagePerDay,
+      recommendedTdeeAdjustment,
+      detectedAt,
+    ));
+    this._lastTrendDetectedAt.set(detectedAt);
   }
 
   // ─── Manual Activity ──────────────────────────────────────────────────────
@@ -170,6 +213,7 @@ export class WearableStore {
         user.id, previousTarget, previousTarget + calories, calories,
       ));
       this._estimatedCalories.set(0);
+      this.analyzeWeeklyTrend();
     } catch {
       this._error.set('physical_activity.error_log_activity');
     } finally {

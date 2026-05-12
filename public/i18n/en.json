@@ -691,6 +691,12 @@
         "ACTIVITY_TREND":          "Activity trend",
         "BODY_COMPOSITION_UPDATE": "Body composition update"
       }
+    },
+    "activity_trend": {
+      "detected":          "High activity trend detected",
+      "average_burned":    "Avg. {{ kcal }} kcal/day burned over the last 7 days",
+      "tdee_adjusted":     "Daily calorie target adjusted by +{{ delta }} kcal",
+      "threshold_reached": "Activity threshold reached (≥ 300 kcal/day avg)"
     }
   },
   "smart_scan": {

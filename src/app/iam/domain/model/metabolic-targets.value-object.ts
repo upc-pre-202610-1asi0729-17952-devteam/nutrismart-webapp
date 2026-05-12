@@ -98,4 +98,29 @@ export class MetabolicTargets {
       fiberTarget: 25,
     });
   }
+
+  /**
+   * Produces a new {@link MetabolicTargets} by adding an activity-trend
+   * adjustment on top of an existing set of targets.
+   *
+   * Extra calories are allocated entirely to carbohydrates (primary fuel for
+   * aerobic activity). Protein, fat and fibre remain unchanged.
+   *
+   * @param base             - Existing targets to adjust.
+   * @param extraKcalPerDay  - Daily calorie increment derived from the activity trend.
+   * @returns A new immutable {@link MetabolicTargets} instance.
+   */
+  static withActivityAdjustment(
+    base: MetabolicTargets,
+    extraKcalPerDay: number,
+  ): MetabolicTargets {
+    const extraCarbs = Math.round(extraKcalPerDay / 4);
+    return new MetabolicTargets({
+      dailyCalorieTarget: base.dailyCalorieTarget + extraKcalPerDay,
+      proteinTarget:      base.proteinTarget,
+      carbsTarget:        base.carbsTarget + extraCarbs,
+      fatTarget:          base.fatTarget,
+      fiberTarget:        base.fiberTarget,
+    });
+  }
 }
