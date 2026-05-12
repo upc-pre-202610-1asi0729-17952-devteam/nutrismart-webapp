@@ -1,6 +1,6 @@
 <div class="analytics-dashboard-container">
   <header class="dashboard-header">
-    <h1 class="dashboard-title">Analytics and progress</h1>
+    <h1 class="dashboard-title">{{ 'analytics.page_title' | translate }}</h1>
     <div class="header-actions">
       <app-period-toggle
         [selectedPeriod]="selectedPeriod()"
@@ -8,50 +8,66 @@
       ></app-period-toggle>
       <app-export-pdf-button
         [isPremiumUser]="isPremiumUser()"
+        [isLoading]="loading()"
         (exportPdf)="onExportPdf()"
       ></app-export-pdf-button>
     </div>
   </header>
 
-  <section class="metric-cards-grid">
-    <app-metric-card [vm]="averageCalorieIntakeVm()"></app-metric-card>
-    <app-metric-card [vm]="averageProteinIntakeVm()"></app-metric-card>
-    <app-metric-card [vm]="currentStreakVm()"></app-metric-card>
-    <app-metric-card [vm]="weightChangeVm()"></app-metric-card>
-  </section>
-
-  <section class="charts-grid">
-    <app-daily-calories-chart
-      [dailyCaloriesHistory]="analyticsData()?.dailyCaloriesHistory ?? []"
-      [goal]="dailyCaloriesGoal()"
-      [period]="selectedPeriod()"
-    ></app-daily-calories-chart>
-    <app-average-macros-panel
-      [macroAnalysis]="analyticsData()?.macroAnalysis ?? []"
-      [daysWithCompleteLog]="analyticsData()?.daysWithCompleteLog ?? []"
-    ></app-average-macros-panel>
-    <app-weight-evolution-chart
-      [weightEvolution]="analyticsData()?.weightEvolution ?? []"
-    ></app-weight-evolution-chart>
-  </section>
-
-  @if (showAdherenceHistory()) {
-    <section class="adherence-section">
-      <app-adherence-history-timeline
-        [adherenceHistory]="analyticsData()?.adherenceHistory ?? []"
-      ></app-adherence-history-timeline>
+  @if (loading()) {
+    <div class="state-message" role="status" aria-live="polite">
+      {{ 'analytics.loading' | translate }}
+    </div>
+  } @else if (error()) {
+    <div class="state-message state-error" role="alert">
+      {{ error()! | translate }}
+    </div>
+  } @else if (!analyticsData()) {
+    <div class="state-message" role="status">
+      {{ 'analytics.empty' | translate }}
+    </div>
+  } @else {
+    <section class="metric-cards-grid" aria-label="Metric summary">
+      <app-metric-card [vm]="averageCalorieIntakeVm()"></app-metric-card>
+      <app-metric-card [vm]="averageProteinIntakeVm()"></app-metric-card>
+      <app-metric-card [vm]="currentStreakVm()"></app-metric-card>
+      <app-metric-card [vm]="weightChangeVm()"></app-metric-card>
     </section>
-  }
 
-  <section class="behavioral-events-section">
-    <app-behavioral-events-list
-      [behavioralEvents]="analyticsData()?.behavioralEvents ?? []"
-    ></app-behavioral-events-list>
-  </section>
+    <section class="charts-grid" aria-label="Progress charts">
+      <app-daily-calories-chart
+        [dailyCaloriesHistory]="analyticsData()!.dailyCaloriesHistory"
+        [goal]="dailyCaloriesGoal()"
+        [period]="selectedPeriod()"
+      ></app-daily-calories-chart>
+      <app-average-macros-panel
+        [macroAnalysis]="analyticsData()!.macroAnalysis"
+        [daysWithCompleteLog]="analyticsData()!.daysWithCompleteLog"
+        [proteinCompliance]="analyticsData()!.proteinCompliance"
+      ></app-average-macros-panel>
+      <app-weight-evolution-chart
+        [weightEvolution]="analyticsData()!.weightEvolution"
+        [goalWeight]="analyticsData()!.goalWeight"
+      ></app-weight-evolution-chart>
+    </section>
+
+    @if (showAdherenceHistory()) {
+      <section class="adherence-section" aria-label="Adherence and behavioral data">
+        <app-adherence-history-timeline
+          [adherenceHistory]="analyticsData()!.adherenceHistory ?? []"
+        ></app-adherence-history-timeline>
+        <app-behavioral-events-list
+          [behavioralEvents]="analyticsData()!.behavioralEvents ?? []"
+        ></app-behavioral-events-list>
+      </section>
+    }
+  }
 
   <app-export-pdf-report-view
     [isVisible]="showExportPdfModal()"
+    [isLoading]="loading()"
+    [errorKey]="error()"
     (close)="onCloseExportPdfModal()"
-    (reportGenerated)="onReportGenerated()"
+    (exportRequest)="onExportRequest($event)"
   ></app-export-pdf-report-view>
 </div>

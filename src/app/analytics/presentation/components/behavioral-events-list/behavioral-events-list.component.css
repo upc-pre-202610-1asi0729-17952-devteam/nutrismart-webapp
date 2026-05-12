@@ -1,42 +1,46 @@
-.behavioral-events-list {
-  padding: 18px 20px;
-}
+.behavioral-events-list { }
 
 .panel-title {
-  margin: 0 0 24px;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: #1f1f1f;
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
 }
 
 .event-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .event-item {
   display: flex;
   align-items: baseline;
-  margin-bottom: 10px;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--nutrismart-border);
+  font-size: 13px;
 }
+
+.event-item:last-child { border-bottom: none; }
 
 .event-date {
   font-weight: 600;
-  color: #555555;
-  margin-right: 10px;
+  color: var(--nutrismart-text-mid);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .event-description {
-  color: #1f1f1f;
+  color: var(--nutrismart-text-dark);
   line-height: 1.4;
 }
 
 .no-data-message {
+  padding: 24px 0;
   text-align: center;
-  padding: 20px;
-  font-size: 14px;
-  color: #8b8b8b;
+  font-size: 13px;
+  color: var(--nutrismart-text-light);
 }

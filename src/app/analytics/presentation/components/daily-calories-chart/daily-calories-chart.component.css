@@ -1,54 +1,40 @@
 .daily-calories-chart {
-  padding: 18px 20px;
+  min-height: 200px;
 }
 
 .chart-title {
-  margin: 0 0 24px;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: #1f1f1f;
+  margin: 0 0 20px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
 }
 
 .chart-container {
   width: 100%;
-  overflow-x: auto; /* Allow scrolling for many bars */
-  padding-bottom: 10px; /* Space for scrollbar */
+  overflow-x: auto;
+  padding-bottom: 8px;
 }
 
 .bar-chart {
   display: block;
   width: 100%;
-  min-width: 300px; /* Ensure chart is not too small */
-  height: 200px; /* Fixed height for the SVG area */
+  min-width: 280px;
+  height: 200px;
 }
 
-/* Bar styles */
-.bar-over-goal {
-  fill: #c65353; /* Red */
-}
+.bar-over-goal  { fill: #e05454; }
+.bar-on-target  { fill: var(--nutrismart-primary); }
+.bar-no-data    { fill: var(--nutrismart-border); }
 
-.bar-on-target {
-  fill: #55938e; /* Teal */
-}
+.bar-chart text { font-family: 'Poppins', sans-serif; }
 
-.bar-no-data {
-  fill: #e0e0e0; /* Grey */
-}
-
-/* Text styles for values and days */
-.bar-chart text {
-  font-family: inherit;
-}
-
-/* Legend styles */
 .chart-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
-  margin-top: 20px;
+  gap: 12px;
+  margin-top: 16px;
   font-size: 12px;
-  color: #555555;
+  color: var(--nutrismart-text-mid);
 }
 
 .legend-item {
@@ -58,31 +44,26 @@
 }
 
 .legend-color-box {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
 }
 
-.legend-goal {
-  background: none;
-  border: 1px dashed #8b8b8b;
-}
-
-.legend-over-goal {
-  background-color: #c65353;
-}
-
-.legend-on-target {
-  background-color: #55938e;
-}
-
-.legend-no-data {
-  background-color: #e0e0e0;
-}
+.legend-goal       { background: none; border: 1px dashed var(--nutrismart-text-light); }
+.legend-over-goal  { background: #e05454; }
+.legend-on-target  { background: var(--nutrismart-primary); }
+.legend-no-data    { background: var(--nutrismart-border); }
 
 .chart-footer {
-  margin-top: 15px;
-  font-size: 14px;
+  margin-top: 12px;
+  font-size: 13px;
   font-weight: 600;
-  color: #1f1f1f;
+  color: var(--nutrismart-text-dark);
+}
+
+.no-data-message {
+  padding: 32px 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--nutrismart-text-light);
 }

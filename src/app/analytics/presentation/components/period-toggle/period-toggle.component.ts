@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule, NgClass } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { AnalyticsPeriod } from '../../../domain/model/analytics-models';
 
 @Component({
   selector: 'app-period-toggle',
   standalone: true,
-  imports: [CommonModule],
+  imports: [TranslateModule],
   templateUrl: './period-toggle.component.html',
   styleUrl: './period-toggle.component.css',
 })
@@ -13,10 +13,10 @@ export class PeriodToggleComponent {
   @Input({ required: true }) selectedPeriod!: AnalyticsPeriod;
   @Output() periodChange = new EventEmitter<AnalyticsPeriod>();
 
-  periods: { label: string; value: AnalyticsPeriod }[] = [
-    { label: '7 days', value: '7_DAYS' },
-    { label: '30 days', value: '30_DAYS' },
-    { label: '90 days', value: '90_DAYS' },
+  readonly periods: { labelKey: string; value: AnalyticsPeriod }[] = [
+    { labelKey: 'analytics.period_7_days',  value: '7_DAYS'  },
+    { labelKey: 'analytics.period_30_days', value: '30_DAYS' },
+    { labelKey: 'analytics.period_90_days', value: '90_DAYS' },
   ];
 
   onSelectPeriod(period: AnalyticsPeriod): void {

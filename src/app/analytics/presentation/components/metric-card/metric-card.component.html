@@ -1,5 +1,5 @@
-<article class="metric-card">
+<article class="metric-card nutrismart-card" role="region" [attr.aria-label]="vm.label">
   <span class="metric-label">{{ vm.label }}</span>
-  <strong>{{ vm.value }}</strong>
-  <p [ngClass]="vm.statusClass">{{ vm.description }}</p>
+  <strong class="metric-value">{{ vm.value }}</strong>
+  <p class="metric-description" [ngClass]="vm.statusClass">{{ vm.description }}</p>
 </article>
