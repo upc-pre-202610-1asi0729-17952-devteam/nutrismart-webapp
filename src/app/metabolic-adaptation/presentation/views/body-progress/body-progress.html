@@ -8,7 +8,7 @@
     </div>
     <div class="header-actions">
       <button class="btn btn--primary" [disabled]="store.loading()" (click)="onOpenLogModal()">
-        {{ 'body_progress.log_weight_btn' | translate }}
+        {{ (store.hasLoggedToday() ? 'body_progress.update_weight_btn' : 'body_progress.log_weight_btn') | translate }}
       </button>
     </div>
   </header>
@@ -29,7 +29,7 @@
         {{ 'body_progress.stale_banner' | translate:{ date: formattedUpdatedLabel() } }}
       </span>
       <button class="btn btn--primary btn--sm" (click)="onOpenLogModal()">
-        {{ 'body_progress.log_now' | translate }}
+        {{ (store.hasLoggedToday() ? 'body_progress.update_weight_btn' : 'body_progress.log_now') | translate }}
       </button>
     </div>
   }
@@ -262,7 +262,7 @@
                          [ngModel]="goalInputModel()"
                          (ngModelChange)="onGoalModelChange($event)"
                          [placeholder]="'body_progress.placeholder_goal' | translate"
-                         min="0.1" max="500" step="0.1" />
+                         min="30" [max]="(store.currentMetric()?.weightKg ?? 500) - 0.1" step="0.1" />
                   <button class="icon-btn icon-btn--confirm" type="button"
                           [attr.aria-label]="'body_progress.aria_confirm' | translate"
                           [disabled]="goalInputInvalid()"
@@ -426,6 +426,32 @@
   </div>
 
 </div>
+
+<!-- ── Goal auto-set notification modal ──────────────────────── -->
+@if (showGoalAutoSetModal()) {
+  <div class="modal-backdrop">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="goal-auto-set-title">
+      <div class="modal-header">
+        <h3 class="modal-title" id="goal-auto-set-title">
+          {{ 'body_progress.goal_auto_set_title' | translate }}
+        </h3>
+      </div>
+      <p class="modal-desc">
+        {{ 'body_progress.goal_auto_set_desc' | translate:{
+          weight: (store.currentMetric()?.targetWeightKg ?? 0 | number:'1.1-1')
+        } }}
+      </p>
+      <div class="modal-actions">
+        <button class="btn btn--outline" (click)="onAdjustAutoGoal()">
+          {{ 'body_progress.goal_auto_set_adjust' | translate }}
+        </button>
+        <button class="btn btn--primary" (click)="onConfirmAutoGoal()">
+          {{ 'body_progress.goal_auto_set_confirm' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
 
 <!-- ── Composition update modal ──────────────────────────────── -->
 @if (showCompositionModal()) {

@@ -510,6 +510,11 @@
     "error_weight_max": "Ingresa un peso válido (máx. 500 kg).",
     "error_weight_invalid": "Ingresa un peso válido.",
     "error_goal_below_current": "El peso objetivo debe ser menor a tu peso actual ({{ current }} kg).",
+    "error_goal_below_min": "El peso objetivo debe ser al menos {{ min }} kg.",
+    "goal_auto_set_title": "Peso objetivo asignado automáticamente",
+    "goal_auto_set_desc": "Basándonos en un IMC saludable (24.9), hemos establecido tu peso objetivo en {{ weight }} kg. Puedes ajustarlo en cualquier momento.",
+    "goal_auto_set_confirm": "Entendido",
+    "goal_auto_set_adjust": "Ajustar"
     "composition_panel": "Actualizar composición corporal",
     "waist_label": "Cintura (cm)",
     "neck_label": "Cuello (cm)",

@@ -6,6 +6,7 @@ import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@a
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 const WEIGHT_MAX_KG = 500;
+const MIN_GOAL_KG   = 30;
 const WAIST_MIN_CM  = 30;
 const WAIST_MAX_CM  = 200;
 import { MetabolicStore } from '../../../application/metabolic.store';
@@ -42,6 +43,8 @@ export class BodyProgressView implements OnInit {
   protected isEditingGoal  = signal<boolean>(false);
   protected goalInputModel = signal<string>('');
   protected goalInputError = signal<string>('');
+
+  protected showGoalAutoSetModal = signal<boolean>(false);
 
   // ─── Composition update modal ─────────────────────────────────────────────
 
@@ -113,9 +116,11 @@ export class BodyProgressView implements OnInit {
 
   protected readonly goalInputInvalid = computed(() => {
     const val = this.goalInputModel();
-    const raw = parseFloat(val);
     if (!val.trim()) return false;
-    return isNaN(raw) || raw <= 0;
+    const raw = parseFloat(val);
+    if (isNaN(raw) || raw <= 0 || raw < MIN_GOAL_KG) return true;
+    const current = this.store.currentMetric()?.weightKg;
+    return current !== undefined && raw >= current;
   });
 
   protected formattedProjectedDate = computed(() => {
@@ -194,6 +199,14 @@ export class BodyProgressView implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.store.initialise();
+    const metric = this.store.currentMetric();
+    const user   = this.iamStore.currentUser();
+    if (metric && user && !this.store.isMuscleGain() && !(metric.targetWeightKg > 0)) {
+      await this.store.applyInitialTarget(user.goal);
+      if ((this.store.currentMetric()?.targetWeightKg ?? 0) > 0) {
+        this.showGoalAutoSetModal.set(true);
+      }
+    }
   }
 
   // ─── Global keyboard handler ──────────────────────────────────────────────
@@ -254,6 +267,15 @@ export class BodyProgressView implements OnInit {
 
   // ─── Inline goal weight edit ──────────────────────────────────────────────
 
+  onConfirmAutoGoal(): void {
+    this.showGoalAutoSetModal.set(false);
+  }
+
+  onAdjustAutoGoal(): void {
+    this.showGoalAutoSetModal.set(false);
+    this.onStartEditGoal();
+  }
+
   onStartEditGoal(): void {
     const target = this.store.currentMetric()?.targetWeightKg;
     this.goalInputModel.set(target && target > 0 ? target.toString() : '');
@@ -268,13 +290,12 @@ export class BodyProgressView implements OnInit {
   }
 
   async onSaveGoalInline(): Promise<void> {
-    const raw = parseFloat(this.goalInputModel());
-
-    if (!this.goalInputModel().trim() || isNaN(raw) || raw <= 0) {
-      this.goalInputError.set(this.translate.instant('body_progress.error_weight_invalid'));
+    const raw   = parseFloat(this.goalInputModel());
+    const error = this.validateGoalWeight(raw);
+    if (!this.goalInputModel().trim() || error) {
+      this.goalInputError.set(error || this.translate.instant('body_progress.error_weight_invalid'));
       return;
     }
-
     this.goalInputError.set('');
     await this.store.setTargetWeight(raw);
     this.isEditingGoal.set(false);
@@ -283,7 +304,21 @@ export class BodyProgressView implements OnInit {
 
   onGoalModelChange(value: string): void {
     this.goalInputModel.set(value);
-    this.goalInputError.set('');
+    this.goalInputError.set(value.trim() ? this.validateGoalWeight(parseFloat(value)) : '');
+  }
+
+  private validateGoalWeight(raw: number): string {
+    if (isNaN(raw) || raw <= 0) {
+      return this.translate.instant('body_progress.error_weight_invalid');
+    }
+    if (raw < MIN_GOAL_KG) {
+      return this.translate.instant('body_progress.error_goal_below_min', { min: MIN_GOAL_KG });
+    }
+    const current = this.store.currentMetric()?.weightKg;
+    if (current !== undefined && raw >= current) {
+      return this.translate.instant('body_progress.error_goal_below_current', { current: current.toFixed(1) });
+    }
+    return '';
   }
 
   // ─── Composition update modal ─────────────────────────────────────────────

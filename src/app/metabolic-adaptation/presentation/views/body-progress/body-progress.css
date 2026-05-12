@@ -605,6 +605,13 @@
   margin-top: 4px;
 }
 
+.modal-desc {
+  font-size: 0.875rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+  line-height: 1.5;
+  margin: 0;
+}
+
 /* ── Composition subtitle ── */
 .composition-subtitle {
   font-size: 11px;

@@ -510,6 +510,11 @@
     "error_weight_max": "Please enter a valid weight (max 500 kg).",
     "error_weight_invalid": "Please enter a valid weight.",
     "error_goal_below_current": "Goal weight must be lower than your current weight ({{ current }} kg).",
+    "error_goal_below_min": "Goal weight must be at least {{ min }} kg.",
+    "goal_auto_set_title": "Goal weight set automatically",
+    "goal_auto_set_desc": "Based on a healthy BMI (24.9), we've set your goal weight to {{ weight }} kg. You can adjust it anytime.",
+    "goal_auto_set_confirm": "Got it",
+    "goal_auto_set_adjust": "Adjust"
     "composition_panel": "Update body composition",
     "waist_label": "Waist (cm)",
     "neck_label": "Neck (cm)",
