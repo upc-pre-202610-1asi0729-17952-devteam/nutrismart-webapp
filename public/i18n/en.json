@@ -757,7 +757,14 @@
     "metric_avg_protein_above": "✓ Above target",
     "metric_avg_protein_below": "⚠ Below target",
     "metric_streak_label": "CURRENT STREAK",
+    "metric_streak_unit": "days",
     "metric_streak_description": "Consecutive days logged",
+    "macros": {
+      "protein": "Protein",
+      "carbs": "Carbohydrates",
+      "fat": "Fat",
+      "fiber": "Fiber"
+    },
     "metric_weight_label": "WEIGHT THIS PERIOD",
     "metric_weight_down": "▼ Down",
     "metric_weight_up": "▲ Up",

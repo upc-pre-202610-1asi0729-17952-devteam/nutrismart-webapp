@@ -3,6 +3,7 @@ export type WeightChangeDirection = 'up' | 'down' | 'none';
 export type WeightChangeStatus = 'positive' | 'negative' | 'neutral';
 export type AdherenceStatus = 'ON_TRACK' | 'AT_RISK' | 'DROPPED' | 'RECOVERED';
 export type MacroColorKey = 'macro-protein' | 'macro-carbs' | 'macro-fat' | 'macro-fiber';
+export type MacroKey = 'protein' | 'carbs' | 'fat' | 'fiber';
 
 export interface DailyCaloriesHistory {
   date: string;
@@ -11,11 +12,14 @@ export interface DailyCaloriesHistory {
 }
 
 export interface MacroAnalysis {
+  /** Stable identifier used to look up this macro programmatically. */
+  key: MacroKey;
+  /** i18n translation key rendered in the UI. */
   name: string;
   consumed: number;
   target: number;
   colorClass: MacroColorKey;
-  isAboveTarget?: boolean;
+  isAboveTarget: boolean;
 }
 
 export interface AdherenceHistoryEntry {

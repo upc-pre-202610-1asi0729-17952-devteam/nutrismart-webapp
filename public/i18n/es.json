@@ -757,7 +757,14 @@
     "metric_avg_protein_above": "✓ Por encima del objetivo",
     "metric_avg_protein_below": "⚠ Por debajo del objetivo",
     "metric_streak_label": "RACHA ACTUAL",
+    "metric_streak_unit": "días",
     "metric_streak_description": "Días consecutivos registrados",
+    "macros": {
+      "protein": "Proteína",
+      "carbs": "Carbohidratos",
+      "fat": "Grasas",
+      "fiber": "Fibra"
+    },
     "metric_weight_label": "PESO EN EL PERÍODO",
     "metric_weight_down": "▼ A la baja",
     "metric_weight_up": "▲ Al alza",

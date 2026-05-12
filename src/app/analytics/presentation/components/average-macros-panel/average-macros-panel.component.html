@@ -7,13 +7,13 @@
         <div class="macro-row-header">
           <span>
             <i class="macro-dot" [ngClass]="macro.colorClass"></i>
-            {{ macro.name }}
+            {{ macro.name | translate }}
           </span>
           <strong [class.macro-above-target]="macro.isAboveTarget">
             {{ macro.consumed }}g / {{ macro.target }}g
           </strong>
         </div>
-        <div class="macro-track" [attr.aria-label]="macro.name + ': ' + macroPercent(macro.consumed, macro.target) + '%'">
+        <div class="macro-track" [attr.aria-label]="(macro.name | translate) + ': ' + macroPercent(macro.consumed, macro.target) + '%'">
           <div
             class="macro-fill"
             [ngClass]="macro.colorClass"

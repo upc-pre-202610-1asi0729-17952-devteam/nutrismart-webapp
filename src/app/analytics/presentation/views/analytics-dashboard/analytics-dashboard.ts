@@ -1,7 +1,6 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AnalyticsStore } from '../../../application/analytics.store';
-import { IamStore } from '../../../../iam/application/iam.store';
 import { AnalyticsPeriod } from '../../../domain/model/analytics-models';
 import { MetricCardComponent } from '../../components/metric-card/metric-card.component';
 import { PeriodToggleComponent } from '../../components/period-toggle/period-toggle.component';
@@ -12,7 +11,6 @@ import { WeightEvolutionChartComponent } from '../../components/weight-evolution
 import { AdherenceHistoryTimelineComponent } from '../../components/adherence-history-timeline/adherence-history-timeline.component';
 import { BehavioralEventsListComponent } from '../../components/behavioral-events-list/behavioral-events-list.component';
 import { ExportPdfReportViewComponent, ExportPdfRequest } from '../export-pdf-report-view/export-pdf-report-view.component';
-import { SubscriptionPlan } from '../../../../iam/domain/model/subscription-plan.enum';
 
 @Component({
   selector: 'app-analytics-dashboard',
@@ -34,32 +32,23 @@ import { SubscriptionPlan } from '../../../../iam/domain/model/subscription-plan
 })
 export class AnalyticsDashboardComponent implements OnInit {
   protected readonly analyticsStore = inject(AnalyticsStore);
-  protected readonly iamStore = inject(IamStore);
   private readonly translate = inject(TranslateService);
 
-  protected readonly analyticsData = this.analyticsStore.currentAnalyticsData;
-  protected readonly loading = this.analyticsStore.loading;
-  protected readonly error = this.analyticsStore.error;
-  protected readonly selectedPeriod = this.analyticsStore.selectedPeriod;
-
-  private readonly _showExportPdfModal = signal<boolean>(false);
-  readonly showExportPdfModal = this._showExportPdfModal.asReadonly();
-
-  readonly isPremiumUser = computed(() =>
-    this.iamStore.currentUser()?.plan === SubscriptionPlan.PREMIUM
-  );
+  protected readonly analyticsData    = this.analyticsStore.currentAnalyticsData;
+  protected readonly loading          = this.analyticsStore.loading;
+  protected readonly error            = this.analyticsStore.error;
+  protected readonly selectedPeriod   = this.analyticsStore.selectedPeriod;
+  protected readonly showExportPdfModal = this.analyticsStore.exportPdfModalOpen;
+  protected readonly isPremiumUser    = this.analyticsStore.isPremiumUser;
 
   readonly dailyCaloriesGoal = computed(() =>
     this.analyticsData()?.dailyCaloriesHistory?.[0]?.goal ?? 1800
   );
 
-  readonly showAdherenceHistory = computed(() =>
-    this.selectedPeriod() !== '7_DAYS'
-  );
+  readonly showAdherenceHistory = computed(() => this.selectedPeriod() !== '7_DAYS');
 
   readonly averageCalorieIntakeVm = computed(() => {
-    const data = this.analyticsData();
-    const avg = data?.averageCalorieIntake ?? 0;
+    const avg  = this.analyticsData()?.averageCalorieIntake ?? 0;
     const goal = this.dailyCaloriesGoal();
     const isOver = avg > goal;
     return {
@@ -73,11 +62,10 @@ export class AnalyticsDashboardComponent implements OnInit {
   });
 
   readonly averageProteinIntakeVm = computed(() => {
-    const data = this.analyticsData();
-    const protein = data?.macroAnalysis.find(m => m.name === 'Protein');
+    const protein  = this.analyticsData()?.macroAnalysis.find(m => m.key === 'protein');
     const consumed = protein?.consumed ?? 0;
-    const target = protein?.target ?? 1;
-    const ratio = consumed / target;
+    const target   = protein?.target ?? 1;
+    const ratio    = consumed / target;
     let descKey: string;
     let statusClass: string;
     if (protein?.isAboveTarget || ratio >= 1) {
@@ -100,17 +88,17 @@ export class AnalyticsDashboardComponent implements OnInit {
 
   readonly currentStreakVm = computed(() => ({
     label: this.translate.instant('analytics.metric_streak_label'),
-    value: `${this.analyticsData()?.currentStreak ?? 0} días`,
+    value: `${this.analyticsData()?.currentStreak ?? 0} ${this.translate.instant('analytics.metric_streak_unit')}`,
     description: this.translate.instant('analytics.metric_streak_description'),
     statusClass: 'status-on-track',
   }));
 
   readonly weightChangeVm = computed(() => {
-    const data = this.analyticsData();
-    const change = data?.weightChange ?? 0;
+    const data      = this.analyticsData();
+    const change    = data?.weightChange ?? 0;
     const direction = data?.weightChangeDirection ?? 'none';
-    const status = data?.weightChangeStatus ?? 'neutral';
-    const sign = change > 0 ? '+' : '';
+    const status    = data?.weightChangeStatus ?? 'neutral';
+    const sign      = change > 0 ? '+' : '';
     let descKey: string;
     if (direction === 'down') descKey = 'analytics.metric_weight_down';
     else if (direction === 'up') descKey = 'analytics.metric_weight_up';
@@ -134,16 +122,16 @@ export class AnalyticsDashboardComponent implements OnInit {
   }
 
   onExportPdf(): void {
-    this._showExportPdfModal.set(true);
+    this.analyticsStore.openExportPdfModal();
   }
 
   onCloseExportPdfModal(): void {
-    this._showExportPdfModal.set(false);
+    this.analyticsStore.closeExportPdfModal();
   }
 
   onExportRequest(req: ExportPdfRequest): void {
     this.analyticsStore.exportReport(req.fromDate, req.toDate).subscribe({
-      next: () => this._showExportPdfModal.set(false),
+      next: () => this.analyticsStore.closeExportPdfModal(),
       error: () => {},
     });
   }

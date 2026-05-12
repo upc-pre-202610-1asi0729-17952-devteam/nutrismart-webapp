@@ -1,38 +1,59 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { forkJoin, Observable, throwError } from 'rxjs';
 import { catchError, map, retry } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { AnalyticsApi } from './analytics-api';
-import { AnalyticsRawInput, NutritionLogResource, BodyMetricResource } from './analytics-resource';
+import { AnalyticsRawInput, BodyMetricResource, NutritionLogResource } from './analytics-resource';
 
 @Injectable({ providedIn: 'root' })
 export class AnalyticsApiHttpService extends AnalyticsApi {
   private readonly http = inject(HttpClient);
-  private readonly base = 'http://localhost:3000';
+  private readonly base = environment.apiBaseUrl;
 
-  getHistory(userId: number | string, fromDate: string): Observable<AnalyticsRawInput> {
+  /**
+   * Fetches nutrition logs and body metrics for the given user since {@link fromDate}.
+   * @param userId - Authenticated user identifier.
+   * @param fromDate - ISO date string (YYYY-MM-DD) marking the start of the period.
+   */
+  override getHistory(userId: number | string, fromDate: string): Observable<AnalyticsRawInput> {
     const uid = String(userId);
     return forkJoin({
-      nutritionLogs: this.http.get<NutritionLogResource[]>(`${this.base}/nutrition-log`, {
-        params: { userId: uid },
-      }),
-      weightEntries: this.http.get<BodyMetricResource[]>(`${this.base}/body-metrics`, {
-        params: { user_id: uid },
-      }),
+      nutritionLogs: this.http.get<NutritionLogResource[]>(
+        `${this.base}${environment.nutritionLogEndpointPath}`,
+        { params: { userId: uid } },
+      ),
+      weightEntries: this.http.get<BodyMetricResource[]>(
+        `${this.base}${environment.bodyMetricsEndpointPath}`,
+        { params: { userId: uid } },
+      ),
     }).pipe(
       map(({ nutritionLogs, weightEntries }) => ({
         nutritionLogs: nutritionLogs.filter(e => e.loggedAt >= fromDate),
-        weightEntries: weightEntries.filter(e => e.logged_at >= fromDate),
+        weightEntries: weightEntries.filter(e => e.loggedAt >= fromDate),
       })),
       retry(2),
       catchError(err => throwError(() => err)),
     );
   }
 
-  exportPdfReport(userId: number | string, fromDate: string, toDate: string): Observable<Blob> {
+  /**
+   * Requests a PDF report blob for the given user and date range.
+   * @param userId - Authenticated user identifier.
+   * @param fromDate - Report start date (YYYY-MM-DD).
+   * @param toDate - Report end date (YYYY-MM-DD).
+   */
+  override exportPdfReport(
+    userId: number | string,
+    fromDate: string,
+    toDate: string,
+  ): Observable<Blob> {
     return this.http
-      .post(`${this.base}/analytics/export`, { userId, fromDate, toDate }, { responseType: 'blob' })
+      .post(
+        `${this.base}${environment.analyticsEndpointPath}/export`,
+        { userId, fromDate, toDate },
+        { responseType: 'blob' },
+      )
       .pipe(
         retry(2),
         catchError(err => throwError(() => err)),

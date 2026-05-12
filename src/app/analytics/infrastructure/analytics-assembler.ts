@@ -1,15 +1,29 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
-  AnalyticsData, AnalyticsPeriod,
-  AdherenceHistoryEntry, AdherenceStatus,
-  BehavioralEvent, DailyCaloriesHistory, MacroAnalysis,
-  WeightChangeDirection, WeightChangeStatus,
+  AnalyticsData,
+  AnalyticsPeriod,
+  AdherenceHistoryEntry,
+  BehavioralEvent,
+  DailyCaloriesHistory,
+  MacroAnalysis,
+  WeightChangeDirection,
 } from '../domain/model/analytics-models';
+import { AnalyticsDomainService } from '../domain/service/analytics-domain.service';
 import { AnalyticsRawInput, UserTargets } from './analytics-resource';
 
 @Injectable({ providedIn: 'root' })
 export class AnalyticsAssembler {
+  private readonly domain = inject(AnalyticsDomainService);
 
+  /**
+   * Converts raw API data into a fully computed {@link AnalyticsData} domain object.
+   * DTO aggregation lives here; all business rules are delegated to {@link AnalyticsDomainService}.
+   *
+   * @param raw - Raw nutrition logs and weight entries from the API.
+   * @param period - Selected analytics period.
+   * @param userGoal - User's nutritional goal (defaults to WEIGHT_LOSS).
+   * @param targets - User's daily macro targets.
+   */
   assembleAnalyticsData(
     raw: AnalyticsRawInput,
     period: AnalyticsPeriod,
@@ -28,7 +42,7 @@ export class AnalyticsAssembler {
 
     const dateSet = new Set(dateArray);
 
-    // ── Aggregate logs by day ────────────────────────────────────────────────
+    // Aggregate nutrition logs by day (DTO aggregation — not domain logic)
     const dailyMap = new Map<string, { calories: number; protein: number; carbs: number; fat: number; fiber: number }>();
     for (const log of raw.nutritionLogs) {
       const date = log.loggedAt.split('T')[0];
@@ -49,44 +63,37 @@ export class AnalyticsAssembler {
     const avg = (key: 'calories' | 'protein' | 'carbs' | 'fat' | 'fiber') =>
       Math.round(loggedDays.reduce((sum, d) => sum + (dailyMap.get(d)?.[key] ?? 0), 0) / n);
 
-    // ── Core metrics ─────────────────────────────────────────────────────────
     const averageCalorieIntake = loggedDays.length ? avg('calories') : 0;
     const averageProteinIntake = loggedDays.length ? avg('protein')  : 0;
 
-    // ── Streak ───────────────────────────────────────────────────────────────
-    let currentStreak = 0;
-    for (let i = dateArray.length - 1; i >= 0; i--) {
-      if (dailyMap.has(dateArray[i])) currentStreak++;
-      else break;
-    }
+    const currentStreak = this.domain.computeStreak(dailyMap, dateArray);
 
-    // ── Daily history ─────────────────────────────────────────────────────────
     const dailyCaloriesHistory: DailyCaloriesHistory[] = dateArray.map(date => ({
       date,
       calories: dailyMap.get(date)?.calories ?? 0,
-      goal:     targets.dailyCalorieTarget,
+      goal: targets.dailyCalorieTarget,
     }));
 
-    // ── Days with complete log (≥ 80 % of calorie target) ────────────────────
-    const daysWithCompleteLog: boolean[] = dateArray.map(date => {
-      const cals = dailyMap.get(date)?.calories ?? 0;
-      return cals >= targets.dailyCalorieTarget * 0.8;
-    });
+    const daysWithCompleteLog: boolean[] = dateArray.map(date =>
+      this.domain.isCompleteDay(dailyMap.get(date)?.calories ?? 0, targets.dailyCalorieTarget)
+    );
 
-    // ── Macro analysis ───────────────────────────────────────────────────────
+    const avgProtein = loggedDays.length ? avg('protein') : 0;
+    const avgCarbs   = loggedDays.length ? avg('carbs')   : 0;
+    const avgFat     = loggedDays.length ? avg('fat')     : 0;
+    const avgFiber   = loggedDays.length ? avg('fiber')   : 0;
+
     const macroAnalysis: MacroAnalysis[] = [
-      { name: 'Protein',       consumed: loggedDays.length ? avg('protein') : 0, target: targets.proteinTarget, colorClass: 'macro-protein' },
-      { name: 'Carbohydrates', consumed: loggedDays.length ? avg('carbs')   : 0, target: targets.carbsTarget,   colorClass: 'macro-carbs'   },
-      { name: 'Fat',           consumed: loggedDays.length ? avg('fat')     : 0, target: targets.fatTarget,     colorClass: 'macro-fat'     },
-      { name: 'Fiber',         consumed: loggedDays.length ? avg('fiber')   : 0, target: targets.fiberTarget,   colorClass: 'macro-fiber'   },
+      { key: 'protein', name: 'analytics.macros.protein', consumed: avgProtein, target: targets.proteinTarget, colorClass: 'macro-protein', isAboveTarget: avgProtein > targets.proteinTarget },
+      { key: 'carbs',   name: 'analytics.macros.carbs',   consumed: avgCarbs,   target: targets.carbsTarget,   colorClass: 'macro-carbs',   isAboveTarget: avgCarbs   > targets.carbsTarget   },
+      { key: 'fat',     name: 'analytics.macros.fat',     consumed: avgFat,     target: targets.fatTarget,     colorClass: 'macro-fat',     isAboveTarget: avgFat     > targets.fatTarget     },
+      { key: 'fiber',   name: 'analytics.macros.fiber',   consumed: avgFiber,   target: targets.fiberTarget,   colorClass: 'macro-fiber',   isAboveTarget: avgFiber   > targets.fiberTarget   },
     ];
 
-    // ── Weight evolution ─────────────────────────────────────────────────────
     const weightEvolution = [...raw.weightEntries]
-      .sort((a, b) => a.logged_at.localeCompare(b.logged_at))
-      .map(e => ({ date: e.logged_at.split('T')[0], weight: e.weight_kg }));
+      .sort((a, b) => a.loggedAt.localeCompare(b.loggedAt))
+      .map(e => ({ date: e.loggedAt.split('T')[0], weight: e.weightKg }));
 
-    // ── Weight change ─────────────────────────────────────────────────────────
     let weightChange = 0;
     let weightChangeDirection: WeightChangeDirection = 'none';
     if (weightEvolution.length >= 2) {
@@ -94,40 +101,30 @@ export class AnalyticsAssembler {
       weightChange = parseFloat(diff.toFixed(1));
       weightChangeDirection = diff > 0.05 ? 'up' : diff < -0.05 ? 'down' : 'none';
     }
-    const weightChangeStatus: WeightChangeStatus = this.resolveStatus(weightChangeDirection, userGoal);
 
-    // ── Goal weight ───────────────────────────────────────────────────────────
+    const weightChangeStatus = this.domain.resolveWeightChangeStatus(weightChangeDirection, userGoal);
+
     const lastMetric = raw.weightEntries.at(-1);
-    const goalWeight = lastMetric?.target_weight_kg;
+    const goalWeight = lastMetric?.targetWeightKg;
 
-    // ── Adherence history (30d / 90d only) ───────────────────────────────────
     let adherenceHistory: AdherenceHistoryEntry[] | undefined;
     let behavioralEvents: BehavioralEvent[] | undefined;
 
     if (period !== '7_DAYS') {
-      adherenceHistory = dateArray.map(date => {
-        const cals = dailyMap.get(date)?.calories ?? 0;
-        let status: AdherenceStatus;
-        if      (cals === 0)                                     status = 'DROPPED';
-        else if (cals >= targets.dailyCalorieTarget * 0.8)      status = 'ON_TRACK';
-        else if (cals >= targets.dailyCalorieTarget * 0.5)      status = 'AT_RISK';
-        else                                                     status = 'DROPPED';
-        return { date, status };
-      });
-
-      const events: BehavioralEvent[] = [];
-      for (let i = 1; i < adherenceHistory.length; i++) {
-        const prev = adherenceHistory[i - 1].status;
-        const curr = adherenceHistory[i].status;
-        if (prev !== 'DROPPED' && curr === 'DROPPED')
-          events.push({ date: adherenceHistory[i].date, description: 'BehavioralDropDetected' });
-        else if (prev === 'DROPPED' && curr === 'ON_TRACK')
-          events.push({ date: adherenceHistory[i].date, description: 'ConsistencyRecovered' });
-        else if (prev === 'ON_TRACK' && curr === 'AT_RISK')
-          events.push({ date: adherenceHistory[i].date, description: 'NutritionalAbandonmentRisk' });
-      }
-      behavioralEvents = events;
+      adherenceHistory = dateArray.map(date => ({
+        date,
+        status: this.domain.classifyAdherence(
+          dailyMap.get(date)?.calories ?? 0,
+          targets.dailyCalorieTarget,
+        ),
+      }));
+      behavioralEvents = this.domain.detectBehavioralTransitions(adherenceHistory);
     }
+
+    const proteinMacro = macroAnalysis.find(m => m.key === 'protein');
+    const proteinCompliance = proteinMacro
+      ? this.domain.computeProteinCompliance(proteinMacro.consumed, proteinMacro.target)
+      : undefined;
 
     return {
       period,
@@ -144,16 +141,7 @@ export class AnalyticsAssembler {
       goalWeight,
       adherenceHistory,
       behavioralEvents,
+      proteinCompliance,
     };
-  }
-
-  private resolveStatus(
-    direction: WeightChangeDirection,
-    goal: 'WEIGHT_LOSS' | 'MUSCLE_GAIN',
-  ): WeightChangeStatus {
-    if (direction === 'none') return 'neutral';
-    const downIsGood = goal === 'WEIGHT_LOSS';
-    if (downIsGood) return direction === 'down' ? 'positive' : 'negative';
-    return direction === 'up' ? 'positive' : 'negative';
   }
 }

@@ -5,12 +5,6 @@ export const ANALYTICS_ROUTES: Routes = [
   {
     path: '',
     component: AnalyticsDashboardComponent,
-    title: 'Analytics Dashboard',
+    title: 'NutriSmart - Analytics',
   },
-  // Potentially add more routes here for specific analytics views or reports
-  // {
-  //   path: 'export-pdf',
-  //   component: ExportPdfReportViewComponent, // If it were a standalone route
-  //   title: 'Export PDF Report',
-  // },
 ];

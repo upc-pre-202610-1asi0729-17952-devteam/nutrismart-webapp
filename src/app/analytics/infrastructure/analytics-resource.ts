@@ -11,10 +11,10 @@ export interface NutritionLogResource {
 
 export interface BodyMetricResource {
   id: string;
-  user_id: string;
-  weight_kg: number;
-  target_weight_kg?: number;
-  logged_at: string;
+  userId: string;
+  weightKg: number;
+  targetWeightKg?: number;
+  loggedAt: string;
 }
 
 export interface AnalyticsRawInput {
