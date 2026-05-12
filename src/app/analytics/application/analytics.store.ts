@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { AnalyticsApi } from '../infrastructure/analytics-api';
 import { AnalyticsAssembler } from '../infrastructure/analytics-assembler';
 import { AnalyticsData, AnalyticsPeriod } from '../domain/model/analytics-models';
@@ -48,24 +48,31 @@ export class AnalyticsStore {
     this._error.set(null);
     this._selectedPeriod.set(period);
 
-    let apiCall: Observable<any>;
-    switch (period) {
-      case '7_DAYS':  apiCall = this.analyticsApi.getWeeklyHistory(user.id);    break;
-      case '30_DAYS': apiCall = this.analyticsApi.getMonthlyHistory(user.id);   break;
-      case '90_DAYS': apiCall = this.analyticsApi.getQuarterlyHistory(user.id); break;
-      default: return throwError(() => new Error('Invalid analytics period.'));
-    }
+    const days     = period === '7_DAYS' ? 7 : period === '30_DAYS' ? 30 : 90;
+    const fromDate = new Date(Date.now() - (days - 1) * 24 * 60 * 60 * 1000)
+      .toISOString().split('T')[0];
 
-    return apiCall.pipe(
-      tap(rawData => {
-        const assembled = rawData
+    const targets = {
+      dailyCalorieTarget: user.dailyCalorieTarget ?? 2000,
+      proteinTarget:      user.proteinTarget      ?? 150,
+      carbsTarget:        user.carbsTarget        ?? 250,
+      fatTarget:          user.fatTarget          ?? 65,
+      fiberTarget:        user.fiberTarget        ?? 25,
+    };
+
+    return this.analyticsApi.getHistory(user.id, fromDate).pipe(
+      map(raw => {
+        const hasData = raw.nutritionLogs.length > 0 || raw.weightEntries.length > 0;
+        return hasData
           ? this.analyticsAssembler.assembleAnalyticsData(
-              rawData,
-              period,
+              raw, period,
               user.goal as 'WEIGHT_LOSS' | 'MUSCLE_GAIN',
+              targets,
             )
-          : null;
-        this._currentAnalyticsData.set(assembled);
+          : undefined;
+      }),
+      tap(assembled => {
+        this._currentAnalyticsData.set(assembled ?? null);
         this._loading.set(false);
       }),
       catchError(err => {
