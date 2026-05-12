@@ -1,7 +1,7 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 import { ActivityLevel } from './activity-level.enum';
 import { DietaryRestriction } from './dietary-restriction.enum';
-import { MetabolicTargets } from './metabolic-targets.value-object';
+import { MacroDistribution } from '../../../shared/domain/metabolic-target-set.event';
 import { SubscriptionPlan } from './subscription-plan.enum';
 import { UserGoal } from './user-goal.enum';
 
@@ -432,7 +432,7 @@ export class User implements BaseEntity {
    *
    * @param targets - Immutable value object containing the computed targets.
    */
-  applyMetabolicTargets(targets: MetabolicTargets): void {
+  applyMetabolicTargets(targets: MacroDistribution): void {
     this._dailyCalorieTarget = targets.dailyCalorieTarget;
     this._proteinTarget = targets.proteinTarget;
     this._carbsTarget = targets.carbsTarget;

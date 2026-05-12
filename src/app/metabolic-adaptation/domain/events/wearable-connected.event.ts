@@ -4,7 +4,7 @@ export class WearableConnected extends DomainEvent {
   readonly eventType = 'WearableConnected';
 
   constructor(
-    readonly userId: string | number,
+    readonly userId: number,
     readonly provider: string,
     readonly authorizedAt: string,
   ) { super(); }

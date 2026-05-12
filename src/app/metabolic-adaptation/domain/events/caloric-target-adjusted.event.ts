@@ -4,7 +4,7 @@ export class CaloricTargetAdjusted extends DomainEvent {
   readonly eventType = 'CaloricTargetAdjusted';
 
   constructor(
-    readonly userId: string | number,
+    readonly userId: number,
     readonly previousTarget: number,
     readonly newTarget: number,
     readonly activeCaloriesAdded: number,

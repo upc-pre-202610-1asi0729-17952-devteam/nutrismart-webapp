@@ -1,10 +1,10 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, filter, map, tap } from 'rxjs/operators';
 import { DomainEventBus } from '../../shared/application/domain-event-bus';
 import { AccountCreated } from '../../shared/domain/account-created.event';
-import { GoalSwitched } from '../../shared/domain/goal-switched.event';
+import { MetabolicTargetSet } from '../../shared/domain/metabolic-target-set.event';
 import { OnboardingCompleted } from '../../shared/domain/onboarding-completed.event';
 import { PlanUpgraded } from '../../shared/domain/plan-upgraded.event';
 import { ProfileUpdated } from '../../shared/domain/profile-updated.event';
@@ -12,7 +12,6 @@ import { RestrictionsChanged } from '../../shared/domain/restrictions-changed.ev
 import { ActivityLevel } from '../domain/model/activity-level.enum';
 import { DietaryRestriction } from '../domain/model/dietary-restriction.enum';
 import { MedicalCondition } from '../domain/model/medical-condition.enum';
-import { MetabolicTargets } from '../domain/model/metabolic-targets.value-object';
 import { SubscriptionPlan } from '../domain/model/subscription-plan.enum';
 import { UserGoal } from '../domain/model/user-goal.enum';
 import { User, UserProps } from '../domain/model/user.entity';
@@ -25,6 +24,10 @@ const SESSION_KEY = 'nutrismart_session';
  *
  * Manages authentication state and the current user using Angular signals.
  * All mutations are persisted to the json-server backend via {@link IamApi}.
+ * Physical-attribute changes (weight, height, activityLevel, goal) are
+ * persisted here but macro recalculation is delegated to MetabolicAdaptation
+ * via the {@link DomainEventBus} — IAM receives updated targets back through
+ * {@link MetabolicTargetSet} and applies them via {@link User.applyMetabolicTargets}.
  *
  * Provided in root so a single instance is shared across the application.
  */
@@ -53,6 +56,7 @@ export class IamStore {
 
   constructor() {
     this.restoreSession();
+    this.subscribeToMetabolicTargets();
   }
 
   // ─── Public readonly signals ───────────────────────────────────────────────
@@ -68,6 +72,25 @@ export class IamStore {
 
   /** Read-only signal holding the most recent error message, or `null`. */
   readonly error = this._error.asReadonly();
+
+  // ─── Cross-context subscriptions ──────────────────────────────────────────
+
+  /**
+   * Applies updated macro targets published by MetabolicAdaptation and
+   * persists them so the IAM user record stays in sync.
+   * Root services live for the full app lifetime, so no takeUntilDestroyed is needed.
+   */
+  private subscribeToMetabolicTargets(): void {
+    this.eventBus.events$
+      .pipe(filter((e): e is MetabolicTargetSet => e instanceof MetabolicTargetSet))
+      .subscribe((e) => {
+        const user = this._currentUser();
+        if (!user || user.id !== e.userId) return;
+        user.applyMetabolicTargets(e);
+        this._currentUser.set(user);
+        this.persist();
+      });
+  }
 
   // ─── Session persistence ───────────────────────────────────────────────────
 
@@ -242,7 +265,7 @@ export class IamStore {
   /**
    * Updates basic profile fields and persists the change.
    *
-   * @param updates - Partial object with firstName, lastName and/or email.
+   * @param updates - Partial object with displayable profile fields.
    */
   updateProfile(
     updates: Partial<{
@@ -271,7 +294,9 @@ export class IamStore {
   }
 
   /**
-   * Updates physical attributes, recalculates macros, and persists.
+   * Updates physical attributes and persists. Macro recalculation is NOT
+   * done here — MetabolicAdaptation listens to the published event and
+   * responds with {@link MetabolicTargetSet}.
    *
    * @param w     - New body weight in kilograms.
    * @param h     - New height in centimetres.
@@ -303,7 +328,6 @@ export class IamStore {
       homeCity: user.homeCity,
       goalStartedAt: user.goalStartedAt,
     });
-    updated.applyMetabolicTargets(MetabolicTargets.calculate(w, h, level, updated.goal));
     this._currentUser.set(updated);
     this.persist();
 
@@ -318,9 +342,24 @@ export class IamStore {
   }
 
   /**
-   * Changes the fitness goal, stamps goalStartedAt to today, recalculates
-   * macros, and persists. Creates a new User instance so Angular's signal
-   * equality check detects the change.
+   * Persists only the body weight field from the latest body-metric entry.
+   * Called by MetabolicAdaptation after logWeight() to keep the IAM record
+   * in sync without triggering macro recalculation or publishing events.
+   *
+   * @param weightKg - Latest body weight in kilograms.
+   */
+  updateWeightOnly(weightKg: number): void {
+    const user = this._currentUser();
+    if (!user) return;
+    user.weight = weightKg;
+    this._currentUser.set(user);
+    this.persist();
+  }
+
+  /**
+   * Changes the fitness goal, stamps goalStartedAt to today, and persists.
+   * Macro recalculation is orchestrated by {@link MetabolicStore.switchGoal},
+   * which calls this method then publishes {@link GoalSwitched}.
    *
    * @param goal - The new {@link UserGoal}.
    */
@@ -350,12 +389,8 @@ export class IamStore {
       homeCity: user.homeCity,
       goalStartedAt: new Date().toISOString().slice(0, 10),
     });
-    updated.applyMetabolicTargets(
-      MetabolicTargets.calculate(updated.weight, updated.height, updated.activityLevel, goal),
-    );
     this._currentUser.set(updated);
     this.persist();
-    this.eventBus.publish(new GoalSwitched(updated.id, goal));
   }
 
   /**

@@ -2,7 +2,7 @@ import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 
 export interface ActivityLogProps {
   id: number;
-  userId: number | string;
+  userId: number;
   activityType: string;
   durationMinutes: number;
   caloriesBurned: number;
@@ -35,7 +35,7 @@ export class ActivityLog implements BaseEntity {
   get id(): number { return this.#id; }
   set id(v: number) { this.#id = v; }
 
-  get userId(): number | string { return this.#userId; }
+  get userId(): number { return this.#userId; }
   get activityType(): string { return this.#activityType; }
   get durationMinutes(): number { return this.#durationMinutes; }
   get caloriesBurned(): number { return this.#caloriesBurned; }

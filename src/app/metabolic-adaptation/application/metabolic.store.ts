@@ -1,31 +1,37 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom } from 'rxjs';
+import { DomainEventBus } from '../../shared/application/domain-event-bus';
+import { MetabolicTargetSet } from '../../shared/domain/metabolic-target-set.event';
+import { OnboardingCompleted } from '../../shared/domain/onboarding-completed.event';
+import { ProfileUpdated } from '../../shared/domain/profile-updated.event';
+import { GoalSwitched } from '../../shared/domain/goal-switched.event';
+import { StagnationDetected } from '../../shared/domain/stagnation-detected.event';
+import { WeightLogged } from '../../shared/domain/weight-logged.event';
+import { TargetWeightSet } from '../../shared/domain/target-weight-set.event';
+import { WeightGoalAchieved } from '../../shared/domain/weight-goal-achieved.event';
+import { IamStore } from '../../iam/application/iam.store';
+import { UserGoal } from '../../iam/domain/model/user-goal.enum';
+import { MetabolicTargets } from '../../iam/domain/model/metabolic-targets.value-object';
 import { MetabolicApi } from '../infrastructure/metabolic-api';
 import { BodyMetric } from '../domain/model/body-metric.entity';
 import { BodyComposition } from '../domain/model/body-composition.entity';
-import { IamStore } from '../../iam/application/iam.store';
-import { UserGoal } from '../../iam/domain/model/user-goal.enum';
-import { DomainEventBus } from '../../shared/application/domain-event-bus';
-import { WeightLogged } from '../../shared/domain/weight-logged.event';
-import { TargetWeightSet } from '../../shared/domain/target-weight-set.event';
-import { GoalSwitched } from '../../shared/domain/goal-switched.event';
-import { WeightGoalAchieved } from '../../shared/domain/weight-goal-achieved.event';
+import { NutritionPlan } from '../domain/model/nutrition-plan.entity';
 
-const STALE_DAYS_THRESHOLD     = 14;
 const STAGNATION_WINDOW_DAYS   = 14;
 const MIN_GOAL_COMMITMENT_DAYS = 28;
+const STALE_DAYS_THRESHOLD     = 14;
+
+const PHYSICAL_FIELDS = new Set(['weight', 'height', 'activityLevel']);
 
 /**
  * Central state store for the Metabolic Adaptation bounded context.
  *
- * Manages the current body metric snapshot, weight-entry history,
- * body composition, and target weight using Angular Signals. All write
- * operations delegate to {@link MetabolicApi} mock methods and update
- * signals reactively.
+ * Owns target computation: subscribes to {@link OnboardingCompleted} and
+ * {@link ProfileUpdated} (physical-field changes) to recalculate macro targets
+ * via {@link MetabolicTargets}, then publishes {@link MetabolicTargetSet} so
+ * IAM and NutritionTracking can sync their projections.
  *
  * Provided in root so a single instance is shared across the application.
- *
- * @author Espinoza Cruz, Angela Milagros
  */
 @Injectable({ providedIn: 'root' })
 export class MetabolicStore {
@@ -40,6 +46,7 @@ export class MetabolicStore {
   private _stagnationHistory = signal<BodyMetric[]>([]);
   private _allHistory        = signal<BodyMetric[]>([]);
   private _composition       = signal<BodyComposition | null>(null);
+  private _nutritionPlan     = signal<NutritionPlan | null>(null);
   private _selectedDays      = signal<7 | 30 | 90>(7);
   private _loading           = signal<boolean>(false);
   private _error             = signal<string | null>(null);
@@ -54,6 +61,9 @@ export class MetabolicStore {
 
   /** Most recent body composition measurement. */
   readonly composition    = this._composition.asReadonly();
+
+  /** Active nutrition plan (in-memory; recomputed on every target change). */
+  readonly nutritionPlan  = this._nutritionPlan.asReadonly();
 
   /** Currently selected date range (7, 30, or 90 days). */
   readonly selectedDays   = this._selectedDays.asReadonly();
@@ -79,7 +89,7 @@ export class MetabolicStore {
 
   /** Days remaining until the commitment lock expires. */
   readonly daysUntilUnlock = computed(() =>
-    Math.max(0, MIN_GOAL_COMMITMENT_DAYS - this.daysInCurrentGoal())
+    Math.max(0, MIN_GOAL_COMMITMENT_DAYS - this.daysInCurrentGoal()),
   );
 
   /** True while the user is still inside the 28-day commitment window. */
@@ -100,7 +110,7 @@ export class MetabolicStore {
 
   /** True when the user targets MUSCLE_GAIN. */
   readonly isMuscleGain = computed(() =>
-    this.iamStore.currentUser()?.goal === UserGoal.MUSCLE_GAIN
+    this.iamStore.currentUser()?.goal === UserGoal.MUSCLE_GAIN,
   );
 
   /** True when the user has already logged a weight entry for today. */
@@ -112,7 +122,6 @@ export class MetabolicStore {
   /**
    * True when the user has logged weight consistently over the last
    * {@link STAGNATION_WINDOW_DAYS} days but shows no progress toward their goal.
-   * Requires ≥ 3 entries so a single outlier doesn't trigger a false alarm.
    */
   readonly hasStagnated = computed(() => {
     const history = this._stagnationHistory();
@@ -129,16 +138,13 @@ export class MetabolicStore {
     }));
   });
 
-  /** SVG chart points derived from metricsHistory (normalised to 0-100 range). */
+  /** SVG chart points derived from metricsHistory (normalised to 0–100 range). */
   readonly chartPoints = computed(() => {
     const history = this._metricsHistory();
     if (history.length < 2) return { points: '', minW: 0, maxW: 0, dates: [] as string[], targetY: 0 };
 
-    const weights = history.map(m => m.weightKg);
-    const target  = this._currentMetric()?.targetWeightKg ?? 0;
-
-    // Include the goal weight in the Y scale so the reference line always
-    // stays within the chart area even when the target is far from current weight.
+    const weights    = history.map(m => m.weightKg);
+    const target     = this._currentMetric()?.targetWeightKg ?? 0;
     const allWeights = target > 0 ? [...weights, target] : weights;
     const rawMin     = Math.min(...allWeights);
     const rawMax     = Math.max(...allWeights);
@@ -155,19 +161,84 @@ export class MetabolicStore {
     const points = history
       .map((m, i) => {
         const x = Math.round((i / (history.length - 1)) * chartW);
-        const y = toY(m.weightKg);
-        return `${x},${y}`;
+        return `${x},${toY(m.weightKg)}`;
       })
       .join(' ');
 
     const targetY = target > 0 ? toY(target) : chartH;
-
-    // Return raw ISO dates — the component formats them using the current UI locale.
-    const dates = [history[0], history[Math.floor(history.length / 2)], history[history.length - 1]]
+    const dates   = [history[0], history[Math.floor(history.length / 2)], history[history.length - 1]]
       .map(m => m.loggedAt);
 
     return { points, minW, maxW, dates, targetY };
   });
+
+  // ─── Cross-context subscriptions ──────────────────────────────────────────
+
+  constructor() {
+    this.subscribeToOnboardingCompleted();
+    this.subscribeToProfileUpdated();
+  }
+
+  /**
+   * Reacts to {@link OnboardingCompleted}: calculates initial targets and
+   * publishes {@link MetabolicTargetSet}.
+   */
+  private subscribeToOnboardingCompleted(): void {
+    this.eventBus.events$
+      .pipe(filter((e): e is OnboardingCompleted => e instanceof OnboardingCompleted))
+      .subscribe((e) => {
+        const targets = MetabolicTargets.calculate(e.weight, e.height, e.activityLevel, e.goal);
+        this.publishMetabolicTargetSet(e.userId, targets);
+      });
+  }
+
+  /**
+   * Reacts to {@link ProfileUpdated}: recalculates targets when physical
+   * fields (weight, height, activityLevel) are included in the change.
+   */
+  private subscribeToProfileUpdated(): void {
+    this.eventBus.events$
+      .pipe(
+        filter((e): e is ProfileUpdated => e instanceof ProfileUpdated),
+        filter((e) => e.updatedFields.some(f => PHYSICAL_FIELDS.has(f))),
+      )
+      .subscribe(() => {
+        const user = this.iamStore.currentUser();
+        if (!user) return;
+        const targets = MetabolicTargets.calculate(user.weight, user.height, user.activityLevel, user.goal);
+        this.publishMetabolicTargetSet(user.id, targets);
+      });
+  }
+
+  // ─── Private helpers ──────────────────────────────────────────────────────
+
+  /**
+   * Publishes {@link MetabolicTargetSet} and updates the in-memory
+   * {@link NutritionPlan} signal so the UI reflects the new targets immediately.
+   */
+  private publishMetabolicTargetSet(userId: number, targets: MetabolicTargets): void {
+    const event = new MetabolicTargetSet(
+      userId,
+      targets.dailyCalorieTarget,
+      targets.proteinTarget,
+      targets.carbsTarget,
+      targets.fatTarget,
+      targets.fiberTarget,
+    );
+    this.eventBus.publish(event);
+    this._nutritionPlan.set(NutritionPlan.fromTargets(userId, targets));
+  }
+
+  /** Publishes {@link StagnationDetected} when the stagnation window is full. */
+  private checkAndPublishStagnation(): void {
+    if (!this.hasStagnated()) return;
+    const user   = this.iamStore.currentUser();
+    const metric = this._currentMetric();
+    if (!user || !metric) return;
+    this.eventBus.publish(
+      new StagnationDetected(user.id, STAGNATION_WINDOW_DAYS, metric.weightKg, user.goal),
+    );
+  }
 
   // ─── Actions ──────────────────────────────────────────────────────────────
 
@@ -186,12 +257,14 @@ export class MetabolicStore {
       ]);
       this._metricsHistory.set(history);
       this._stagnationHistory.set(stagnationHistory);
+
       if (this.isMuscleGain()) {
         const comp = await firstValueFrom(this.api.getComposition(user.id));
         this._composition.set(comp);
       }
-      // Auto-maintenance: if the loaded metric already meets the weight-loss target,
-      // reset the target to current weight so the goal always reflects real state.
+
+      this.checkAndPublishStagnation();
+
       const current = this._currentMetric();
       if (
         current &&
@@ -202,6 +275,15 @@ export class MetabolicStore {
         await this.setTargetWeight(current.weightKg);
         this.eventBus.publish(new WeightGoalAchieved(user.id, current.weightKg));
       }
+
+      // Materialise the in-memory plan from the user's stored targets.
+      this._nutritionPlan.set(NutritionPlan.fromTargets(user.id, {
+        dailyCalorieTarget: user.dailyCalorieTarget,
+        proteinTarget:      user.proteinTarget,
+        carbsTarget:        user.carbsTarget,
+        fatTarget:          user.fatTarget,
+        fiberTarget:        user.fiberTarget,
+      }));
     } catch {
       this._error.set('body_progress.error_load_failed');
     } finally {
@@ -223,7 +305,6 @@ export class MetabolicStore {
     try {
       let metric: BodyMetric;
       if (todayEntry) {
-        // One-per-day: update the existing entry instead of creating a duplicate.
         metric = await firstValueFrom(this.api.updateWeight(todayEntry, weightKg));
         this._metricsHistory.update(h => h.map(m => m.id === todayEntry.id ? metric : m));
         this._stagnationHistory.update(h => h.map(m => m.id === todayEntry.id ? metric : m));
@@ -235,10 +316,10 @@ export class MetabolicStore {
         this._stagnationHistory.update(h => [...h, metric]);
       }
       this._currentMetric.set(metric);
-      this.iamStore.updatePhysicalDetails(weightKg, metric.heightCm, user.activityLevel);
+      this.iamStore.updateWeightOnly(weightKg);
       this.eventBus.publish(new WeightLogged(user.id, weightKg, metric.bmi()));
+      this.checkAndPublishStagnation();
 
-      // Auto-maintenance: reset target to current weight when goal is reached.
       if (
         user.goal === UserGoal.WEIGHT_LOSS &&
         previousTarget > 0 &&
@@ -261,14 +342,11 @@ export class MetabolicStore {
     this._loading.set(true);
     this._error.set(null);
     try {
-      // defaultValue: null handles the EMPTY case when no current metric exists yet.
       const metric = await firstValueFrom(
         this.api.setTargetWeight(user.id, targetWeightKg, goalStartedAt),
         { defaultValue: null },
       );
       if (!metric) return;
-      // New instance forces Angular signal equality check to detect the change
-      // and re-evaluate dependents (formattedProjectedDate, chartPoints, etc.).
       this._currentMetric.update(current => {
         if (!current) return metric;
         return new BodyMetric({
@@ -327,28 +405,21 @@ export class MetabolicStore {
   }
 
   /**
-   * Auto-calculates and persists the initial target weight when the user sets
-   * or changes their goal on {@link GoalSelectionScreen}.
-   *
-   * - WEIGHT_LOSS: target = weight at BMI 24.9 (top of the WHO normal range),
-   *   computed from the user's stored height.
-   * - MUSCLE_GAIN: no target weight concept applies — skipped entirely.
-   *
-   * Always overwrites any previous target so that switching goals produces a
-   * fresh, contextually meaningful suggestion the user can then override inline.
+   * Orchestrates a goal change: persists the new goal to IAM, sets the
+   * initial target weight for WEIGHT_LOSS goals, recalculates targets, and
+   * publishes {@link GoalSwitched} and {@link MetabolicTargetSet}.
    *
    * @param goal - The goal the user confirmed.
-   */
-  /**
-   * Orchestrates a goal change: persists the new goal to IAM, sets the
-   * initial target weight for WEIGHT_LOSS goals, and publishes {@link GoalSwitched}.
    */
   async switchGoal(goal: UserGoal): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
     this.iamStore.changeGoal(goal);
     await this.applyInitialTarget(goal);
-    this.eventBus.publish(new GoalSwitched(user.id, goal));
+    const updated = this.iamStore.currentUser()!;
+    const targets = MetabolicTargets.calculate(updated.weight, updated.height, updated.activityLevel, goal);
+    this.publishMetabolicTargetSet(updated.id, targets);
+    this.eventBus.publish(new GoalSwitched(updated.id, goal));
   }
 
   async applyInitialTarget(goal: UserGoal): Promise<void> {
@@ -392,5 +463,4 @@ export class MetabolicStore {
       this._loading.set(false);
     }
   }
-
 }
