@@ -514,7 +514,7 @@
     "goal_auto_set_title": "Goal weight set automatically",
     "goal_auto_set_desc": "Based on a healthy BMI (24.9), we've set your goal weight to {{ weight }} kg. You can adjust it anytime.",
     "goal_auto_set_confirm": "Got it",
-    "goal_auto_set_adjust": "Adjust"
+    "goal_auto_set_adjust": "Adjust",
     "composition_panel": "Update body composition",
     "waist_label": "Waist (cm)",
     "neck_label": "Neck (cm)",
