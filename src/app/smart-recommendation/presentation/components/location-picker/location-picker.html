@@ -1,0 +1,46 @@
+<div class="picker-panel" role="dialog" aria-modal="true" [attr.aria-label]="'recommendations.location_picker_title' | translate">
+
+  <div class="picker-header">
+    <span class="picker-title">{{ 'recommendations.location_picker_title' | translate }}</span>
+    <button class="picker-close" (click)="closed.emit()" [attr.aria-label]="'recommendations.location_picker_close' | translate">✕</button>
+  </div>
+
+  <ul class="location-list" role="list">
+    @for (loc of locations; track loc.id) {
+      <li role="listitem">
+        <button
+          class="location-item"
+          [class.location-item--active]="loc.city === selectedCity"
+          [attr.aria-pressed]="loc.city === selectedCity"
+          (click)="citySelected.emit(loc)"
+        >
+          <span class="location-icon">{{ loc.isHot() ? '☀' : '❄' }}</span>
+          <span class="location-name">{{ loc.city }}</span>
+          <span class="location-temp">{{ demoTemperature !== null && loc.city === selectedCity ? demoTemperature : loc.temperatureCelsius }}°C</span>
+        </button>
+      </li>
+    }
+  </ul>
+
+  <div class="temp-slider-section">
+    <label class="slider-label" for="temp-slider">{{ 'recommendations.location_picker_temp' | translate }}</label>
+    <div class="slider-row">
+      <span class="slider-min">0°C</span>
+      <input
+        id="temp-slider"
+        type="range"
+        class="temp-slider"
+        min="0" max="50" step="1"
+        [value]="sliderValue"
+        (input)="onSliderInput($event)"
+        [attr.aria-valuemin]="0"
+        [attr.aria-valuemax]="50"
+        [attr.aria-valuenow]="sliderValue"
+        [attr.aria-label]="'recommendations.location_picker_temp' | translate"
+      />
+      <span class="slider-max">50°C</span>
+    </div>
+    <div class="slider-value">{{ sliderValue }}°C</div>
+  </div>
+
+</div>

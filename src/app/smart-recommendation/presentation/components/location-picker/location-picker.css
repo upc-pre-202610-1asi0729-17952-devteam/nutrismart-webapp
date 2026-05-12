@@ -1,0 +1,114 @@
+.picker-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 100;
+  width: 240px;
+  background: var(--nutrismart-white);
+  border: 1.5px solid var(--nutrismart-border);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 12px;
+}
+
+.picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.picker-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--nutrismart-text-light);
+}
+
+.picker-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--nutrismart-text-light);
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+}
+.picker-close:hover { background: var(--nutrismart-bg); }
+
+.location-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.location-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  background: none;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--nutrismart-text-dark);
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s;
+}
+.location-item:hover { background: var(--nutrismart-bg); }
+.location-item--active {
+  border-color: var(--nutrismart-accent);
+  background: color-mix(in srgb, var(--nutrismart-accent) 8%, transparent);
+}
+
+.location-icon { font-size: 15px; flex-shrink: 0; }
+.location-name { flex: 1; font-weight: 500; }
+.location-temp { font-size: 12px; font-weight: 600; color: var(--nutrismart-text-light); }
+
+.temp-slider-section {
+  border-top: 1px solid var(--nutrismart-border);
+  padding-top: 10px;
+}
+
+.slider-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--nutrismart-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.slider-min, .slider-max {
+  font-size: 10px;
+  color: var(--nutrismart-text-light);
+  white-space: nowrap;
+}
+
+.temp-slider {
+  flex: 1;
+  accent-color: var(--nutrismart-accent);
+  cursor: pointer;
+}
+
+.slider-value {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+  margin-top: 4px;
+}
