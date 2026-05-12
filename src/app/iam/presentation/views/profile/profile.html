@@ -88,6 +88,9 @@
                 }
               </datalist>
               <span class="field-hint">{{ 'profile.home_city_hint' | translate }}</span>
+              @if (personalForm.get('homeCity')?.invalid && personalForm.get('homeCity')?.touched) {
+                <span class="field-error">{{ 'profile.home_city_required' | translate }}</span>
+              }
             </div>
 
             <div class="plan-info-card">

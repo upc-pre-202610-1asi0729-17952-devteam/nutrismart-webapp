@@ -227,7 +227,8 @@
     "delete_account": "Eliminar cuenta",
     "apply_language": "Aplicar",
     "weight_tooltip": "Registra tu peso en Progreso Corporal para mantenerlo actualizado.",
-    "weight_tooltip_aria": "Cómo actualizar el peso"
+    "weight_tooltip_aria": "Cómo actualizar el peso",
+    "home_city_required": "Una vez configurada, tu ciudad de origen no puede eliminarse."
   },
   "medical": {
     "TYPE_2_DIABETES": "Diabetes tipo 2",

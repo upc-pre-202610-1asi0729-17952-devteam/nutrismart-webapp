@@ -227,7 +227,8 @@
     "delete_account": "Delete account",
     "apply_language": "Apply",
     "weight_tooltip": "Log your weight in Body Progress to keep this updated.",
-    "weight_tooltip_aria": "How to update weight"
+    "weight_tooltip_aria": "How to update weight",
+    "home_city_required": "Once set, your home city cannot be removed."
   },
   "medical": {
     "TYPE_2_DIABETES": "Type 2 Diabetes",

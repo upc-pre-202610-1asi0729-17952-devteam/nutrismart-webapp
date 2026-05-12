@@ -81,7 +81,7 @@ export class Profile implements OnInit {
     email: [this.iamStore.currentUser()?.email ?? '', [Validators.required, Validators.email]],
     birthday: [this.iamStore.currentUser()?.birthday ?? ''],
     biologicalSex: [this.iamStore.currentUser()?.biologicalSex ?? ''],
-    homeCity: [this.iamStore.currentUser()?.homeCity ?? ''],
+    homeCity: [this.iamStore.currentUser()?.homeCity ?? '', this.iamStore.currentUser()?.homeCity ? Validators.required : []],
   });
 
   // ─── Panel 2 — Physical details and goals ─────────────────────────────────
