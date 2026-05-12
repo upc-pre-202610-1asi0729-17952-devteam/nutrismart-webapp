@@ -421,7 +421,18 @@
     "new_quantity": "Nueva cantidad",
     "adding_to": "Agregando a: {{ meal }}",
     "quantity_unit": "Cantidad ({{ unit }})",
-    "meal_type": "Tipo de comida"
+    "meal_type": "Tipo de comida",
+    "guardrail": {
+      "calorie_overage": "Añadir esta comida superará tu presupuesto calórico diario en {{overage}} kcal ({{percent}}% del objetivo).",
+      "calorie_overage_rec": "Considera una porción más pequeña o una opción más ligera.",
+      "restriction_conflict": "Este alimento entra en conflicto con tu restricción alimentaria activa.",
+      "restriction_conflict_rec": "Elige una alternativa compatible o actualiza tus restricciones en Perfil.",
+      "medical_risk": "Este alimento puede ser desaconsejable según tus condiciones médicas activas.",
+      "medical_risk_rec": "Consulta tus advertencias dietéticas en Perfil para más detalles.",
+      "severity_block": "No se puede añadir esta comida.",
+      "severity_warning": "Ten esto en cuenta antes de registrar.",
+      "severity_info": "Algo a considerar."
+    }
   },
   "recommendations": {
     "page_title": "Recomendaciones",

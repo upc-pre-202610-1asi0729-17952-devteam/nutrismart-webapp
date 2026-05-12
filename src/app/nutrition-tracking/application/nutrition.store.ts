@@ -16,6 +16,9 @@ import { FoodItem } from '../domain/model/food-item.entity';
 import { MealRecord } from '../domain/model/meal-record.entity';
 import { DailyIntake } from '../domain/model/daily-intake.entity';
 import { MacroName } from '../domain/model/macro-warning.value-object';
+import { PreLogGuardrail } from '../domain/model/pre-log-guardrail.value-object';
+import { GuardrailSeverity } from '../domain/model/guardrail-severity.enum';
+import { GuardrailType } from '../domain/model/guardrail-type.enum';
 import { NutritionApi } from '../infrastructure/nutrition-api';
 import { WearableStore } from '../../metabolic-adaptation/application/wearable.store';
 
@@ -61,6 +64,7 @@ export class NutritionStore {
   private readonly _userRestrictions   = signal<DietaryRestriction[]>([]);
   private readonly _goalExceededToday  = signal<boolean>(false);
   private readonly _allMealsMetToday   = signal<boolean>(false);
+  private readonly _preLogGuardrails   = signal<PreLogGuardrail[]>([]);
 
   private readonly _searchSubject = new Subject<string>();
 
@@ -86,6 +90,14 @@ export class NutritionStore {
 
   /** User's active dietary restrictions, kept in sync via {@link RestrictionsChanged}. */
   readonly userRestrictions = this._userRestrictions.asReadonly();
+
+  /** Guardrails raised by the last {@link evaluatePreLog} call. Reset on each evaluation. */
+  readonly preLogGuardrails = this._preLogGuardrails.asReadonly();
+
+  /** Whether the last evaluation produced at least one guardrail that blocks persistence. */
+  readonly hasBlockingGuardrail = computed(() =>
+    this._preLogGuardrails().some(g => g.isBlocking()),
+  );
 
   // ─── Computed Signals ─────────────────────────────────────────────────────
 
@@ -274,23 +286,64 @@ export class NutritionStore {
   }
 
   /**
-   * Validates restriction conflicts and persists a new meal record.
+   * Evaluates pre-log guardrails for a meal before it is persisted.
    *
-   * Publishes {@link MealRecorded} on success, and detects whether
-   * {@link DailyGoalExceeded} or {@link DailyGoalMet} should fire.
+   * Always call this before {@link recordMeal} to populate {@link preLogGuardrails}
+   * and {@link hasBlockingGuardrail}. Can also be called proactively (e.g. when
+   * the user selects a food item) to surface feedback before they confirm.
+   *
+   * @param record   - The meal record being evaluated.
+   * @param foodItem - The food item selected; required for restriction checking.
+   * @returns The evaluated guardrails (also stored in {@link preLogGuardrails}).
+   */
+  evaluatePreLog(record: MealRecord, foodItem?: FoodItem): PreLogGuardrail[] {
+    const user       = this.iamStore.currentUser();
+    const guardrails: PreLogGuardrail[] = [];
+
+    const intake = this.getDailyIntakeFor(new Date());
+    if (intake) {
+      const calorieGuardrail = intake.evaluateCalorieOverage(
+        record.calories,
+        this.dailyTotals().calories,
+      );
+      if (calorieGuardrail) guardrails.push(calorieGuardrail);
+    }
+
+    if (user && foodItem) {
+      const violations = foodItem.conflictingRestrictions(this._userRestrictions());
+      for (const violation of violations) {
+        guardrails.push(new PreLogGuardrail({
+          type:              GuardrailType.RESTRICTION_CONFLICT,
+          severity:          GuardrailSeverity.BLOCK,
+          messageKey:        'nutrition.guardrail.restriction_conflict',
+          recommendationKey: 'nutrition.guardrail.restriction_conflict_rec',
+          params:            { restriction: violation },
+        }));
+      }
+    }
+
+    this._preLogGuardrails.set(guardrails);
+    return guardrails;
+  }
+
+  /**
+   * Evaluates pre-log guardrails, then persists the meal if none are blocking.
+   *
+   * Replaces the legacy inline restriction check with the unified
+   * {@link evaluatePreLog} flow. Publishes {@link MealRecorded} on success,
+   * and detects whether {@link DailyGoalExceeded} or {@link DailyGoalMet} should fire.
    *
    * @param record   - The {@link MealRecord} entity to save.
-   * @param foodItem - Optional food item used for restriction validation.
+   * @param foodItem - Optional food item used for restriction and calorie validation.
    * @returns Promise that resolves when the record is saved.
    */
   async recordMeal(record: MealRecord, foodItem?: FoodItem): Promise<void> {
-    const user = this.iamStore.currentUser();
-    if (user && foodItem) {
-      const violations = foodItem.conflictingRestrictions(this._userRestrictions());
-      if (violations.length > 0) {
-        this._error.set(`This food conflicts with your dietary restrictions: ${violations.join(', ')}`);
-        return;
-      }
+    const user       = this.iamStore.currentUser();
+    const guardrails = this.evaluatePreLog(record, foodItem);
+    const blocker    = guardrails.find(g => g.isBlocking());
+    if (blocker) {
+      this._error.set(blocker.messageKey);
+      return;
     }
     this._loading.set(true);
     this._error.set(null);

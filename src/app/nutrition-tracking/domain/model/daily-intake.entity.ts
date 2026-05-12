@@ -2,6 +2,9 @@ import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 import { MacronutrientDistribution } from './macronutrient-distribution.value-object';
 import { MacroThreshold } from './macro-threshold';
 import { MacroWarning, MacroName } from './macro-warning.value-object';
+import { GuardrailSeverity } from './guardrail-severity.enum';
+import { GuardrailType } from './guardrail-type.enum';
+import { PreLogGuardrail } from './pre-log-guardrail.value-object';
 
 /**
  * Constructor DTO for creating a {@link DailyIntake} instance.
@@ -172,6 +175,33 @@ export class DailyIntake implements BaseEntity {
         if (ratio >= MacroThreshold.APPROACHING) return [new MacroWarning(c.macro, 'approaching', ratio * 100)];
         return [];
       });
+  }
+
+  /**
+   * Evaluates whether adding an upcoming meal would exceed the adjusted daily calorie budget.
+   *
+   * The adjusted budget is `dailyGoal + active`. Returns a {@link GuardrailSeverity.WARNING}
+   * guardrail when the projected total would exceed it, `null` otherwise.
+   *
+   * @param upcomingCalories      - Calories in the meal about to be logged.
+   * @param alreadyConsumedCalories - Calories already logged for the day (from live signals, not persisted state).
+   * @returns A {@link PreLogGuardrail} of type CALORIE_OVERAGE, or `null` when within budget.
+   */
+  evaluateCalorieOverage(upcomingCalories: number, alreadyConsumedCalories: number): PreLogGuardrail | null {
+    const budget    = this._dailyGoal + this._active;
+    if (budget <= 0) return null;
+    const projected = alreadyConsumedCalories + upcomingCalories;
+    if (projected <= budget) return null;
+    return new PreLogGuardrail({
+      type:              GuardrailType.CALORIE_OVERAGE,
+      severity:          GuardrailSeverity.WARNING,
+      messageKey:        'nutrition.guardrail.calorie_overage',
+      recommendationKey: 'nutrition.guardrail.calorie_overage_rec',
+      params: {
+        percent: Math.round((projected / budget) * 100),
+        overage: Math.round(projected - budget),
+      },
+    });
   }
 
   /**
