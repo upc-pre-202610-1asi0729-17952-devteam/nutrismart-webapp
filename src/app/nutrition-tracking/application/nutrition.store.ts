@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { debounceTime, filter, firstValueFrom, retry, Subject, switchMap } from 'rxjs';
+import { debounceTime, filter, firstValueFrom, map, retry, Subject, switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { IamStore } from '../../iam/application/iam.store';
 import { DomainEventBus } from '../../shared/application/domain-event-bus';
@@ -9,7 +9,15 @@ import { MealRecorded } from '../../shared/domain/meal-recorded.event';
 import { MealRemoved } from '../../shared/domain/meal-removed.event';
 import { DailyGoalExceeded } from '../../shared/domain/daily-goal-exceeded.event';
 import { DailyGoalMet } from '../../shared/domain/daily-goal-met.event';
+import { DailyProgressUpdated } from '../../shared/domain/daily-progress-updated.event';
+import { MealEntryUpdated } from '../../shared/domain/meal-entry-updated.event';
+import { RestrictedItemBlocked } from '../../shared/domain/restricted-item-blocked.event';
+import { MealSkipped } from '../../shared/domain/meal-skipped.event';
 import { CaloricTargetAdjusted } from '../../metabolic-adaptation/domain/events/caloric-target-adjusted.event';
+import { DietaryRestrictionsRegistered } from '../domain/events/dietary-restrictions-registered.event';
+import { FoodSearchExecuted } from '../domain/events/food-search-executed.event';
+import { DailyTargetsSet } from '../domain/events/daily-targets-set.event';
+import { NetTargetUpdated } from '../domain/events/net-target-updated.event';
 import { DietaryRestriction } from '../../iam/domain/model/dietary-restriction.enum';
 import { MealType } from '../domain/model/meal-type.enum';
 import { FoodItem } from '../domain/model/food-item.entity';
@@ -62,9 +70,11 @@ export class NutritionStore {
   private readonly _error              = signal<string | null>(null);
   private readonly _searchQuery        = signal<string>('');
   private readonly _userRestrictions   = signal<DietaryRestriction[]>([]);
-  private readonly _goalExceededToday  = signal<boolean>(false);
-  private readonly _allMealsMetToday   = signal<boolean>(false);
-  private readonly _preLogGuardrails   = signal<PreLogGuardrail[]>([]);
+  private readonly _goalExceededToday      = signal<boolean>(false);
+  private readonly _allMealsMetToday       = signal<boolean>(false);
+  private readonly _preLogGuardrails       = signal<PreLogGuardrail[]>([]);
+  private readonly _restrictionsInitialized = signal<boolean>(false);
+  private readonly _skippedMealsEmitted    = signal<Set<string>>(new Set());
 
   private readonly _searchSubject = new Subject<string>();
 
@@ -186,14 +196,20 @@ export class NutritionStore {
             return [];
           }
           this._loading.set(true);
-          return this.nutritionApi.searchFoods(query);
+          return this.nutritionApi.searchFoods(query).pipe(
+            map(items => ({ query, items })),
+          );
         }),
         takeUntilDestroyed(),
       )
       .subscribe({
-        next: (items) => {
+        next: ({ query, items }) => {
           this._foodItems.set(items);
           this._loading.set(false);
+          const user = this.iamStore.currentUser();
+          if (user) {
+            this.eventBus.publish(new FoodSearchExecuted(user.id, query, items.length));
+          }
         },
         error: () => {
           this._error.set('Failed to search foods.');
@@ -219,6 +235,9 @@ export class NutritionStore {
         }
         return i;
       }));
+      this.eventBus.publish(new DailyTargetsSet(
+        e.userId, e.dailyCalorieTarget, e.proteinTarget, e.carbsTarget, e.fatTarget,
+      ));
     });
   }
 
@@ -233,6 +252,12 @@ export class NutritionStore {
         }
         return i;
       }));
+      const intake = this.getDailyIntakeFor(new Date());
+      if (intake) {
+        this.eventBus.publish(new NetTargetUpdated(
+          e.userId, intake.dailyGoal + intake.active, e.activeCaloriesAdded,
+        ));
+      }
     });
   }
 
@@ -278,6 +303,19 @@ export class NutritionStore {
     try {
       const records = await firstValueFrom(this.nutritionApi.getMealEntries(user.id));
       this._mealRecords.set(records.filter(r => r.userId === user.id));
+
+      if (!this._restrictionsInitialized()) {
+        const restrictions = this._userRestrictions().length > 0
+          ? this._userRestrictions()
+          : (user.restrictions ?? []);
+        this._userRestrictions.set(restrictions);
+        if (restrictions.length > 0) {
+          this.eventBus.publish(new DietaryRestrictionsRegistered(user.id, restrictions));
+        }
+        this._restrictionsInitialized.set(true);
+      }
+
+      this.checkMealWindows();
     } catch {
       this._error.set('Failed to load meal entries.');
     } finally {
@@ -343,6 +381,15 @@ export class NutritionStore {
     const blocker    = guardrails.find(g => g.isBlocking());
     if (blocker) {
       this._error.set(blocker.messageKey);
+      if (user && foodItem) {
+        const restriction = blocker.params?.['restriction'] as string | undefined;
+        this.eventBus.publish(new RestrictedItemBlocked(
+          user.id,
+          foodItem.name,
+          restriction ?? blocker.type,
+          new Date().toISOString().slice(0, 10),
+        ));
+      }
       return;
     }
     this._loading.set(true);
@@ -370,6 +417,7 @@ export class NutritionStore {
    * @returns Promise that resolves when the update is complete.
    */
   async adjustPortion(record: MealRecord): Promise<void> {
+    const user = this.iamStore.currentUser();
     this._loading.set(true);
     this._error.set(null);
     try {
@@ -377,6 +425,10 @@ export class NutritionStore {
         this.nutritionApi.updateMealEntry(record).pipe(retry(2)),
       );
       this._mealRecords.update(prev => prev.map(r => r.id === updated.id ? updated : r));
+      if (user) {
+        this.eventBus.publish(new MealEntryUpdated(user.id, updated.id, updated.mealType, updated.calories));
+        this.checkAndPublishDailyGoalEvents(user.id);
+      }
     } catch {
       this._error.set('Failed to update meal entry.');
     } finally {
@@ -452,6 +504,40 @@ export class NutritionStore {
   // ─── Private Helpers ──────────────────────────────────────────────────────
 
   /**
+   * Checks which meal windows have closed without a log and emits {@link MealSkipped}.
+   * A Set signal deduplicates emissions so each meal type fires at most once per day.
+   */
+  private checkMealWindows(): void {
+    const user = this.iamStore.currentUser();
+    if (!user) return;
+
+    const now   = new Date();
+    const today = now.toISOString().slice(0, 10);
+    const hour  = now.getHours();
+
+    const windows = [
+      { mealType: MealType.BREAKFAST, closesAt: 10, windowEnd: `${today}T10:00:00` },
+      { mealType: MealType.LUNCH,     closesAt: 15, windowEnd: `${today}T15:00:00` },
+      { mealType: MealType.DINNER,    closesAt: 22, windowEnd: `${today}T22:00:00` },
+    ];
+
+    const emitted = new Set(this._skippedMealsEmitted());
+    const groups  = this.recordsByMealType();
+
+    for (const { mealType, closesAt, windowEnd } of windows) {
+      if (hour < closesAt) continue;
+      const key = `${mealType}-${today}`;
+      if (emitted.has(key)) continue;
+      if (groups[mealType].length > 0) continue;
+
+      this.eventBus.publish(new MealSkipped(user.id, mealType, windowEnd, today));
+      emitted.add(key);
+    }
+
+    this._skippedMealsEmitted.set(emitted);
+  }
+
+  /**
    * Evaluates post-meal conditions and publishes {@link DailyGoalExceeded}
    * or {@link DailyGoalMet} at most once per session day.
    */
@@ -463,6 +549,15 @@ export class NutritionStore {
     if (intake.exceeded && !this._goalExceededToday()) {
       this._goalExceededToday.set(true);
       this.eventBus.publish(new DailyGoalExceeded(userId, intake.netCalories, today));
+      return;
+    }
+
+    if (!intake.exceeded) {
+      const totals       = this.dailyTotals();
+      const adherencePct = intake.dailyGoal > 0
+        ? Math.round((totals.calories / intake.dailyGoal) * 100)
+        : 0;
+      this.eventBus.publish(new DailyProgressUpdated(userId, intake.remaining, adherencePct, today));
     }
 
     if (this.allMealsLogged() && !this._allMealsMetToday()) {

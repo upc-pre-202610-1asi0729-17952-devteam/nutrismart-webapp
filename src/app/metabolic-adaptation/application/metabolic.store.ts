@@ -20,6 +20,11 @@ import { NutritionPlan } from '../domain/model/nutrition-plan.entity';
 import { MetabolicAdaptationLog } from '../domain/model/metabolic-adaptation-log.entity';
 import { MetabolicChangeTrigger } from '../domain/model/metabolic-change-trigger.enum';
 import { ActivityTrendDetected } from '../domain/events/activity-trend-detected.event';
+import { BMICalculated } from '../domain/events/bmi-calculated.event';
+import { BMRCalculated } from '../domain/events/bmr-calculated.event';
+import { TDEECalculated } from '../domain/events/tdee-calculated.event';
+import { BodyMetricsUpdated } from '../../shared/domain/body-metrics-updated.event';
+import { MetabolicTargetsRecalculated } from '../../shared/domain/metabolic-targets-recalculated.event';
 
 const STAGNATION_WINDOW_DAYS   = 14;
 const MIN_GOAL_COMMITMENT_DAYS = 28;
@@ -290,6 +295,9 @@ export class MetabolicStore {
       this._adaptationHistory.update(history => [persisted, ...history]);
     });
 
+    this.eventBus.publish(new BMRCalculated(userId, targets.bmr));
+    this.eventBus.publish(new TDEECalculated(userId, targets.tdee, targets.tdee / targets.bmr));
+
     const event = new MetabolicTargetSet(
       userId,
       targets.dailyCalorieTarget,
@@ -299,6 +307,18 @@ export class MetabolicStore {
       targets.fiberTarget,
     );
     this.eventBus.publish(event);
+
+    if (trigger !== MetabolicChangeTrigger.ONBOARDING) {
+      this.eventBus.publish(new MetabolicTargetsRecalculated(
+        userId,
+        targets.dailyCalorieTarget,
+        targets.proteinTarget,
+        targets.carbsTarget,
+        targets.fatTarget,
+        trigger,
+      ));
+    }
+
     this._nutritionPlan.set(NutritionPlan.fromTargets(userId, targets));
   }
 
@@ -392,7 +412,12 @@ export class MetabolicStore {
       }
       this._currentMetric.set(metric);
       this.iamStore.updateWeightOnly(weightKg);
+
       this.eventBus.publish(new WeightLogged(user.id, weightKg, metric.bmi()));
+      this.eventBus.publish(new BodyMetricsUpdated(user.id, weightKg, metric.heightCm, metric.loggedAt));
+      this.eventBus.publish(new BMICalculated(user.id, metric.bmi(), weightKg, metric.heightCm));
+
+      this.recalculateForGoal(user.goal, undefined, MetabolicChangeTrigger.BODY_METRICS_UPDATE);
       this.checkAndPublishStagnation();
 
       if (
@@ -507,14 +532,18 @@ export class MetabolicStore {
    *
    * Used during onboarding when the goal or body composition changes.
    */
-  recalculateForGoal(goal: UserGoal, leanMassKg?: number): void {
+  recalculateForGoal(
+    goal:        UserGoal,
+    leanMassKg?: number,
+    trigger?:    MetabolicChangeTrigger,
+  ): void {
     const user = this.iamStore.currentUser();
     if (!user) return;
-    const targets  = MetabolicTargets.calculate(user.weight, user.height, user.activityLevel, goal, leanMassKg);
-    const trigger  = leanMassKg !== undefined
+    const targets         = MetabolicTargets.calculate(user.weight, user.height, user.activityLevel, goal, leanMassKg);
+    const resolvedTrigger = trigger ?? (leanMassKg !== undefined
       ? MetabolicChangeTrigger.BODY_COMPOSITION_UPDATE
-      : MetabolicChangeTrigger.PROFILE_CHANGE;
-    this.publishMetabolicTargetSet(user.id, targets, trigger);
+      : MetabolicChangeTrigger.PROFILE_CHANGE);
+    this.publishMetabolicTargetSet(user.id, targets, resolvedTrigger);
   }
 
   async applyInitialTarget(goal: UserGoal): Promise<void> {

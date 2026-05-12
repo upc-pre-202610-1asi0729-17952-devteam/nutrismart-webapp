@@ -1,6 +1,8 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { TranslateStore } from '@ngx-translate/core';
 import { IamStore } from '../../iam/application/iam.store';
+import { DomainEventBus } from '../../shared/application/domain-event-bus';
+import { MealPhotoAnalyzed } from '../domain/events/meal-photo-analyzed.event';
 import { MealType } from '../domain/model/meal-type.enum';
 import { MealRecord, MealRecordProps } from '../domain/model/meal-record.entity';
 import { ScanResult } from '../domain/model/scan-result.entity';
@@ -41,6 +43,7 @@ export class PlateScanStore {
   private iamStore        = inject(IamStore);
   private nutritionStore  = inject(NutritionStore);
   private translateStore  = inject(TranslateStore);
+  private eventBus        = inject(DomainEventBus);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
@@ -126,6 +129,12 @@ export class PlateScanStore {
           this._scanResult.set(result);
           this._plateView.set(result.hasItems ? 'result' : 'invalid');
           this._loading.set(false);
+          const user = this.iamStore.currentUser();
+          if (user && result.hasItems) {
+            const itemNames       = result.detectedItems.map(i => i.name);
+            const totalCalories   = result.totalCalories;
+            this.eventBus.publish(new MealPhotoAnalyzed(user.id, itemNames, totalCalories));
+          }
           resolve();
         },
         error: () => {

@@ -23,6 +23,8 @@ import { StreakMilestoneReached } from '../../shared/domain/streak-milestone-rea
 import { StrategyMismatchDetected } from '../../shared/domain/strategy-mismatch-detected.event';
 import { DailyGoalMet } from '../../shared/domain/daily-goal-met.event';
 import { MetabolicTargetSet } from '../../shared/domain/metabolic-target-set.event';
+import { MealSkipped } from '../../shared/domain/meal-skipped.event';
+import { RestrictedItemBlocked } from '../../shared/domain/restricted-item-blocked.event';
 
 /**
  * Central state store for the Behavioral Consistency bounded context.
@@ -44,6 +46,8 @@ export class BehavioralConsistencyStore {
     this.subscribeToMetabolicTargetSet();
     this.subscribeToBehavioralDropEvents();
     this.subscribeToConsistencyRecovered();
+    this.subscribeToMealSkipped();
+    this.subscribeToRestrictedItemBlocked();
   }
 
   /** Current behavioral progress for the active user, or `null` if not loaded. */
@@ -491,6 +495,32 @@ export class BehavioralConsistencyStore {
       .subscribe((e) => {
         const event = e as ConsistencyRecovered;
         void this.completeRecoveryPlan(event.userId);
+      });
+  }
+
+  /** Registers a skipped meal window as a behavioral miss. */
+  private subscribeToMealSkipped(): void {
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof MealSkipped))
+      .subscribe((e) => {
+        const event    = e as MealSkipped;
+        const progress = this._currentProgress();
+        if (progress?.userId === event.userId) {
+          this.markGoalMissed();
+        }
+      });
+  }
+
+  /** Tracks a blocked restricted-item attempt as an informational deviation. */
+  private subscribeToRestrictedItemBlocked(): void {
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof RestrictedItemBlocked))
+      .subscribe((e) => {
+        const event    = e as RestrictedItemBlocked;
+        const progress = this._currentProgress();
+        if (progress?.userId === event.userId) {
+          void this.analyzePattern(event.userId);
+        }
       });
   }
 }

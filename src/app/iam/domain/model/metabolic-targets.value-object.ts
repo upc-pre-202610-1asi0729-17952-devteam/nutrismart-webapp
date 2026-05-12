@@ -20,6 +20,10 @@ export class MetabolicTargets {
   readonly fatTarget: number;
   /** Daily dietary fibre target in grams (fixed at 25 g). */
   readonly fiberTarget: number;
+  /** Basal Metabolic Rate in kcal used during this calculation. */
+  readonly bmr: number;
+  /** Total Daily Energy Expenditure in kcal before goal offset. */
+  readonly tdee: number;
 
   private constructor(data: {
     dailyCalorieTarget: number;
@@ -27,12 +31,16 @@ export class MetabolicTargets {
     carbsTarget: number;
     fatTarget: number;
     fiberTarget: number;
+    bmr: number;
+    tdee: number;
   }) {
     this.dailyCalorieTarget = data.dailyCalorieTarget;
     this.proteinTarget = data.proteinTarget;
     this.carbsTarget = data.carbsTarget;
     this.fatTarget = data.fatTarget;
     this.fiberTarget = data.fiberTarget;
+    this.bmr = data.bmr;
+    this.tdee = data.tdee;
   }
 
   /**
@@ -96,6 +104,8 @@ export class MetabolicTargets {
       carbsTarget: Math.max(carbs, 0),
       fatTarget: fat,
       fiberTarget: 25,
+      bmr: Math.round(bmr),
+      tdee: Math.round(tdee),
     });
   }
 
@@ -121,6 +131,8 @@ export class MetabolicTargets {
       carbsTarget:        base.carbsTarget + extraCarbs,
       fatTarget:          base.fatTarget,
       fiberTarget:        base.fiberTarget,
+      bmr:                base.bmr,
+      tdee:               base.tdee,
     });
   }
 }

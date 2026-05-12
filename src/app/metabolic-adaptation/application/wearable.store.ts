@@ -10,6 +10,8 @@ import { WearableConnected } from '../domain/events/wearable-connected.event';
 import { ManualActivityImported } from '../domain/events/manual-activity-imported.event';
 import { CaloricTargetAdjusted } from '../domain/events/caloric-target-adjusted.event';
 import { ActivityTrendDetected } from '../domain/events/activity-trend-detected.event';
+import { ActivitySynced } from '../domain/events/activity-synced.event';
+import { ActiveCaloriesCalculated } from '../domain/events/active-calories-calculated.event';
 
 @Injectable({ providedIn: 'root' })
 export class WearableStore {
@@ -124,12 +126,28 @@ export class WearableStore {
 
   async syncNow(): Promise<void> {
     const connection = this._connection();
-    if (!connection) return;
+    const user       = this.iamStore.currentUser();
+    if (!connection || !user) return;
     this._loading.set(true);
     this._error.set(null);
     try {
       const updated = await firstValueFrom(this.api.syncNow(connection));
       this._connection.set(updated);
+
+      const logs = await firstValueFrom(this.api.getActivityLogs(user.id));
+      this._activityLogs.set(logs);
+
+      const caloriesBurned  = this.netCalorieAdjustment();
+      const syncedAt        = new Date().toISOString();
+      this.eventBus.publish(new ActivitySynced(user.id, caloriesBurned, syncedAt));
+
+      if (caloriesBurned > 0) {
+        const previousTarget = user.dailyCalorieTarget;
+        this.eventBus.publish(new CaloricTargetAdjusted(
+          user.id, previousTarget, previousTarget + caloriesBurned, caloriesBurned,
+        ));
+      }
+
       this.analyzeWeeklyTrend();
     } catch {
       this._error.set('physical_activity.error_sync');
@@ -207,6 +225,9 @@ export class WearableStore {
       this._activityLogs.update(logs => [log, ...logs]);
       this.eventBus.publish(new ManualActivityImported(
         user.id, activityKey, durationMinutes, calories, log.timestamp,
+      ));
+      this.eventBus.publish(new ActiveCaloriesCalculated(
+        user.id, calories, activityKey, durationMinutes,
       ));
       const previousTarget = user.dailyCalorieTarget;
       this.eventBus.publish(new CaloricTargetAdjusted(
