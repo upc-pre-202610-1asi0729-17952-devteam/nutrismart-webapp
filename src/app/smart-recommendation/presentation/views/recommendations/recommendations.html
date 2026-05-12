@@ -14,9 +14,37 @@
         }
       </p>
     </div>
-    <div class="header-badge" [class.badge--travel]="store.isTravelMode()">
-      <span class="badge-icon">{{ headerBadgeIcon() }}</span>
-      <span class="badge-text">{{ headerBadgeLabel() }}</span>
+    <div class="header-chips">
+      @if (store.isTravelMode()) {
+        <div class="travel-chip" role="status" [attr.aria-label]="'recommendations.travel_chip' | translate:{ city: store.travelContext()?.city }">
+          <span>✈</span>
+          <span>{{ 'recommendations.travel_chip' | translate:{ city: store.travelContext()?.city } }}</span>
+          <button class="travel-chip-close" (click)="onDisableAutoTravel()" [attr.aria-label]="'recommendations.travel_disable' | translate">✕</button>
+        </div>
+      }
+      <div class="header-badge-wrap">
+        <button
+          class="header-badge"
+          [class.badge--travel]="store.isTravelMode()"
+          [attr.aria-pressed]="showLocationPicker()"
+          [attr.aria-label]="'recommendations.location_picker_title' | translate"
+          (click)="onChipClick()"
+        >
+          <span class="badge-icon">{{ headerBadgeIcon() }}</span>
+          <span class="badge-text">{{ headerBadgeLabel() }}</span>
+          <span class="badge-chevron">▾</span>
+        </button>
+        @if (showLocationPicker()) {
+          <app-location-picker
+            [locations]="store.availableLocations()"
+            [selectedCity]="store.weatherContext()?.city ?? ''"
+            [demoTemperature]="store.demoTemperature()"
+            (citySelected)="onCitySelected($event)"
+            (temperatureChanged)="onTemperatureChanged($event)"
+            (closed)="onPickerClosed()"
+          />
+        }
+      </div>
     </div>
   </header>
 

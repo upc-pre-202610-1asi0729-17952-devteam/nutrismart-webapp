@@ -1,15 +1,17 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RecommendationsStore } from '../../../application/recommendations.store';
 import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
+import { WeatherContext } from '../../../domain/model/weather-context.entity';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
+import { LocationPicker } from '../../components/location-picker/location-picker';
 
 @Component({
   selector: 'app-recommendations',
-  imports: [RouterLink, NgClass, TranslatePipe],
+  imports: [RouterLink, NgClass, TranslatePipe, LocationPicker],
   templateUrl: './recommendations.html',
   styleUrl: './recommendations.css',
 })
@@ -20,6 +22,8 @@ export class RecommendationsView implements OnInit {
   private translate    = inject(TranslateService);
 
   protected isPro = computed(() => this.iamStore.currentUser()?.isPro() ?? false);
+
+  protected showLocationPicker = signal<boolean>(false);
 
   // ─── Daily balance ────────────────────────────────────────────────────────
 
@@ -76,15 +80,18 @@ export class RecommendationsView implements OnInit {
   });
 
   protected headerBadgeLabel = computed(() => {
+    const demo = this.store.demoTemperature();
     if (this.store.isTravelMode()) {
       const t = this.store.travelContext();
       const w = this.store.weatherContext();
       return this.translate.instant('recommendations.header_badge_travel', {
         city: t?.city ?? '',
-        temp: w?.temperatureCelsius ?? '?',
+        temp: demo ?? w?.temperatureCelsius ?? '?',
       });
     }
-    return this.store.weatherContext()?.formattedLabel() ?? '';
+    const w = this.store.weatherContext();
+    if (!w) return '';
+    return `${w.city} · ${demo ?? w.temperatureCelsius}°C`;
   });
 
   protected headerBadgeIcon = computed(() =>
@@ -115,10 +122,35 @@ export class RecommendationsView implements OnInit {
     await this.nutStore.loadMealHistory();
   }
 
+  // ─── Location picker ──────────────────────────────────────────────────────
+
+  onChipClick(): void {
+    this.showLocationPicker.update(v => !v);
+  }
+
+  onPickerClosed(): void {
+    this.showLocationPicker.set(false);
+  }
+
+  onCitySelected(loc: WeatherContext): void {
+    const homeCity = this.iamStore.currentUser()?.homeCity ?? '';
+    if (loc.city === homeCity) {
+      void this.store.deactivateTravelMode();
+    } else {
+      void this.store.activateTravelMode(loc.city, loc.country, true);
+    }
+    this.showLocationPicker.set(false);
+  }
+
+  onTemperatureChanged(temp: number): void {
+    this.store.setDemoTemperature(temp);
+  }
+
   // ─── Travel mode user actions ─────────────────────────────────────────────
 
   onDisableAutoTravel(): void {
-    this.store.deactivateTravelMode();
+    void this.store.deactivateTravelMode();
+    this.showLocationPicker.set(false);
   }
 
   // TODO: wire to NutritionStore once cross-BC integration is ready

@@ -25,11 +25,47 @@
   margin: 0;
 }
 
+.header-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.travel-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px 6px 12px;
+  border-radius: 20px;
+  background: #d1fae5;
+  border: 1.5px solid #5ba99b;
+  color: #065f46;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.travel-chip-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #065f46;
+  font-size: 11px;
+  padding: 0 2px;
+  line-height: 1;
+  opacity: 0.7;
+}
+.travel-chip-close:hover { opacity: 1; }
+
+.header-badge-wrap {
+  position: relative;
+}
+
 .header-badge {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 14px;
+  padding: 8px 12px 8px 14px;
   border-radius: 20px;
   border: 1.5px solid var(--nutrismart-border);
   background: var(--nutrismart-white);
@@ -37,11 +73,23 @@
   font-weight: 600;
   color: var(--nutrismart-text-dark);
   white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.header-badge:hover { border-color: var(--nutrismart-accent); }
+.header-badge[aria-pressed="true"] {
+  border-color: var(--nutrismart-accent);
+  background: color-mix(in srgb, var(--nutrismart-accent) 6%, var(--nutrismart-white));
 }
 
 .header-badge.badge--travel {
   border-color: #5ba99b;
   color: #2d7a6f;
+}
+
+.badge-chevron {
+  font-size: 10px;
+  opacity: 0.6;
 }
 
 /* ── Plan gate ── */
