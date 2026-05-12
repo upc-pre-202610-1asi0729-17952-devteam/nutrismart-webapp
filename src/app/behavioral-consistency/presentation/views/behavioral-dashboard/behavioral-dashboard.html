@@ -21,8 +21,8 @@
   <main class="dashboard-shell">
     <header class="dashboard-header">
       <div>
-        <h1>{{ greeting.greetingKey | translate: greeting.greetingParams }}</h1>
-        <p>{{ dateLabel() }}</p>
+        <h1 class="page-title">{{ greeting.greetingKey | translate: greeting.greetingParams }}</h1>
+        <p class="page-subtitle">{{ dateLabel() }}</p>
       </div>
 
       <span class="status-pill" [ngClass]="greeting.badgeClass">

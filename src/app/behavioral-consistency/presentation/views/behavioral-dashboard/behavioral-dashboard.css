@@ -1,13 +1,13 @@
 :host {
   display: block;
   min-height: 100%;
-  background: #fafafa;
+  background: var(--nutrismart-bg);
   color: #1f1f1f;
   font-family: inherit;
 }
 
 .dashboard-shell {
-  padding: 22px 32px 28px;
+  padding: 32px 36px;
 }
 
 .dashboard-state-block {
@@ -40,18 +40,19 @@
   margin-bottom: 22px;
 }
 
-.dashboard-header h1 {
+.dashboard-header .page-title {
   margin: 0;
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+  letter-spacing: -0.3px;
 }
 
-.dashboard-header p {
+.dashboard-header .page-subtitle {
   margin: 4px 0 0;
-  color: #8b8b8b;
-  font-size: 17px;
-  font-weight: 500;
+  color: var(--nutrismart-text-light);
+  font-size: 13px;
+  font-weight: 400;
 }
 
 .status-pill {

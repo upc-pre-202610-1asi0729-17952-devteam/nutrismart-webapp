@@ -1,19 +1,26 @@
 .smart-scan-page {
-  padding: 2rem;
+  padding: 32px 36px;
   max-width: 960px;
   margin: 0 auto;
+  background: var(--nutrismart-bg);
+  min-height: 100vh;
 }
 
 .page-header { margin-bottom: 2rem; }
 
 .page-title {
-  font-size: 1.75rem;
+  font-size: 26px;
   font-weight: 700;
-  color: #1a2e2a;
-  margin: 0 0 0.25rem;
+  color: var(--nutrismart-text-dark);
+  letter-spacing: -0.3px;
+  margin: 0 0 4px;
 }
 
-.page-subtitle { color: #6b7280; margin: 0; }
+.page-subtitle {
+  font-size: 13px;
+  color: var(--nutrismart-text-light);
+  margin: 0;
+}
 
 .paywall-card {
   display: flex;
