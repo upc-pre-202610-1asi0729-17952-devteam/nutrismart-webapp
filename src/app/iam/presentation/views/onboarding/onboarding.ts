@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -8,6 +8,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { CityLookupApi } from '../../../../shared/infrastructure/city-lookup-api';
 
 /**
  * Validates that the date entered corresponds to a person at least `minAge`
@@ -107,12 +109,13 @@ interface VisualLevel {
   templateUrl: './onboarding.html',
   styleUrl: './onboarding.css',
 })
-export class Onboarding {
+export class Onboarding implements OnInit {
   iamStore       = inject(IamStore);
   metabolicStore = inject(MetabolicStore);
 
-  private router = inject(Router);
-  private fb     = inject(FormBuilder);
+  private router        = inject(Router);
+  private fb            = inject(FormBuilder);
+  private cityLookupApi = inject(CityLookupApi);
 
   /** Expose enum to template. */
   readonly UserGoal = UserGoal;
@@ -148,14 +151,22 @@ export class Onboarding {
 
   // ─── Step 1 state ─────────────────────────────────────────────────────────
 
-  selectedActivity = signal<ActivityLevel>(ActivityLevel.MODERATE);
+  selectedActivity  = signal<ActivityLevel>(ActivityLevel.MODERATE);
+  availableCities   = signal<string[]>([]);
+  citiesLoading     = signal(true);
+
+  private readonly cityValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const cities = this.availableCities();
+    if (cities.length === 0) return null;
+    return cities.includes(control.value) ? null : { invalidCity: true };
+  };
 
   bodyForm = this.fb.group({
     birthday:      ['', [Validators.required, minAgeValidator(13)]],
     biologicalSex: ['', Validators.required],
     weight:        [null as number | null, [Validators.required, Validators.min(30), Validators.max(300)]],
     height:        [null as number | null, [Validators.required, Validators.min(100), Validators.max(250)]],
-    homeCity:      ['', Validators.required],
+    homeCity:      ['', [Validators.required, this.cityValidator]],
   });
 
   // ─── Step 2 state ─────────────────────────────────────────────────────────
@@ -245,6 +256,18 @@ export class Onboarding {
     { key: 'onboarding.visual_overweight',   rangeKey: 'onboarding.visual_range_overweight',   override: 25.5 },
     { key: 'onboarding.visual_obese',        rangeKey: 'onboarding.visual_range_obese',        override: 32.0 },
   ];
+
+  // ─── Lifecycle ────────────────────────────────────────────────────────────
+
+  async ngOnInit(): Promise<void> {
+    try {
+      const cities = await firstValueFrom(this.cityLookupApi.getKnownCities());
+      this.availableCities.set(cities);
+      this.bodyForm.get('homeCity')!.updateValueAndValidity();
+    } finally {
+      this.citiesLoading.set(false);
+    }
+  }
 
   // ─── Navigation ───────────────────────────────────────────────────────────
 

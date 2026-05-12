@@ -118,7 +118,7 @@
     "error_weight_range": "Weight must be between 30 and 300 kg",
     "error_height_range": "Height must be between 100 and 250 cm",
     "home_city": "Home city",
-    "home_city_placeholder": "e.g. Lima",
+    "home_city_placeholder": "Select your city",
     "error_home_city_required": "Home city is required",
     "continue_btn": "Continue →",
     "back_btn": "← Back",
@@ -158,7 +158,9 @@
     "visual_range_lean": "13–18%",
     "visual_range_average": "18–23%",
     "visual_range_overweight": "23–28%",
-    "visual_range_obese": "28%+"
+    "visual_range_obese": "28%+",
+    "home_city_loading": "Loading cities...",
+    "error_home_city_invalid": "Select a valid city from the list"
   },
   "subscription": {
     "title": "Choose your plan",
