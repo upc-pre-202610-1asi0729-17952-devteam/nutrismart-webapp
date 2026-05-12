@@ -203,9 +203,10 @@ export class MetabolicStore {
         filter((e) => e.updatedFields.some(f => PHYSICAL_FIELDS.has(f))),
       )
       .subscribe(() => {
-        const user = this.iamStore.currentUser();
+        const user      = this.iamStore.currentUser();
         if (!user) return;
-        const targets = MetabolicTargets.calculate(user.weight, user.height, user.activityLevel, user.goal);
+        const leanMass  = this._composition()?.leanMassKg();
+        const targets   = MetabolicTargets.calculate(user.weight, user.height, user.activityLevel, user.goal, leanMass);
         this.publishMetabolicTargetSet(user.id, targets);
       });
   }
@@ -397,6 +398,7 @@ export class MetabolicStore {
         this.api.setComposition(user.id, weightKg, heightCm, waistCm, overrideBodyFatPercent),
       );
       this._composition.set(comp);
+      this.recalculateForGoal(user.goal, comp.leanMassKg());
     } catch {
       this._error.set('body_progress.error_save_failed');
     } finally {
@@ -426,13 +428,15 @@ export class MetabolicStore {
    * Recalculates macro targets for the given goal using the current user's
    * physical data and publishes {@link MetabolicTargetSet}.
    *
-   * Used during onboarding when the goal changes after physical data is set,
-   * since {@link subscribeToProfileUpdated} only reacts to physical-field changes.
+   * Uses Katch-McArdle when `leanMassKg` is supplied; falls back to
+   * Mifflin-St Jeor otherwise.
+   *
+   * Used during onboarding when the goal or body composition changes.
    */
-  recalculateForGoal(goal: UserGoal): void {
+  recalculateForGoal(goal: UserGoal, leanMassKg?: number): void {
     const user = this.iamStore.currentUser();
     if (!user) return;
-    const targets = MetabolicTargets.calculate(user.weight, user.height, user.activityLevel, goal);
+    const targets = MetabolicTargets.calculate(user.weight, user.height, user.activityLevel, goal, leanMassKg);
     this.publishMetabolicTargetSet(user.id, targets);
   }
 

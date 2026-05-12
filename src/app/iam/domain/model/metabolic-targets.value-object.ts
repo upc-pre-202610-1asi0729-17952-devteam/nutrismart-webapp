@@ -36,13 +36,18 @@ export class MetabolicTargets {
   }
 
   /**
-   * Calculates daily macro targets using the Mifflin-St Jeor formula.
+   * Calculates daily macro targets.
+   *
+   * When `leanMassKg` is provided (body composition known), uses the
+   * **Katch-McArdle** formula: BMR = 370 + 21.6 × lean_mass_kg.
+   * Otherwise falls back to **Mifflin-St Jeor**: BMR = 10w + 6.25h − 161.
    *
    * Steps:
-   * 1. BMR (female formula) = (10 × weight) + (6.25 × height) − 161
+   * 1. BMR — Katch-McArdle if lean mass available, otherwise Mifflin-St Jeor
    * 2. TDEE = BMR × activity multiplier (1.2 / 1.375 / 1.55 / 1.725)
    * 3. Calories = TDEE − 300 (weight loss) or TDEE + 300 (muscle gain)
-   * 4. Protein = weight × 1.6 g (weight loss) or weight × 2.0 g (muscle gain)
+   * 4. Protein — based on lean mass when available (2.4 g/kg MUSCLE_GAIN,
+   *    2.0 g/kg WEIGHT_LOSS), otherwise total weight (2.0 g/kg / 1.6 g/kg)
    * 5. Fat = 25 % of calories ÷ 9
    * 6. Carbs = (calories − protein kcal − fat kcal) ÷ 4
    * 7. Fibre = 25 g fixed
@@ -51,6 +56,7 @@ export class MetabolicTargets {
    * @param heightCm      - Height in centimetres.
    * @param activityLevel - Daily activity level.
    * @param goal          - Fitness goal driving the caloric offset.
+   * @param leanMassKg    - Optional lean body mass (kg) from body composition measurement.
    * @returns An immutable {@link MetabolicTargets} instance.
    */
   static calculate(
@@ -58,8 +64,11 @@ export class MetabolicTargets {
     heightCm: number,
     activityLevel: ActivityLevel,
     goal: UserGoal,
+    leanMassKg?: number,
   ): MetabolicTargets {
-    const bmr = 10 * weightKg + 6.25 * heightCm - 161;
+    const bmr = leanMassKg !== undefined
+      ? 370 + 21.6 * leanMassKg
+      : 10 * weightKg + 6.25 * heightCm - 161;
 
     const multipliers: Record<ActivityLevel, number> = {
       [ActivityLevel.SEDENTARY]: 1.2,
@@ -72,10 +81,11 @@ export class MetabolicTargets {
     const calories =
       goal === UserGoal.WEIGHT_LOSS ? Math.round(tdee - 300) : Math.round(tdee + 300);
 
+    const base = leanMassKg ?? weightKg;
     const protein =
       goal === UserGoal.WEIGHT_LOSS
-        ? Math.round(weightKg * 1.6)
-        : Math.round(weightKg * 2.0);
+        ? Math.round(base * (leanMassKg !== undefined ? 2.0 : 1.6))
+        : Math.round(base * (leanMassKg !== undefined ? 2.4 : 2.0));
 
     const fat = Math.round((calories * 0.25) / 9);
     const carbs = Math.round((calories - protein * 4 - fat * 9) / 4);
@@ -83,7 +93,7 @@ export class MetabolicTargets {
     return new MetabolicTargets({
       dailyCalorieTarget: calories,
       proteinTarget: protein,
-      carbsTarget: carbs,
+      carbsTarget: Math.max(carbs, 0),
       fatTarget: fat,
       fiberTarget: 25,
     });
