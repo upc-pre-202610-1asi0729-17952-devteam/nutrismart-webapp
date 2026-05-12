@@ -160,6 +160,26 @@
   padding: 32px 24px;
 }
 
+@media (max-width: 1023px) {
+  .subscription-shell.manage-mode {
+    padding-top: 68px;
+  }
+}
+
+@media (max-width: 600px) {
+  .subscription-shell {
+    padding: 24px 16px;
+  }
+
+  .subscription-shell.manage-mode {
+    padding: 68px 16px 24px;
+  }
+
+  .plans-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .plan-card.current-plan {
   border-color: var(--nutrismart-primary, #508B89);
   background: var(--nutrismart-primary-light, #e8f2f2);

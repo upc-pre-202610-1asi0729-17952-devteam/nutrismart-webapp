@@ -127,8 +127,13 @@
     align-items: flex-start;
   }
 
-  .log-activity-btn {
+  .header-actions {
     width: 100%;
+    justify-content: space-between;
+  }
+
+  .log-activity-btn {
+    flex: 1;
     justify-content: center;
   }
 }

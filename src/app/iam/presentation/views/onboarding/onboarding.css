@@ -466,6 +466,35 @@
   line-height: 1.4;
 }
 
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .onboarding-card {
+    padding: 16px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .goal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-details {
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+  }
+
+  .step-title {
+    font-size: 1.15rem;
+  }
+}
+
 /* Continue button */
 .btn-continue {
   background: var(--nutrismart-primary, #508B89);

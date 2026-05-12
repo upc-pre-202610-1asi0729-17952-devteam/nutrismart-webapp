@@ -182,3 +182,25 @@
   min-width: 120px;
   text-align: center;
 }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .history-panel__header {
+    padding: 14px 16px 12px;
+  }
+
+  .history-table__head th {
+    padding: 8px 12px;
+    font-size: 10px;
+  }
+
+  .history-table__row td {
+    padding: 10px 12px;
+    font-size: 12.5px;
+  }
+
+  .history-panel__footer,
+  .history-panel__pagination {
+    padding: 12px 16px;
+  }
+}
