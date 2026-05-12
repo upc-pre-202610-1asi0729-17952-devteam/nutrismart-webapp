@@ -348,7 +348,17 @@
     "view_daily_log_btn": "View daily log",
     "net_balance_desc": "kcal net today",
     "meal_more": "+{{count}} more",
-    "weekly_completion": "weekly completion"
+    "weekly_completion": "weekly completion",
+    "pattern": {
+      "CONSISTENT": "Consistent",
+      "WEEKDAY_ONLY": "Weekdays only",
+      "RECOVERING": "Recovering",
+      "IRREGULAR": "Irregular",
+      "analyzed_at": "Pattern analysed on {{date}}",
+      "improving": "Your habit is building momentum.",
+      "declining": "Your habit is losing ground.",
+      "label": "Habit pattern"
+    }
   },
   "nutrition": {
     "page_title": "Daily Log",

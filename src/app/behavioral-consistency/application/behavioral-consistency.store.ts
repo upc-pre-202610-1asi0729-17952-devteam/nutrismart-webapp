@@ -1,12 +1,16 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, firstValueFrom } from 'rxjs/operators';
 import { AdherenceStatus } from '../domain/model/adherence-status.enum';
 import {
   BehavioralProgress,
   BehavioralProgressProps,
 } from '../domain/model/behavioral-progress.entity';
+import { EatingBehaviorPattern } from '../domain/model/eating-behavior-pattern.entity';
+import { BehaviorPatternType } from '../domain/model/behavior-pattern-type.enum';
+import { BehaviorPatternAnalyzed } from '../domain/events/behavior-pattern-analyzed.event';
 import { BehavioralConsistencyApi } from '../infrastructure/behavioral-consistency-api';
+import { EatingBehaviorPatternApi } from '../infrastructure/eating-behavior-pattern-api';
 import { DomainEventBus } from '../../shared/application/domain-event-bus';
 import { BehavioralDropDetected } from '../../shared/domain/behavioral-drop-detected.event';
 import { ConsistencyRecovered } from '../../shared/domain/consistency-recovered.event';
@@ -26,8 +30,9 @@ import { MetabolicTargetSet } from '../../shared/domain/metabolic-target-set.eve
  */
 @Injectable({ providedIn: 'root' })
 export class BehavioralConsistencyStore {
-  private behavioralConsistencyApi = inject(BehavioralConsistencyApi);
-  private eventBus                 = inject(DomainEventBus);
+  private behavioralConsistencyApi  = inject(BehavioralConsistencyApi);
+  private eatingBehaviorPatternApi  = inject(EatingBehaviorPatternApi);
+  private eventBus                  = inject(DomainEventBus);
 
   constructor() {
     this.subscribeToDailyGoalMet();
@@ -36,6 +41,9 @@ export class BehavioralConsistencyStore {
 
   /** Current behavioral progress for the active user, or `null` if not loaded. */
   private _currentProgress = signal<BehavioralProgress | null>(null);
+
+  /** Latest eating behavior pattern for the active user, or `null` if not analysed yet. */
+  private _currentPattern = signal<EatingBehaviorPattern | null>(null);
 
   /** Whether an async operation is in flight. */
   private _loading = signal<boolean>(false);
@@ -48,11 +56,29 @@ export class BehavioralConsistencyStore {
   /** Read-only signal exposing the current {@link BehavioralProgress}. */
   readonly currentProgress = this._currentProgress.asReadonly();
 
+  /** Read-only signal exposing the latest {@link EatingBehaviorPattern}, or `null`. */
+  readonly currentPattern = this._currentPattern.asReadonly();
+
   /** Read-only signal indicating whether an async operation is in progress. */
   readonly loading = this._loading.asReadonly();
 
   /** Read-only signal holding the most recent error message, or `null`. */
   readonly error = this._error.asReadonly();
+
+  /** Classified pattern type, or `null` if no analysis has run yet. */
+  readonly patternType = computed(() =>
+    this._currentPattern()?.patternType ?? null,
+  );
+
+  /** Whether the current pattern shows positive momentum. */
+  readonly isPatternImproving = computed(() =>
+    this._currentPattern()?.isImproving() ?? false,
+  );
+
+  /** Whether the current pattern is in active decline. */
+  readonly isPatternDeclining = computed(() =>
+    this._currentPattern()?.isDeclining() ?? false,
+  );
 
   /** Current behavioral adherence status, or `null` if progress is not loaded. */
   readonly adherenceStatus = computed(() =>
@@ -191,6 +217,8 @@ export class BehavioralConsistencyStore {
       const milestone = this.clampMilestone(prevMilestone);
       this.eventBus.publish(new StreakMilestoneReached(progress.userId, progress.streak, milestone));
     }
+
+    void this.analyzePattern(progress.userId);
   }
 
   markGoalMissed(): void {
@@ -206,6 +234,8 @@ export class BehavioralConsistencyStore {
     } else if (progress.consecutiveMisses >= 3) {
       this.eventBus.publish(new BehavioralDropDetected(progress.userId, progress.consecutiveMisses));
     }
+
+    void this.analyzePattern(progress.userId);
   }
 
   /**
@@ -223,6 +253,44 @@ export class BehavioralConsistencyStore {
     progress.adherenceStatus = status;
     this._currentProgress.set(progress);
     this.persist();
+  }
+
+  // ─── Pattern analysis ─────────────────────────────────────────────────────
+
+  /**
+   * Derives and persists an {@link EatingBehaviorPattern} from the current progress.
+   *
+   * Runs an upsert: fetches the existing pattern for the user and updates it,
+   * or creates a new record when none exists. Publishes {@link BehaviorPatternAnalyzed}
+   * on success so downstream contexts can adapt their strategy.
+   *
+   * @param userId - Numeric identifier of the user being analysed.
+   */
+  async analyzePattern(userId: number): Promise<void> {
+    const progress = this._currentProgress();
+    if (!progress || progress.userId !== userId) return;
+
+    const pattern = EatingBehaviorPattern.fromProgress(userId, progress);
+
+    try {
+      const existing = await firstValueFrom(this.eatingBehaviorPatternApi.getByUserId(userId));
+      let persisted: EatingBehaviorPattern;
+
+      if (existing) {
+        pattern.id = existing.id;
+        persisted = await firstValueFrom(this.eatingBehaviorPatternApi.update(pattern));
+      } else {
+        persisted = await firstValueFrom(this.eatingBehaviorPatternApi.create(pattern));
+      }
+
+      this._currentPattern.set(persisted);
+      this.eventBus.publish(
+        new BehaviorPatternAnalyzed(userId, persisted.patternType, persisted.analyzedAt),
+      );
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Pattern analysis failed.';
+      this._error.set(message);
+    }
   }
 
   // ─── Private helpers ───────────────────────────────────────────────────────

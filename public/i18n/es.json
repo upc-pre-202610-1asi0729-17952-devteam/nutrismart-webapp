@@ -348,7 +348,17 @@
     "view_daily_log_btn": "Ver registro diario",
     "net_balance_desc": "kcal neto hoy",
     "meal_more": "+{{count}} más",
-    "weekly_completion": "completado esta semana"
+    "weekly_completion": "completado esta semana",
+    "pattern": {
+      "CONSISTENT": "Constante",
+      "WEEKDAY_ONLY": "Solo días laborables",
+      "RECOVERING": "En recuperación",
+      "IRREGULAR": "Irregular",
+      "analyzed_at": "Patrón analizado el {{date}}",
+      "improving": "Tu hábito está ganando impulso.",
+      "declining": "Tu hábito está perdiendo terreno.",
+      "label": "Patrón de hábito"
+    }
   },
   "nutrition": {
     "page_title": "Registro Diario",
