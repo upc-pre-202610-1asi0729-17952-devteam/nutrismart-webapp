@@ -518,6 +518,7 @@ export class NutritionStore {
     const windows = [
       { mealType: MealType.BREAKFAST, closesAt: 10, windowEnd: `${today}T10:00:00` },
       { mealType: MealType.LUNCH,     closesAt: 15, windowEnd: `${today}T15:00:00` },
+      { mealType: MealType.SNACK,     closesAt: 18, windowEnd: `${today}T18:00:00` },
       { mealType: MealType.DINNER,    closesAt: 22, windowEnd: `${today}T22:00:00` },
     ];
 

@@ -60,7 +60,8 @@ export class MetabolicStore {
   private _selectedDays       = signal<7 | 30 | 90>(7);
   private _loading            = signal<boolean>(false);
   private _error              = signal<string | null>(null);
-  private _adaptationHistory  = signal<MetabolicAdaptationLog[]>([]);
+  private _adaptationHistory        = signal<MetabolicAdaptationLog[]>([]);
+  private _stagnationPublishedToday = signal<string | null>(null);
 
   // ─── Public Read-only Signals ─────────────────────────────────────────────
 
@@ -322,12 +323,15 @@ export class MetabolicStore {
     this._nutritionPlan.set(NutritionPlan.fromTargets(userId, targets));
   }
 
-  /** Publishes {@link StagnationDetected} when the stagnation window is full. */
+  /** Publishes {@link StagnationDetected} when the stagnation window is full. Fires at most once per calendar day. */
   private checkAndPublishStagnation(): void {
     if (!this.hasStagnated()) return;
     const user   = this.iamStore.currentUser();
     const metric = this._currentMetric();
     if (!user || !metric) return;
+    const today = new Date().toISOString().slice(0, 10);
+    if (this._stagnationPublishedToday() === today) return;
+    this._stagnationPublishedToday.set(today);
     this.eventBus.publish(
       new StagnationDetected(user.id, STAGNATION_WINDOW_DAYS, metric.weightKg, user.goal),
     );

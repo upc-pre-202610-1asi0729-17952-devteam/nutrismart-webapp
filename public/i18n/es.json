@@ -68,6 +68,7 @@
     "error_password_min": "La contraseña debe tener al menos 8 caracteres",
     "error_passwords_mismatch": "Las contraseñas no coinciden",
     "error_invalid_credentials": "Email o contraseña inválidos",
+    "error_account_blocked": "Cuenta bloqueada temporalmente. Intentá en 15 minutos.",
     "error_email_taken": "Este correo ya está registrado",
     "checking_email": "Verificando disponibilidad…",
     "error_terms": "Debes aceptar los términos",
@@ -1015,5 +1016,33 @@
       "crossfit": "CrossFit",
       "martial_arts": "Artes marciales"
     }
+  },
+  "restaurant": {
+    "error_scan_failed": "No se pudo analizar la foto del menú. Intentá de nuevo.",
+    "error_log_failed": "No se pudo registrar el plato seleccionado. Intentá de nuevo."
+  },
+  "subscriptions": {
+    "title": "Elegí tu plan",
+    "plan_basic": "Basic",
+    "plan_pro": "Pro",
+    "plan_premium": "Premium",
+    "cta_select": "Seleccionar plan",
+    "cta_cancel": "Cancelar suscripción",
+    "current_plan": "Tu plan actual",
+    "features_nutrition_log": "Registro nutricional",
+    "features_basic_dashboard": "Panel básico",
+    "features_bmi_bmr_tdee": "Calculadora IMC, TMB y TDEE",
+    "features_smart_scan": "Escaneo inteligente de platos",
+    "features_travel_mode": "Modo viaje",
+    "features_weather_recs": "Recomendaciones por clima",
+    "features_pantry": "Despensa y sugerencias de recetas",
+    "features_wearable_sync": "Sincronización con Google Fit",
+    "features_restaurant_menu": "Análisis de menú de restaurante",
+    "features_unlimited_history": "Historial ilimitado",
+    "features_pdf_reports": "Reportes PDF",
+    "error_load_failed": "No se pudo cargar la información de la suscripción.",
+    "error_update_failed": "No se pudo actualizar tu plan. Intentá de nuevo.",
+    "success_activated": "Plan activado exitosamente.",
+    "success_cancelled": "Suscripción cancelada."
   }
 }

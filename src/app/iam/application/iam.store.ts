@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError, filter, map, tap } from 'rxjs/operators';
@@ -6,9 +6,12 @@ import { DomainEventBus } from '../../shared/application/domain-event-bus';
 import { AccountCreated } from '../../shared/domain/account-created.event';
 import { MetabolicTargetSet } from '../../shared/domain/metabolic-target-set.event';
 import { OnboardingCompleted } from '../../shared/domain/onboarding-completed.event';
-import { PlanUpgraded } from '../../shared/domain/plan-upgraded.event';
 import { ProfileUpdated } from '../../shared/domain/profile-updated.event';
 import { RestrictionsChanged } from '../../shared/domain/restrictions-changed.event';
+import { SessionStarted } from '../../shared/domain/session-started.event';
+import { SessionTerminated } from '../../shared/domain/session-terminated.event';
+import { BenefitsEnabled } from '../../shared/domain/benefits-enabled.event';
+import { Subscription } from '../../subscriptions/domain/model/subscription.entity';
 import { ActivityLevel } from '../domain/model/activity-level.enum';
 import { DietaryRestriction } from '../domain/model/dietary-restriction.enum';
 import { MedicalCondition } from '../domain/model/medical-condition.enum';
@@ -54,6 +57,12 @@ export class IamStore {
   /** Last error message from a failed async operation, or `null`. */
   private _error = signal<string | null>(null);
 
+  /** Consecutive failed login attempts for the current email session. */
+  private _failedLoginAttempts = signal<number>(0);
+
+  /** Timestamp until which login is blocked, or null when not blocked. */
+  private _blockedUntil = signal<Date | null>(null);
+
   constructor() {
     this.restoreSession();
     this.subscribeToMetabolicTargets();
@@ -72,6 +81,15 @@ export class IamStore {
 
   /** Read-only signal holding the most recent error message, or `null`. */
   readonly error = this._error.asReadonly();
+
+  /** True while the account is temporarily locked due to too many failed login attempts. */
+  readonly isLoginBlocked = computed(() => {
+    const until = this._blockedUntil();
+    return until ? new Date() < until : false;
+  });
+
+  /** The timestamp until which login is blocked, or null. */
+  readonly loginBlockedUntil = this._blockedUntil.asReadonly();
 
   // ─── Cross-context subscriptions ──────────────────────────────────────────
 
@@ -150,20 +168,29 @@ export class IamStore {
    */
   login(email: string, password: string): Observable<User> {
     void password;
+
+    if (this.isLoginBlocked()) {
+      this._error.set('auth.error_account_blocked');
+      return throwError(() => new Error('auth.error_account_blocked'));
+    }
+
     this._loading.set(true);
     this._error.set(null);
 
     return this.iamApi.getUsers().pipe(
       map((users) => {
         const user = users.find((u) => u.email === email);
-        if (!user) throw new Error('Invalid email or password.');
+        if (!user) throw new Error('auth.error_invalid_credentials');
         return user;
       }),
       tap((user) => {
+        this._failedLoginAttempts.set(0);
+        this._blockedUntil.set(null);
         this._currentUser.set(user);
         this._isAuthenticated.set(true);
         this._loading.set(false);
         this.saveSession(user);
+        this.eventBus.publish(new SessionStarted(user.id, user.email));
         const incomplete = !user.birthday || !user.biologicalSex;
         if (incomplete) this.router.navigate(['/onboarding']);
         else if (!user.plan) this.router.navigate(['/subscription']);
@@ -171,7 +198,14 @@ export class IamStore {
       }),
       catchError((err) => {
         this._loading.set(false);
-        this._error.set(err.message);
+        const attempts = this._failedLoginAttempts() + 1;
+        this._failedLoginAttempts.set(attempts);
+        if (attempts >= 5) {
+          this._blockedUntil.set(new Date(Date.now() + 15 * 60 * 1000));
+          this._error.set('auth.error_account_blocked');
+        } else {
+          this._error.set(err.message);
+        }
         return throwError(() => err);
       }),
     );
@@ -236,9 +270,11 @@ export class IamStore {
    * Logs the current user out, clears all state, and navigates to login.
    */
   logout(): void {
+    const userId = this._currentUser()?.id ?? 0;
     this._isAuthenticated.set(false);
     this._currentUser.set(null);
     this.clearSession();
+    this.eventBus.publish(new SessionTerminated(userId));
     this.router.navigate(['/auth/login']);
   }
 
@@ -487,7 +523,8 @@ export class IamStore {
   }
 
   /**
-   * Upgrades the subscription plan and persists.
+   * Upgrades the subscription plan, persists, and publishes {@link BenefitsEnabled}
+   * so other bounded contexts can unlock plan-gated features.
    *
    * @param plan - The new {@link SubscriptionPlan}.
    */
@@ -497,6 +534,7 @@ export class IamStore {
     user.plan = plan;
     this._currentUser.set(user);
     this.persist();
-    this.eventBus.publish(new PlanUpgraded(user.id, plan));
+    const features = Subscription.featuresFor(plan);
+    this.eventBus.publish(new BenefitsEnabled(user.id, plan, features));
   }
 }

@@ -13,6 +13,9 @@ import { BehavioralDropDetected } from '../../shared/domain/behavioral-drop-dete
 import { ConsistencyRecovered } from '../../shared/domain/consistency-recovered.event';
 import { NutritionalAbandonmentRisk } from '../../shared/domain/nutritional-abandonment-risk.event';
 import { StrategyMismatchDetected } from '../../shared/domain/strategy-mismatch-detected.event';
+import { StagnationDetected } from '../../shared/domain/stagnation-detected.event';
+import { BenefitsEnabled } from '../../shared/domain/benefits-enabled.event';
+import { BenefitsDisabled } from '../../shared/domain/benefits-disabled.event';
 import { CompatibleDishesRanked } from '../../shared/domain/compatible-dishes-ranked.event';
 import { ContextualTargetAdjusted } from '../../shared/domain/contextual-target-adjusted.event';
 import { ContextualTargetAdjustment } from '../domain/model/contextual-target-adjustment.value-object';
@@ -27,6 +30,7 @@ export class RecommendationsStore {
 
   constructor() {
     this.subscribeToAdherenceEvents();
+    this.subscribeToBillingEvents();
     this.subscribeToLangChange();
   }
 
@@ -305,6 +309,22 @@ export class RecommendationsStore {
     return match?.snapshotId ?? cityName;
   }
 
+  private subscribeToBillingEvents(): void {
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof BenefitsEnabled))
+      .subscribe(async () => {
+        await this.initialise();
+      });
+
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof BenefitsDisabled))
+      .subscribe(() => {
+        this._travelCards.set([]);
+        this._weatherCards.set([]);
+        this._bestDishCard.set(null);
+      });
+  }
+
   private subscribeToLangChange(): void {
     this.translate.onLangChange.subscribe(() => {
       if (this.iamStore.currentUser()) {
@@ -334,6 +354,12 @@ export class RecommendationsStore {
 
     this.eventBus.events$
       .pipe(filter(e => e instanceof StrategyMismatchDetected))
+      .subscribe(async () => {
+        await this.setAdherenceStatus(AdherenceStatus.AT_RISK);
+      });
+
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof StagnationDetected))
       .subscribe(async () => {
         await this.setAdherenceStatus(AdherenceStatus.AT_RISK);
       });

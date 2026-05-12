@@ -1,5 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { WearableApi } from '../infrastructure/wearable-api';
 import { IamStore } from '../../iam/application/iam.store';
 import { DomainEventBus } from '../../shared/application/domain-event-bus';
@@ -12,6 +13,10 @@ import { CaloricTargetAdjusted } from '../domain/events/caloric-target-adjusted.
 import { ActivityTrendDetected } from '../domain/events/activity-trend-detected.event';
 import { ActivitySynced } from '../domain/events/activity-synced.event';
 import { ActiveCaloriesCalculated } from '../domain/events/active-calories-calculated.event';
+import { StagnationDetected } from '../../shared/domain/stagnation-detected.event';
+import { BehavioralDropDetected } from '../../shared/domain/behavioral-drop-detected.event';
+import { BenefitsEnabled } from '../../shared/domain/benefits-enabled.event';
+import { BenefitsDisabled } from '../../shared/domain/benefits-disabled.event';
 
 @Injectable({ providedIn: 'root' })
 export class WearableStore {
@@ -21,12 +26,15 @@ export class WearableStore {
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
-  private _connection           = signal<WearableConnection | null>(null);
-  private _activityLogs         = signal<ActivityLog[]>([]);
-  private _estimatedCalories    = signal<number>(0);
-  private _loading              = signal<boolean>(false);
-  private _error                = signal<string | null>(null);
-  private _lastTrendDetectedAt  = signal<string | null>(null);
+  private _connection                    = signal<WearableConnection | null>(null);
+  private _activityLogs                  = signal<ActivityLog[]>([]);
+  private _estimatedCalories             = signal<number>(0);
+  private _loading                       = signal<boolean>(false);
+  private _error                         = signal<string | null>(null);
+  private _lastTrendDetectedAt           = signal<string | null>(null);
+  private _stagnationSuggestion          = signal<boolean>(false);
+  private _activitySuggestionForRecovery = signal<boolean>(false);
+  private _premiumEnabled                = signal<boolean>(false);
 
   // ─── Public Read-only Signals ─────────────────────────────────────────────
 
@@ -63,12 +71,42 @@ export class WearableStore {
 
   readonly activityTypeKeys = computed(() => ActivityType.allKeys());
 
+  /** True when a stagnation event has been received; suggests increasing physical activity. */
+  readonly stagnationSuggestion          = this._stagnationSuggestion.asReadonly();
+
+  /** True when a behavioral drop has been received; suggests light recovery activity. */
+  readonly activitySuggestionForRecovery = this._activitySuggestionForRecovery.asReadonly();
+
+  /** True when the user's active plan includes the `wearable_sync` feature. */
+  readonly premiumEnabled                = this._premiumEnabled.asReadonly();
+
   /** The 15 most recent activity logs, sorted newest-first. */
   readonly recentLogs = computed(() =>
     [...this._activityLogs()]
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
       .slice(0, 15),
   );
+
+  constructor() {
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof StagnationDetected), takeUntilDestroyed())
+      .subscribe(() => this._stagnationSuggestion.set(true));
+
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof BehavioralDropDetected), takeUntilDestroyed())
+      .subscribe(() => this._activitySuggestionForRecovery.set(true));
+
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof BenefitsEnabled), takeUntilDestroyed())
+      .subscribe(e => {
+        const ev = e as BenefitsEnabled;
+        this._premiumEnabled.set(ev.features.includes('wearable_sync'));
+      });
+
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof BenefitsDisabled), takeUntilDestroyed())
+      .subscribe(() => this._premiumEnabled.set(false));
+  }
 
   // ─── Load ─────────────────────────────────────────────────────────────────
 

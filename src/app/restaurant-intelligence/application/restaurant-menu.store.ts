@@ -120,7 +120,7 @@ export class RestaurantMenuStore {
           resolve();
         },
         error: () => {
-          this._error.set('Failed to analyse menu photo.');
+          this._error.set('restaurant.error_scan_failed');
           this._menuView.set('idle');
           this._loading.set(false);
           resolve();
@@ -169,7 +169,7 @@ export class RestaurantMenuStore {
       this._loading.set(false);
       this.reset();
     } catch {
-      this._error.set('Failed to log menu dish.');
+      this._error.set('restaurant.error_log_failed');
       this._loading.set(false);
     }
   }

@@ -68,6 +68,7 @@
     "error_password_min": "Password must be at least 8 characters",
     "error_passwords_mismatch": "Passwords do not match",
     "error_invalid_credentials": "Invalid email or password",
+    "error_account_blocked": "Account temporarily locked. Try again in 15 minutes.",
     "error_email_taken": "This email is already registered",
     "checking_email": "Checking availability…",
     "error_terms": "You must accept the terms",
@@ -906,6 +907,34 @@
     "status_at_risk": "At risk",
     "status_dropped": "Dropped",
     "status_recovered": "Recovered"
+  },
+  "restaurant": {
+    "error_scan_failed": "Failed to analyse the menu photo. Please try again.",
+    "error_log_failed": "Failed to log the selected dish. Please try again."
+  },
+  "subscriptions": {
+    "title": "Choose your plan",
+    "plan_basic": "Basic",
+    "plan_pro": "Pro",
+    "plan_premium": "Premium",
+    "cta_select": "Select plan",
+    "cta_cancel": "Cancel subscription",
+    "current_plan": "Your current plan",
+    "features_nutrition_log": "Nutrition log",
+    "features_basic_dashboard": "Basic dashboard",
+    "features_bmi_bmr_tdee": "BMI, BMR & TDEE calculator",
+    "features_smart_scan": "Smart plate scan",
+    "features_travel_mode": "Travel mode",
+    "features_weather_recs": "Weather-based recommendations",
+    "features_pantry": "Pantry & recipe suggestions",
+    "features_wearable_sync": "Google Fit sync",
+    "features_restaurant_menu": "Restaurant menu analysis",
+    "features_unlimited_history": "Unlimited history",
+    "features_pdf_reports": "PDF reports",
+    "error_load_failed": "Failed to load subscription details.",
+    "error_update_failed": "Failed to update your plan. Please try again.",
+    "success_activated": "Plan activated successfully.",
+    "success_cancelled": "Subscription cancelled."
   },
   "physical_activity": {
     "title": "Physical Activity",

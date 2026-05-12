@@ -1,22 +1,25 @@
-/**
- * Subscriptions routes.
- *
- * Delegates to the IAM bounded context's {@link Subscription} view, which
- * lives in the IAM context because plan selection is part of the user
- * registration flow.
- */
 import { Routes } from '@angular/router';
 
-/** Lazy-loads the {@link Subscription} standalone component from the IAM context. */
-const subscription = () =>
-  import('../../iam/presentation/views/subscription/subscription').then(
-    m => m.Subscription
+/** Lazy-loads the {@link SubscriptionPlans} standalone component. */
+const subscriptionPlans = () =>
+  import('./views/subscription-plans/subscription-plans').then(
+    m => m.SubscriptionPlans,
   );
 
+/** Post-onboarding plan selection gate. */
 export const subscriptionsRoutes: Routes = [
-  { path: '', loadComponent: subscription, data: { mode: 'setup' }, title: 'NutriSmart - Choose Your Plan' },
+  {
+    path: '',
+    loadComponent: subscriptionPlans,
+    title: 'NutriSmart - Choose Your Plan',
+  },
 ];
 
+/** Active subscription management (my-plan section). */
 export const myPlanRoutes: Routes = [
-  { path: '', loadComponent: subscription, data: { mode: 'manage' }, title: 'NutriSmart - My Plan' },
+  {
+    path: '',
+    loadComponent: subscriptionPlans,
+    title: 'NutriSmart - My Plan',
+  },
 ];
