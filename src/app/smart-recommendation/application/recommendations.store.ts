@@ -8,10 +8,11 @@ import { RecommendationSession } from '../domain/model/recommendation-session.en
 import { AdherenceStatus } from '../domain/model/adherence-status.enum';
 import { IamStore } from '../../iam/application/iam.store';
 import { BehavioralConsistencyStore } from '../../behavioral-consistency/application/behavioral-consistency.store';
-import { AdherenceStatus as BcAdherenceStatus } from '../../behavioral-consistency/domain/model/adherence-status.enum';
 import { DomainEventBus } from '../../shared/application/domain-event-bus';
 import { BehavioralDropDetected } from '../../shared/domain/behavioral-drop-detected.event';
 import { ConsistencyRecovered } from '../../shared/domain/consistency-recovered.event';
+import { NutritionalAbandonmentRisk } from '../../shared/domain/nutritional-abandonment-risk.event';
+import { StrategyMismatchDetected } from '../../shared/domain/strategy-mismatch-detected.event';
 import { CompatibleDishesRanked } from '../../shared/domain/compatible-dishes-ranked.event';
 
 @Injectable({ providedIn: 'root' })
@@ -152,13 +153,10 @@ export class RecommendationsStore {
 
   private async syncAdherenceFromBehavioralContext(userId: number, userIdStr: string): Promise<void> {
     await firstValueFrom(this.bcStore.ensureProgressForUser(userId));
-    const bcStatus = this.bcStore.adherenceStatus();
-    if (!bcStatus) return;
+    const bcStatus = this.bcStore.adherenceStatus() as string as AdherenceStatus | null;
+    if (!bcStatus || bcStatus === AdherenceStatus.ON_TRACK) return;
 
-    const mapped = this.mapBcAdherenceStatus(bcStatus);
-    if (mapped === AdherenceStatus.ON_TRACK) return;
-
-    const session = await firstValueFrom(this.api.getStrategyAdjustment(mapped, userIdStr));
+    const session = await firstValueFrom(this.api.getStrategyAdjustment(bcStatus, userIdStr));
     this._session.set(session);
 
     if (session.requiresPreventiveRecommendation()) {
@@ -167,14 +165,6 @@ export class RecommendationsStore {
     } else if (session.requiresInterventionRecommendation()) {
       const card = await firstValueFrom(this.api.getInterventionRecommendation());
       this._interventionCard.set(card);
-    }
-  }
-
-  private mapBcAdherenceStatus(bcStatus: BcAdherenceStatus): AdherenceStatus {
-    switch (bcStatus) {
-      case BcAdherenceStatus.DROPPED:  return AdherenceStatus.DROPPED;
-      case BcAdherenceStatus.AT_RISK:  return AdherenceStatus.AT_RISK;
-      default:                         return AdherenceStatus.ON_TRACK;
     }
   }
 
@@ -276,16 +266,26 @@ export class RecommendationsStore {
   private subscribeToAdherenceEvents(): void {
     this.eventBus.events$
       .pipe(filter(e => e instanceof BehavioralDropDetected))
-      .subscribe(async (e) => {
-        const event = e as BehavioralDropDetected;
-        const status = event.consecutiveMisses >= 5 ? AdherenceStatus.DROPPED : AdherenceStatus.AT_RISK;
-        await this.setAdherenceStatus(status);
+      .subscribe(async () => {
+        await this.setAdherenceStatus(AdherenceStatus.AT_RISK);
+      });
+
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof NutritionalAbandonmentRisk))
+      .subscribe(async () => {
+        await this.setAdherenceStatus(AdherenceStatus.DROPPED);
       });
 
     this.eventBus.events$
       .pipe(filter(e => e instanceof ConsistencyRecovered))
       .subscribe(async () => {
         await this.setAdherenceStatus(AdherenceStatus.ON_TRACK);
+      });
+
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof StrategyMismatchDetected))
+      .subscribe(async () => {
+        await this.setAdherenceStatus(AdherenceStatus.AT_RISK);
       });
 
     this.eventBus.events$
