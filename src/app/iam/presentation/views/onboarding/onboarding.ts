@@ -151,9 +151,17 @@ export class Onboarding implements OnInit {
 
   // ─── Step 1 state ─────────────────────────────────────────────────────────
 
-  selectedActivity  = signal<ActivityLevel>(ActivityLevel.MODERATE);
-  availableCities   = signal<string[]>([]);
-  citiesLoading     = signal(true);
+  selectedActivity    = signal<ActivityLevel>(ActivityLevel.MODERATE);
+  availableCities     = signal<string[]>([]);
+  citiesLoading       = signal(true);
+  citySearchQuery     = signal('');
+  showCitySuggestions = signal(false);
+
+  readonly filteredCities = computed(() => {
+    const q = this.citySearchQuery().toLowerCase().trim();
+    if (!q) return this.availableCities();
+    return this.availableCities().filter(c => c.toLowerCase().includes(q));
+  });
 
   private readonly cityValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     const cities = this.availableCities();
@@ -326,6 +334,24 @@ export class Onboarding implements OnInit {
 
   selectActivity(level: ActivityLevel): void {
     this.selectedActivity.set(level);
+  }
+
+  onCityInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.citySearchQuery.set(value);
+    this.bodyForm.get('homeCity')!.setValue('');
+    this.showCitySuggestions.set(true);
+  }
+
+  selectCity(city: string): void {
+    this.citySearchQuery.set(city);
+    this.bodyForm.get('homeCity')!.setValue(city);
+    this.bodyForm.get('homeCity')!.markAsTouched();
+    this.showCitySuggestions.set(false);
+  }
+
+  onCityBlur(): void {
+    setTimeout(() => this.showCitySuggestions.set(false), 150);
   }
 
   // ─── Step 2 helpers ───────────────────────────────────────────────────────

@@ -118,7 +118,7 @@
     "error_weight_range": "El peso debe estar entre 30 y 300 kg",
     "error_height_range": "La altura debe estar entre 100 y 250 cm",
     "home_city": "Ciudad de residencia",
-    "home_city_placeholder": "Selecciona tu ciudad",
+    "home_city_placeholder": "Buscar ciudad...",
     "error_home_city_required": "La ciudad de residencia es obligatoria",
     "continue_btn": "Continuar →",
     "back_btn": "← Atrás",

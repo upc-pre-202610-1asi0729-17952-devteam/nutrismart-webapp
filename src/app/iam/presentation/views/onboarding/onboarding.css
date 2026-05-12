@@ -131,6 +131,40 @@
   color: #dc2626;
 }
 
+/* City autocomplete */
+.city-autocomplete {
+  position: relative;
+}
+
+.city-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--nutrismart-white, #ffffff);
+  border: 1.5px solid var(--nutrismart-primary, #508B89);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  z-index: 20;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.city-suggestion-item {
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.city-suggestion-item:hover {
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  color: var(--nutrismart-primary, #508B89);
+}
+
 /* Activity cards */
 .activity-grid {
   display: grid;

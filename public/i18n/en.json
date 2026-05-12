@@ -118,7 +118,7 @@
     "error_weight_range": "Weight must be between 30 and 300 kg",
     "error_height_range": "Height must be between 100 and 250 cm",
     "home_city": "Home city",
-    "home_city_placeholder": "Select your city",
+    "home_city_placeholder": "Search city...",
     "error_home_city_required": "Home city is required",
     "continue_btn": "Continue →",
     "back_btn": "← Back",

@@ -78,19 +78,31 @@
             </div>
             <div class="form-group">
               <label class="form-label">{{ 'onboarding.home_city' | translate }} *</label>
-              <select
-                formControlName="homeCity"
-                class="form-input"
-                [class.is-invalid]="bodyForm.get('homeCity')?.invalid && bodyForm.get('homeCity')?.touched"
-                [attr.disabled]="citiesLoading() ? true : null"
-              >
-                <option value="" disabled selected>
-                  {{ (citiesLoading() ? 'onboarding.home_city_loading' : 'onboarding.home_city_placeholder') | translate }}
-                </option>
-                @for (city of availableCities(); track city) {
-                  <option [value]="city">{{ city }}</option>
+              <div class="city-autocomplete">
+                <input
+                  type="text"
+                  class="form-input"
+                  [class.is-invalid]="bodyForm.get('homeCity')?.invalid && bodyForm.get('homeCity')?.touched"
+                  [value]="citySearchQuery()"
+                  [placeholder]="(citiesLoading() ? 'onboarding.home_city_loading' : 'onboarding.home_city_placeholder') | translate"
+                  [disabled]="citiesLoading()"
+                  (input)="onCityInput($event)"
+                  (focus)="showCitySuggestions.set(true)"
+                  (blur)="onCityBlur()"
+                  autocomplete="off"
+                />
+                @if (showCitySuggestions() && filteredCities().length > 0) {
+                  <ul class="city-suggestions" role="listbox">
+                    @for (city of filteredCities(); track city) {
+                      <li
+                        class="city-suggestion-item"
+                        role="option"
+                        (mousedown)="selectCity(city)"
+                      >{{ city }}</li>
+                    }
+                  </ul>
                 }
-              </select>
+              </div>
               @if (bodyForm.get('homeCity')?.touched) {
                 @if (bodyForm.get('homeCity')?.errors?.['required']) {
                   <span class="field-error">{{ 'onboarding.error_home_city_required' | translate }}</span>
