@@ -5,7 +5,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { ReplacePipe } from '../../../../shared/pipes/replace.pipe';
 
 export interface ExportPdfRequest {
   fromDate: string;
@@ -22,7 +21,6 @@ export interface ExportPdfRequest {
     MatInputModule,
     MatNativeDateModule,
     TranslateModule,
-    ReplacePipe,
   ],
   templateUrl: './export-pdf-report-view.component.html',
   styleUrl: './export-pdf-report-view.component.css',

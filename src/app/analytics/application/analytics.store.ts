@@ -48,11 +48,12 @@ export class AnalyticsStore {
     this._error.set(null);
     this._selectedPeriod.set(period);
 
+    const userIdStr = String(user.id);
     let apiCall: Observable<any>;
     switch (period) {
-      case '7_DAYS':  apiCall = this.analyticsApi.getWeeklyHistory(user.id);    break;
-      case '30_DAYS': apiCall = this.analyticsApi.getMonthlyHistory(user.id);   break;
-      case '90_DAYS': apiCall = this.analyticsApi.getQuarterlyHistory(user.id); break;
+      case '7_DAYS':  apiCall = this.analyticsApi.getWeeklyHistory(userIdStr);    break;
+      case '30_DAYS': apiCall = this.analyticsApi.getMonthlyHistory(userIdStr);   break;
+      case '90_DAYS': apiCall = this.analyticsApi.getQuarterlyHistory(userIdStr); break;
       default: return throwError(() => new Error('Invalid analytics period.'));
     }
 
@@ -84,7 +85,7 @@ export class AnalyticsStore {
     this._loading.set(true);
     this._error.set(null);
 
-    return this.analyticsApi.exportPdfReport(userId, fromDate, toDate).pipe(
+    return this.analyticsApi.exportPdfReport(String(userId), fromDate, toDate).pipe(
       tap(() => this._loading.set(false)),
       catchError(err => {
         this._loading.set(false);
