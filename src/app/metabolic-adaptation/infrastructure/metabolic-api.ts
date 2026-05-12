@@ -153,10 +153,5 @@ export class MetabolicApi extends BaseApi {
     );
   }
 
-  deleteWeight(metricId: number | string): Observable<void> {
-    return this.metricEp.delete(String(metricId) as unknown as number).pipe(
-      retry(2),
-      catchError(err => throwError(() => err)),
-    );
-  }
+}
 }

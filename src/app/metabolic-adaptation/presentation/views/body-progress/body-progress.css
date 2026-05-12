@@ -336,6 +336,27 @@
 .history-delta--neg { color: var(--nutrismart-primary); }
 .history-delta--pos { color: #ef4444; }
 
+.history-actions { padding: 6px 0; text-align: right; white-space: nowrap; }
+
+.history-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.history-edit-input {
+  width: 80px;
+  padding: 4px 8px;
+  border: 1px solid var(--nutrismart-border);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--nutrismart-text-dark);
+}
+.history-edit-input:focus { outline: none; border-color: var(--nutrismart-primary); }
+.history-edit-error { font-size: 11px; color: #ef4444; }
+
+.icon-btn--sm .material-icons { font-size: 15px; }
+
 /* ── Body composition card ── */
 .fat-alert-banner {
   display: flex;

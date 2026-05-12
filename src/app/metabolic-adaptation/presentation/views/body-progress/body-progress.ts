@@ -440,7 +440,5 @@ export class BodyProgressView implements OnInit {
     this.editWeightInput.set('');
   }
 
-  async onDeleteMetric(metricId: number | string): Promise<void> {
-    await this.store.deleteWeight(metricId);
-  }
+
 }

@@ -377,24 +377,6 @@ export class MetabolicStore {
     }
   }
 
-  async deleteWeight(metricId: number | string): Promise<void> {
-    this._loading.set(true);
-    this._error.set(null);
-    try {
-      await firstValueFrom(this.api.deleteWeight(metricId));
-      this._metricsHistory.update(h => h.filter(m => m.id !== metricId));
-      this._stagnationHistory.update(h => h.filter(m => m.id !== metricId));
-      if (this._currentMetric()?.id === metricId) {
-        const remaining = this._metricsHistory();
-        this._currentMetric.set(remaining.length > 0 ? remaining[remaining.length - 1] : null);
-      }
-    } catch {
-      this._error.set('body_progress.error_save_failed');
-    } finally {
-      this._loading.set(false);
-    }
-  }
-
   async loadAllHistory(): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
