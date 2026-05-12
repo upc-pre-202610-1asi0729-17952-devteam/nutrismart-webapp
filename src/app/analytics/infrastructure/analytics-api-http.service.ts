@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, Observable, throwError } from 'rxjs';
 import { catchError, map, retry } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../environments/environment';
 import { AnalyticsApi } from './analytics-api';
 import { AnalyticsRawInput, BodyMetricResource, NutritionLogResource } from './analytics-resource';
 
