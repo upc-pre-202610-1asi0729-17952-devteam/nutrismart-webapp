@@ -1,6 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Observable } from 'rxjs';
-import { filter, firstValueFrom } from 'rxjs/operators';
+import { filter, firstValueFrom, Observable } from 'rxjs';
 import { AdherenceStatus } from '../domain/model/adherence-status.enum';
 import {
   BehavioralProgress,
