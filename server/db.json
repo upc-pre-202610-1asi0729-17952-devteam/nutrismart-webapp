@@ -5446,6 +5446,57 @@
         false
       ],
       "id": "QVBN3zCOB38"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "H3krUYW_tN0"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "z7GMtn0JAwg"
+    },
+    {
+      "userId": "k1b4s43nx",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "VgsJaoK6cw4"
     }
   ],
   "daily-balance": [
@@ -5784,6 +5835,66 @@
       "is_active": false,
       "is_manual": false,
       "activated_at": ""
+    }
+  ],
+  "wearable-connections": [
+    {
+      "id": "1",
+      "user_id": "Mv9paKyK60k",
+      "provider": "google_fit",
+      "status": "CONNECTED",
+      "last_synced_at": "2026-05-11T09:37:00.000Z",
+      "authorized_at": "2026-05-01T08:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "user_id": "81P8BYgebrM",
+      "provider": "google_fit",
+      "status": "SYNC_FAILED",
+      "last_synced_at": "2026-05-11T07:22:00.000Z",
+      "authorized_at": "2026-04-28T10:15:00.000Z"
+    }
+  ],
+  "activity-logs": [
+    {
+      "id": "1",
+      "user_id": "Mv9paKyK60k",
+      "activity_type": "running",
+      "duration_minutes": 35,
+      "calories_burned": 327,
+      "timestamp": "2026-05-11T07:15:00.000Z"
+    },
+    {
+      "id": "2",
+      "user_id": "Mv9paKyK60k",
+      "activity_type": "walking",
+      "duration_minutes": 45,
+      "calories_burned": 183,
+      "timestamp": "2026-05-10T18:30:00.000Z"
+    },
+    {
+      "id": "3",
+      "user_id": "Mv9paKyK60k",
+      "activity_type": "cycling",
+      "duration_minutes": 40,
+      "calories_burned": 350,
+      "timestamp": "2026-05-09T07:00:00.000Z"
+    },
+    {
+      "id": "4",
+      "user_id": "81P8BYgebrM",
+      "activity_type": "weight_training",
+      "duration_minutes": 50,
+      "calories_burned": 292,
+      "timestamp": "2026-05-11T06:45:00.000Z"
+    },
+    {
+      "id": "5",
+      "user_id": "ozdURzTkhPE",
+      "activity_type": "hiit",
+      "duration_minutes": 30,
+      "calories_burned": 300,
+      "timestamp": "2026-05-11T08:00:00.000Z"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
