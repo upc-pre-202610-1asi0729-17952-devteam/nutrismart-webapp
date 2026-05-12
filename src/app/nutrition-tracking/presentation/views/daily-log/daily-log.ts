@@ -198,8 +198,12 @@ export class DailyLog implements OnInit {
     this.nutritionStore.getDailyIntakeFor(this.selectedDate())
   );
 
-  /** Active (burned) calories for the selected date, sourced from {@link DailyIntake}. */
-  protected readonly selectedActive = computed(() => this.selectedDailyIntake()?.active ?? 0);
+  /** Active (burned) calories for the selected date. Falls back to wearable data when viewing today without a DB record. */
+  protected readonly selectedActive = computed(() =>
+    this.isToday()
+      ? this.nutritionStore.todayActiveCalories()
+      : this.selectedDailyIntake()?.active ?? 0,
+  );
 
   /**
    * Always-non-null DailyIntake for the selected date.
