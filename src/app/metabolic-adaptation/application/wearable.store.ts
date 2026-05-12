@@ -59,6 +59,13 @@ export class WearableStore {
 
   readonly activityTypeKeys = computed(() => ActivityType.allKeys());
 
+  /** The 15 most recent activity logs, sorted newest-first. */
+  readonly recentLogs = computed(() =>
+    [...this._activityLogs()]
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, 15),
+  );
+
   // ─── Load ─────────────────────────────────────────────────────────────────
 
   async load(): Promise<void> {

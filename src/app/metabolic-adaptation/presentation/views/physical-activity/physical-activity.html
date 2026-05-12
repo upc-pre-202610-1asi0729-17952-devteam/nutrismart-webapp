@@ -6,68 +6,50 @@
       <h1 class="page-title">{{ 'physical_activity.title' | translate }}</h1>
       <p class="page-subtitle">{{ 'physical_activity.subtitle' | translate }}</p>
     </div>
+    <div class="header-actions">
+      <app-wearable-chip [isConnected]="isWearableConnected()" />
+      @if (isPremium) {
+        <button class="log-activity-btn"
+                (click)="onOpenModal()"
+                type="button"
+                [disabled]="store.loading()">
+          <span class="material-icons log-activity-btn__icon">add</span>
+          {{ 'physical_activity.log_activity_btn' | translate }}
+        </button>
+      }
+    </div>
   </header>
 
   <!-- ── Error banner ── -->
   @if (store.error()) {
     <div class="error-banner" role="alert">
-      <span class="material-icons error-banner-icon">error_outline</span>
+      <span class="material-icons error-banner__icon">error_outline</span>
       <span>{{ store.error()! | translate }}</span>
     </div>
   }
 
   <!-- ── Loading ── -->
-  @if (store.loading() && !store.connection()) {
+  @if (store.loading()) {
     <div class="loading-state" role="status"
          [attr.aria-label]="'common.loading' | translate">
       <span class="material-icons loading-icon">refresh</span>
     </div>
   }
 
-  <!-- ══════════ BASIC PLAN — Paywall ══════════ -->
+  <!-- ── Paywall (BASIC plan) ── -->
   @if (!isPremium) {
     <app-activity-paywall-card />
   }
 
-  <!-- ══════════ PREMIUM / PRO ══════════ -->
-  @if (isPremium) {
-
-    <!-- ── Sync failed banner (shown above the two-col layout when failed) ── -->
-    @if (wearableStatus === WearableStatus.SYNC_FAILED && store.connection()) {
-      <app-sync-failed-banner
-        [connection]="store.connection()!"
-        [isLoading]="store.loading()"
-        (retry)="onSyncNow()"
-        (disconnect)="onDisconnect()" />
-    }
-
-    <!-- ── Two-column card row: Google Fit + Manual ── -->
-    @if (!store.connection() || wearableStatus === WearableStatus.DISCONNECTED) {
-      <div class="cards-row">
-        <app-google-fit-connect-card (connect)="onConnect()" />
-        <app-manual-activity-card (openModal)="onOpenModal()" />
-      </div>
-    }
-
-    <!-- ── Connected state: full-width card + manual log button ── -->
-    @if (wearableStatus === WearableStatus.CONNECTED || wearableStatus === WearableStatus.SYNC_FAILED) {
-      @if (store.connection()) {
-        <app-wearable-connected-card
-          [connection]="store.connection()!"
-          [netCalories]="store.netCalorieAdjustment()"
-          [netDailyTarget]="store.netDailyTarget()"
-          [baseTarget]="iamStore.currentUser()?.dailyCalorieTarget ?? 0"
-          [weekLogs]="store.weekLogs()"
-          [isLoading]="store.loading()"
-          (syncNow)="onSyncNow()"
-          (disconnect)="onDisconnect()" />
-      }
-
-      <div class="manual-row">
-        <app-manual-activity-card (openModal)="onOpenModal()" />
-      </div>
-    }
-
+  <!-- ── History panel (PREMIUM / PRO) ── -->
+  @if (isPremium && !store.loading()) {
+    <app-activity-history-panel
+      [logs]="displayedLogs()"
+      [showAll]="showAll()"
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      (viewAll)="onViewAll()"
+      (pageChange)="onPageChange($event)" />
   }
 
 </div>

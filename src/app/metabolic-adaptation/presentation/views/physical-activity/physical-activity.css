@@ -12,13 +12,21 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .page-title {
   font-size: 26px;
   font-weight: 700;
   color: var(--nutrismart-text-dark);
-  margin: 0 0 5px;
+  margin: 0;
   letter-spacing: -0.3px;
 }
 
@@ -26,6 +34,43 @@
   font-size: 13px;
   color: var(--nutrismart-text-light);
   margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ── Log Activity button ── */
+.log-activity-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px 8px 12px;
+  background: var(--nutrismart-primary, #2d9e8f);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+  white-space: nowrap;
+}
+
+.log-activity-btn:hover:not(:disabled) {
+  background: #258b7e;
+}
+
+.log-activity-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.log-activity-btn__icon {
+  font-size: 18px;
 }
 
 /* ── Error banner ── */
@@ -41,7 +86,10 @@
   color: #991b1b;
 }
 
-.error-banner-icon { font-size: 18px; flex-shrink: 0; }
+.error-banner__icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
 
 /* ── Loading ── */
 .loading-state {
@@ -60,17 +108,4 @@
 @keyframes spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
-}
-
-/* ── Two-column card row (not connected) ── */
-.cards-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  align-items: start;
-}
-
-/* ── Manual log row below connected card ── */
-.manual-row {
-  max-width: 440px;
 }

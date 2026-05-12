@@ -816,7 +816,12 @@
   },
   "physical_activity": {
     "title": "Actividad física",
-    "subtitle": "Sincronizá Google Fit o registrá tu actividad manualmente",
+    "subtitle": "Registrá tus entrenamientos y mirá cómo afectan tu balance calórico diario.",
+    "chip": {
+      "connected": "Wearable conectado",
+      "disconnected": "Sin wearable"
+    },
+    "log_activity_btn": "Registrar actividad",
     "error_load": "No se pudo cargar la actividad. Intentá de nuevo.",
     "error_connect": "No se pudo conectar con Google Fit. Intentá de nuevo.",
     "error_disconnect": "No se pudo desconectar el dispositivo. Intentá de nuevo.",
@@ -868,7 +873,17 @@
     },
     "history": {
       "this_week": "Esta semana",
-      "empty": "Sin actividad registrada esta semana."
+      "title": "Historial de actividad",
+      "empty": "Todavía no hay actividad registrada.",
+      "see_all_btn": "Ver todos",
+      "page_of": "Página {{current}} de {{total}}",
+      "col_type": "Actividad",
+      "col_duration": "Duración",
+      "col_calories": "Calorías",
+      "col_date": "Fecha",
+      "min": "min",
+      "prev_page": "Página anterior",
+      "next_page": "Página siguiente"
     },
     "modal": {
       "title": "Registrar actividad física",

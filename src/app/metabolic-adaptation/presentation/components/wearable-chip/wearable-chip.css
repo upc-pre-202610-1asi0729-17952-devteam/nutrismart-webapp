@@ -1,0 +1,37 @@
+.wearable-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 20px;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  user-select: none;
+  border: 1.5px solid #e5e7eb;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.wearable-chip--active {
+  background: #d1fae5;
+  color: #065f46;
+  border-color: #6ee7b7;
+}
+
+.wearable-chip__icon {
+  font-size: 15px;
+}
+
+.wearable-chip__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d1d5db;
+  flex-shrink: 0;
+}
+
+.wearable-chip--active .wearable-chip__dot {
+  background: #10b981;
+}

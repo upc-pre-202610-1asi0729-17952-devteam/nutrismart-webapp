@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { DietaryRestriction } from '../../../../iam/domain/model/dietary-restriction.enum';
 import { NutritionStore } from '../../../application/nutrition.store';
+import { WearableStore } from '../../../../metabolic-adaptation/application/wearable.store';
 import { MealType } from '../../../domain/model/meal-type.enum';
 import { FoodItem, FoodItemProps } from '../../../domain/model/food-item.entity';
 import { MealRecord, MealRecordProps } from '../../../domain/model/meal-record.entity';
@@ -47,6 +48,7 @@ export class DailyLog implements OnInit {
   private iamStore = inject(IamStore);
   private translate = inject(TranslateService);
   protected nutritionStore = inject(NutritionStore);
+  private wearableStore = inject(WearableStore);
 
   /** Food selected from the search panel — drives the Add Food dialog. */
   protected selectedFood = signal<FoodItem | null>(null);
@@ -196,8 +198,18 @@ export class DailyLog implements OnInit {
     this.nutritionStore.getDailyIntakeFor(this.selectedDate())
   );
 
-  /** Active (burned) calories for the selected date — 0 when no record exists. */
-  protected readonly selectedActive = computed(() => this.selectedDailyIntake()?.active ?? 0);
+  /**
+   * Active (burned) calories for the selected date.
+   *
+   * For today, reads directly from WearableStore so the balance updates
+   * immediately when an activity is logged — no persistence round-trip needed.
+   * For past dates, falls back to the stored value in DailyIntake.
+   */
+  protected readonly selectedActive = computed(() =>
+    this.isToday()
+      ? this.wearableStore.netCalorieAdjustment()
+      : (this.selectedDailyIntake()?.active ?? 0),
+  );
 
   /**
    * Always-non-null DailyIntake for the selected date.
@@ -331,8 +343,11 @@ export class DailyLog implements OnInit {
   // ─── Lifecycle ────────────────────────────────────────────────────────────
 
   async ngOnInit(): Promise<void> {
-    await this.nutritionStore.loadMealHistory();
-    await this.nutritionStore.loadDailyBalance();
+    await Promise.all([
+      this.nutritionStore.loadMealHistory(),
+      this.nutritionStore.loadDailyBalance(),
+      this.wearableStore.load(),
+    ]);
     this._preloadRecipeFromState();
   }
 

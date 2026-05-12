@@ -816,7 +816,12 @@
   },
   "physical_activity": {
     "title": "Physical Activity",
-    "subtitle": "Sync Google Fit or record your activity manually",
+    "subtitle": "Track your workouts and see how they affect your daily calorie balance.",
+    "chip": {
+      "connected": "Wearable connected",
+      "disconnected": "No wearable"
+    },
+    "log_activity_btn": "Log activity",
     "error_load": "Could not load activity data. Please try again.",
     "error_connect": "Could not connect to Google Fit. Please try again.",
     "error_disconnect": "Could not disconnect the device. Please try again.",
@@ -868,7 +873,17 @@
     },
     "history": {
       "this_week": "This week",
-      "empty": "No activity logged this week."
+      "title": "Activity History",
+      "empty": "No activity logged yet.",
+      "see_all_btn": "See all",
+      "page_of": "Page {{current}} of {{total}}",
+      "col_type": "Activity",
+      "col_duration": "Duration",
+      "col_calories": "Calories",
+      "col_date": "Date",
+      "min": "min",
+      "prev_page": "Previous page",
+      "next_page": "Next page"
     },
     "modal": {
       "title": "Log physical activity",
