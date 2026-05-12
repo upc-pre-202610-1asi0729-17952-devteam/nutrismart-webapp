@@ -302,7 +302,8 @@ export class BodyProgressView implements OnInit {
     this.goalInputModel.set('');
   }
 
-  onGoalModelChange(value: string): void {
+  onGoalModelChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
     this.goalInputModel.set(value);
     this.goalInputError.set(value.trim() ? this.validateGoalWeight(parseFloat(value)) : '');
   }
