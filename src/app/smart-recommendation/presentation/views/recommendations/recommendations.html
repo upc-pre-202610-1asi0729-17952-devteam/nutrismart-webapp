@@ -65,7 +65,7 @@
               {{ store.weatherContext()?.isHot() ? ('recommendations.its_hot' | translate) : ('recommendations.its_cold' | translate) }} in
               {{ store.weatherContext()?.city }} —
               {{ store.weatherContext()?.temperatureCelsius }}°C ·
-              {{ store.weatherContext()?.condition }}
+              {{ weatherConditionLabel() }}
             </strong>
             <p>
               @if (store.weatherContext()?.isHot()) {
@@ -80,7 +80,7 @@
           @if (store.isTravelMode()) {
             {{ 'recommendations.detected_auto' | translate }}
           } @else {
-            {{ store.weatherContext()?.updatedAgo() }}
+            {{ weatherUpdatedAgo() }}
           }
         </div>
       </div>
@@ -196,7 +196,7 @@
           @if (store.activeFilters().length > 0) {
             <div class="filter-tags">
               @for (f of store.activeFilters(); track f) {
-                <span class="filter-tag">{{ f }}</span>
+                <span class="filter-tag">{{ ('restrictions.' + f) | translate }}</span>
               }
             </div>
           } @else {

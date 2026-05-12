@@ -460,7 +460,12 @@
     "location_search_back": "Back",
     "location_search_quick": "Quick select",
     "error_load_failed": "Could not load recommendations. Please try again.",
-    "banner_travel_active": "Travel mode active — {{ location }}, {{ temp }}°C"
+    "banner_travel_active": "Travel mode active — {{ location }}, {{ temp }}°C",
+    "condition_hot": "Sunny",
+    "condition_cold": "Cold",
+    "condition_mild": "Partly cloudy",
+    "updated_just_now": "Just updated",
+    "updated_mins_ago": "Updated {{ mins }} min ago"
   },
   "body_progress": {
     "page_title": "Body Progress",

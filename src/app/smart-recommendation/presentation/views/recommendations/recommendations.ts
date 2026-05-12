@@ -91,6 +91,22 @@ export class RecommendationsView implements OnInit {
     this.store.isTravelMode() ? '📍' : this.weatherIcon()
   );
 
+  protected weatherConditionLabel = computed(() => {
+    const w = this.store.weatherContext();
+    if (!w) return '';
+    if (w.isHot())  return this.translate.instant('recommendations.condition_hot');
+    if (w.isCold()) return this.translate.instant('recommendations.condition_cold');
+    return this.translate.instant('recommendations.condition_mild');
+  });
+
+  protected weatherUpdatedAgo = computed(() => {
+    const w = this.store.weatherContext();
+    if (!w) return '';
+    const diff = Math.round((Date.now() - new Date(w.updatedAt).getTime()) / 60000);
+    if (diff < 1) return this.translate.instant('recommendations.updated_just_now');
+    return this.translate.instant('recommendations.updated_mins_ago', { mins: diff });
+  });
+
   protected session = computed(() => this.store.session());
 
   async ngOnInit(): Promise<void> {

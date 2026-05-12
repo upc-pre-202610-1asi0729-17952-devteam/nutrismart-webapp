@@ -71,10 +71,7 @@ export class RecommendationsStore {
   );
 
   readonly activeFilters = computed(() =>
-    (this.iamStore.currentUser()?.restrictions ?? []).map(r =>
-      r.toString().replace(/_/g, '-').toLowerCase()
-        .replace(/^\w/, (c: string) => c.toUpperCase())
-    )
+    this.iamStore.currentUser()?.restrictions ?? []
   );
 
   // ─── Actions ──────────────────────────────────────────────────────────────

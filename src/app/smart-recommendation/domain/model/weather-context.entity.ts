@@ -69,9 +69,4 @@ export class WeatherContext implements BaseEntity {
     return `${this.#city} · ${this.#temperatureCelsius}°C`;
   }
 
-  updatedAgo(now: Date = new Date()): string {
-    const diff = Math.round((now.getTime() - new Date(this.#updatedAt).getTime()) / 60000);
-    if (diff < 1) return 'Just now';
-    return `Updated ${diff} min${diff > 1 ? 's' : ''} ago`;
-  }
 }

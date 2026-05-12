@@ -460,7 +460,12 @@
     "location_search_back": "Volver",
     "location_search_quick": "Selección rápida",
     "error_load_failed": "No se pudieron cargar las recomendaciones. Inténtalo de nuevo.",
-    "banner_travel_active": "Modo viaje activo — {{ location }}, {{ temp }}°C"
+    "banner_travel_active": "Modo viaje activo — {{ location }}, {{ temp }}°C",
+    "condition_hot": "Soleado",
+    "condition_cold": "Frío",
+    "condition_mild": "Parcialmente nublado",
+    "updated_just_now": "Recién actualizado",
+    "updated_mins_ago": "Actualizado hace {{ mins }} min"
   },
   "body_progress": {
     "page_title": "Progreso Corporal",
