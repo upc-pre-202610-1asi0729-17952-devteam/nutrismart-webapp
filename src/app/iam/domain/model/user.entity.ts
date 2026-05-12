@@ -1,6 +1,7 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 import { ActivityLevel } from './activity-level.enum';
 import { DietaryRestriction } from './dietary-restriction.enum';
+import { MetabolicTargets } from './metabolic-targets.value-object';
 import { SubscriptionPlan } from './subscription-plan.enum';
 import { UserGoal } from './user-goal.enum';
 
@@ -40,10 +41,6 @@ export interface UserProps {
   fatTarget: number;
   /** Daily dietary fibre target in grams. */
   fiberTarget: number;
-  /** Number of consecutive days with on-track nutrition logging. */
-  streak: number;
-  /** Number of consecutive days where logs were missed. */
-  consecutiveMisses: number;
   /** Date of birth in ISO format (YYYY-MM-DD). Optional. */
   birthday?: string;
   /** Biological sex: 'male' | 'female' | 'other'. Optional. */
@@ -96,10 +93,6 @@ export class User implements BaseEntity {
   private _fatTarget: number;
   /** @see UserProps.fiberTarget */
   private _fiberTarget: number;
-  /** @see UserProps.streak */
-  private _streak: number;
-  /** @see UserProps.consecutiveMisses */
-  private _consecutiveMisses: number;
   /** @see UserProps.birthday */
   private _birthday: string;
   /** @see UserProps.biologicalSex */
@@ -133,8 +126,6 @@ export class User implements BaseEntity {
     this._carbsTarget = props.carbsTarget;
     this._fatTarget = props.fatTarget;
     this._fiberTarget = props.fiberTarget;
-    this._streak = props.streak;
-    this._consecutiveMisses = props.consecutiveMisses;
     this._birthday = props.birthday ?? '';
     this._biologicalSex = props.biologicalSex ?? '';
     this._createdAt = props.createdAt ?? '';
@@ -288,24 +279,6 @@ export class User implements BaseEntity {
     this._fiberTarget = value;
   }
 
-  /** Consecutive days with on-track logging. */
-  get streak(): number {
-    return this._streak;
-  }
-  /** @param value - New streak value. */
-  set streak(value: number) {
-    this._streak = value;
-  }
-
-  /** Consecutive days where logs were missed. */
-  get consecutiveMisses(): number {
-    return this._consecutiveMisses;
-  }
-  /** @param value - New consecutiveMisses value. */
-  set consecutiveMisses(value: number) {
-    this._consecutiveMisses = value;
-  }
-
   /** Date of birth in ISO format (YYYY-MM-DD). */
   get birthday(): string {
     return this._birthday;
@@ -452,48 +425,19 @@ export class User implements BaseEntity {
   }
 
   /**
-   * Recalculates daily macro targets using the Mifflin-St Jeor formula.
+   * Applies pre-computed macro targets produced by {@link MetabolicTargets.calculate}.
    *
-   * Steps:
-   * 1. BMR (female formula) = (10 × weight) + (6.25 × height) − 161
-   * 2. TDEE = BMR × activityMultiplier (1.2 / 1.375 / 1.55 / 1.725)
-   * 3. Calories = TDEE − 300 for WEIGHT_LOSS, TDEE + 300 for MUSCLE_GAIN
-   * 4. Protein = weight × 1.6 g (WEIGHT_LOSS) or weight × 2.0 g (MUSCLE_GAIN)
-   * 5. Fat = 25 % of calories ÷ 9
-   * 6. Carbs = (calories − proteinCals − fatCals) ÷ 4
-   * 7. Fiber = 25 g fixed
+   * The User aggregate stores targets as a denormalised projection; it does not
+   * compute them — that responsibility belongs to the MetabolicAdaptation context.
    *
-   * Results are rounded to the nearest integer and stored on the entity.
+   * @param targets - Immutable value object containing the computed targets.
    */
-  recalculateMacros(): void {
-    const bmr = 10 * this._weight + 6.25 * this._height - 161;
-
-    const multipliers: Record<ActivityLevel, number> = {
-      [ActivityLevel.SEDENTARY]: 1.2,
-      [ActivityLevel.MODERATE]: 1.375,
-      [ActivityLevel.ACTIVE]: 1.55,
-      [ActivityLevel.VERY_ACTIVE]: 1.725,
-    };
-    const tdee = bmr * multipliers[this._activityLevel];
-
-    const calories =
-      this._goal === UserGoal.WEIGHT_LOSS ? Math.round(tdee - 300) : Math.round(tdee + 300);
-
-    const protein =
-      this._goal === UserGoal.WEIGHT_LOSS
-        ? Math.round(this._weight * 1.6)
-        : Math.round(this._weight * 2.0);
-
-    const fat = Math.round((calories * 0.25) / 9);
-    const proteinCals = protein * 4;
-    const fatCals = fat * 9;
-    const carbs = Math.round((calories - proteinCals - fatCals) / 4);
-
-    this._dailyCalorieTarget = calories;
-    this._proteinTarget = protein;
-    this._fatTarget = fat;
-    this._carbsTarget = carbs;
-    this._fiberTarget = 25;
+  applyMetabolicTargets(targets: MetabolicTargets): void {
+    this._dailyCalorieTarget = targets.dailyCalorieTarget;
+    this._proteinTarget = targets.proteinTarget;
+    this._carbsTarget = targets.carbsTarget;
+    this._fatTarget = targets.fatTarget;
+    this._fiberTarget = targets.fiberTarget;
   }
 
   /**

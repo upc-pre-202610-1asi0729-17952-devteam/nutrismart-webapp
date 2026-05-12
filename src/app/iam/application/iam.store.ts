@@ -2,9 +2,17 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
+import { DomainEventBus } from '../../shared/application/domain-event-bus';
+import { AccountCreated } from '../../shared/domain/account-created.event';
+import { GoalSwitched } from '../../shared/domain/goal-switched.event';
+import { OnboardingCompleted } from '../../shared/domain/onboarding-completed.event';
+import { PlanUpgraded } from '../../shared/domain/plan-upgraded.event';
+import { ProfileUpdated } from '../../shared/domain/profile-updated.event';
+import { RestrictionsChanged } from '../../shared/domain/restrictions-changed.event';
 import { ActivityLevel } from '../domain/model/activity-level.enum';
 import { DietaryRestriction } from '../domain/model/dietary-restriction.enum';
 import { MedicalCondition } from '../domain/model/medical-condition.enum';
+import { MetabolicTargets } from '../domain/model/metabolic-targets.value-object';
 import { SubscriptionPlan } from '../domain/model/subscription-plan.enum';
 import { UserGoal } from '../domain/model/user-goal.enum';
 import { User, UserProps } from '../domain/model/user.entity';
@@ -27,6 +35,9 @@ export class IamStore {
 
   /** Angular router used for post-auth navigation. */
   private router = inject(Router);
+
+  /** Shared event bus for cross-context communication. */
+  private eventBus = inject(DomainEventBus);
 
   /** Currently authenticated user, or `null` when logged out. */
   private _currentUser = signal<User | null>(null);
@@ -78,8 +89,6 @@ export class IamStore {
       carbsTarget: user.carbsTarget,
       fatTarget: user.fatTarget,
       fiberTarget: user.fiberTarget,
-      streak: user.streak,
-      consecutiveMisses: user.consecutiveMisses,
       birthday: user.birthday,
       biologicalSex: user.biologicalSex,
       createdAt: user.createdAt,
@@ -178,8 +187,6 @@ export class IamStore {
       carbsTarget: 250,
       fatTarget: 65,
       fiberTarget: 25,
-      streak: 0,
-      consecutiveMisses: 0,
       createdAt: new Date().toISOString().slice(0, 10),
     });
 
@@ -189,6 +196,9 @@ export class IamStore {
         this._isAuthenticated.set(true);
         this._loading.set(false);
         this.saveSession(created);
+        this.eventBus.publish(
+          new AccountCreated(created.id, created.email, created.firstName, created.lastName, created.goal),
+        );
         this.router.navigate(['/onboarding']);
       }),
       catchError((err) => {
@@ -246,14 +256,18 @@ export class IamStore {
   ): void {
     const user = this._currentUser();
     if (!user) return;
-    if (updates.firstName !== undefined) user.firstName = updates.firstName;
-    if (updates.lastName !== undefined) user.lastName = updates.lastName;
-    if (updates.email !== undefined) user.email = updates.email;
-    if (updates.birthday !== undefined) user.birthday = updates.birthday;
-    if (updates.biologicalSex !== undefined) user.biologicalSex = updates.biologicalSex;
-    if (updates.homeCity !== undefined) user.homeCity = updates.homeCity;
+    const changedFields: string[] = [];
+    if (updates.firstName !== undefined) { user.firstName = updates.firstName; changedFields.push('firstName'); }
+    if (updates.lastName !== undefined) { user.lastName = updates.lastName; changedFields.push('lastName'); }
+    if (updates.email !== undefined) { user.email = updates.email; changedFields.push('email'); }
+    if (updates.birthday !== undefined) { user.birthday = updates.birthday; changedFields.push('birthday'); }
+    if (updates.biologicalSex !== undefined) { user.biologicalSex = updates.biologicalSex; changedFields.push('biologicalSex'); }
+    if (updates.homeCity !== undefined) { user.homeCity = updates.homeCity; changedFields.push('homeCity'); }
     this._currentUser.set(user);
     this.persist();
+    if (changedFields.length > 0) {
+      this.eventBus.publish(new ProfileUpdated(user.id, changedFields));
+    }
   }
 
   /**
@@ -283,17 +297,24 @@ export class IamStore {
       carbsTarget: user.carbsTarget,
       fatTarget: user.fatTarget,
       fiberTarget: user.fiberTarget,
-      streak: user.streak,
-      consecutiveMisses: user.consecutiveMisses,
       birthday: user.birthday,
       biologicalSex: user.biologicalSex,
       createdAt: user.createdAt,
       homeCity: user.homeCity,
       goalStartedAt: user.goalStartedAt,
     });
-    updated.recalculateMacros();
+    updated.applyMetabolicTargets(MetabolicTargets.calculate(w, h, level, updated.goal));
     this._currentUser.set(updated);
     this.persist();
+
+    const isCompletingOnboarding = !user.plan && !!user.birthday && !!user.biologicalSex;
+    if (isCompletingOnboarding) {
+      this.eventBus.publish(
+        new OnboardingCompleted(updated.id, w, h, level, updated.biologicalSex, updated.birthday, updated.goal),
+      );
+    } else {
+      this.eventBus.publish(new ProfileUpdated(updated.id, ['weight', 'height', 'activityLevel']));
+    }
   }
 
   /**
@@ -323,17 +344,18 @@ export class IamStore {
       carbsTarget: user.carbsTarget,
       fatTarget: user.fatTarget,
       fiberTarget: user.fiberTarget,
-      streak: user.streak,
-      consecutiveMisses: user.consecutiveMisses,
       birthday: user.birthday,
       biologicalSex: user.biologicalSex,
       createdAt: user.createdAt,
       homeCity: user.homeCity,
       goalStartedAt: new Date().toISOString().slice(0, 10),
     });
-    updated.recalculateMacros();
+    updated.applyMetabolicTargets(
+      MetabolicTargets.calculate(updated.weight, updated.height, updated.activityLevel, goal),
+    );
     this._currentUser.set(updated);
     this.persist();
+    this.eventBus.publish(new GoalSwitched(updated.id, goal));
   }
 
   /**
@@ -347,6 +369,7 @@ export class IamStore {
     user.addRestriction(r);
     this._currentUser.set(user);
     this.persist();
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.restrictions, user.medicalConditions));
   }
 
   /**
@@ -360,6 +383,7 @@ export class IamStore {
     user.removeRestriction(r);
     this._currentUser.set(user);
     this.persist();
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.restrictions, user.medicalConditions));
   }
 
   /**
@@ -373,6 +397,7 @@ export class IamStore {
     user.addMedicalCondition(c);
     this._currentUser.set(user);
     this.persist();
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.restrictions, user.medicalConditions));
   }
 
   /**
@@ -395,6 +420,7 @@ export class IamStore {
     user.removeMedicalCondition(c);
     this._currentUser.set(user);
     this.persist();
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.restrictions, user.medicalConditions));
   }
 
   /**
@@ -408,6 +434,7 @@ export class IamStore {
     user.restrictions = restrictions;
     this._currentUser.set(user);
     this.persist();
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.restrictions, user.medicalConditions));
   }
 
   /**
@@ -421,6 +448,7 @@ export class IamStore {
     user.medicalConditions = conditions;
     this._currentUser.set(user);
     this.persist();
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.restrictions, user.medicalConditions));
   }
 
   /**
@@ -434,5 +462,6 @@ export class IamStore {
     user.plan = plan;
     this._currentUser.set(user);
     this.persist();
+    this.eventBus.publish(new PlanUpgraded(user.id, plan));
   }
 }
