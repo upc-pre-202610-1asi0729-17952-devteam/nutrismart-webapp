@@ -8,7 +8,7 @@
     "recommendations": "Recommendations",
     "body_progress": "Body progress",
     "pantry": "Pantry",
-    "wearable": "Wearable",
+    "wearable": "Physical Activity",
     "analytics": "Analytics",
     "subscription": "Subscription",
     "profile": "Profile",
@@ -803,5 +803,89 @@
     "status_at_risk": "At risk",
     "status_dropped": "Dropped",
     "status_recovered": "Recovered"
+  },
+  "physical_activity": {
+    "title": "Physical Activity",
+    "subtitle": "Sync Google Fit or record your activity manually",
+    "error_load": "Could not load activity data. Please try again.",
+    "error_connect": "Could not connect to Google Fit. Please try again.",
+    "error_disconnect": "Could not disconnect the device. Please try again.",
+    "error_sync": "Sync failed. Please try again.",
+    "error_log_activity": "Could not save the activity. Please try again.",
+    "google_fit": {
+      "title": "Connect Google Fit",
+      "desc": "Sync your physical activity. Connect your Google Fit account to automatically import your daily steps and active calories. The calorie balance on your dashboard will update in real time.",
+      "connect_btn": "Connect to Google Fit"
+    },
+    "manual": {
+      "title": "No wearable device?",
+      "desc": "You can log your activity manually. The system will estimate the calories burned based on the type of exercise and your current body weight.",
+      "cardio_label": "Cardio and walking",
+      "cardio_hint": "Enter the type and duration; the system calculates using METs",
+      "strength_label": "Strength training and others",
+      "strength_hint": "Weights, swimming, cycling and over 20 other types",
+      "log_btn": "Log activity manually"
+    },
+    "connected": {
+      "badge": "Connected · Google Fit",
+      "last_synced": "Last synced:",
+      "sync_now": "Sync now",
+      "disconnect": "Disconnect",
+      "active_calories": "ACTIVE CALORIES",
+      "burned_today": "Burned today",
+      "net_target": "NET DAILY TARGET",
+      "active": "active"
+    },
+    "sync_failed": {
+      "badge": "Sync failed · Using last known data",
+      "last_success": "Last successful sync:",
+      "retry_btn": "Retry sync",
+      "desc": "Google Fit connection interrupted. Active calorie data may be outdated."
+    },
+    "paywall": {
+      "title": "Wearable Sync requires Premium",
+      "desc": "Connect Google Fit to automatically import steps and active calories. Available from $9.99/month.",
+      "upgrade_btn": "Upgrade to Premium →"
+    },
+    "history": {
+      "this_week": "This week",
+      "empty": "No activity logged this week."
+    },
+    "modal": {
+      "title": "Log physical activity",
+      "activity_label": "Activity type",
+      "activity_placeholder": "Select an activity",
+      "duration_label": "Duration (minutes)",
+      "duration_placeholder": "e.g. 30",
+      "estimated_calories": "Estimated calories burned",
+      "based_on": "Based on your weight:",
+      "save_btn": "Save",
+      "error_duration": "Enter a valid duration greater than 0.",
+      "error_duration_max": "Duration cannot exceed 480 minutes."
+    },
+    "activity_types": {
+      "running": "Running",
+      "cycling": "Cycling",
+      "swimming": "Swimming",
+      "walking": "Walking",
+      "weight_training": "Weight training",
+      "hiit": "HIIT",
+      "yoga": "Yoga",
+      "elliptical": "Elliptical",
+      "rowing": "Rowing",
+      "boxing": "Boxing",
+      "pilates": "Pilates",
+      "dancing": "Dancing",
+      "basketball": "Basketball",
+      "football": "Football",
+      "tennis": "Tennis",
+      "volleyball": "Volleyball",
+      "hiking": "Hiking",
+      "jump_rope": "Jump rope",
+      "stair_climbing": "Stair climbing",
+      "stretching": "Stretching",
+      "crossfit": "CrossFit",
+      "martial_arts": "Martial arts"
+    }
   }
 }

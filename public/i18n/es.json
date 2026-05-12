@@ -8,7 +8,7 @@
     "recommendations": "Recomendaciones",
     "body_progress": "Progreso corporal",
     "pantry": "Despensa",
-    "wearable": "Wearable",
+    "wearable": "Actividad física",
     "analytics": "Analítica",
     "subscription": "Suscripción",
     "profile": "Perfil",
@@ -803,5 +803,89 @@
     "status_at_risk": "En riesgo",
     "status_dropped": "Caída",
     "status_recovered": "Recuperado"
+  },
+  "physical_activity": {
+    "title": "Actividad física",
+    "subtitle": "Sincronizá Google Fit o registrá tu actividad manualmente",
+    "error_load": "No se pudo cargar la actividad. Intentá de nuevo.",
+    "error_connect": "No se pudo conectar con Google Fit. Intentá de nuevo.",
+    "error_disconnect": "No se pudo desconectar el dispositivo. Intentá de nuevo.",
+    "error_sync": "La sincronización falló. Intentá de nuevo.",
+    "error_log_activity": "No se pudo guardar la actividad. Intentá de nuevo.",
+    "google_fit": {
+      "title": "Conectar Google Fit",
+      "desc": "Sincronizá tu actividad física. Conectá tu cuenta de Google Fit para importar automáticamente tus pasos y calorías activas del día. El balance calórico de tu panel se actualizará en tiempo real.",
+      "connect_btn": "Conectar con Google Fit"
+    },
+    "manual": {
+      "title": "¿No tenés dispositivo?",
+      "desc": "Podés registrar tu actividad manualmente. El sistema estimará las calorías quemadas según el tipo de ejercicio y tu peso corporal actual.",
+      "cardio_label": "Cardio y caminata",
+      "cardio_hint": "Ingresá el tipo y la duración; el sistema calcula usando METs",
+      "strength_label": "Musculación y otros",
+      "strength_hint": "Pesas, natación, ciclismo y más de 20 tipos adicionales",
+      "log_btn": "Registrar actividad manual"
+    },
+    "connected": {
+      "badge": "Conectado · Google Fit",
+      "last_synced": "Última sincronización:",
+      "sync_now": "Sincronizar ahora",
+      "disconnect": "Desconectar",
+      "active_calories": "CALORÍAS ACTIVAS",
+      "burned_today": "Quemadas hoy",
+      "net_target": "OBJETIVO NETO DIARIO",
+      "active": "activas"
+    },
+    "sync_failed": {
+      "badge": "Error de sincronización · Usando últimos datos",
+      "last_success": "Última sincronización exitosa:",
+      "retry_btn": "Reintentar",
+      "desc": "Conexión con Google Fit interrumpida. Los datos de calorías activas pueden estar desactualizados."
+    },
+    "paywall": {
+      "title": "El Wearable Sync requiere Premium",
+      "desc": "Conectá Google Fit para importar automáticamente pasos y calorías activas. Disponible desde $9.99/mes.",
+      "upgrade_btn": "Mejorar a Premium →"
+    },
+    "history": {
+      "this_week": "Esta semana",
+      "empty": "Sin actividad registrada esta semana."
+    },
+    "modal": {
+      "title": "Registrar actividad física",
+      "activity_label": "Tipo de actividad",
+      "activity_placeholder": "Seleccioná una actividad",
+      "duration_label": "Duración (minutos)",
+      "duration_placeholder": "Ej. 30",
+      "estimated_calories": "Calorías estimadas quemadas",
+      "based_on": "Basado en tu peso:",
+      "save_btn": "Guardar",
+      "error_duration": "Ingresá una duración válida mayor a 0.",
+      "error_duration_max": "La duración no puede superar 480 minutos."
+    },
+    "activity_types": {
+      "running": "Correr",
+      "cycling": "Ciclismo",
+      "swimming": "Natación",
+      "walking": "Caminata",
+      "weight_training": "Musculación",
+      "hiit": "HIIT",
+      "yoga": "Yoga",
+      "elliptical": "Elíptica",
+      "rowing": "Remo",
+      "boxing": "Boxeo",
+      "pilates": "Pilates",
+      "dancing": "Baile",
+      "basketball": "Básquetbol",
+      "football": "Fútbol",
+      "tennis": "Tenis",
+      "volleyball": "Vóleibol",
+      "hiking": "Senderismo",
+      "jump_rope": "Soga",
+      "stair_climbing": "Escaleras",
+      "stretching": "Estiramiento",
+      "crossfit": "CrossFit",
+      "martial_arts": "Artes marciales"
+    }
   }
 }
