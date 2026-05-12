@@ -12,6 +12,7 @@ const WAIST_MAX_CM  = 200;
 import { MetabolicStore } from '../../../application/metabolic.store';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { BodyMetric, BmiCategory } from '../../../domain/model/body-metric.entity';
+import { ActivityLevel } from '../../../../iam/domain/model/activity-level.enum';
 
 /**
  * Main Body Progress view — route `/body-progress/progress`.
@@ -100,13 +101,21 @@ export class BodyProgressView implements OnInit {
    * Live BMI/TDEE preview — delegates to BodyMetric entity methods to avoid
    * duplicating the Mifflin-St Jeor formula.
    */
+  /** TDEE for the current body metric using the user's actual activity level. */
+  protected currentTdee = computed(() => {
+    const metric        = this.store.currentMetric();
+    const activityLevel = this.iamStore.currentUser()?.activityLevel ?? ActivityLevel.MODERATE;
+    return metric ? metric.tdee(activityLevel) : null;
+  });
+
   protected weightPreview = computed<{ bmi: number; tdee: number } | null>(() => {
-    const raw      = parseFloat(this.weightInput());
+    const raw           = parseFloat(this.weightInput());
     if (!raw || raw <= 0 || raw > WEIGHT_MAX_KG) return null;
-    const heightCm = this.store.currentMetric()?.heightCm;
+    const heightCm      = this.store.currentMetric()?.heightCm;
     if (!heightCm) return null;
+    const activityLevel = this.iamStore.currentUser()?.activityLevel ?? ActivityLevel.MODERATE;
     const temp = new BodyMetric({ id: 0, userId: 0, weightKg: raw, heightCm, loggedAt: new Date().toISOString() });
-    return { bmi: temp.bmi(), tdee: temp.tdee() };
+    return { bmi: temp.bmi(), tdee: temp.tdee(activityLevel) };
   });
 
   protected weightInputInvalid = computed(() => {

@@ -43,7 +43,7 @@ export class ActivityLogAssembler
   toEntityFromResource(r: ActivityLogResource): ActivityLog {
     return new ActivityLog({
       id:              r.id,
-      userId:          r.user_id,
+      userId:          Number(r.user_id),
       activityType:    r.activity_type,
       durationMinutes: r.duration_minutes,
       caloriesBurned:  r.calories_burned,

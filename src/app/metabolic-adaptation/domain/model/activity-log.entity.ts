@@ -17,7 +17,7 @@ export interface ActivityLogProps {
  */
 export class ActivityLog implements BaseEntity {
   #id: number;
-  #userId: number | string;
+  #userId: number;
   #activityType: string;
   #durationMinutes: number;
   #caloriesBurned: number;

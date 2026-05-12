@@ -73,7 +73,7 @@ export class WearableApi extends BaseApi {
   }
 
   logManualActivity(
-    userId: string | number,
+    userId: number,
     activityType: string,
     durationMinutes: number,
     caloriesBurned: number,

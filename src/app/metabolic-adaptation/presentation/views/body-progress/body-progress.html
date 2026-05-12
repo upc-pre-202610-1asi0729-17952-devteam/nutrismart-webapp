@@ -158,7 +158,7 @@
           <p class="metric-tooltip">{{ 'body_progress.tooltip_tdee' | translate }}</p>
         }
         <div class="metric-card-value">
-          {{ store.currentMetric()?.tdee() | number:'1.0-0' }}
+          {{ currentTdee() | number:'1.0-0' }}
           <span class="metric-card-unit">{{ 'body_progress.kcal_day' | translate }}</span>
         </div>
         <div class="metric-card-sub">{{ 'body_progress.tdee_desc' | translate }}</div>
