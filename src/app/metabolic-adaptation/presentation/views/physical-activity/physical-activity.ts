@@ -3,7 +3,6 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { WearableStore } from '../../../application/wearable.store';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { WearableStatus } from '../../../domain/model/wearable-status.enum';
-import { SubscriptionPlan } from '../../../../iam/domain/model/subscription-plan.enum';
 import { ActivityPaywallCard } from '../../components/activity-paywall-card/activity-paywall-card';
 import { ManualActivityModal } from '../../components/manual-activity-modal/manual-activity-modal';
 import { WearableChip } from '../../components/wearable-chip/wearable-chip';
@@ -31,16 +30,13 @@ export class PhysicalActivityView implements OnInit {
 
   protected readonly pageSize = 15;
 
-  readonly SubscriptionPlan = SubscriptionPlan;
-
   /** Whether a wearable device is currently connected — drives the chip color. */
   protected readonly isWearableConnected = computed(() =>
     this.store.connection()?.status === WearableStatus.CONNECTED,
   );
 
   get isPremium(): boolean {
-    const plan = this.iamStore.currentUser()?.plan;
-    return plan === SubscriptionPlan.PREMIUM || plan === SubscriptionPlan.PRO;
+    return this.iamStore.currentUser()?.isPremium() ?? false;
   }
 
   /** All logs sorted newest-first. */
