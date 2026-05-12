@@ -96,9 +96,9 @@ export class RecommendationsApi extends BaseApi {
       );
   }
 
-  getTravelRecommendations(city: string): Observable<RecommendationCard[]> {
+  getTravelRecommendations(cityId: string): Observable<RecommendationCard[]> {
     const params = new HttpParams()
-      .set('travel_city', city)
+      .set('travel_city', cityId)
       .set('card_type', 'travel')
       .set('_expand', 'food');
     return this.http

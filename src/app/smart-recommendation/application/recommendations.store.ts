@@ -122,7 +122,7 @@ export class RecommendationsStore {
         });
         travel.activate(city, country, false);
         this._travelContext.set(travel);
-        const travelCards = await firstValueFrom(this.api.getTravelRecommendations(city));
+        const travelCards = await firstValueFrom(this.api.getTravelRecommendations(this.resolveCityId(city)));
         if (travelCards.length === 0) {
           this._unrecognizedCity.set(true);
         } else {
@@ -207,7 +207,7 @@ export class RecommendationsStore {
       this._demoTemperature.set(null);
 
       const [cards, weather] = await Promise.all([
-        firstValueFrom(this.api.getTravelRecommendations(city)),
+        firstValueFrom(this.api.getTravelRecommendations(this.resolveCityId(city))),
         firstValueFrom(this.api.getCurrentWeather(city)),
       ]);
       if (weather) this._weatherContext.set(weather);
@@ -253,6 +253,12 @@ export class RecommendationsStore {
 
   allowLocation(): void {
     this._locationDenied.set(false);
+  }
+
+  /** Resolves a city name to its weather-snapshot ID for querying recommendation-cards. */
+  private resolveCityId(cityName: string): string {
+    const match = this._availableLocations().find(l => l.city === cityName);
+    return match?.snapshotId ?? cityName;
   }
 
   private subscribeToLangChange(): void {

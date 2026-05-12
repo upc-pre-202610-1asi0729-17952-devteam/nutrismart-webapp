@@ -30,6 +30,7 @@ export class WeatherContextAssembler
   toEntityFromResource(r: WeatherContextResource): WeatherContext {
     return new WeatherContext({
       id:                 typeof r.id === 'string' ? 0 : r.id as number,
+      snapshotId:         String(r.id),
       city:               r.city,
       country:            r.country,
       temperatureCelsius: r.temperature_celsius,

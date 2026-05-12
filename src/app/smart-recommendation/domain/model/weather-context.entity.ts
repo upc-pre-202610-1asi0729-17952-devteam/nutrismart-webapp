@@ -3,6 +3,8 @@ import { WeatherType } from './weather-type.enum';
 
 export interface WeatherContextProps {
   id: number;
+  /** Raw snapshot ID from the persistence layer (e.g. "ws-1"). Used to reference this city in recommendation-cards. */
+  snapshotId: string;
   city: string;
   country: string;
   temperatureCelsius: number;
@@ -13,6 +15,7 @@ export interface WeatherContextProps {
 
 export class WeatherContext implements BaseEntity {
   #id: number;
+  #snapshotId: string;
   #city: string;
   #country: string;
   #temperatureCelsius: number;
@@ -22,6 +25,7 @@ export class WeatherContext implements BaseEntity {
 
   constructor(props: WeatherContextProps) {
     this.#id                 = props.id;
+    this.#snapshotId         = props.snapshotId;
     this.#city               = props.city;
     this.#country            = props.country;
     this.#temperatureCelsius = props.temperatureCelsius;
@@ -32,6 +36,9 @@ export class WeatherContext implements BaseEntity {
 
   get id(): number { return this.#id; }
   set id(v: number) { this.#id = v; }
+
+  get snapshotId(): string { return this.#snapshotId; }
+  set snapshotId(v: string) { this.#snapshotId = v; }
 
   get city(): string { return this.#city; }
   set city(v: string) { this.#city = v; }
