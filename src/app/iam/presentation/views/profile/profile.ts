@@ -81,7 +81,7 @@ export class Profile implements OnInit {
     email: [this.iamStore.currentUser()?.email ?? '', [Validators.required, Validators.email]],
     birthday: [this.iamStore.currentUser()?.birthday ?? ''],
     biologicalSex: [this.iamStore.currentUser()?.biologicalSex ?? ''],
-    homeCity: [this.iamStore.currentUser()?.homeCity ?? '', this.iamStore.currentUser()?.homeCity ? Validators.required : []],
+    homeCity: [this.iamStore.currentUser()?.homeCity ?? ''],
   });
 
   // ─── Panel 2 — Physical details and goals ─────────────────────────────────
@@ -225,6 +225,11 @@ export class Profile implements OnInit {
       return;
     }
     const { firstName, lastName, birthday, biologicalSex, homeCity } = this.personalForm.value;
+    if (this.iamStore.currentUser()?.homeCity && !homeCity?.trim()) {
+      this.personalForm.get('homeCity')?.setErrors({ required: true });
+      this.personalForm.get('homeCity')?.markAsTouched();
+      return;
+    }
     this.iamStore.updateProfile({
       firstName: firstName!,
       lastName: lastName!,
