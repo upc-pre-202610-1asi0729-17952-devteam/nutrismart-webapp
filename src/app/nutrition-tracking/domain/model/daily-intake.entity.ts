@@ -111,6 +111,24 @@ export class DailyIntake implements BaseEntity {
   }
 
   /**
+   * Updates the daily calorie goal, e.g. when a new metabolic target arrives.
+   *
+   * @param newGoal - New daily calorie target in kcal.
+   */
+  updateGoal(newGoal: number): void {
+    this._dailyGoal = newGoal;
+  }
+
+  /**
+   * Updates the active (exercise) calorie adjustment for the day.
+   *
+   * @param calories - Total active calories burned today.
+   */
+  updateActive(calories: number): void {
+    this._active = calories;
+  }
+
+  /**
    * Human-readable balance summary.
    *
    * @returns e.g. "74% of your goal consumed" or "Exceeded by 220 kcal".

@@ -1,7 +1,16 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { debounceTime, Subject, switchMap } from 'rxjs';
+import { debounceTime, filter, firstValueFrom, retry, Subject, switchMap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { IamStore } from '../../iam/application/iam.store';
+import { DomainEventBus } from '../../shared/application/domain-event-bus';
+import { MetabolicTargetSet } from '../../shared/domain/metabolic-target-set.event';
+import { RestrictionsChanged } from '../../shared/domain/restrictions-changed.event';
+import { MealRecorded } from '../../shared/domain/meal-recorded.event';
+import { MealRemoved } from '../../shared/domain/meal-removed.event';
+import { DailyGoalExceeded } from '../../shared/domain/daily-goal-exceeded.event';
+import { DailyGoalMet } from '../../shared/domain/daily-goal-met.event';
+import { CaloricTargetAdjusted } from '../../metabolic-adaptation/domain/events/caloric-target-adjusted.event';
+import { DietaryRestriction } from '../../iam/domain/model/dietary-restriction.enum';
 import { MealType } from '../domain/model/meal-type.enum';
 import { FoodItem } from '../domain/model/food-item.entity';
 import { MealRecord } from '../domain/model/meal-record.entity';
@@ -14,26 +23,34 @@ import { NutritionApi } from '../infrastructure/nutrition-api';
  * Manages food search results, daily meal records, and caloric balance
  * using Angular Signals. All mutations are persisted via {@link NutritionApi}.
  *
+ * Reacts to cross-context domain events:
+ * - {@link MetabolicTargetSet}  → refreshes today's `dailyGoal`
+ * - {@link CaloricTargetAdjusted} → refreshes today's `active` calories
+ * - {@link RestrictionsChanged} → caches restrictions for pre-log validation
+ *
  * Provided in root so a single instance is shared across the application.
  *
  * @author Mora Rivera, Joel Fernando
  */
 @Injectable({ providedIn: 'root' })
 export class NutritionStore {
-  private nutritionApi = inject(NutritionApi);
-  private iamStore = inject(IamStore);
+  private readonly nutritionApi = inject(NutritionApi);
+  private readonly iamStore     = inject(IamStore);
+  private readonly eventBus     = inject(DomainEventBus);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
-  private _foodItems = signal<FoodItem[]>([]);
-  private _mealRecords = signal<MealRecord[]>([]);
-  private _dailyIntakes = signal<DailyIntake[]>([]);
-  private _loading     = signal<boolean>(false);
-  private _error       = signal<string | null>(null);
-  private _searchQuery = signal<string>('');
+  private readonly _foodItems          = signal<FoodItem[]>([]);
+  private readonly _mealRecords        = signal<MealRecord[]>([]);
+  private readonly _dailyIntakes       = signal<DailyIntake[]>([]);
+  private readonly _loading            = signal<boolean>(false);
+  private readonly _error              = signal<string | null>(null);
+  private readonly _searchQuery        = signal<string>('');
+  private readonly _userRestrictions   = signal<DietaryRestriction[]>([]);
+  private readonly _goalExceededToday  = signal<boolean>(false);
+  private readonly _allMealsMetToday   = signal<boolean>(false);
 
-  /** Subject for debounced food search. */
-  private _searchSubject = new Subject<string>();
+  private readonly _searchSubject = new Subject<string>();
 
   // ─── Public Read-only Signals ─────────────────────────────────────────────
 
@@ -55,6 +72,9 @@ export class NutritionStore {
   /** Current search query string. */
   readonly searchQuery = this._searchQuery.asReadonly();
 
+  /** User's active dietary restrictions, kept in sync via {@link RestrictionsChanged}. */
+  readonly userRestrictions = this._userRestrictions.asReadonly();
+
   // ─── Computed Signals ─────────────────────────────────────────────────────
 
   /** Meal records grouped by meal type. */
@@ -62,9 +82,9 @@ export class NutritionStore {
     const records = this._mealRecords();
     return {
       [MealType.BREAKFAST]: records.filter((r) => r.mealType === MealType.BREAKFAST),
-      [MealType.LUNCH]: records.filter((r) => r.mealType === MealType.LUNCH),
-      [MealType.SNACK]: records.filter((r) => r.mealType === MealType.SNACK),
-      [MealType.DINNER]: records.filter((r) => r.mealType === MealType.DINNER),
+      [MealType.LUNCH]:     records.filter((r) => r.mealType === MealType.LUNCH),
+      [MealType.SNACK]:     records.filter((r) => r.mealType === MealType.SNACK),
+      [MealType.DINNER]:    records.filter((r) => r.mealType === MealType.DINNER),
     };
   });
 
@@ -73,31 +93,30 @@ export class NutritionStore {
     this._mealRecords().filter(r => r.isFromToday).reduce(
       (acc, r) => ({
         calories: Math.round((acc.calories + r.calories) * 10) / 10,
-        protein: Math.round((acc.protein + r.protein) * 10) / 10,
-        carbs: Math.round((acc.carbs + r.carbs) * 10) / 10,
-        fat: Math.round((acc.fat + r.fat) * 10) / 10,
-        fiber: Math.round((acc.fiber + r.fiber) * 10) / 10,
-        sugar: Math.round((acc.sugar + r.sugar) * 10) / 10,
+        protein:  Math.round((acc.protein  + r.protein)  * 10) / 10,
+        carbs:    Math.round((acc.carbs    + r.carbs)    * 10) / 10,
+        fat:      Math.round((acc.fat      + r.fat)      * 10) / 10,
+        fiber:    Math.round((acc.fiber    + r.fiber)    * 10) / 10,
+        sugar:    Math.round((acc.sugar    + r.sugar)    * 10) / 10,
       }),
       { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, sugar: 0 },
     ),
   );
 
-  /** Whether today's consumed calories exceed today's daily goal (DailyGoalExceeded event). */
+  /** Whether today's consumed calories exceed today's daily goal. */
   readonly isDailyGoalExceeded = computed(() => {
     const intake = this.getDailyIntakeFor(new Date());
     if (!intake) return false;
     return this.dailyTotals().calories > intake.dailyGoal;
   });
 
-  /** Whether all 4 meal windows have at least one entry (DailyGoalMet check). */
+  /** Whether all 4 meal windows have at least one entry. */
   readonly allMealsLogged = computed(() => {
     const groups = this.recordsByMealType();
     return Object.values(groups).every((arr) => arr.length > 0);
   });
 
   constructor() {
-    // Wire up the debounced search pipeline (400 ms)
     this._searchSubject
       .pipe(
         debounceTime(400),
@@ -121,6 +140,51 @@ export class NutritionStore {
           this._loading.set(false);
         },
       });
+
+    this.subscribeToMetabolicTargetSet();
+    this.subscribeToCaloricTargetAdjusted();
+    this.subscribeToRestrictionsChanged();
+  }
+
+  // ─── Event Subscriptions ──────────────────────────────────────────────────
+
+  private subscribeToMetabolicTargetSet(): void {
+    this.eventBus.events$.pipe(
+      filter((e): e is MetabolicTargetSet => e.eventType === 'MetabolicTargetSet'),
+    ).subscribe(e => {
+      const today = new Date().toISOString().slice(0, 10);
+      this._dailyIntakes.update(intakes => intakes.map(i => {
+        if (i.userId === e.userId && i.date === today) {
+          i.updateGoal(e.dailyCalorieTarget);
+        }
+        return i;
+      }));
+    });
+  }
+
+  private subscribeToCaloricTargetAdjusted(): void {
+    this.eventBus.events$.pipe(
+      filter((e): e is CaloricTargetAdjusted => e.eventType === 'CaloricTargetAdjusted'),
+    ).subscribe(e => {
+      const today = new Date().toISOString().slice(0, 10);
+      this._dailyIntakes.update(intakes => intakes.map(i => {
+        if (i.userId === e.userId && i.date === today) {
+          i.updateActive(e.activeCaloriesAdded);
+        }
+        return i;
+      }));
+    });
+  }
+
+  private subscribeToRestrictionsChanged(): void {
+    this.eventBus.events$.pipe(
+      filter((e): e is RestrictionsChanged => e.eventType === 'RestrictionsChanged'),
+    ).subscribe(e => {
+      const user = this.iamStore.currentUser();
+      if (user && e.userId === user.id) {
+        this._userRestrictions.set(e.restrictions);
+      }
+    });
   }
 
   // ─── Actions ──────────────────────────────────────────────────────────────
@@ -151,48 +215,51 @@ export class NutritionStore {
     if (!user) return;
     this._loading.set(true);
     this._error.set(null);
-    return new Promise((resolve) => {
-      this.nutritionApi.getMealEntries(user.id).subscribe({
-        next: (records) => {
-          const userId = String(user.id);
-          this._mealRecords.set(records.filter((r) => String(r.userId) === userId));
-          this._loading.set(false);
-          resolve();
-        },
-        error: () => {
-          this._error.set('Failed to load meal entries.');
-          this._loading.set(false);
-          resolve();
-        },
-      });
-    });
+    try {
+      const records = await firstValueFrom(this.nutritionApi.getMealEntries(user.id));
+      this._mealRecords.set(records.filter(r => r.userId === user.id));
+    } catch {
+      this._error.set('Failed to load meal entries.');
+    } finally {
+      this._loading.set(false);
+    }
   }
 
   /**
-   * Persists a new meal record and updates local state.
+   * Validates restriction conflicts and persists a new meal record.
    *
-   * Emits the MealRecorded domain event on success.
+   * Publishes {@link MealRecorded} on success, and detects whether
+   * {@link DailyGoalExceeded} or {@link DailyGoalMet} should fire.
    *
-   * @param record - The {@link MealRecord} entity to save.
+   * @param record   - The {@link MealRecord} entity to save.
+   * @param foodItem - Optional food item used for restriction validation.
    * @returns Promise that resolves when the record is saved.
    */
-  async recordMeal(record: MealRecord): Promise<void> {
+  async recordMeal(record: MealRecord, foodItem?: FoodItem): Promise<void> {
+    const user = this.iamStore.currentUser();
+    if (user && foodItem) {
+      const violations = foodItem.conflictingRestrictions(this._userRestrictions());
+      if (violations.length > 0) {
+        this._error.set(`This food conflicts with your dietary restrictions: ${violations.join(', ')}`);
+        return;
+      }
+    }
     this._loading.set(true);
     this._error.set(null);
-    return new Promise((resolve, reject) => {
-      this.nutritionApi.createMealEntry(record).subscribe({
-        next: (created) => {
-          this._mealRecords.update((prev) => [...prev, created]);
-          this._loading.set(false);
-          resolve();
-        },
-        error: () => {
-          this._error.set('Failed to add meal entry.');
-          this._loading.set(false);
-          reject();
-        },
-      });
-    });
+    try {
+      const created = await firstValueFrom(
+        this.nutritionApi.createMealEntry(record).pipe(retry(2)),
+      );
+      this._mealRecords.update(prev => [...prev, created]);
+      if (user) {
+        this.eventBus.publish(new MealRecorded(user.id, record.mealType, record.calories, 'manual'));
+        this.checkAndPublishDailyGoalEvents(user.id);
+      }
+    } catch {
+      this._error.set('Failed to add meal entry.');
+    } finally {
+      this._loading.set(false);
+    }
   }
 
   /**
@@ -204,49 +271,46 @@ export class NutritionStore {
   async adjustPortion(record: MealRecord): Promise<void> {
     this._loading.set(true);
     this._error.set(null);
-    return new Promise((resolve, reject) => {
-      this.nutritionApi.updateMealEntry(record).subscribe({
-        next: (updated) => {
-          this._mealRecords.update((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
-          this._loading.set(false);
-          resolve();
-        },
-        error: () => {
-          this._error.set('Failed to update meal entry.');
-          this._loading.set(false);
-          reject();
-        },
-      });
-    });
+    try {
+      const updated = await firstValueFrom(
+        this.nutritionApi.updateMealEntry(record).pipe(retry(2)),
+      );
+      this._mealRecords.update(prev => prev.map(r => r.id === updated.id ? updated : r));
+    } catch {
+      this._error.set('Failed to update meal entry.');
+    } finally {
+      this._loading.set(false);
+    }
   }
 
   /**
    * Deletes a meal record and removes it from local state.
    *
+   * Publishes {@link MealRemoved} on success.
+   *
    * @param id - Numeric ID of the record to delete.
    * @returns Promise that resolves when deletion is complete.
    */
   async removeMeal(id: number): Promise<void> {
+    const user   = this.iamStore.currentUser();
+    const record = this._mealRecords().find(r => r.id === id);
     this._loading.set(true);
     this._error.set(null);
-    return new Promise((resolve, reject) => {
-      this.nutritionApi.deleteMealEntry(id).subscribe({
-        next: () => {
-          this._mealRecords.update((prev) => prev.filter((r) => r.id !== id));
-          this._loading.set(false);
-          resolve();
-        },
-        error: () => {
-          this._error.set('Failed to delete meal entry.');
-          this._loading.set(false);
-          reject();
-        },
-      });
-    });
+    try {
+      await firstValueFrom(this.nutritionApi.deleteMealEntry(id).pipe(retry(2)));
+      this._mealRecords.update(prev => prev.filter(r => r.id !== id));
+      if (user && record) {
+        this.eventBus.publish(new MealRemoved(user.id, record.mealType));
+      }
+    } catch {
+      this._error.set('Failed to delete meal entry.');
+    } finally {
+      this._loading.set(false);
+    }
   }
 
   /**
-   * Loads the daily caloric balance.
+   * Loads the daily caloric balance records for the current user.
    *
    * @returns Promise that resolves when loading is complete.
    */
@@ -255,29 +319,49 @@ export class NutritionStore {
     if (!user) return;
     this._loading.set(true);
     this._error.set(null);
-    return new Promise((resolve) => {
-      this.nutritionApi.getDailyBalance().subscribe({
-        next: (balances) => {
-          const userId = String(user.id);
-          this._dailyIntakes.set(balances.filter((b) => String(b.userId) === userId));
-          this._loading.set(false);
-          resolve();
-        },
-        error: () => {
-          this._error.set('Failed to load daily balance.');
-          this._loading.set(false);
-          resolve();
-        },
-      });
-    });
+    try {
+      const balances = await firstValueFrom(this.nutritionApi.getDailyBalance());
+      this._dailyIntakes.set(balances.filter(b => b.userId === user.id));
+    } catch {
+      this._error.set('Failed to load daily balance.');
+    } finally {
+      this._loading.set(false);
+    }
   }
 
   /**
    * Returns the {@link DailyIntake} record for the given date, or null if none exists.
-   * Callers should apply their own fallback (e.g. user.dailyCalorieTarget).
+   *
+   * @param date - The calendar day to look up.
    */
   getDailyIntakeFor(date: Date): DailyIntake | null {
     const dateStr = date.toISOString().slice(0, 10);
     return this._dailyIntakes().find((b) => b.date === dateStr) ?? null;
+  }
+
+  // ─── Private Helpers ──────────────────────────────────────────────────────
+
+  /**
+   * Evaluates post-meal conditions and publishes {@link DailyGoalExceeded}
+   * or {@link DailyGoalMet} at most once per session day.
+   */
+  private checkAndPublishDailyGoalEvents(userId: number): void {
+    const today  = new Date().toISOString().slice(0, 10);
+    const intake = this.getDailyIntakeFor(new Date());
+    if (!intake) return;
+
+    if (intake.exceeded && !this._goalExceededToday()) {
+      this._goalExceededToday.set(true);
+      this.eventBus.publish(new DailyGoalExceeded(userId, intake.netCalories, today));
+    }
+
+    if (this.allMealsLogged() && !this._allMealsMetToday()) {
+      this._allMealsMetToday.set(true);
+      const totals       = this.dailyTotals();
+      const adherencePct = intake.dailyGoal > 0
+        ? Math.round((totals.calories / intake.dailyGoal) * 100)
+        : 0;
+      this.eventBus.publish(new DailyGoalMet(userId, today, totals.calories, adherencePct));
+    }
   }
 }
