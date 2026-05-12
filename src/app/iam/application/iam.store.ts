@@ -404,7 +404,7 @@ export class IamStore {
     user.addRestriction(r);
     this._currentUser.set(user);
     this.persist();
-    this.eventBus.publish(new RestrictionsChanged(user.id, user.restrictions, user.medicalConditions));
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.effectiveRestrictions(), user.medicalConditions));
   }
 
   /**
@@ -418,7 +418,7 @@ export class IamStore {
     user.removeRestriction(r);
     this._currentUser.set(user);
     this.persist();
-    this.eventBus.publish(new RestrictionsChanged(user.id, user.restrictions, user.medicalConditions));
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.effectiveRestrictions(), user.medicalConditions));
   }
 
   /**
@@ -432,7 +432,7 @@ export class IamStore {
     user.addMedicalCondition(c);
     this._currentUser.set(user);
     this.persist();
-    this.eventBus.publish(new RestrictionsChanged(user.id, user.restrictions, user.medicalConditions));
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.effectiveRestrictions(), user.medicalConditions));
   }
 
   /**
@@ -455,7 +455,7 @@ export class IamStore {
     user.removeMedicalCondition(c);
     this._currentUser.set(user);
     this.persist();
-    this.eventBus.publish(new RestrictionsChanged(user.id, user.restrictions, user.medicalConditions));
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.effectiveRestrictions(), user.medicalConditions));
   }
 
   /**
@@ -469,7 +469,7 @@ export class IamStore {
     user.restrictions = restrictions;
     this._currentUser.set(user);
     this.persist();
-    this.eventBus.publish(new RestrictionsChanged(user.id, user.restrictions, user.medicalConditions));
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.effectiveRestrictions(), user.medicalConditions));
   }
 
   /**
@@ -483,7 +483,7 @@ export class IamStore {
     user.medicalConditions = conditions;
     this._currentUser.set(user);
     this.persist();
-    this.eventBus.publish(new RestrictionsChanged(user.id, user.restrictions, user.medicalConditions));
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.effectiveRestrictions(), user.medicalConditions));
   }
 
   /**

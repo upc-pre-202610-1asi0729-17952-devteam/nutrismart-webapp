@@ -235,7 +235,27 @@
     "apply_language": "Aplicar",
     "weight_tooltip": "Registra tu peso en Progreso Corporal para mantenerlo actualizado.",
     "weight_tooltip_aria": "Cómo actualizar el peso",
-    "home_city_required": "Una vez configurada, tu ciudad de origen no puede eliminarse."
+    "home_city_required": "Una vez configurada, tu ciudad de origen no puede eliminarse.",
+    "medical_warnings": {
+      "TYPE_2_DIABETES": "Limita los azúcares añadidos y los carbohidratos simples para controlar la glucosa en sangre.",
+      "HIGH_BLOOD_PRESSURE": "Limita el sodio a menos de 2.300 mg al día para mantener una presión arterial saludable.",
+      "COELIAC_DISEASE": "Dieta sin gluten aplicada. Todos los alimentos con gluten quedan bloqueados automáticamente.",
+      "KIDNEY_DISEASE": "Modera tu consumo de proteínas para reducir la carga de trabajo de tus riñones.",
+      "GOUT": "Limita los alimentos ricos en purinas: carnes rojas, mariscos y alcohol, para controlar el ácido úrico.",
+      "HYPOTHYROIDISM": "Ten precaución con el exceso de soja y las verduras crudas crucíferas, que pueden afectar la función tiroidea.",
+      "nutrient": {
+        "sugar": "Azúcares añadidos",
+        "sodium": "Sodio",
+        "gluten": "Gluten",
+        "protein": "Proteínas",
+        "purines": "Purinas",
+        "soy": "Soja / bociógenos"
+      },
+      "severity": {
+        "ADVISORY": "Recomendación",
+        "STRICT": "Obligatorio"
+      }
+    }
   },
   "medical": {
     "TYPE_2_DIABETES": "Diabetes tipo 2",

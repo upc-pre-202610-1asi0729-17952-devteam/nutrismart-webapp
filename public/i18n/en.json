@@ -235,7 +235,27 @@
     "apply_language": "Apply",
     "weight_tooltip": "Log your weight in Body Progress to keep this updated.",
     "weight_tooltip_aria": "How to update weight",
-    "home_city_required": "Once set, your home city cannot be removed."
+    "home_city_required": "Once set, your home city cannot be removed.",
+    "medical_warnings": {
+      "TYPE_2_DIABETES": "Limit added sugars and simple carbohydrates to help manage blood glucose levels.",
+      "HIGH_BLOOD_PRESSURE": "Limit sodium intake to under 2,300 mg per day to support healthy blood pressure.",
+      "COELIAC_DISEASE": "Gluten-free diet is enforced. All foods containing gluten are automatically blocked.",
+      "KIDNEY_DISEASE": "Moderate your protein intake to reduce the workload on your kidneys.",
+      "GOUT": "Limit high-purine foods such as red meat, shellfish, and alcohol to manage uric acid levels.",
+      "HYPOTHYROIDISM": "Be mindful of excess soy and raw cruciferous vegetables, which may affect thyroid function.",
+      "nutrient": {
+        "sugar": "Added sugars",
+        "sodium": "Sodium",
+        "gluten": "Gluten",
+        "protein": "Protein",
+        "purines": "Purines",
+        "soy": "Soy / goitrogens"
+      },
+      "severity": {
+        "ADVISORY": "Advisory",
+        "STRICT": "Enforced"
+      }
+    }
   },
   "medical": {
     "TYPE_2_DIABETES": "Type 2 Diabetes",
