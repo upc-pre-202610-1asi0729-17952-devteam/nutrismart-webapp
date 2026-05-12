@@ -235,6 +235,7 @@ export class MetabolicStore {
         this._stagnationHistory.update(h => [...h, metric]);
       }
       this._currentMetric.set(metric);
+      this.iamStore.updatePhysicalDetails(weightKg, metric.heightCm, user.activityLevel);
       this.eventBus.publish(new WeightLogged(user.id, weightKg, metric.bmi()));
 
       // Auto-maintenance: reset target to current weight when goal is reached.
