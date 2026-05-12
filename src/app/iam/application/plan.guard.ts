@@ -26,5 +26,5 @@ export const planGuard: CanActivateFn = (route) => {
     required === 'PRO'     ? user.isPro()     :
     true;
 
-  return allowed ? true : router.createUrlTree(['/subscription']);
+  return allowed ? true : router.createUrlTree(['/my-plan']);
 };
