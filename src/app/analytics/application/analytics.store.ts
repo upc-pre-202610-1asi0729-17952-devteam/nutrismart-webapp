@@ -5,7 +5,6 @@ import { AnalyticsApi } from '../infrastructure/analytics-api';
 import { AnalyticsAssembler } from '../infrastructure/analytics-assembler';
 import { AnalyticsData, AnalyticsPeriod } from '../domain/model/analytics-models';
 import { IamStore } from '../../iam/application/iam.store';
-import { SubscriptionPlan } from '../../iam/domain/model/subscription-plan.enum';
 
 @Injectable({ providedIn: 'root' })
 export class AnalyticsStore {
@@ -42,7 +41,14 @@ export class AnalyticsStore {
 
   /** True when the current user holds a Premium subscription. */
   readonly isPremiumUser = computed(
-    () => this.iamStore.currentUser()?.plan === SubscriptionPlan.PREMIUM,
+    () => this.iamStore.currentUser()?.isPremium() ?? false,
+  );
+
+  /** Periods unlocked for the current plan tier (PRO: 7d+30d; PREMIUM: all). */
+  readonly allowedPeriods = computed<AnalyticsPeriod[]>(() =>
+    this.isPremiumUser()
+      ? ['7_DAYS', '30_DAYS', '90_DAYS']
+      : ['7_DAYS', '30_DAYS'],
   );
 
   /**
@@ -57,11 +63,14 @@ export class AnalyticsStore {
       return throwError(() => new Error('User not authenticated.'));
     }
 
+    const safePeriod: AnalyticsPeriod =
+      this.allowedPeriods().includes(period) ? period : '7_DAYS';
+
     this._loading.set(true);
     this._error.set(null);
-    this._selectedPeriod.set(period);
+    this._selectedPeriod.set(safePeriod);
 
-    const days     = period === '7_DAYS' ? 7 : period === '30_DAYS' ? 30 : 90;
+    const days     = safePeriod === '7_DAYS' ? 7 : safePeriod === '30_DAYS' ? 30 : 90;
     const fromDate = new Date(Date.now() - (days - 1) * 24 * 60 * 60 * 1000)
       .toISOString().split('T')[0];
 
@@ -79,7 +88,7 @@ export class AnalyticsStore {
         return hasData
           ? this.analyticsAssembler.assembleAnalyticsData(
               raw,
-              period,
+              safePeriod,
               user.goal as 'WEIGHT_LOSS' | 'MUSCLE_GAIN',
               targets,
             )

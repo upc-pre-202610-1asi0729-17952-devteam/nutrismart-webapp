@@ -34,12 +34,13 @@ export class AnalyticsDashboardComponent implements OnInit {
   protected readonly analyticsStore = inject(AnalyticsStore);
   private readonly translate = inject(TranslateService);
 
-  protected readonly analyticsData    = this.analyticsStore.currentAnalyticsData;
-  protected readonly loading          = this.analyticsStore.loading;
-  protected readonly error            = this.analyticsStore.error;
-  protected readonly selectedPeriod   = this.analyticsStore.selectedPeriod;
+  protected readonly analyticsData      = this.analyticsStore.currentAnalyticsData;
+  protected readonly loading            = this.analyticsStore.loading;
+  protected readonly error              = this.analyticsStore.error;
+  protected readonly selectedPeriod     = this.analyticsStore.selectedPeriod;
   protected readonly showExportPdfModal = this.analyticsStore.exportPdfModalOpen;
-  protected readonly isPremiumUser    = this.analyticsStore.isPremiumUser;
+  protected readonly isPremiumUser      = this.analyticsStore.isPremiumUser;
+  protected readonly allowedPeriods     = this.analyticsStore.allowedPeriods;
 
   readonly dailyCaloriesGoal = computed(() =>
     this.analyticsData()?.dailyCaloriesHistory?.[0]?.goal ?? 1800

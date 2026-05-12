@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, computed, EventEmitter, Input, Output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AnalyticsPeriod } from '../../../domain/model/analytics-models';
 
@@ -11,13 +11,19 @@ import { AnalyticsPeriod } from '../../../domain/model/analytics-models';
 })
 export class PeriodToggleComponent {
   @Input({ required: true }) selectedPeriod!: AnalyticsPeriod;
+  /** Restricts visible periods; when omitted all three periods are shown. */
+  @Input() allowedPeriods: AnalyticsPeriod[] = ['7_DAYS', '30_DAYS', '90_DAYS'];
   @Output() periodChange = new EventEmitter<AnalyticsPeriod>();
 
-  readonly periods: { labelKey: string; value: AnalyticsPeriod }[] = [
+  readonly allPeriods: { labelKey: string; value: AnalyticsPeriod }[] = [
     { labelKey: 'analytics.period_7_days',  value: '7_DAYS'  },
     { labelKey: 'analytics.period_30_days', value: '30_DAYS' },
     { labelKey: 'analytics.period_90_days', value: '90_DAYS' },
   ];
+
+  get periods() {
+    return this.allPeriods.filter(p => this.allowedPeriods.includes(p.value));
+  }
 
   onSelectPeriod(period: AnalyticsPeriod): void {
     this.periodChange.emit(period);

@@ -4,6 +4,7 @@
     <div class="header-actions">
       <app-period-toggle
         [selectedPeriod]="selectedPeriod()"
+        [allowedPeriods]="allowedPeriods()"
         (periodChange)="onPeriodChange($event)"
       ></app-period-toggle>
       <app-export-pdf-button
