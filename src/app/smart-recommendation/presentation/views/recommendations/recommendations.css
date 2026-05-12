@@ -452,3 +452,42 @@
   color: var(--nutrismart-text-light);
   font-size: 13px;
 }
+
+/* ── Responsive ── */
+@media (max-width: 1023px) {
+  .rec-page {
+    padding-top: 68px;
+  }
+}
+
+@media (max-width: 960px) {
+  .rec-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .right-col {
+    order: -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .rec-page {
+    padding: 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .header-chips {
+    flex-wrap: wrap;
+  }
+
+  .demo-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

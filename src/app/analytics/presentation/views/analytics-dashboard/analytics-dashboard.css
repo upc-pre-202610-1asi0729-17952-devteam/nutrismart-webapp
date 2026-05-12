@@ -83,8 +83,12 @@
   .adherence-section{ grid-template-columns: 1fr; }
 }
 
+@media (max-width: 1023px) {
+  .analytics-dashboard-container { padding-top: 68px; }
+}
+
 @media (max-width: 600px) {
-  .analytics-dashboard-container { padding: 16px; }
+  .analytics-dashboard-container { padding: 68px 16px 16px; }
   .dashboard-title  { font-size: 18px; }
   .header-actions   { flex-direction: column; align-items: flex-start; gap: 8px; }
 }

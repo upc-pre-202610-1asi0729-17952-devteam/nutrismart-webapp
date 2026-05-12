@@ -650,3 +650,37 @@
     justify-content: flex-start;
   }
 }
+
+@media (max-width: 1023px) {
+  .dashboard-shell {
+    padding-top: 68px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-shell {
+    padding: 68px 16px 16px;
+  }
+
+  .dashboard-header .page-title {
+    font-size: 20px;
+  }
+
+  .metric-card strong {
+    font-size: 28px;
+  }
+
+  .panel {
+    padding: 14px 14px;
+  }
+
+  .risk-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .risk-button {
+    width: 100%;
+    text-align: center;
+  }
+}

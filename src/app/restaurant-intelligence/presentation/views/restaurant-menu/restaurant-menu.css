@@ -44,7 +44,16 @@
   gap: 1.5rem;
 }
 
+@media (max-width: 1023px) {
+  .smart-scan-page {
+    padding-top: 68px;
+  }
+}
+
 @media (max-width: 640px) {
+  .smart-scan-page {
+    padding: 68px 16px 16px;
+  }
   .scan-cards-grid { grid-template-columns: 1fr; }
 }
 

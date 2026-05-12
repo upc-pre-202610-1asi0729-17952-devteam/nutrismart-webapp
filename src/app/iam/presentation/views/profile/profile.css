@@ -617,6 +617,60 @@
   cursor: pointer;
 }
 
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .profile-shell {
+    padding-top: 68px;
+  }
+}
+
+@media (max-width: 960px) {
+  .profile-shell {
+    flex-direction: column;
+  }
+
+  .profile-nav {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--nutrismart-border, #e0eaea);
+    padding: 20px 16px;
+    gap: 16px;
+  }
+
+  .nav-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .nav-item {
+    padding: 8px 12px;
+    font-size: 0.82rem;
+  }
+
+  .profile-content {
+    padding: 24px 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-nav {
+    padding: 16px;
+  }
+
+  .profile-content {
+    padding: 16px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-section {
+    max-width: 100%;
+  }
+}
+
 /* ─── Save button ─────────────────────────────────────────────────────────── */
 
 .btn-save {

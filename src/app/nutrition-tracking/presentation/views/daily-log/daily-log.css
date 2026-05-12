@@ -303,6 +303,47 @@
   opacity: .7;
 }
 
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .daily-log-page {
+    padding-top: 68px;
+  }
+}
+
+@media (max-width: 600px) {
+  .daily-log-page {
+    padding: 68px 16px 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .add-food-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .search-modal-backdrop {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .search-modal {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    max-height: 85vh;
+  }
+}
+
 /* ── Read-only notice ────────────────────────────────────────────────── */
 .read-only-notice {
   display: flex;
