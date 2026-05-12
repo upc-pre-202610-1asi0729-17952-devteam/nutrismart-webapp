@@ -1,6 +1,32 @@
 <div class="app-shell">
+
+  <!-- HAMBURGER BUTTON (mobile/tablet only) -->
+  <button
+    class="hamburger-btn"
+    type="button"
+    (click)="toggleSidebar($event)"
+    [attr.aria-expanded]="isSidebarOpen()"
+    [attr.aria-label]="(isSidebarOpen() ? 'nav.close_menu' : 'nav.open_menu') | translate">
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+    <span class="hamburger-line"></span>
+  </button>
+
+  <!-- OVERLAY (mobile/tablet, closes sidebar on click) -->
+  @if (isSidebarOpen()) {
+    <div
+      class="sidebar-overlay"
+      aria-hidden="true"
+      (click)="closeSidebar()">
+    </div>
+  }
+
   <!-- SIDEBAR -->
-  <nav class="sidebar">
+  <nav
+    class="sidebar"
+    [class.sidebar--open]="isSidebarOpen()"
+    (click)="$event.stopPropagation()">
+
     <div class="sidebar-logo">
       <div class="logo-icon">
         <img src="/logo.png" alt="NutriSmart logo" class="logo-img" />
@@ -14,7 +40,8 @@
         <a class="nav-item"
            [routerLink]="item.link"
            routerLinkActive="active"
-           [attr.aria-label]="item.label | translate">
+           [attr.aria-label]="item.label | translate"
+           (click)="closeSidebar()">
           <span class="nav-icon">{{ item.icon }}</span>
           {{ item.label | translate }}
         </a>
@@ -27,7 +54,8 @@
         <a class="nav-item"
            [routerLink]="item.link"
            routerLinkActive="active"
-           [attr.aria-label]="item.label | translate">
+           [attr.aria-label]="item.label | translate"
+           (click)="closeSidebar()">
           <span class="nav-icon">{{ item.icon }}</span>
           {{ item.label | translate }}
         </a>
@@ -40,7 +68,7 @@
         <div class="user-info">
           <div class="user-name">{{ iamStore.currentUser()?.fullName }}</div>
           <div class="user-links">
-            <a [routerLink]="'/profile'">{{ 'nav.profile' | translate }}</a>
+            <a [routerLink]="'/profile'" (click)="closeSidebar()">{{ 'nav.profile' | translate }}</a>
             · <a href="#" (click)="iamStore.logout()">{{ 'nav.logout' | translate }}</a>
           </div>
         </div>

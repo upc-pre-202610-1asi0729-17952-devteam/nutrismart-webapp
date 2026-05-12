@@ -162,3 +162,79 @@
   min-height: 100vh;
   background: var(--nutrismart-bg);
 }
+
+/* ── HAMBURGER BUTTON ── */
+.hamburger-btn {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 200;
+  width: 40px;
+  height: 40px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: none;
+  border-radius: 8px;
+  background: var(--nutrismart-white);
+  box-shadow: var(--nutrismart-shadow);
+  cursor: pointer;
+  padding: 0;
+}
+
+.hamburger-line {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--nutrismart-text-dark);
+  transition: opacity 0.2s;
+}
+
+/* ── OVERLAY ── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 99;
+}
+
+/* ── RESPONSIVE: tablet (768px – 1023px) ── */
+@media (max-width: 1023px) {
+  .hamburger-btn {
+    display: flex;
+  }
+
+  .sidebar {
+    transform: translateX(-240px);
+    transition: transform 0.25s ease;
+    z-index: 150;
+  }
+
+  .sidebar--open {
+    transform: translateX(0);
+  }
+
+  .sidebar-overlay {
+    display: block;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+/* ── RESPONSIVE: mobile (< 768px) ── */
+@media (max-width: 767px) {
+  .sidebar {
+    width: 280px;
+    transform: translateX(-280px);
+  }
+
+  .sidebar--open {
+    transform: translateX(0);
+  }
+}

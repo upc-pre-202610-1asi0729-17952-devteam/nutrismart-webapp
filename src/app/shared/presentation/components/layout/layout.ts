@@ -1,6 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { IamStore } from '../../../../iam/application/iam.store';
 
 /**
@@ -22,6 +24,9 @@ interface NavItem {
  * bounded-context views are projected. The sidebar is split into two
  * sections — principal features and tools — each driven by a signal-based
  * array so items can be updated reactively if needed.
+ *
+ * On mobile/tablet (≤ 1023px) the sidebar is hidden by default and toggled
+ * via a hamburger button. Navigation events automatically close it.
  */
 @Component({
   selector: 'app-layout',
@@ -37,6 +42,28 @@ interface NavItem {
 export class Layout {
   /** IAM store providing the current user for the sidebar footer. */
   iamStore = inject(IamStore);
+
+  /** Controls sidebar visibility on mobile/tablet. */
+  isSidebarOpen = signal(false);
+
+  constructor() {
+    inject(Router).events
+      .pipe(
+        filter(e => e instanceof NavigationEnd),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.isSidebarOpen.set(false));
+  }
+
+  /** @param event – click event used to stop propagation from the sidebar itself. */
+  toggleSidebar(event?: Event): void {
+    event?.stopPropagation();
+    this.isSidebarOpen.update(open => !open);
+  }
+
+  closeSidebar(): void {
+    this.isSidebarOpen.set(false);
+  }
 
   /** Primary navigation items shown in the PRINCIPAL section. */
   principalNav = signal<NavItem[]>([
