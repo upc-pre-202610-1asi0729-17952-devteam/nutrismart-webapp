@@ -55,20 +55,19 @@
     </div>
   }
 
-  <!-- ── DailyGoalExceeded alert - T22 ──────────────────────── -->
-  @if (isDailyGoalExceeded()) {
-    <div class="alert alert--danger" role="alert" aria-live="polite">
-      <span class="alert-icon">⚠</span>
-      <span>{{ 'nutrition.goal_exceeded_alert' | translate: { kcal: exceededBy() } }}</span>
-    </div>
-  }
-
   <!-- ── DailyGoalMet alert - T22 ───────────────────────────── -->
   @if (!isDailyGoalExceeded() && allMealsLogged() && showGoalMetAlert()) {
     <div class="alert alert--success" role="alert" aria-live="polite">
       <span class="alert-icon">✓</span>
       <span>{{ 'nutrition.goal_met_alert' | translate }}</span>
     </div>
+  }
+
+  <!-- ── Macro threshold warnings (today only) ─────────────── -->
+  @if (isToday()) {
+    <app-macro-warning-banner
+      [approaching]="approachingMacros()"
+      [exceeded]="exceededMacros()" />
   }
 
   <!-- ── Daily Summary bar ───────────────────────────────────── -->

@@ -8,6 +8,7 @@ import { IamStore } from '../../../../iam/application/iam.store';
 import { BehavioralConsistencyStore } from '../../../application/behavioral-consistency.store';
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
 import { WearableStore } from '../../../../metabolic-adaptation/application/wearable.store';
+import { MacroWarningBanner } from '../../../../shared/presentation/components/macro-warning-banner/macro-warning-banner';
 import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
 import { MealType } from '../../../../nutrition-tracking/domain/model/meal-type.enum';
 import { MealRecord } from '../../../../nutrition-tracking/domain/model/meal-record.entity';
@@ -85,7 +86,7 @@ interface StreakVm {
 
 @Component({
   selector: 'app-behavioral-dashboard',
-  imports: [NgClass, TranslatePipe],
+  imports: [NgClass, TranslatePipe, MacroWarningBanner],
   templateUrl: './behavioral-dashboard.html',
   styleUrl: './behavioral-dashboard.css',
 })
@@ -246,6 +247,29 @@ export class BehavioralDashboard implements OnInit {
       weeklyCompletionRate: progress?.weeklyCompletionRate ?? 0,
     };
   });
+
+  private readonly macroProgress = computed(() => {
+    const totals = this.nutritionStore.dailyTotals();
+    const u = this.currentUser();
+    const calories = this.caloriesVm();
+    return [
+      { key: 'nutrition.calories',      pct: calories.target > 0 ? (calories.consumed / calories.target) * 100 : 0 },
+      { key: 'nutrition.protein',       pct: (u?.proteinTarget ?? 120) > 0 ? (Math.round(totals.protein) / (u?.proteinTarget ?? 120)) * 100 : 0 },
+      { key: 'nutrition.carbohydrates', pct: (u?.carbsTarget   ?? 220) > 0 ? (Math.round(totals.carbs)   / (u?.carbsTarget   ?? 220)) * 100 : 0 },
+      { key: 'nutrition.fats',          pct: (u?.fatTarget     ?? 65)  > 0 ? (Math.round(totals.fat)     / (u?.fatTarget     ?? 65))  * 100 : 0 },
+      { key: 'nutrition.fiber',         pct: (u?.fiberTarget   ?? 25)  > 0 ? (Math.round(totals.fiber ?? 0) / (u?.fiberTarget ?? 25)) * 100 : 0 },
+    ];
+  });
+
+  /** i18n keys of macros between 80% and 99% of their daily target. */
+  protected readonly approachingMacros = computed(() =>
+    this.macroProgress().filter(m => m.pct >= 80 && m.pct < 100).map(m => m.key),
+  );
+
+  /** i18n keys of macros at or above 100% of their daily target. */
+  protected readonly exceededMacros = computed(() =>
+    this.macroProgress().filter(m => m.pct >= 100).map(m => m.key),
+  );
 
   ngOnInit(): void {
     this.loadData();

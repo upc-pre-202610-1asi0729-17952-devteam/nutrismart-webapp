@@ -20,6 +20,7 @@ import {
 } from '../../components/add-food-dialog/add-food-dialog';
 import { RestrictedItemDialogComponent } from '../../components/restricted-item-dialog/restricted-item-dialog';
 import { MealEntryDetailComponent } from '../../components/meal-entry-detail/meal-entry-detail';
+import { MacroWarningBanner } from '../../../../shared/presentation/components/macro-warning-banner/macro-warning-banner';
 
 /**
  * Main Daily Log view — route `/nutrition/log`.
@@ -39,6 +40,7 @@ import { MealEntryDetailComponent } from '../../components/meal-entry-detail/mea
     AddFoodDialogComponent,
     RestrictedItemDialogComponent,
     MealEntryDetailComponent,
+    MacroWarningBanner,
     TranslatePipe,
   ],
   templateUrl: './daily-log.html',
@@ -241,9 +243,26 @@ export class DailyLog implements OnInit {
     Object.values(this.filteredByMealType()).every((arr) => arr.length > 0),
   );
 
-  /** Kilocalories consumed beyond the daily goal (T22). */
-  protected exceededBy = computed(() =>
-    Math.abs(this.filteredTotals().calories - this.dailyGoalTarget())
+  private readonly macroProgress = computed(() => {
+    const t = this.filteredTotals();
+    const u = this.iamStore.currentUser();
+    return [
+      { key: 'nutrition.calories',      pct: this.dailyGoalTarget() > 0 ? (t.calories / this.dailyGoalTarget()) * 100 : 0 },
+      { key: 'nutrition.protein',       pct: (u?.proteinTarget ?? 120) > 0 ? (t.protein / (u?.proteinTarget ?? 120)) * 100 : 0 },
+      { key: 'nutrition.carbohydrates', pct: (u?.carbsTarget   ?? 200) > 0 ? (t.carbs   / (u?.carbsTarget   ?? 200)) * 100 : 0 },
+      { key: 'nutrition.fats',          pct: (u?.fatTarget     ?? 55)  > 0 ? (t.fat     / (u?.fatTarget     ?? 55))  * 100 : 0 },
+      { key: 'nutrition.fiber',         pct: (u?.fiberTarget   ?? 25)  > 0 ? (t.fiber   / (u?.fiberTarget   ?? 25))  * 100 : 0 },
+    ];
+  });
+
+  /** i18n keys of macros between 80% and 99% of their daily target — drives the yellow banner. */
+  protected readonly approachingMacros = computed(() =>
+    this.macroProgress().filter(m => m.pct >= 80 && m.pct < 100).map(m => m.key),
+  );
+
+  /** i18n keys of macros at or above 100% of their daily target — drives the red banner. */
+  protected readonly exceededMacros = computed(() =>
+    this.macroProgress().filter(m => m.pct >= 100).map(m => m.key),
   );
 
   /** Summary bar macro descriptors. */
