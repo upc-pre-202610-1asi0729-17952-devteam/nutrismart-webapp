@@ -15,20 +15,24 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { SubscriptionPlan } from '../../../../iam/domain/model/subscription-plan.enum';
 import { MealType } from '../../../../nutrition-tracking/domain/model/meal-type.enum';
-import { MacroKey, SmartScanStore } from '../../../application/smart-scan.store';
+import { MacroKey, PlateScanStore } from '../../../../nutrition-tracking/application/plate-scan.store';
+import { RestaurantMenuStore } from '../../../application/restaurant-menu.store';
 import { RankedDish } from '../../../domain/model/menu-analysis.entity';
 
 /**
  * Smart Scan view — route `/smart-scan`.
  *
- * Manages all scan states in a single component using {@link SmartScanStore}
- * signals: landing (T27), analyzing/plate-result/plate-invalid (T28),
- * and menu-result (T29).
+ * Orchestrates two domain stores from separate bounded contexts:
+ * - {@link PlateScanStore} (Nutrition Tracking) — plate-photo logging flow.
+ * - {@link RestaurantMenuStore} (Restaurant Intelligence) — menu analysis flow.
+ *
+ * The landing page presents both capabilities simultaneously. Interaction with
+ * each drop-zone delegates exclusively to the responsible store.
  *
  * @author Del Aguila Del Aguila, Olenka Priscilla
  */
 @Component({
-  selector: 'app-smart-scan',
+  selector: 'app-restaurant-menu',
   imports: [
     TranslatePipe,
     FormsModule,
@@ -42,18 +46,19 @@ import { RankedDish } from '../../../domain/model/menu-analysis.entity';
     MatExpansionModule,
     MatChipsModule,
   ],
-  templateUrl: './smart-scan.html',
-  styleUrl: './smart-scan.css',
+  templateUrl: './restaurant-menu.html',
+  styleUrl: './restaurant-menu.css',
 })
-export class SmartScan implements OnInit {
-  protected iamStore       = inject(IamStore);
-  protected smartScanStore = inject(SmartScanStore);
-  private   router         = inject(Router);
+export class RestaurantMenu implements OnInit {
+  protected iamStore           = inject(IamStore);
+  protected plateScanStore     = inject(PlateScanStore);
+  protected restaurantMenuStore = inject(RestaurantMenuStore);
+  private   router             = inject(Router);
 
   protected readonly MealType = MealType;
 
-  protected selectedMealType     = this.defaultMealType();
-  protected selectedMenuMealType = this.defaultMealType();
+  protected selectedMealType     = this._defaultMealType();
+  protected selectedMenuMealType = this._defaultMealType();
   protected plateDragActive      = signal(false);
   protected menuDragActive       = signal(false);
   protected quantityErrors       = signal<Map<number, string>>(new Map());
@@ -68,6 +73,16 @@ export class SmartScan implements OnInit {
     return user?.plan === SubscriptionPlan.PREMIUM;
   });
 
+  /** True when neither scan flow is active — renders the landing card grid. */
+  protected isLanding = computed(() =>
+    this.plateScanStore.plateView() === 'idle' &&
+    this.restaurantMenuStore.menuView() === 'idle',
+  );
+
+  protected isLoading = computed(() =>
+    this.plateScanStore.loading() || this.restaurantMenuStore.loading(),
+  );
+
   protected readonly availableMealTypes = computed(() => {
     const hour = new Date().getHours();
     const types = [{ value: MealType.BREAKFAST, labelKey: 'nutrition.breakfast' }];
@@ -77,16 +92,7 @@ export class SmartScan implements OnInit {
     return types;
   });
 
-  private defaultMealType(): MealType {
-    const hour = new Date().getHours();
-    if (hour >= 17) return MealType.DINNER;
-    if (hour >= 11) return MealType.LUNCH;
-    return MealType.BREAKFAST;
-  }
-
   constructor() {
-    // Reset and refresh nutrition data when navigating to /smart-scan so that
-    // macroAlerts always reflects the current daily totals, not a cached state.
     this.router.events
       .pipe(
         filter(e => e instanceof NavigationEnd),
@@ -94,14 +100,14 @@ export class SmartScan implements OnInit {
         takeUntilDestroyed(),
       )
       .subscribe(() => {
-        this.smartScanStore.reset();
-        this.smartScanStore.refreshDailyTotals();
+        this._resetAll();
+        this.plateScanStore.refreshDailyTotals();
       });
   }
 
   ngOnInit(): void {
-    this.smartScanStore.reset();
-    this.smartScanStore.refreshDailyTotals();
+    this._resetAll();
+    this.plateScanStore.refreshDailyTotals();
   }
 
   // ─── Plate drop zone ──────────────────────────────────────────────────────
@@ -159,7 +165,7 @@ export class SmartScan implements OnInit {
   }
 
   async onTakePhotoPlate(): Promise<void> {
-    await this.smartScanStore.analyzePlatePhoto('demo-plate-base64');
+    await this.plateScanStore.analyzePlatePhoto('demo-plate-base64');
   }
 
   async onUploadMenu(event: Event): Promise<void> {
@@ -169,7 +175,7 @@ export class SmartScan implements OnInit {
   }
 
   async onTakePhotoMenu(): Promise<void> {
-    await this.smartScanStore.analyzeMenuPhoto('demo-menu-base64');
+    await this.restaurantMenuStore.analyzeMenuPhoto('demo-menu-base64');
   }
 
   // ─── Plate result actions ─────────────────────────────────────────────────
@@ -182,13 +188,12 @@ export class SmartScan implements OnInit {
     const value = parseFloat(raw);
     const errors = new Map(this.quantityErrors());
 
-    if (isNaN(value) || value < SmartScan.MIN_QUANTITY) {
+    if (isNaN(value) || value < RestaurantMenu.MIN_QUANTITY) {
       errors.set(itemId, 'smart_scan.qty_error_min');
       this.quantityErrors.set(errors);
       return;
     }
-
-    if (value > SmartScan.MAX_QUANTITY) {
+    if (value > RestaurantMenu.MAX_QUANTITY) {
       errors.set(itemId, 'smart_scan.qty_error_max');
       this.quantityErrors.set(errors);
       return;
@@ -196,7 +201,7 @@ export class SmartScan implements OnInit {
 
     errors.delete(itemId);
     this.quantityErrors.set(errors);
-    this.smartScanStore.updateScannedItemQuantity(itemId, value);
+    this.plateScanStore.updateScannedItemQuantity(itemId, value);
   }
 
   quantityError(itemId: number): string | null {
@@ -204,20 +209,24 @@ export class SmartScan implements OnInit {
   }
 
   onRemoveItem(itemId: number): void {
-    this.smartScanStore.removeScannedItem(itemId);
+    this.plateScanStore.removeScannedItem(itemId);
   }
 
   async onConfirmLog(): Promise<void> {
-    await this.smartScanStore.logScannedPlate(this.selectedMealType);
+    await this.plateScanStore.logScannedPlate(this.selectedMealType);
   }
 
   onCancel(): void {
-    this.smartScanStore.reset();
+    this._resetAll();
   }
 
+  // ─── Menu result actions ──────────────────────────────────────────────────
+
   async onLogMenuDish(dish: RankedDish): Promise<void> {
-    await this.smartScanStore.logSelectedDish(dish, this.selectedMenuMealType);
+    await this.restaurantMenuStore.logSelectedDish(dish, this.selectedMenuMealType);
   }
+
+  // ─── i18n helper ──────────────────────────────────────────────────────────
 
   protected macroI18nKey(macro: MacroKey): string {
     const map: Record<MacroKey, string> = {
@@ -232,11 +241,23 @@ export class SmartScan implements OnInit {
 
   // ─── Private helpers ──────────────────────────────────────────────────────
 
+  private _resetAll(): void {
+    this.plateScanStore.reset();
+    this.restaurantMenuStore.reset();
+  }
+
+  private _defaultMealType(): MealType {
+    const hour = new Date().getHours();
+    if (hour >= 17) return MealType.DINNER;
+    if (hour >= 11) return MealType.LUNCH;
+    return MealType.BREAKFAST;
+  }
+
   private _readAndScanPlate(file: File): Promise<void> {
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onload = async () => {
-        await this.smartScanStore.analyzePlatePhoto(reader.result as string);
+        await this.plateScanStore.analyzePlatePhoto(reader.result as string);
         resolve();
       };
       reader.readAsDataURL(file);
@@ -247,7 +268,7 @@ export class SmartScan implements OnInit {
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onload = async () => {
-        await this.smartScanStore.analyzeMenuPhoto(reader.result as string);
+        await this.restaurantMenuStore.analyzeMenuPhoto(reader.result as string);
         resolve();
       };
       reader.readAsDataURL(file);

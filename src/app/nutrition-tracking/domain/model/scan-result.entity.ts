@@ -1,6 +1,6 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 import { ScannedFoodItem } from './scanned-food-item.entity';
-import { MealType } from '../../../nutrition-tracking/domain/model/meal-type.enum';
+import { MealType } from './meal-type.enum';
 
 /** Possible processing states for a plate-scan session. */
 export type ScanStatus = 'analyzing' | 'success' | 'invalid';
@@ -21,10 +21,13 @@ export interface ScanResultProps {
 }
 
 /**
- * Aggregate root for a plate-photo scan session.
+ * Aggregate root for a plate-photo scan session (ScanMealPhoto command on DailyIntake).
+ *
+ * Lives in the Nutrition Tracking bounded context: plate scanning is a mechanism
+ * for logging food into DailyIntake, not an analysis of restaurant menus.
  *
  * Non-anemic: owns the list of detected items and exposes domain operations
- * ({@link totalCalories}, {@link confirmItem}, {@link removeItem}).
+ * ({@link totalCalories}, {@link updateItemQuantity}, {@link removeItem}).
  *
  * @author Del Aguila Del Aguila, Olenka Priscilla
  */

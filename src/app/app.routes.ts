@@ -31,7 +31,7 @@ const nutritionRoutes = () =>
 
 /** Lazy-loads the smart scan child routes (restaurant-intelligence context). */
 const smartScanRoutes = () =>
-  import('./restaurant-intelligence/presentation/smart-scan.routes').then((m) => m.smartScanRoutes);
+  import('./restaurant-intelligence/presentation/restaurant-menu.routes').then((m) => m.restaurantMenuRoutes);
 
 /** Lazy-loads the recommendations child routes (smart-recommendation context). */
 const recommendationsRoutes = () =>

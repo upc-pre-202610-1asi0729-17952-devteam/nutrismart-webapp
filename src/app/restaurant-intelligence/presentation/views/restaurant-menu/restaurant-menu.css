@@ -30,7 +30,6 @@
 .paywall-title { font-size: 1.25rem; font-weight: 700; color: #1a2e2a; margin: 0; }
 .paywall-description { color: #6b7280; margin: 0; }
 .paywall-cta { margin-top: 0.5rem; }
-.paywall-link { color: #2d9e8f; font-size: 0.875rem; text-decoration: underline; }
 
 .scan-cards-grid {
   display: grid;
@@ -235,7 +234,6 @@ mat-card-header { position: relative; }
 
 .impact-panel__icon { font-size: 1.1rem; color: #6b7280; }
 .impact-panel__title { font-size: 0.875rem; font-weight: 600; color: #374151; }
-.impact-panel__note { font-size: 0.78rem; color: #9ca3af; margin-left: 0.25rem; }
 .impact-panel--inline { margin-top: 0.75rem; border-radius: 6px; }
 .impact-list--compact { border-top: none; }
 .impact-item--compact { padding: 0.35rem 0; font-size: 0.78rem; border-bottom: none; background: transparent !important; }

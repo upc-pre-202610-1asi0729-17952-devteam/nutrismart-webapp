@@ -1,6 +1,6 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 import { DietaryRestriction } from '../../../iam/domain/model/dietary-restriction.enum';
-import { MacronutrientDistribution } from '../../../nutrition-tracking/domain/model/macronutrient-distribution.value-object';
+import { MacronutrientDistribution } from './macronutrient-distribution.value-object';
 
 export interface ScannedFoodItemProps {
   id: number;
@@ -12,6 +12,14 @@ export interface ScannedFoodItemProps {
   isEdited: boolean;
 }
 
+/**
+ * A single food item detected within a plate-scan session.
+ *
+ * Belongs to the Nutrition Tracking bounded context as a component of
+ * {@link ScanResult} (plate-scan aggregate).
+ *
+ * @author Del Aguila Del Aguila, Olenka Priscilla
+ */
 export class ScannedFoodItem implements BaseEntity {
   private _id: number;
   private _name: string;

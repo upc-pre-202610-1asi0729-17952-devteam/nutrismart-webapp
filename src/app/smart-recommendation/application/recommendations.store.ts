@@ -12,6 +12,7 @@ import { AdherenceStatus as BcAdherenceStatus } from '../../behavioral-consisten
 import { DomainEventBus } from '../../shared/application/domain-event-bus';
 import { BehavioralDropDetected } from '../../shared/domain/behavioral-drop-detected.event';
 import { ConsistencyRecovered } from '../../shared/domain/consistency-recovered.event';
+import { CompatibleDishesRanked } from '../../shared/domain/compatible-dishes-ranked.event';
 
 @Injectable({ providedIn: 'root' })
 export class RecommendationsStore {
@@ -36,6 +37,7 @@ export class RecommendationsStore {
   private _travelCards      = signal<RecommendationCard[]>([]);
   private _preventiveCard   = signal<RecommendationCard | null>(null);
   private _interventionCard = signal<RecommendationCard | null>(null);
+  private _bestDishCard     = signal<RecommendationCard | null>(null);
   private _loading            = signal<boolean>(false);
   private _locationDenied     = signal<boolean>(false);
   private _error              = signal<string | null>(null);
@@ -52,6 +54,8 @@ export class RecommendationsStore {
   readonly travelCards      = this._travelCards.asReadonly();
   readonly preventiveCard   = this._preventiveCard.asReadonly();
   readonly interventionCard = this._interventionCard.asReadonly();
+  /** Best dish recommended after a menu analysis — populated by {@link CompatibleDishesRanked}. */
+  readonly bestDishCard     = this._bestDishCard.asReadonly();
   readonly loading            = this._loading.asReadonly();
   readonly locationDenied     = this._locationDenied.asReadonly();
   readonly unrecognizedCity   = this._unrecognizedCity.asReadonly();
@@ -283,6 +287,20 @@ export class RecommendationsStore {
       .pipe(filter(e => e instanceof ConsistencyRecovered))
       .subscribe(async () => {
         await this.setAdherenceStatus(AdherenceStatus.ON_TRACK);
+      });
+
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof CompatibleDishesRanked))
+      .subscribe((e) => {
+        const event = e as CompatibleDishesRanked;
+        this._bestDishCard.set({
+          id:          `best-dish-${event.occurredAt}`,
+          name:        event.bestDishName,
+          description: `${event.bestDishCalories} kcal · P${event.bestDishProtein}g · C${event.bestDishCarbs}g · G${event.bestDishFat}g`,
+          kcal:        event.bestDishCalories,
+          protein:     event.bestDishProtein,
+          badge:       'restaurant',
+        });
       });
   }
 }

@@ -23,9 +23,9 @@
   } @else {
 
     <!-- ════════════════════════════════════════════════════════════
-         LANDING — two mode cards (T27)
+         LANDING — two mode cards
     ═══════════════════════════════════════════════════════════════ -->
-    @if (smartScanStore.view() === 'landing') {
+    @if (isLanding()) {
       <div class="scan-cards-grid">
 
         <!-- Card: Scan food dish (Pro + Premium) -->
@@ -111,13 +111,13 @@
     }
 
     <!-- ════════════════════════════════════════════════════════════
-         ANALYZING — plate scan spinner (T28)
+         ANALYZING — plate scan spinner
     ═══════════════════════════════════════════════════════════════ -->
-    @if (smartScanStore.view() === 'analyzing-plate') {
+    @if (plateScanStore.plateView() === 'analyzing') {
       <div class="analyzing-state">
         <div class="analyzing-state__preview">
-          @if (smartScanStore.uploadedImagePreview()) {
-            <img [src]="smartScanStore.uploadedImagePreview()!"
+          @if (plateScanStore.uploadedImagePreview()) {
+            <img [src]="plateScanStore.uploadedImagePreview()!"
                  alt="Uploaded meal photo"
                  class="analyzing-state__img">
           }
@@ -132,9 +132,9 @@
     }
 
     <!-- ════════════════════════════════════════════════════════════
-         PLATE RESULT — MealPhotoAnalyzed (T28)
+         PLATE RESULT — MealPhotoAnalyzed
     ═══════════════════════════════════════════════════════════════ -->
-    @if (smartScanStore.view() === 'plate-result' && smartScanStore.scanResult()) {
+    @if (plateScanStore.plateView() === 'result' && plateScanStore.scanResult()) {
       <div class="result-panel">
         <header class="result-panel__header">
           <h2 class="result-panel__title">{{ 'smart_scan.result_title' | translate }}</h2>
@@ -142,7 +142,7 @@
         </header>
 
         <ul class="detected-items" role="list">
-          @for (item of smartScanStore.scanResult()!.detectedItems; track item.id) {
+          @for (item of plateScanStore.scanResult()!.detectedItems; track item.id) {
             <li class="detected-item">
               <span class="detected-item__name">
                 {{ item.nameKey ? ('food_items.' + item.nameKey | translate) : item.name }}
@@ -176,17 +176,17 @@
 
         <div class="result-totals">
           <span>{{ 'smart_scan.total_estimated' | translate }}</span>
-          <strong class="result-totals__kcal">{{ smartScanStore.totalEstimatedCalories() }} kcal</strong>
+          <strong class="result-totals__kcal">{{ plateScanStore.totalEstimatedCalories() }} kcal</strong>
         </div>
 
-        @if (smartScanStore.hasMacroAlerts()) {
+        @if (plateScanStore.hasMacroAlerts()) {
           <div class="impact-panel">
             <div class="impact-panel__header">
               <mat-icon class="impact-panel__icon">info_outline</mat-icon>
               <span class="impact-panel__title">{{ 'smart_scan.impact_title' | translate }}</span>
             </div>
             <ul class="impact-list" role="list">
-              @for (alert of smartScanStore.macroAlerts(); track alert.macro) {
+              @for (alert of plateScanStore.macroAlerts(); track alert.macro) {
                 <li class="impact-item"
                     [class.impact-item--warning]="alert.severity === 'warning'"
                     [class.impact-item--danger]="alert.severity === 'danger'">
@@ -223,9 +223,9 @@
 
         <button mat-flat-button
                 class="btn-teal btn-confirm"
-                [disabled]="!smartScanStore.hasScanItems() || smartScanStore.loading()"
+                [disabled]="!plateScanStore.hasScanItems() || isLoading()"
                 (click)="onConfirmLog()">
-          @if (smartScanStore.loading()) {
+          @if (isLoading()) {
             <mat-spinner diameter="20"></mat-spinner>
           } @else {
             {{ 'smart_scan.confirm_log' | translate }}
@@ -238,9 +238,9 @@
     }
 
     <!-- ════════════════════════════════════════════════════════════
-         PLATE INVALID — image not recognised (T28)
+         PLATE INVALID — image not recognised
     ═══════════════════════════════════════════════════════════════ -->
-    @if (smartScanStore.view() === 'plate-invalid') {
+    @if (plateScanStore.plateView() === 'invalid') {
       <div class="invalid-state">
         <span class="material-icons invalid-state__icon">error_outline</span>
         <h2 class="invalid-state__title">{{ 'smart_scan.invalid_title' | translate }}</h2>
@@ -259,7 +259,7 @@
     <!-- ════════════════════════════════════════════════════════════
          ANALYZING — menu scan spinner
     ═══════════════════════════════════════════════════════════════ -->
-    @if (smartScanStore.view() === 'analyzing-menu') {
+    @if (restaurantMenuStore.menuView() === 'analyzing') {
       <div class="analyzing-state">
         <div class="analyzing-state__overlay analyzing-state__overlay--solo">
           <mat-spinner diameter="48" class="analyzing-spinner"></mat-spinner>
@@ -271,16 +271,16 @@
     }
 
     <!-- ════════════════════════════════════════════════════════════
-         MENU RESULT — CompatibleDishesRanked (T29)
+         MENU RESULT — CompatibleDishesRanked
     ═══════════════════════════════════════════════════════════════ -->
-    @if (smartScanStore.view() === 'menu-result' && smartScanStore.menuAnalysis()) {
+    @if (restaurantMenuStore.menuView() === 'result' && restaurantMenuStore.menuAnalysis()) {
       <div class="menu-result-panel">
         <header class="result-panel__header">
           <h2 class="result-panel__title">{{ 'smart_scan.menu_title' | translate }}</h2>
           <p class="result-panel__subtitle">{{ 'smart_scan.menu_subtitle' | translate }}</p>
         </header>
 
-        @if (smartScanStore.menuAnalysis()!.bestDish; as best) {
+        @if (restaurantMenuStore.menuAnalysis()!.bestDish; as best) {
           <mat-card class="best-dish-card">
             <mat-card-header>
               <span class="best-badge">
@@ -301,7 +301,7 @@
                 <span class="macro-chip macro-chip--carbs">C{{ best.carbs }}g</span>
                 <span class="macro-chip macro-chip--fat">G{{ best.fat }}g</span>
               </div>
-              @if (smartScanStore.menuDishAlertsByRank()[best.rank]; as alerts) {
+              @if (restaurantMenuStore.menuDishAlertsByRank()[best.rank]; as alerts) {
                 <div class="impact-panel impact-panel--inline">
                   <div class="impact-panel__header">
                     <mat-icon class="impact-panel__icon">info_outline</mat-icon>
@@ -329,9 +329,9 @@
             </mat-card-content>
             <mat-card-actions>
               <button mat-flat-button class="btn-teal"
-                      [disabled]="smartScanStore.loading()"
+                      [disabled]="isLoading()"
                       (click)="onLogMenuDish(best)">
-                @if (smartScanStore.loading()) {
+                @if (isLoading()) {
                   <mat-spinner diameter="18"></mat-spinner>
                 } @else {
                   {{ 'smart_scan.log_dish' | translate }}
@@ -341,9 +341,9 @@
           </mat-card>
         }
 
-        @if (smartScanStore.menuAnalysis()!.alternatives.length > 0) {
+        @if (restaurantMenuStore.menuAnalysis()!.alternatives.length > 0) {
           <ul class="alternatives-list" role="list">
-            @for (dish of smartScanStore.menuAnalysis()!.alternatives; track dish.rank) {
+            @for (dish of restaurantMenuStore.menuAnalysis()!.alternatives; track dish.rank) {
               <li class="alternative-item">
                 <span class="alternative-item__rank">#{{ dish.rank }}</span>
                 <div class="alternative-item__info">
@@ -355,7 +355,7 @@
                     {{ 'smart_scan.compatibility' | translate }}
                     {{ dish.formattedScore() }}
                   </span>
-                  @if (smartScanStore.menuDishAlertsByRank()[dish.rank]; as alerts) {
+                  @if (restaurantMenuStore.menuDishAlertsByRank()[dish.rank]; as alerts) {
                     <ul class="impact-list impact-list--compact" role="list">
                       @for (alert of alerts; track alert.macro) {
                         <li class="impact-item impact-item--compact"
@@ -376,7 +376,7 @@
                   }
                 </div>
                 <button mat-stroked-button class="alternative-item__log"
-                        [disabled]="smartScanStore.loading()"
+                        [disabled]="isLoading()"
                         (click)="onLogMenuDish(dish)">
                   {{ 'common.log_this' | translate }}
                 </button>
@@ -385,15 +385,15 @@
           </ul>
         }
 
-        @if (smartScanStore.menuAnalysis()!.hasRestrictedDishes) {
+        @if (restaurantMenuStore.menuAnalysis()!.hasRestrictedDishes) {
           <mat-expansion-panel class="restricted-panel" hideToggle>
             <mat-expansion-panel-header>
               <mat-panel-title class="restricted-panel__title">
-                {{ 'smart_scan.restricted_dishes' | translate: { count: smartScanStore.menuAnalysis()!.restrictedDishes.length } }}
+                {{ 'smart_scan.restricted_dishes' | translate: { count: restaurantMenuStore.menuAnalysis()!.restrictedDishes.length } }}
               </mat-panel-title>
             </mat-expansion-panel-header>
             <ul class="restricted-list" role="list">
-              @for (dish of smartScanStore.menuAnalysis()!.restrictedDishes; track dish.name) {
+              @for (dish of restaurantMenuStore.menuAnalysis()!.restrictedDishes; track dish.name) {
                 <li class="restricted-item">
                   <span class="restricted-item__name">
                     {{ dish.nameKey ? ('menu_dishes.' + dish.nameKey | translate) : dish.name }}
