@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'http://localhost:8080/api/v1',
+  apiBaseUrl: 'https://smart-api.nutriproject.xyz/api/v1',
   iamEndpointPath: '/users',
   nutritionLogEndpointPath: '/nutrition-log',
   foodSearchEndpointPath: '/foods',
