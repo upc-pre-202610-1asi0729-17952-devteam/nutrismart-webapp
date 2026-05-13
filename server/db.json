@@ -595,7 +595,7 @@
       "fat": 5.4,
       "fiber": 0,
       "sugar": 0,
-      "loggedAt": "2026-05-12T12:44:35.155Z",
+      "loggedAt": "2026-05-12T08:00:00.000Z",
       "userId": "pca8q2h0s",
       "id": "C_maMxfYzEY"
     },
@@ -603,7 +603,7 @@
       "foodItemId": "4",
       "foodItemName": "Grilled chicken breast",
       "foodItemNameEs": "Pechuga de pollo a la plancha",
-      "mealType": "BREAKFAST",
+      "mealType": "LUNCH",
       "quantity": 150,
       "unit": "g",
       "calories": 247.5,
@@ -612,7 +612,7 @@
       "fat": 5.4,
       "fiber": 0,
       "sugar": 0,
-      "loggedAt": "2026-05-12T12:44:38.673Z",
+      "loggedAt": "2026-05-12T13:00:00.000Z",
       "userId": "pca8q2h0s",
       "id": "jhWO1sV9pVk"
     },
@@ -620,7 +620,7 @@
       "foodItemId": "4",
       "foodItemName": "Grilled chicken breast",
       "foodItemNameEs": "Pechuga de pollo a la plancha",
-      "mealType": "BREAKFAST",
+      "mealType": "DINNER",
       "quantity": 150,
       "unit": "g",
       "calories": 247.5,
@@ -629,7 +629,7 @@
       "fat": 5.4,
       "fiber": 0,
       "sugar": 0,
-      "loggedAt": "2026-05-12T12:44:56.594Z",
+      "loggedAt": "2026-05-12T19:00:00.000Z",
       "userId": "pca8q2h0s",
       "id": "xTKEY3i1iJ0"
     },
@@ -5953,6 +5953,108 @@
       "loggedAt": "2026-05-13T00:00:55.754Z",
       "userId": "vgsdgwm02",
       "id": "Z17w866Mz-M"
+    },
+    {
+      "foodItemId": "3",
+      "foodItemName": "Skim milk",
+      "foodItemNameEs": "Leche descremada",
+      "mealType": "BREAKFAST",
+      "quantity": 200,
+      "unit": "ml",
+      "calories": 68,
+      "protein": 6.8,
+      "carbs": 10,
+      "fat": 0.2,
+      "fiber": 0,
+      "sugar": 10,
+      "loggedAt": "2026-05-11T17:00:00.000Z",
+      "userId": "xfozkpybz",
+      "id": "mnJNqivIqUU"
+    },
+    {
+      "foodItemId": "25",
+      "foodItemName": "Simple egg bowl with toast",
+      "foodItemNameEs": "Bol de huevo con tostada",
+      "mealType": "LUNCH",
+      "quantity": 1,
+      "unit": "serving",
+      "calories": 1.4,
+      "protein": 0.1,
+      "carbs": 0.2,
+      "fat": 0.1,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-11T17:00:00.000Z",
+      "userId": "xfozkpybz",
+      "id": "vfiMg5KRE3Y"
+    },
+    {
+      "foodItemId": "2",
+      "foodItemName": "Medium banana",
+      "foodItemNameEs": "Plátano mediano",
+      "mealType": "DINNER",
+      "quantity": 120,
+      "unit": "unit",
+      "calories": 106.8,
+      "protein": 1.3,
+      "carbs": 27.6,
+      "fat": 0.4,
+      "fiber": 3.1,
+      "sugar": 14.4,
+      "loggedAt": "2026-05-11T17:00:00.000Z",
+      "userId": "xfozkpybz",
+      "id": "lkDa61OR68I"
+    },
+    {
+      "foodItemId": "3",
+      "foodItemName": "Skim milk",
+      "foodItemNameEs": "Leche descremada",
+      "mealType": "LUNCH",
+      "quantity": 200,
+      "unit": "ml",
+      "calories": 68,
+      "protein": 6.8,
+      "carbs": 10,
+      "fat": 0.2,
+      "fiber": 0,
+      "sugar": 10,
+      "loggedAt": "2026-05-13T00:12:09.070Z",
+      "userId": "xfozkpybz",
+      "id": "2ZGIH9IDgZw"
+    },
+    {
+      "foodItemId": "3",
+      "foodItemName": "Skim milk",
+      "foodItemNameEs": "Leche descremada",
+      "mealType": "BREAKFAST",
+      "quantity": 200,
+      "unit": "ml",
+      "calories": 68,
+      "protein": 6.8,
+      "carbs": 10,
+      "fat": 0.2,
+      "fiber": 0,
+      "sugar": 10,
+      "loggedAt": "2026-05-13T00:12:13.662Z",
+      "userId": "xfozkpybz",
+      "id": "4h_i5EVzfko"
+    },
+    {
+      "foodItemId": "13",
+      "foodItemName": "Hake ceviche",
+      "foodItemNameEs": "Ceviche de merluza",
+      "mealType": "DINNER",
+      "quantity": 1,
+      "unit": "serving",
+      "calories": 0.9,
+      "protein": 0.1,
+      "carbs": 0.1,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-13T00:12:18.461Z",
+      "userId": "xfozkpybz",
+      "id": "Gfa30mHOoT0"
     }
   ],
   "foods": [
@@ -10355,6 +10457,448 @@
         false
       ],
       "id": "k2dY4Vf4BB0"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "k7afnd74nuM"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "bLDi_nJM1x8"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "c2lSqKXkYKg"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "wFm57bo-hvk"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "sq09DlDIejs"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "vTxaKahbdWE"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "rJ208uvb72s"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "LcQtxx-iLs0"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "W5pZBbumbtM"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "wTUg0bZD9pQ"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "1pSuO2XHcc4"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "CRsCGq1lLVg"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "GvPj4drNQdc"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "ivcGe85Cg6g"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "MJ_nc8bryok"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "2u18cACXEGk"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "Y2168JK59SA"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "by1jyNsI0ZI"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "YO5fUdxKT1M"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "bysn-8YosUo"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "HpK_XMQVFUw"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "9whYBxKKuZU"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "kRr_EYpEOZc"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "vO89fHZsEb0"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "Y-WRnkL6zmg"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "9KqnWM3j818"
     }
   ],
   "eating-behavior-patterns": [
@@ -11910,7 +12454,7 @@
       "user_id": "Mv9paKyK60k",
       "provider": "google_fit",
       "status": "CONNECTED",
-      "last_synced_at": "2026-05-12T23:48:26.247Z",
+      "last_synced_at": "2026-05-13T00:14:48.890Z",
       "authorized_at": "2026-05-01T08:00:00.000Z"
     },
     {

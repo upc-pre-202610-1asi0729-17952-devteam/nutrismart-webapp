@@ -62,16 +62,13 @@ export class DailyLog implements OnInit {
     return MealType.BREAKFAST;
   });
 
-  /** Meal types the user may log right now (time-gated for today). */
-  protected availableMealTypes = computed((): MealType[] => {
-    if (!this.isToday()) return [MealType.BREAKFAST, MealType.LUNCH, MealType.SNACK, MealType.DINNER];
-    const hour = new Date().getHours();
-    const types: MealType[] = [MealType.BREAKFAST];
-    if (hour >= 11) types.push(MealType.LUNCH);
-    types.push(MealType.SNACK);
-    if (hour >= 17) types.push(MealType.DINNER);
-    return types;
-  });
+  /** All meal types are always available regardless of the current hour. */
+  protected readonly availableMealTypes: MealType[] = [
+    MealType.BREAKFAST,
+    MealType.LUNCH,
+    MealType.SNACK,
+    MealType.DINNER,
+  ];
 
   /** Food blocked due to restriction — drives the Restricted Item dialog. */
   protected blockedFood = signal<FoodItem | null>(null);
@@ -230,10 +227,13 @@ export class DailyLog implements OnInit {
     this.filteredTotals().calories > this.dailyGoalTarget()
   );
 
-  /** Whether all 4 meal windows are logged for the selected date (T22). */
-  protected allMealsLogged = computed(() =>
-    Object.values(this.filteredByMealType()).every((arr) => arr.length > 0),
-  );
+  /** Whether the three required meal windows (B/L/D) are logged for the selected date. */
+  protected allMealsLogged = computed(() => {
+    const groups = this.filteredByMealType();
+    return [MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER].every(
+      type => groups[type].length > 0,
+    );
+  });
 
   /** Warning signals delegated to the domain via {@link NutritionStore.todayMacroWarnings}. */
   protected readonly approachingMacros = computed(() => this.nutritionStore.todayMacroWarnings().approaching);
