@@ -23,7 +23,7 @@ export class RecoveryPlanAssembler implements BaseAssembler<
   toEntityFromResource(resource: RecoveryPlanResource): RecoveryPlan {
     return new RecoveryPlan({
       id:          resource.id ?? undefined,
-      userId:      Number(resource.userId),
+      userId:      resource.userId as number,
       trigger:     resource.trigger as AdherenceDropTrigger,
       status:      resource.status as RecoveryPlanStatus,
       actions:     (resource.actions ?? []).map(a => new RecoveryAction({

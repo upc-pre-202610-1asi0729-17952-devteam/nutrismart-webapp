@@ -357,7 +357,7 @@ export class BehavioralConsistencyStore {
       streak: 0,
       consecutiveMisses: 0,
       lastGoalMetDate: '',
-      weekDots: [false, false, false, false, false, false, false],
+      goalMetDates: [],
     };
 
     return new BehavioralProgress(props);
