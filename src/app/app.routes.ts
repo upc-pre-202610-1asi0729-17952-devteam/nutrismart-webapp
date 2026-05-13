@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './iam/application/auth.guard';
 import { onboardingGuard } from './iam/application/onboarding.guard';
 import { subscriptionGuard } from './iam/application/subscription.guard';
+import { planGuard } from './iam/application/plan.guard';
 
 /**
  * Lazy-loads the PageNotFound standalone component.
@@ -23,7 +24,7 @@ const profileRoutes = () =>
 
 /** Lazy-loads the dashboard child routes (behavioral-consistency context). */
 const dashboardRoutes = () =>
-  import('./behavioral-consistency/presentation/dashboard.routes').then((m) => m.dashboardRoutes);
+  import('./behavioral-consistency/presentation/behavioral-consistency.routes').then((m) => m.behavioralConsistencyRoutes);
 
 /** Lazy-loads the nutrition tracking child routes. */
 const nutritionRoutes = () =>
@@ -31,7 +32,7 @@ const nutritionRoutes = () =>
 
 /** Lazy-loads the smart scan child routes (restaurant-intelligence context). */
 const smartScanRoutes = () =>
-  import('./restaurant-intelligence/presentation/smart-scan.routes').then((m) => m.smartScanRoutes);
+  import('./restaurant-intelligence/presentation/restaurant-menu.routes').then((m) => m.restaurantMenuRoutes);
 
 /** Lazy-loads the recommendations child routes (smart-recommendation context). */
 const recommendationsRoutes = () =>
@@ -55,7 +56,7 @@ const wearableRoutes = () =>
 
 /** Lazy-loads the analytics child routes. */
 const analyticsRoutes = () =>
-  import('./analytics/presentation/analytics.routes').then((m) => m.analyticsRoutes);
+  import('./analytics/presentation/analytics.routes').then((m) => m.ANALYTICS_ROUTES);
 
 /** Lazy-loads the subscriptions child routes (post-onboarding gate). */
 const subscriptionsRoutes = () =>
@@ -81,11 +82,11 @@ export const routes: Routes = [
   { path: 'dashboard', loadChildren: dashboardRoutes, canActivate: [authGuard, subscriptionGuard] },
   { path: 'nutrition', loadChildren: nutritionRoutes, canActivate: [authGuard, subscriptionGuard] },
   { path: 'smart-scan', loadChildren: smartScanRoutes, canActivate: [authGuard, subscriptionGuard] },
-  { path: 'recommendations', loadChildren: recommendationsRoutes, canActivate: [authGuard, subscriptionGuard] },
+  { path: 'recommendations', loadChildren: recommendationsRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
   { path: 'body-progress', loadChildren: bodyProgressRoutes, canActivate: [authGuard, subscriptionGuard] },
-  { path: 'pantry', loadChildren: pantryRoutes, canActivate: [authGuard, subscriptionGuard] },
-  { path: 'wearable', loadChildren: wearableRoutes, canActivate: [authGuard, subscriptionGuard] },
-  { path: 'analytics', loadChildren: analyticsRoutes, canActivate: [authGuard, subscriptionGuard] },
+  { path: 'pantry', loadChildren: pantryRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
+  { path: 'wearable', loadChildren: wearableRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
+  { path: 'analytics', loadChildren: analyticsRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
   { path: 'subscription', loadChildren: subscriptionsRoutes, canActivate: [authGuard] },
   { path: 'my-plan', loadChildren: myPlanRoutes, canActivate: [authGuard, subscriptionGuard] },
   { path: '', redirectTo: '/auth/login', pathMatch: 'full' },

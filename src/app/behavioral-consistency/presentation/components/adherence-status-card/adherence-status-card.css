@@ -45,11 +45,11 @@
   color: #d97706;
 }
 
-/* DROPPED / OFF_TRACK - Red/Pink Theme */
-.off-track, .dropped {
+/* DROPPED - Red/Pink Theme */
+.dropped {
   background-color: #fff1f2;
   border-color: #f43f5e;
 }
-.off-track .status-badge {
+.dropped .status-badge {
   color: #e11d48;
 }

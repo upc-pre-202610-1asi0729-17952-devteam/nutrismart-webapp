@@ -1,51 +1,58 @@
-@if (hasProgress()) {
-  @let vm = dashboardVm();
+@if (isLoading() && !hasProgress()) {
+  <div class="dashboard-state-block">
+    <p>{{ 'dashboard.loading_progress' | translate }}</p>
+  </div>
+} @else if (loadError() && !hasProgress()) {
+  <div class="dashboard-state-block">
+    <p>{{ 'dashboard.load_error' | translate }}</p>
+    <button type="button" class="retry-button" (click)="onRetry()">
+      {{ 'dashboard.retry' | translate }}
+    </button>
+  </div>
+} @else if (hasProgress()) {
+  @let greeting = greetingVm();
+  @let calories = caloriesVm();
+  @let meals = mealsVm();
+  @let macros = macrosVm();
+  @let streak = streakVm();
+  @let arcs = donutArcs();
 
   <main class="dashboard-shell">
     <header class="dashboard-header">
       <div>
-        <h1>{{ vm.greetingKey | translate: vm.greetingParams }}</h1>
-        <p>{{ dateLabel }}</p>
+        <h1 class="page-title">{{ greeting.greetingKey | translate: greeting.greetingParams }}</h1>
+        <p class="page-subtitle">{{ dateLabel() }}</p>
       </div>
 
-      <span class="status-pill" [ngClass]="vm.badgeClass">
-        {{ vm.badgeLabelKey | translate: vm.badgeLabelParams }}
+      <span class="status-pill" [ngClass]="greeting.badgeClass">
+        {{ greeting.badgeLabelKey | translate: greeting.badgeLabelParams }}
       </span>
     </header>
 
-    @if (vm.showAlert) {
-      <section class="risk-banner" [ngClass]="vm.topAccentClass">
-        <div class="risk-icon">{{ vm.alertIcon }}</div>
-
-        <div class="risk-content">
-          <strong>{{ vm.alertTitleKey | translate: vm.alertTitleParams }}</strong>
-          <p>{{ vm.alertDescKey | translate }}</p>
-        </div>
-
-        <button type="button" class="risk-button" [ngClass]="vm.alertButtonClass">
-          {{ vm.alertBtnKey | translate }}
-        </button>
-      </section>
-    }
+    <app-re-engagement-card
+      [status]="status()"
+      [plan]="activeRecoveryPlan()"
+      (actionAccepted)="onLogMeal()">
+    </app-re-engagement-card>
 
     <section class="top-cards">
       <article class="metric-card">
         <span class="metric-label">{{ 'dashboard.calories_consumed_label' | translate }}</span>
-        <strong>{{ vm.consumedCalories }}</strong>
-        <p>{{ 'dashboard.calories_consumed_desc' | translate: { target: vm.targetCalories } }}</p>
+        <strong>{{ calories.consumed }}</strong>
+        <p>{{ 'dashboard.calories_consumed_desc' | translate: { target: calories.target } }}</p>
 
         <div class="progress-track">
           <div
             class="progress-fill"
-            [ngClass]="vm.topAccentClass"
-            [style.width.%]="vm.progressPercent">
+            [ngClass]="greeting.topAccentClass"
+            [style.width.%]="calories.progressPercent">
           </div>
         </div>
       </article>
 
       <article class="metric-card">
         <span class="metric-label">{{ 'dashboard.calories_remaining_label' | translate }}</span>
-        <strong class="teal-value">{{ vm.remainingCalories }}</strong>
+        <strong class="teal-value">{{ calories.remaining }}</strong>
         <p>{{ 'dashboard.calories_remaining_desc' | translate }}</p>
 
         <div class="progress-track muted">
@@ -55,32 +62,43 @@
 
       <article class="metric-card">
         <span class="metric-label">{{ 'dashboard.net_balance_label' | translate }}</span>
-        <strong>{{ vm.netBalance }}</strong>
+        <strong>{{ calories.netBalance }}</strong>
+        <p>{{ 'dashboard.net_balance_desc' | translate }}</p>
 
-        @if (vm.googleFitCalories !== null) {
-          <span class="fit-badge">{{ 'dashboard.fit_badge' | translate: { calories: vm.googleFitCalories } }}</span>
-        } @else if (vm.netBalanceSubtitleKey) {
-          <p>{{ vm.netBalanceSubtitleKey | translate }}</p>
+        @if (calories.googleFitCalories !== null) {
+          <span class="fit-badge">
+            <span class="material-icons fit-badge__icon">directions_run</span>
+            {{ 'dashboard.fit_badge' | translate: { calories: calories.googleFitCalories } }}
+          </span>
         }
       </article>
     </section>
 
+    <app-macro-warning-banner
+      [approaching]="approachingMacros()"
+      [exceeded]="exceededMacros()" />
+
     <section class="middle-grid">
       <article class="panel today-log-panel">
-        <h2>{{ 'dashboard.todays_log' | translate }}</h2>
+        <div class="panel-header">
+          <h2>{{ 'dashboard.todays_log' | translate }}</h2>
+          <button type="button" class="view-log-button" (click)="onLogMeal()">
+            {{ 'dashboard.view_daily_log_btn' | translate }}
+          </button>
+        </div>
 
-        @if (vm.showNoMealsLoggedBlock) {
+        @if (meals.showNoMealsLoggedBlock) {
           <div class="no-meals-logged-block">
             <div class="no-meals-icon">💙</div>
-            <h3>{{ 'dashboard.no_meals_title' | translate: { days: vm.noMealsDays } }}</h3>
+            <h3>{{ 'dashboard.no_meals_title' | translate: { days: meals.noMealsDays } }}</h3>
             <p>{{ 'dashboard.no_meals_desc' | translate }}</p>
-            <button type="button" class="log-meal-button">
+            <button type="button" class="log-meal-button" (click)="onLogMeal()">
               {{ 'dashboard.log_meal_btn' | translate }}
             </button>
           </div>
         } @else {
           <div class="meal-list">
-            @for (meal of vm.meals; track meal.nameKey) {
+            @for (meal of meals.meals; track meal.nameKey) {
               <div class="meal-row">
                 <div class="meal-dot" [ngClass]="meal.dotClass"></div>
 
@@ -101,8 +119,6 @@
                 <strong class="meal-kcal" [class.muted-kcal]="meal.notLogged">
                   {{ meal.caloriesLabel }}
                 </strong>
-
-                <button type="button" class="add-button">+</button>
               </div>
             }
           </div>
@@ -115,19 +131,34 @@
         <div class="donut-wrapper">
           <svg viewBox="0 0 120 120" class="donut-chart" aria-hidden="true">
             <circle class="donut-bg" cx="60" cy="60" r="42"></circle>
-            <circle class="donut-arc donut-protein" cx="60" cy="60" r="42"></circle>
-            <circle class="donut-arc donut-carbs" cx="60" cy="60" r="42"></circle>
-            <circle class="donut-arc donut-fat" cx="60" cy="60" r="42"></circle>
+            <circle
+              class="donut-arc donut-protein"
+              cx="60" cy="60" r="42"
+              [style.stroke-dasharray]="arcs.protein.dasharray"
+              [style.stroke-dashoffset]="arcs.protein.dashoffset">
+            </circle>
+            <circle
+              class="donut-arc donut-carbs"
+              cx="60" cy="60" r="42"
+              [style.stroke-dasharray]="arcs.carbs.dasharray"
+              [style.stroke-dashoffset]="arcs.carbs.dashoffset">
+            </circle>
+            <circle
+              class="donut-arc donut-fat"
+              cx="60" cy="60" r="42"
+              [style.stroke-dasharray]="arcs.fat.dasharray"
+              [style.stroke-dashoffset]="arcs.fat.dashoffset">
+            </circle>
           </svg>
 
           <div class="donut-center">
-            <strong>{{ vm.consumedCalories }}</strong>
+            <strong>{{ calories.consumed }}</strong>
             <span>kcal</span>
           </div>
         </div>
 
         <div class="macro-list">
-          @for (macro of vm.macros; track macro.nameKey) {
+          @for (macro of macros.macros; track macro.nameKey) {
             <div class="macro-row">
               <div class="macro-row-header">
                 <span>
@@ -151,30 +182,32 @@
       </article>
     </section>
 
-    <section class="streak-card" [ngClass]="vm.streakClass">
+
+    <section class="streak-card" [ngClass]="streak.streakClass">
       <div class="streak-left">
         <span>{{ 'dashboard.active_streak_label' | translate }}</span>
-        <strong>{{ vm.streak }}</strong>
-        <p>{{ vm.streakDescKey | translate: vm.streakDescParams }}</p>
+        <strong>{{ streak.streak }}</strong>
+        <p>{{ streak.descKey | translate: streak.descParams }}</p>
       </div>
 
       <div class="streak-right">
         <span>{{ 'dashboard.streak_this_week' | translate }}</span>
 
         <div class="week-dots">
-          @for (dot of vm.weekDots; track $index) {
+          @for (dot of streak.weekDots; track $index) {
             <div class="week-dot-wrapper">
               <span
                 class="week-dot"
                 [class.filled]="dot"
-                [class.today]="$index === vm.todayIndex">
+                [class.today]="$index === streak.todayIndex">
               </span>
-              <small>{{ weekLabels[$index] }}</small>
+              <small>{{ weekLabels()[$index] }}</small>
             </div>
           }
         </div>
 
-        <p>{{ vm.streakFooterKey | translate: vm.streakFooterParams }}</p>
+        <p>{{ streak.footerKey | translate: streak.footerParams }}</p>
+        <span class="weekly-rate">{{ streak.weeklyCompletionRate }}% {{ 'dashboard.weekly_completion' | translate }}</span>
       </div>
     </section>
   </main>

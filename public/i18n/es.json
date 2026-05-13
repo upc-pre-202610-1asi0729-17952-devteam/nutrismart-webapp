@@ -8,11 +8,13 @@
     "recommendations": "Recomendaciones",
     "body_progress": "Progreso corporal",
     "pantry": "Despensa",
-    "wearable": "Wearable",
+    "wearable": "Actividad física",
     "analytics": "Analítica",
     "subscription": "Suscripción",
     "profile": "Perfil",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "open_menu": "Abrir menú",
+    "close_menu": "Cerrar menú"
   },
   "common": {
     "save": "Guardar",
@@ -66,6 +68,7 @@
     "error_password_min": "La contraseña debe tener al menos 8 caracteres",
     "error_passwords_mismatch": "Las contraseñas no coinciden",
     "error_invalid_credentials": "Email o contraseña inválidos",
+    "error_account_blocked": "Cuenta bloqueada temporalmente. Intentá en 15 minutos.",
     "error_email_taken": "Este correo ya está registrado",
     "checking_email": "Verificando disponibilidad…",
     "error_terms": "Debes aceptar los términos",
@@ -117,6 +120,9 @@
     "error_sex_required": "El sexo biológico es obligatorio",
     "error_weight_range": "El peso debe estar entre 30 y 300 kg",
     "error_height_range": "La altura debe estar entre 100 y 250 cm",
+    "home_city": "Ciudad de residencia",
+    "home_city_placeholder": "Buscar ciudad...",
+    "error_home_city_required": "La ciudad de residencia es obligatoria",
     "continue_btn": "Continuar →",
     "back_btn": "← Atrás",
     "looks_good_btn": "Se ve bien →",
@@ -155,7 +161,9 @@
     "visual_range_lean": "13–18%",
     "visual_range_average": "18–23%",
     "visual_range_overweight": "23–28%",
-    "visual_range_obese": "28%+"
+    "visual_range_obese": "28%+",
+    "home_city_loading": "Cargando ciudades...",
+    "error_home_city_invalid": "Selecciona una ciudad válida de la lista"
   },
   "subscription": {
     "title": "Elige tu plan",
@@ -208,6 +216,8 @@
     "email": "Correo electrónico",
     "birthday": "Fecha de nacimiento",
     "biological_sex": "Sexo biológico",
+    "home_city": "Ciudad de origen",
+    "home_city_hint": "Se usa para detectar cuándo estás viajando y mostrarte recomendaciones locales.",
     "weight": "Peso (kg)",
     "height": "Altura (cm)",
     "activity_level": "Nivel de actividad",
@@ -223,7 +233,30 @@
     "password_changed": "Contraseña actualizada correctamente.",
     "logout_all_btn": "Cerrar sesión en todos los dispositivos",
     "delete_account": "Eliminar cuenta",
-    "apply_language": "Aplicar"
+    "apply_language": "Aplicar",
+    "weight_tooltip": "Registra tu peso en Progreso Corporal para mantenerlo actualizado.",
+    "weight_tooltip_aria": "Cómo actualizar el peso",
+    "home_city_required": "Una vez configurada, tu ciudad de origen no puede eliminarse.",
+    "medical_warnings": {
+      "TYPE_2_DIABETES": "Limita los azúcares añadidos y los carbohidratos simples para controlar la glucosa en sangre.",
+      "HIGH_BLOOD_PRESSURE": "Limita el sodio a menos de 2.300 mg al día para mantener una presión arterial saludable.",
+      "COELIAC_DISEASE": "Dieta sin gluten aplicada. Todos los alimentos con gluten quedan bloqueados automáticamente.",
+      "KIDNEY_DISEASE": "Modera tu consumo de proteínas para reducir la carga de trabajo de tus riñones.",
+      "GOUT": "Limita los alimentos ricos en purinas: carnes rojas, mariscos y alcohol, para controlar el ácido úrico.",
+      "HYPOTHYROIDISM": "Ten precaución con el exceso de soja y las verduras crudas crucíferas, que pueden afectar la función tiroidea.",
+      "nutrient": {
+        "sugar": "Azúcares añadidos",
+        "sodium": "Sodio",
+        "gluten": "Gluten",
+        "protein": "Proteínas",
+        "purines": "Purinas",
+        "soy": "Soja / bociógenos"
+      },
+      "severity": {
+        "ADVISORY": "Recomendación",
+        "STRICT": "Obligatorio"
+      }
+    }
   },
   "medical": {
     "TYPE_2_DIABETES": "Diabetes tipo 2",
@@ -285,7 +318,7 @@
     "calories_remaining_desc": "kcal disponibles hoy",
     "net_balance_label": "BALANCE NETO",
     "no_activity_synced": "Sin actividad sincronizada",
-    "fit_badge": "🏃 −{{calories}} Google Fit",
+    "fit_badge": "−{{calories}} kcal quemadas",
     "todays_log": "Registro de hoy",
     "no_meals_title": "Sin comidas registradas en {{days}} días",
     "no_meals_desc": "Tu plan está listo. Empieza con algo pequeño — una comida es suficiente.",
@@ -309,7 +342,81 @@
     "streak_dropped_desc": "{{days}} días inactivo",
     "streak_dropped_footer": "Tu plan te espera cuando estés listo",
     "streak_recovered_desc": "Racha de recuperación iniciada — ¡sigue así!",
-    "streak_recovered_footer": "Estás de vuelta en camino"
+    "streak_recovered_footer": "Estás de vuelta en camino",
+    "loading_progress": "Cargando tu panel…",
+    "load_error": "No se pudieron cargar tus datos. Inténtalo de nuevo.",
+    "retry": "Reintentar",
+    "view_daily_log_btn": "Ver registro diario",
+    "net_balance_desc": "kcal neto hoy",
+    "meal_more": "+{{count}} más",
+    "weekly_completion": "completado esta semana",
+    "pattern": {
+      "CONSISTENT": "Constante",
+      "WEEKDAY_ONLY": "Solo días laborables",
+      "RECOVERING": "En recuperación",
+      "IRREGULAR": "Irregular",
+      "analyzed_at": "Patrón analizado el {{date}}",
+      "improving": "Tu hábito está ganando impulso.",
+      "declining": "Tu hábito está perdiendo terreno.",
+      "label": "Patrón de hábito"
+    }
+  },
+  "behavioral": {
+    "reengagement": {
+      "icon_at_risk": "⚠️",
+      "icon_dropped": "🚀",
+      "title_at_risk": "¡No pierdas el impulso!",
+      "title_dropped": "Es momento de reiniciar",
+      "desc_at_risk": "Has faltado a un par de registros. Completa una acción pequeña hoy para proteger tu racha.",
+      "desc_dropped": "Llevas un tiempo sin actividad. Reinicia con una meta simple: registra tu siguiente comida.",
+      "btn_at_risk": "Registrar ahora",
+      "btn_dropped": "Volver al plan"
+    },
+    "recovery": {
+      "plan_title": "Tu plan de recuperación",
+      "action": {
+        "reduce_calorie_target": "Reduce tu objetivo calórico diario a un nivel más alcanzable.",
+        "focus_single_meal": "Enfócate en registrar solo una comida al día de forma constante.",
+        "simplify_tracking": "Simplifica tu seguimiento — registra solo las comidas principales por ahora.",
+        "log_any_meal": "Registra cualquier comida hoy, sin importar lo pequeña que sea. Solo empieza."
+      }
+    },
+    "streak": {
+      "days_label": "Días de racha",
+      "message_danger": "¡Cuidado! Tu racha está en peligro.",
+      "message_start": "Empieza hoy tu primer registro.",
+      "message_beginning": "¡Buen comienzo! No te detengas.",
+      "message_habit": "¡Gran ritmo! Estás creando un hábito.",
+      "message_unstoppable": "¡Eres imparable! Tu constancia es clave.",
+      "missed_one": "día perdido",
+      "missed_other": "días perdidos"
+    },
+    "status": {
+      "on_track_title": "✓ En Camino",
+      "at_risk_title": "⚠ En Riesgo",
+      "dropped_title": "✖ Abandonado",
+      "on_track_message": "¡Sigue así! Tu consistencia es estable. Continúa registrando tus comidas diarias.",
+      "at_risk_message": "Adherencia nutricional en riesgo. Has perdido 3 registros consecutivos. ¡Volvamos al camino!",
+      "dropped_message": "Caída conductual detectada. 7 días de inactividad. Accede a tu plan de reactivación para recuperar tu racha.",
+      "unknown_message": "Registra tu primera comida del día para actualizar tu estado."
+    },
+    "week_strip": {
+      "title": "Actividad Semanal",
+      "aria_label": "Consistencia semanal: {{completed}} de 7 días completados"
+    },
+    "summary_card": {
+      "title": "Resumen Semanal",
+      "days_completed": "{{completed}}/7 días cumplidos",
+      "high_consistency": "Alta Consistencia",
+      "moderate_consistency": "Consistencia Moderada",
+      "at_risk_consistency": "Consistencia en Riesgo"
+    },
+    "action_panel": {
+      "title": "Acciones de Hoy",
+      "goal_met": "Meta Cumplida",
+      "skip_log": "Saltar Registro",
+      "sync_fit": "Sincronizar Fit"
+    }
   },
   "nutrition": {
     "page_title": "Registro Diario",
@@ -341,9 +448,17 @@
     "entry_deleted": "Registro eliminado",
     "daily_goal": "Meta Diaria",
     "consumed": "Consumido",
+    "active_burned": "Activas quemadas",
     "remaining": "Restante",
     "exceeded": "Excedido",
     "percent_consumed": "{{ percent }}% de tu meta consumida",
+    "daily_balance": "Balance Diario",
+    "no_meals_banner_title": "Aún no hay comidas registradas",
+    "no_meals_banner_desc": "Empieza agregando tu primera comida del día.",
+    "add_food_btn": "Agregar alimento",
+    "search_modal_title": "Agregar alimento a tu registro",
+    "impact_approaching": "Alcanzará el {{percent}}% de tu meta diaria",
+    "impact_exceeded": "Superará tu meta diaria ({{percent}}%)",
     "calorie_limit_exceeded": "Límite calórico superado",
     "exceeded_warning": "Has superado tu meta. Considera una cena más ligera.",
     "restrictions_warning": "Algunos resultados contienen ingredientes que coinciden con tus restricciones activas: {{ restrictions }}",
@@ -351,10 +466,11 @@
     "add_food_to": "+ Agregar alimento a {{ meal }}",
     "first_meal_hint": "¡Agrega tu primera comida usando el buscador de abajo!",
     "not_yet_logged": "Aún no registrado",
-    "meal_skipped": "Ventana perdida · MealSkipped emitido",
-    "meal_skipped_text": "No registrado · Evento MealSkipped emitido",
-    "goal_exceeded_alert": "Meta diaria superada. Evento DailyGoalExceeded emitido · Consumiste {{ kcal }} kcal de más.",
-    "goal_met_alert": "¡Meta diaria cumplida! Evento DailyGoalMet emitido · AdherenceStatus: ON_TRACK.",
+    "meal_skipped": "Ventana perdida",
+    "meal_skipped_text": "No registrado en esta ventana",
+    "goal_met_alert": "¡Meta diaria cumplida! Todas las comidas registradas.",
+    "warning_approaching": "Cerca del límite diario para",
+    "warning_exceeded": "Límite diario superado para",
     "base_info": "Base: {{ size }}{{ unit }} · {{ calories }} kcal · P {{ protein }}g · C {{ carbs }}g · G {{ fat }}g",
     "macro_preview": "Vista previa nutricional",
     "restricted_blocked_title": "Alimento restringido",
@@ -365,13 +481,26 @@
     "logged_at": "Registrado a las {{ time }}",
     "add_to_daily_log": "Agregar al Registro Diario",
     "date_today": "Hoy",
+    "prev_day": "Día anterior",
+    "next_day": "Día siguiente",
     "edit_entry": "Editar registro",
     "save_changes": "Guardar cambios",
     "entry_read_only": "Este registro tiene más de 7 días y ya no puede editarse",
     "new_quantity": "Nueva cantidad",
     "adding_to": "Agregando a: {{ meal }}",
     "quantity_unit": "Cantidad ({{ unit }})",
-    "meal_type": "Tipo de comida"
+    "meal_type": "Tipo de comida",
+    "guardrail": {
+      "calorie_overage": "Añadir esta comida superará tu presupuesto calórico diario en {{overage}} kcal ({{percent}}% del objetivo).",
+      "calorie_overage_rec": "Considera una porción más pequeña o una opción más ligera.",
+      "restriction_conflict": "Este alimento entra en conflicto con tu restricción alimentaria activa.",
+      "restriction_conflict_rec": "Elige una alternativa compatible o actualiza tus restricciones en Perfil.",
+      "medical_risk": "Este alimento puede ser desaconsejable según tus condiciones médicas activas.",
+      "medical_risk_rec": "Consulta tus advertencias dietéticas en Perfil para más detalles.",
+      "severity_block": "No se puede añadir esta comida.",
+      "severity_warning": "Ten esto en cuenta antes de registrar.",
+      "severity_info": "Algo a considerar."
+    }
   },
   "recommendations": {
     "page_title": "Recomendaciones",
@@ -440,13 +569,29 @@
     "location_search_back": "Volver",
     "location_search_quick": "Selección rápida",
     "error_load_failed": "No se pudieron cargar las recomendaciones. Inténtalo de nuevo.",
-    "banner_travel_active": "Modo viaje activo — {{ location }}, {{ temp }}°C"
+    "banner_travel_active": "Modo viaje activo — {{ location }}, {{ temp }}°C",
+    "condition_hot": "Soleado",
+    "condition_cold": "Frío",
+    "condition_mild": "Parcialmente nublado",
+    "updated_just_now": "Recién actualizado",
+    "updated_mins_ago": "Actualizado hace {{ mins }} min",
+    "location_picker_title": "Tu ubicación",
+    "location_picker_temp": "Temperatura (demo)",
+    "location_picker_close": "Cerrar",
+    "travel_chip": "Viajando a {{ city }}",
+    "context_adjustment": {
+      "travel": "Ajuste por modo viaje",
+      "weather": "Ajuste por clima",
+      "calorie_adjusted": "Objetivo calórico ajustado a {{ kcal }} kcal",
+      "factor": "Factor {{ factor }}× aplicado al objetivo base"
+    }
   },
   "body_progress": {
     "page_title": "Progreso Corporal",
     "page_subtitle": "Seguimiento de peso, métricas y composición corporal",
     "update_height_btn": "Actualizar altura",
     "log_weight_btn": "+ Registrar peso",
+    "update_weight_btn": "↺ Actualizar peso de hoy",
     "stale_banner": "Tu último registro de peso fue {{ date }}. Para métricas precisas, te recomendamos registrar tu peso actual.",
     "log_now": "Registrar ahora",
     "metric_weight": "PESO ACTUAL",
@@ -489,6 +634,11 @@
     "error_weight_max": "Ingresa un peso válido (máx. 500 kg).",
     "error_weight_invalid": "Ingresa un peso válido.",
     "error_goal_below_current": "El peso objetivo debe ser menor a tu peso actual ({{ current }} kg).",
+    "error_goal_below_min": "El peso objetivo debe ser al menos {{ min }} kg.",
+    "goal_auto_set_title": "Peso objetivo asignado automáticamente",
+    "goal_auto_set_desc": "Basándonos en un IMC saludable (24.9), hemos establecido tu peso objetivo en {{ weight }} kg. Puedes ajustarlo en cualquier momento.",
+    "goal_auto_set_confirm": "Entendido",
+    "goal_auto_set_adjust": "Ajustar",
     "composition_panel": "Actualizar composición corporal",
     "waist_label": "Cintura (cm)",
     "neck_label": "Cuello (cm)",
@@ -559,7 +709,32 @@
     "history_title": "Historial de peso completo",
     "history_subtitle": "Todos los registros del ciclo de objetivo actual",
     "history_empty": "Aún no hay registros de peso para este ciclo.",
-    "back_to_progress": "← Volver al progreso"
+    "back_to_progress": "← Volver al progreso",
+    "aria_edit_entry": "Editar registro de peso",
+    "aria_delete_entry": "Eliminar registro de peso",
+    "aria_save_edit": "Guardar",
+    "aria_cancel_edit": "Cancelar",
+    "today_entry_updated": "Registro de hoy actualizado.",
+    "error_already_logged_today": "Ya tienes un registro de hoy. Se actualizará.",
+    "adaptation_log": {
+      "title": "Historial de adaptaciones metabólicas",
+      "no_history": "Aún no se han registrado cambios en los objetivos.",
+      "calorie_delta": "{{ delta }} kcal",
+      "trigger": {
+        "ONBOARDING":              "Configuración inicial",
+        "PROFILE_CHANGE":          "Actualización de perfil",
+        "GOAL_SWITCH":             "Cambio de objetivo",
+        "STAGNATION_RESPONSE":     "Ajuste por estancamiento",
+        "ACTIVITY_TREND":          "Tendencia de actividad",
+        "BODY_COMPOSITION_UPDATE": "Actualización de composición corporal"
+      }
+    },
+    "activity_trend": {
+      "detected":          "Tendencia de actividad alta detectada",
+      "average_burned":    "Promedio de {{ kcal }} kcal/día quemadas en los últimos 7 días",
+      "tdee_adjusted":     "Objetivo calórico diario ajustado en +{{ delta }} kcal",
+      "threshold_reached": "Umbral de actividad alcanzado (≥ 300 kcal/día promedio)"
+    }
   },
   "smart_scan": {
     "page_title": "Smart Scan",
@@ -613,27 +788,27 @@
     "seafood_paella": "Paella de mariscos"
   },
   "ingredient_categories": {
-    "grain":          "Cereal",
+    "grain": "Cereal",
     "animal_protein": "Proteína animal",
-    "vegetable":      "Verdura",
-    "fruit":          "Fruta",
-    "dairy":          "Lácteo",
-    "legume":         "Legumbre",
-    "seasoning":      "Condimento",
-    "other":          "Otro"
+    "vegetable": "Verdura",
+    "fruit": "Fruta",
+    "dairy": "Lácteo",
+    "legume": "Legumbre",
+    "seasoning": "Condimento",
+    "other": "Otro"
   },
   "pantry_items": {
-    "white_rice":      "Arroz blanco",
-    "chicken_breast":  "Pechuga de pollo",
-    "lemon":           "Limón",
-    "onion":           "Cebolla",
-    "garlic":          "Ajo",
-    "quinoa":          "Quinoa"
+    "white_rice": "Arroz blanco",
+    "chicken_breast": "Pechuga de pollo",
+    "lemon": "Limón",
+    "onion": "Cebolla",
+    "garlic": "Ajo",
+    "quinoa": "Quinoa"
   },
   "recipes": {
-    "chicken_quinoa":    "Pechuga de pollo con quinoa",
+    "chicken_quinoa": "Pechuga de pollo con quinoa",
     "rice_chicken_bowl": "Bowl de arroz con pollo",
-    "chicken_salad":     "Pollo con ensalada",
+    "chicken_salad": "Pollo con ensalada",
     "lemon_garlic_rice": "Arroz al limón con ajo"
   },
   "food_items": {
@@ -701,5 +876,222 @@
     "g": "g",
     "ml": "ml",
     "serving": "porción"
+  },
+  "analytics": {
+    "page_title": "Analítica y progreso",
+    "period_7_days": "7 días",
+    "period_30_days": "30 días",
+    "period_90_days": "90 días",
+    "metric_avg_calories_label": "CALORÍAS PROMEDIO",
+    "metric_avg_calories_on_track": "✓ Dentro del objetivo",
+    "metric_avg_calories_at_risk": "⚠ Por encima del objetivo",
+    "metric_avg_protein_label": "PROTEÍNA PROMEDIO",
+    "metric_avg_protein_on_track": "✓ En objetivo",
+    "metric_avg_protein_above": "✓ Por encima del objetivo",
+    "metric_avg_protein_below": "⚠ Por debajo del objetivo",
+    "metric_streak_label": "RACHA ACTUAL",
+    "metric_streak_unit": "días",
+    "metric_streak_description": "Días consecutivos registrados",
+    "macros": {
+      "protein": "Proteína",
+      "carbs": "Carbohidratos",
+      "fat": "Grasas",
+      "fiber": "Fibra"
+    },
+    "metric_weight_label": "PESO EN EL PERÍODO",
+    "metric_weight_down": "▼ A la baja",
+    "metric_weight_up": "▲ Al alza",
+    "metric_weight_none": "— Sin cambio",
+    "chart_calories_title": "Calorías diarias",
+    "chart_calories_last_7": "Últimos 7 días",
+    "chart_calories_last_30": "Últimos 30 días",
+    "chart_calories_last_90": "Últimos 90 días",
+    "chart_calories_goal": "Objetivo: {{ value }} kcal",
+    "chart_calories_average": "Promedio: {{ value }} kcal",
+    "chart_legend_goal": "Objetivo",
+    "chart_legend_over": "Sobre el objetivo",
+    "chart_legend_on_target": "En objetivo",
+    "chart_legend_no_data": "Sin datos",
+    "chart_calories_aria": "Gráfica de barras de ingesta calórica diaria",
+    "macros_title": "Macros promedio",
+    "macros_days_logged": "Días con registro completo:",
+    "weight_chart_title": "Evolución del peso",
+    "weight_chart_aria": "Gráfica de línea de evolución del peso",
+    "weight_chart_no_data": "No hay suficientes datos de peso para mostrar la gráfica.",
+    "weight_chart_goal": "Objetivo: {{ value }} kg",
+    "adherence_title": "Adherencia mensual",
+    "adherence_no_data": "Sin historial de adherencia para este período.",
+    "behavioral_title": "Eventos conductuales",
+    "behavioral_no_data": "Sin eventos conductuales registrados para este período.",
+    "export_btn_label": "Exportar a PDF",
+    "export_btn_premium_required": "Requiere plan Premium",
+    "export_modal_title": "Exportar reporte PDF",
+    "export_from_date": "Fecha de inicio",
+    "export_to_date": "Fecha de fin",
+    "export_include": "Incluir en el reporte:",
+    "export_option_daily": "Resúmenes calóricos diarios",
+    "export_option_macros": "Promedios de macros",
+    "export_option_weight": "Gráfica de evolución del peso",
+    "export_option_adherence": "Historial de adherencia",
+    "export_option_activity": "Datos de actividad",
+    "export_cancel": "Cancelar",
+    "export_generate": "Generar PDF",
+    "loading": "Cargando analítica...",
+    "error_load": "No se pudo cargar la analítica. Intenta de nuevo.",
+    "empty": "Sin datos de analítica disponibles para este período.",
+    "status_on_track": "En camino",
+    "status_at_risk": "En riesgo",
+    "status_dropped": "Caída",
+    "status_recovered": "Recuperado"
+  },
+  "physical_activity": {
+    "title": "Actividad física",
+    "subtitle": "Registrá tus entrenamientos y mirá cómo afectan tu balance calórico diario.",
+    "chip": {
+      "connected": "Wearable conectado",
+      "disconnected": "Sin wearable"
+    },
+    "log_activity_btn": "Registrar actividad",
+    "error_load": "No se pudo cargar la actividad. Intentá de nuevo.",
+    "error_connect": "No se pudo conectar con Google Fit. Intentá de nuevo.",
+    "error_disconnect": "No se pudo desconectar el dispositivo. Intentá de nuevo.",
+    "error_sync": "La sincronización falló. Intentá de nuevo.",
+    "error_log_activity": "No se pudo guardar la actividad. Intentá de nuevo.",
+    "google_fit": {
+      "title": "Conectar Google Fit",
+      "desc": "Sincronizá tu actividad física. Conectá tu cuenta de Google Fit para importar automáticamente tus pasos y calorías activas del día. El balance calórico de tu panel se actualizará en tiempo real.",
+      "connect_btn": "Conectar con Google Fit",
+      "feature_steps": "Pasos diarios importados automáticamente",
+      "feature_calories": "Calorías activas sumadas a tu balance",
+      "feature_sync": "Sincroniza cada hora en segundo plano"
+    },
+    "manual": {
+      "badge": "Registro manual",
+      "title": "¿No tenés dispositivo?",
+      "desc": "Podés registrar tu actividad manualmente. El sistema estimará las calorías quemadas según el tipo de ejercicio y tu peso corporal actual.",
+      "cardio_label": "Cardio y caminata",
+      "cardio_hint": "Ingresá el tipo y la duración; el sistema calcula usando METs",
+      "strength_label": "Musculación y otros",
+      "strength_hint": "Pesas, natación, ciclismo y más de 20 tipos adicionales",
+      "log_btn": "Registrar actividad manual"
+    },
+    "connected": {
+      "badge": "Conectado · Google Fit",
+      "last_synced": "Última sincronización:",
+      "sync_now": "Sincronizar ahora",
+      "disconnect": "Desconectar",
+      "active_calories": "CALORÍAS ACTIVAS",
+      "burned_today": "Quemadas hoy",
+      "net_target": "OBJETIVO NETO DIARIO",
+      "active": "activas"
+    },
+    "sync_failed": {
+      "badge": "Error de sincronización · Usando últimos datos",
+      "last_success": "Última sincronización exitosa:",
+      "retry_btn": "Reintentar",
+      "desc": "Conexión con Google Fit interrumpida. Los datos de calorías activas pueden estar desactualizados.",
+      "ago": "atrás"
+    },
+    "paywall": {
+      "title": "El Wearable Sync requiere Premium",
+      "desc": "Conectá Google Fit para importar automáticamente pasos y calorías activas. Disponible desde $9.99/mes.",
+      "upgrade_btn": "Mejorar a Premium",
+      "feature_sync": "Sincronización con Google Fit incluida",
+      "feature_auto": "Importación automática de calorías cada hora",
+      "feature_balance": "Balance diario ajustado en tiempo real",
+      "note": "Incluye Smart Scan y todas las funciones premium"
+    },
+    "history": {
+      "this_week": "Esta semana",
+      "title": "Historial de actividad",
+      "empty": "Todavía no hay actividad registrada.",
+      "see_all_btn": "Ver todos",
+      "page_of": "Página {{current}} de {{total}}",
+      "col_type": "Actividad",
+      "col_duration": "Duración",
+      "col_calories": "Calorías",
+      "col_date": "Fecha",
+      "min": "min",
+      "prev_page": "Página anterior",
+      "next_page": "Página siguiente"
+    },
+    "modal": {
+      "title": "Registrar actividad física",
+      "activity_label": "Tipo de actividad",
+      "activity_placeholder": "Seleccioná una actividad",
+      "duration_label": "Duración (minutos)",
+      "duration_placeholder": "Ej. 30",
+      "estimated_calories": "Calorías estimadas quemadas",
+      "based_on": "Basado en tu peso:",
+      "save_btn": "Guardar",
+      "error_duration": "Ingresá una duración válida mayor a 0.",
+      "error_duration_max": "La duración no puede superar 480 minutos.",
+      "preview_hint": "Seleccioná una actividad e ingresá la duración para ver las calorías estimadas"
+    },
+    "activity_types": {
+      "running": "Correr",
+      "cycling": "Ciclismo",
+      "swimming": "Natación",
+      "walking": "Caminata",
+      "weight_training": "Musculación",
+      "hiit": "HIIT",
+      "yoga": "Yoga",
+      "elliptical": "Elíptica",
+      "rowing": "Remo",
+      "boxing": "Boxeo",
+      "pilates": "Pilates",
+      "dancing": "Baile",
+      "basketball": "Básquetbol",
+      "football": "Fútbol",
+      "tennis": "Tenis",
+      "volleyball": "Vóleibol",
+      "hiking": "Senderismo",
+      "jump_rope": "Soga",
+      "stair_climbing": "Escaleras",
+      "stretching": "Estiramiento",
+      "crossfit": "CrossFit",
+      "martial_arts": "Artes marciales"
+    }
+  },
+  "restaurant": {
+    "error_scan_failed": "No se pudo analizar la foto del menú. Intentá de nuevo.",
+    "error_log_failed": "No se pudo registrar el plato seleccionado. Intentá de nuevo."
+  },
+  "subscriptions": {
+    "title": "Elegí tu plan",
+    "plan_basic": "Basic",
+    "plan_pro": "Pro",
+    "plan_premium": "Premium",
+    "cta_select": "Seleccionar plan",
+    "cta_cancel": "Cancelar suscripción",
+    "current_plan": "Tu plan actual",
+    "features_nutrition_log": "Registro nutricional",
+    "features_basic_dashboard": "Panel básico",
+    "features_bmi_bmr_tdee": "Calculadora IMC, TMB y TDEE",
+    "features_smart_scan": "Escaneo inteligente de platos",
+    "features_travel_mode": "Modo viaje",
+    "features_weather_recs": "Recomendaciones por clima",
+    "features_pantry": "Despensa y sugerencias de recetas",
+    "features_wearable_sync": "Sincronización con Google Fit",
+    "features_restaurant_menu": "Análisis de menú de restaurante",
+    "features_unlimited_history": "Historial ilimitado",
+    "features_pdf_reports": "Reportes PDF",
+    "error_load_failed": "No se pudo cargar la información de la suscripción.",
+    "error_update_failed": "No se pudo actualizar tu plan. Intentá de nuevo.",
+    "success_activated": "Plan activado exitosamente.",
+    "success_cancelled": "Suscripción cancelada."
+  },
+  "notifications": {
+    "restricted_item": "Este alimento no es compatible con tu restricción dietética activa.",
+    "goal_exceeded": "Superaste tu objetivo calórico del día por {{kcal}} kcal.",
+    "meal_skipped_breakfast": "No registraste el desayuno. ¿Olvidaste hacerlo?",
+    "meal_skipped_lunch": "No registraste el almuerzo. ¿Olvidaste hacerlo?",
+    "meal_skipped_snack": "No registraste tu merienda. ¿Olvidaste hacerlo?",
+    "meal_skipped_dinner": "No registraste la cena. ¿Olvidaste hacerlo?",
+    "drop_detected": "Llevas {{days}} días sin cumplir tus metas. ¿Necesitas un plan más flexible?",
+    "abandonment_risk": "Te extrañamos. Tu plan nutricional te espera cuando estés listo.",
+    "consistency_recovered": "¡Bienvenido de vuelta! Cada día cuenta. Hoy es un buen día.",
+    "streak_milestone": "¡{{days}} días consecutivos! Estás construyendo un hábito real.",
+    "strategy_adjustment": "Tu cuerpo se adaptó. Te sugerimos revisar tu estrategia nutricional."
   }
 }

@@ -1,11 +1,12 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgClass } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { DailyCaloriesHistory, AnalyticsPeriod } from '../../../domain/model/analytics-models';
 
 @Component({
   selector: 'app-daily-calories-chart',
   standalone: true,
-  imports: [CommonModule],
+  imports: [NgClass, TranslateModule],
   templateUrl: './daily-calories-chart.component.html',
   styleUrl: './daily-calories-chart.component.css',
 })
@@ -18,6 +19,8 @@ export class DailyCaloriesChartComponent implements OnChanges {
   maxCalories: number = 0;
   averageCalories: number = 0;
 
+  private readonly weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['dailyCaloriesHistory'] || changes['goal'] || changes['period']) {
       this.processChartData();
@@ -25,37 +28,32 @@ export class DailyCaloriesChartComponent implements OnChanges {
   }
 
   private processChartData(): void {
-    if (!this.dailyCaloriesHistory || this.dailyCaloriesHistory.length === 0 || this.goal === 0) {
+    if (!this.dailyCaloriesHistory.length || this.goal === 0) {
       this.chartData = [];
       this.averageCalories = 0;
       this.maxCalories = 0;
       return;
     }
 
-    const daysOfWeek = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-    const totalCalories = this.dailyCaloriesHistory.reduce((sum, entry) => sum + entry.calories, 0);
-    const loggedDays = this.dailyCaloriesHistory.filter(entry => entry.calories > 0).length;
-    this.averageCalories = loggedDays > 0 ? Math.round(totalCalories / loggedDays) : 0;
-
-    // Determine max calories for scaling, including the goal
-    this.maxCalories = Math.max(this.goal * 1.2, ...this.dailyCaloriesHistory.map(d => d.calories)); // 20% buffer above goal
+    const total = this.dailyCaloriesHistory.reduce((s, e) => s + e.calories, 0);
+    const logged = this.dailyCaloriesHistory.filter(e => e.calories > 0).length;
+    this.averageCalories = logged > 0 ? Math.round(total / logged) : 0;
+    this.maxCalories = Math.max(this.goal * 1.2, ...this.dailyCaloriesHistory.map(d => d.calories));
 
     this.chartData = this.dailyCaloriesHistory.map((entry, index) => {
       const status: 'over' | 'on-target' | 'no-data' =
-        entry.calories === 0
-          ? 'no-data'
-          : entry.calories > this.goal
-            ? 'over'
-            : 'on-target';
-
+        entry.calories === 0 ? 'no-data'
+        : entry.calories > this.goal ? 'over'
+        : 'on-target';
       const height = (entry.calories / this.maxCalories) * 100;
-      const dayLabel = this.period === '7_DAYS' ? daysOfWeek[index % 7] : (index + 1).toString(); // Simple day label for now
-
+      const day = this.period === '7_DAYS'
+        ? this.weekDays[index % 7]
+        : (index + 1).toString();
       return {
-        day: dayLabel,
+        day,
         calories: entry.calories,
-        status: status,
-        height: height,
+        status,
+        height,
         label: entry.calories > 0 ? entry.calories.toString() : '—',
       };
     });

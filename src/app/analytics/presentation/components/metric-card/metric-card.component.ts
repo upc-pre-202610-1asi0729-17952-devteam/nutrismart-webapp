@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 
 export interface MetricCardVm {
   label: string;
@@ -11,7 +11,7 @@ export interface MetricCardVm {
 @Component({
   selector: 'app-metric-card',
   standalone: true,
-  imports: [CommonModule, NgClass],
+  imports: [NgClass],
   templateUrl: './metric-card.component.html',
   styleUrl: './metric-card.component.css',
 })

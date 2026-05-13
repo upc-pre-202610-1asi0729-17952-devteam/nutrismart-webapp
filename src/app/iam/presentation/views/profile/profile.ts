@@ -1,9 +1,10 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageSwitcher } from '../../../../shared/presentation/components/language-switcher/language-switcher';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { MetabolicStore } from '../../../../metabolic-adaptation/application/metabolic.store';
+import { CityLookupApi } from '../../../../shared/infrastructure/city-lookup-api';
 import { ActivityLevel } from '../../../../iam/domain/model/activity-level.enum';
 import { DietaryRestriction } from '../../../../iam/domain/model/dietary-restriction.enum';
 import { MedicalCondition } from '../../../../iam/domain/model/medical-condition.enum';
@@ -47,14 +48,14 @@ interface PanelNavItem {
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
-export class Profile {
-  /** IAM store providing current user state and update methods. */
+export class Profile implements OnInit {
   iamStore = inject(IamStore);
 
-  private metabolicStore = inject(MetabolicStore);
+  protected metabolicStore = inject(MetabolicStore);
+  private cityLookupApi   = inject(CityLookupApi);
+  private translate       = inject(TranslateService);
 
-  /** ngx-translate service for language switching in panel 4. */
-  private translate = inject(TranslateService);
+  readonly knownCities = signal<string[]>([]);
 
   /** Form builder for constructing panel-specific reactive forms. */
   private fb = inject(FormBuilder);
@@ -80,6 +81,7 @@ export class Profile {
     email: [this.iamStore.currentUser()?.email ?? '', [Validators.required, Validators.email]],
     birthday: [this.iamStore.currentUser()?.birthday ?? ''],
     biologicalSex: [this.iamStore.currentUser()?.biologicalSex ?? ''],
+    homeCity: [this.iamStore.currentUser()?.homeCity ?? ''],
   });
 
   // ─── Panel 2 — Physical details and goals ─────────────────────────────────
@@ -122,7 +124,6 @@ export class Profile {
    * Reactive form for physical details.
    */
   physicalForm = this.fb.group({
-    weight: [this.iamStore.currentUser()?.weight ?? 70, Validators.required],
     height: [this.iamStore.currentUser()?.height ?? 170, Validators.required],
   });
 
@@ -202,6 +203,15 @@ export class Profile {
    *
    * @param panel - The {@link ProfilePanel} to activate.
    */
+  ngOnInit(): void {
+    this.cityLookupApi.getKnownCities().subscribe({
+      next: cities => this.knownCities.set(cities),
+    });
+    if (!this.metabolicStore.currentMetric()) {
+      void this.metabolicStore.initialise();
+    }
+  }
+
   setPanel(panel: ProfilePanel): void {
     this.activePanel.set(panel);
   }
@@ -214,12 +224,18 @@ export class Profile {
       this.personalForm.markAllAsTouched();
       return;
     }
-    const { firstName, lastName, birthday, biologicalSex } = this.personalForm.value;
+    const { firstName, lastName, birthday, biologicalSex, homeCity } = this.personalForm.value;
+    if (this.iamStore.currentUser()?.homeCity && !homeCity?.trim()) {
+      this.personalForm.get('homeCity')?.setErrors({ required: true });
+      this.personalForm.get('homeCity')?.markAsTouched();
+      return;
+    }
     this.iamStore.updateProfile({
       firstName: firstName!,
       lastName: lastName!,
       birthday: birthday ?? '',
       biologicalSex: biologicalSex ?? '',
+      homeCity: homeCity ?? '',
     });
     this.personalSaved.set(true);
     setTimeout(() => this.personalSaved.set(false), 2500);
@@ -270,8 +286,9 @@ export class Profile {
   }
 
   private commitPhysical(): void {
-    const { weight, height } = this.physicalForm.value;
-    this.iamStore.updatePhysicalDetails(weight!, height!, this.selectedActivity());
+    const { height } = this.physicalForm.value;
+    const currentWeight = this.iamStore.currentUser()?.weight ?? 70;
+    this.iamStore.updatePhysicalDetails(currentWeight, height!, this.selectedActivity());
     this.iamStore.changeGoal(this.selectedGoal());
     this.physicalSaved.set(true);
     setTimeout(() => this.physicalSaved.set(false), 2500);

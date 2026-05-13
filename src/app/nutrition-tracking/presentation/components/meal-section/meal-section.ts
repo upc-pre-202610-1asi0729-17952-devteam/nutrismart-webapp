@@ -32,10 +32,11 @@ export class MealSectionComponent {
   /** When true, renders the MealSkipped state instead of the entries list (T21). */
   isSkipped = input<boolean>(false);
 
-  /** Emitted when the user clicks the remove button on an entry. */
-  @Output() removeEntry = new EventEmitter<number>();
+  /** Emitted when the user removes a meal entry. */
+  @Output() mealRemoved = new EventEmitter<number>();
 
-  @Output() viewEntry = new EventEmitter<MealRecord>();
+  /** Emitted when the user opens an entry's detail view. */
+  @Output() entryViewed = new EventEmitter<MealRecord>();
 
   private translate = inject(TranslateService);
 
@@ -60,8 +61,7 @@ export class MealSectionComponent {
   /** Total kilocalories for this meal section. */
   protected totalCalories = computed(() => this.records().reduce((sum, r) => sum + r.calories, 0));
 
-  /** Delegates remove action to the parent view. */
-  onRemove(id: number): void {
-    this.removeEntry.emit(id);
+  onMealRemove(id: number): void {
+    this.mealRemoved.emit(id);
   }
 }

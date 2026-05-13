@@ -62,6 +62,7 @@
 }
 
 .col-weight, .col-delta { text-align: right; }
+.col-actions { width: 60px; }
 
 .history-table tbody tr {
   border-bottom: 1px solid var(--nutrismart-border);
@@ -76,12 +77,48 @@
   font-size: 14px;
 }
 
-.cell-date   { color: var(--nutrismart-text-mid); }
-.cell-weight { text-align: right; font-weight: 600; color: var(--nutrismart-text-dark); }
-.cell-delta  { text-align: right; font-weight: 600; color: var(--nutrismart-text-light); }
+.cell-date    { color: var(--nutrismart-text-mid); }
+.cell-weight  { text-align: right; font-weight: 600; color: var(--nutrismart-text-dark); }
+.cell-delta   { text-align: right; font-weight: 600; color: var(--nutrismart-text-light); }
+.cell-actions { text-align: right; white-space: nowrap; padding: 8px 12px; }
 
 .delta--neg { color: var(--nutrismart-primary); }
 .delta--pos { color: #ef4444; }
+
+/* ── Icon buttons ── */
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--nutrismart-text-light);
+  padding: 2px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
+}
+.icon-btn .material-icons { font-size: 17px; }
+.icon-btn--sm .material-icons { font-size: 15px; }
+.icon-btn:hover { color: var(--nutrismart-text-dark); }
+
+/* ── Inline edit ── */
+.history-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.history-edit-input {
+  width: 80px;
+  padding: 4px 8px;
+  border: 1px solid var(--nutrismart-border);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--nutrismart-text-dark);
+}
+.history-edit-input:focus { outline: none; border-color: var(--nutrismart-primary); }
+.history-edit-error { font-size: 11px; color: #ef4444; }
 
 /* ── Loading skeleton ── */
 @keyframes shimmer {

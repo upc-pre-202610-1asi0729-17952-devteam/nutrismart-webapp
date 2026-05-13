@@ -1,11 +1,12 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonModule, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AdherenceHistoryEntry } from '../../../domain/model/analytics-models';
 
 @Component({
   selector: 'app-adherence-history-timeline',
   standalone: true,
-  imports: [CommonModule, NgClass],
+  imports: [NgClass, TranslateModule],
   templateUrl: './adherence-history-timeline.component.html',
   styleUrl: './adherence-history-timeline.component.css',
 })
@@ -14,45 +15,35 @@ export class AdherenceHistoryTimelineComponent implements OnChanges {
 
   timelineEntries: { date: string; statusClass: string; tooltip: string }[] = [];
 
+  private readonly statusClassMap: Record<string, string> = {
+    ON_TRACK:  'status-on-track',
+    AT_RISK:   'status-at-risk',
+    DROPPED:   'status-dropped',
+    RECOVERED: 'status-recovered',
+  };
+
+  private readonly statusI18nMap: Record<string, string> = {
+    ON_TRACK:  'analytics.status_on_track',
+    AT_RISK:   'analytics.status_at_risk',
+    DROPPED:   'analytics.status_dropped',
+    RECOVERED: 'analytics.status_recovered',
+  };
+
+  constructor(private readonly translate: TranslateService) {}
+
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['adherenceHistory']) {
-      this.processTimelineData();
-    }
+    if (changes['adherenceHistory']) this.processTimelineData();
   }
 
   private processTimelineData(): void {
-    this.timelineEntries = this.adherenceHistory.map(entry => {
-      let statusClass = '';
-      let tooltip = `Adherence: ${entry.status}`;
-
-      switch (entry.status) {
-        case 'ON_TRACK':
-          statusClass = 'status-on-track';
-          break;
-        case 'AT_RISK':
-          statusClass = 'status-at-risk';
-          break;
-        case 'DROPPED':
-          statusClass = 'status-dropped';
-          break;
-        case 'RECOVERED':
-          statusClass = 'status-recovered';
-          break;
-        default:
-          statusClass = 'status-unknown';
-          break;
-      }
-
-      return {
-        date: this.formatDate(entry.date),
-        statusClass: statusClass,
-        tooltip: tooltip,
-      };
-    });
+    this.timelineEntries = this.adherenceHistory.map(entry => ({
+      date: this.formatDate(entry.date),
+      statusClass: this.statusClassMap[entry.status] ?? 'status-unknown',
+      tooltip: `${this.formatDate(entry.date)}: ${this.translate.instant(this.statusI18nMap[entry.status] ?? entry.status)}`,
+    }));
   }
 
   formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 }

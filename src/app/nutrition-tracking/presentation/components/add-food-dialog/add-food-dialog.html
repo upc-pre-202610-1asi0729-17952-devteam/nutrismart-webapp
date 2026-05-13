@@ -41,7 +41,7 @@
     <div class="meal-type-section">
       <label class="field-label">{{ 'nutrition.meal_type' | translate }}</label>
       <div class="meal-type-buttons" role="group" [attr.aria-label]="'nutrition.meal_type' | translate">
-        @for (mt of mealTypes; track mt) {
+        @for (mt of availableMealTypes(); track mt) {
           <button class="meal-btn"
                   [class.meal-btn--active]="selectedMealType === mt"
                   [attr.aria-pressed]="selectedMealType === mt"
@@ -70,6 +70,20 @@
         <span class="chip-value">{{ nutrients().fat }}g</span>
         <span class="chip-label">{{ 'nutrition.fat' | translate }}</span>
       </div>
+    </div>
+
+    <!-- Calorie impact indicator -->
+    <div class="impact-bar" [class.impact-bar--warning]="impactLevel() === RiskLevel.MODERATE" [class.impact-bar--danger]="impactLevel() === RiskLevel.HIGH">
+      <div class="impact-track">
+        <div class="impact-fill" [style.width.%]="impactPercent()"></div>
+      </div>
+      <span class="impact-label">
+        @if (impactLevel() === RiskLevel.HIGH) {
+          {{ 'nutrition.impact_exceeded' | translate: { percent: impactPercent() } }}
+        } @else {
+          {{ 'nutrition.impact_approaching' | translate: { percent: impactPercent() } }}
+        }
+      </span>
     </div>
 
     <!-- Actions -->

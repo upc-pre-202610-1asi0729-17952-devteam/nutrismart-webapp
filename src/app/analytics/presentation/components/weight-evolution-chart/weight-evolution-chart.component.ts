@@ -1,10 +1,10 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-weight-evolution-chart',
   standalone: true,
-  imports: [CommonModule],
+  imports: [TranslateModule],
   templateUrl: './weight-evolution-chart.component.html',
   styleUrl: './weight-evolution-chart.component.css',
 })
@@ -32,22 +32,18 @@ export class WeightEvolutionChartComponent implements OnChanges {
       return;
     }
 
-    const weights = this.weightEvolution.map(entry => entry.weight);
-    if (this.goalWeight !== undefined) {
-      weights.push(this.goalWeight);
-    }
+    const weights = this.weightEvolution.map(e => e.weight);
+    if (this.goalWeight !== undefined) weights.push(this.goalWeight);
 
-    this.minWeight = Math.min(...weights) - 2; // Add some padding
-    this.maxWeight = Math.max(...weights) + 2; // Add some padding
-
+    this.minWeight = Math.min(...weights) - 2;
+    this.maxWeight = Math.max(...weights) + 2;
     this.minDate = new Date(this.weightEvolution[0].date);
     this.maxDate = new Date(this.weightEvolution[this.weightEvolution.length - 1].date);
 
-    const chartWidth = 500; // Fixed width for scaling purposes in SVG
-    const chartHeight = 150; // Fixed height for scaling purposes in SVG
+    const chartWidth = 500;
+    const chartHeight = 150;
 
     this.chartPoints = this.weightEvolution.map((entry, index) => {
-      const date = new Date(entry.date);
       const x = (index / (this.weightEvolution.length - 1)) * chartWidth;
       const y = chartHeight - ((entry.weight - this.minWeight) / (this.maxWeight - this.minWeight)) * chartHeight;
       return { x, y, date: entry.date, weight: entry.weight };
@@ -58,20 +54,13 @@ export class WeightEvolutionChartComponent implements OnChanges {
     }
   }
 
-  // Helper to format date for X-axis labels
   formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
-  // Helper to generate Y-axis labels
   getYAxisLabels(): number[] {
     if (this.minWeight === this.maxWeight) return [this.minWeight];
-    const labels: number[] = [];
-    const step = (this.maxWeight - this.minWeight) / 3; // 3 steps for 4 labels
-    for (let i = 0; i <= 3; i++) {
-      labels.push(Math.round(this.minWeight + i * step));
-    }
-    return labels.reverse(); // Display higher values at the top
+    const step = (this.maxWeight - this.minWeight) / 3;
+    return [0, 1, 2, 3].map(i => Math.round(this.minWeight + i * step)).reverse();
   }
 }

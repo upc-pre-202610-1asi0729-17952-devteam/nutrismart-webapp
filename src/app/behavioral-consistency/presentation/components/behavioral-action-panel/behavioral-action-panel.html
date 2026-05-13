@@ -1,19 +1,22 @@
 <div class="action-panel-container">
-  <h3 class="panel-title">Acciones de Hoy</h3>
+  <h3 class="panel-title">{{ 'behavioral.action_panel.title' | translate }}</h3>
   <div class="actions-grid">
-    <button (click)="markGoalMet()" class="action-btn btn-success" title="Registrar cumplimiento">
+    <button (click)="markGoalMet()" class="action-btn btn-success"
+            [title]="'behavioral.action_panel.goal_met' | translate">
       <span class="icon">✓</span>
-      <span class="label">Meta Cumplida</span>
+      <span class="label">{{ 'behavioral.action_panel.goal_met' | translate }}</span>
     </button>
 
-    <button (click)="markGoalMissed()" class="action-btn btn-warning" title="Marcar como no cumplido">
+    <button (click)="markGoalMissed()" class="action-btn btn-warning"
+            [title]="'behavioral.action_panel.skip_log' | translate">
       <span class="icon">✕</span>
-      <span class="label">Saltar Registro</span>
+      <span class="label">{{ 'behavioral.action_panel.skip_log' | translate }}</span>
     </button>
 
-    <button (click)="refresh()" class="action-btn btn-sync" title="Sincronizar dispositivos">
+    <button (click)="refresh()" class="action-btn btn-sync"
+            [title]="'behavioral.action_panel.sync_fit' | translate">
       <span class="icon">🔄</span>
-      <span class="label">Sincronizar Fit</span>
+      <span class="label">{{ 'behavioral.action_panel.sync_fit' | translate }}</span>
     </button>
   </div>
 </div>

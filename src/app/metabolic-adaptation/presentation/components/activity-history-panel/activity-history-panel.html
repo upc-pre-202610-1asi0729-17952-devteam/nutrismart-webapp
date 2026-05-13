@@ -1,0 +1,74 @@
+<section class="history-panel">
+
+  <div class="history-panel__header">
+    <h2 class="history-panel__title">{{ 'physical_activity.history.title' | translate }}</h2>
+  </div>
+
+  @if (logs().length === 0) {
+    <div class="history-panel__empty" role="status">
+      <span class="material-icons history-panel__empty-icon">directions_run</span>
+      <p class="history-panel__empty-text">{{ 'physical_activity.history.empty' | translate }}</p>
+    </div>
+  } @else {
+
+    <div class="history-panel__table-wrapper">
+      <table class="history-table" role="table">
+        <thead class="history-table__head">
+          <tr>
+            <th scope="col">{{ 'physical_activity.history.col_type' | translate }}</th>
+            <th scope="col">{{ 'physical_activity.history.col_duration' | translate }}</th>
+            <th scope="col">{{ 'physical_activity.history.col_calories' | translate }}</th>
+            <th scope="col">{{ 'physical_activity.history.col_date' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (log of logs(); track log.id) {
+            <tr class="history-table__row">
+              <td class="history-table__type">
+                <span class="activity-badge"></span>
+                {{ ('physical_activity.activity_types.' + log.activityType) | translate }}
+              </td>
+              <td class="history-table__duration">
+                {{ log.durationMinutes }}&nbsp;{{ 'physical_activity.history.min' | translate }}
+              </td>
+              <td class="history-table__calories">{{ log.caloriesBurned }} kcal</td>
+              <td class="history-table__date">{{ log.timestamp | date: 'mediumDate' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (!showAll()) {
+      <div class="history-panel__footer">
+        <button class="see-all-btn" (click)="onViewAll()" type="button">
+          {{ 'physical_activity.history.see_all_btn' | translate }}
+          <span class="material-icons see-all-btn__icon">arrow_forward</span>
+        </button>
+      </div>
+    } @else if (totalPages() > 1) {
+      <div class="history-panel__pagination" role="navigation"
+           [attr.aria-label]="'physical_activity.history.title' | translate">
+        <button class="pagination-btn"
+                [disabled]="currentPage() === 1"
+                (click)="onPrev()"
+                type="button"
+                [attr.aria-label]="'physical_activity.history.prev_page' | translate">
+          &#8249;
+        </button>
+        <span class="pagination-info">
+          {{ 'physical_activity.history.page_of' | translate: { current: currentPage(), total: totalPages() } }}
+        </span>
+        <button class="pagination-btn"
+                [disabled]="currentPage() === totalPages()"
+                (click)="onNext()"
+                type="button"
+                [attr.aria-label]="'physical_activity.history.next_page' | translate">
+          &#8250;
+        </button>
+      </div>
+    }
+
+  }
+
+</section>

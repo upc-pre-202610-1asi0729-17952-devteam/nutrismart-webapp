@@ -19,8 +19,8 @@ export interface BehavioralProgressResource extends BaseResource {
   consecutiveMisses: number;
   /** Last date where the user met the daily goal, in ISO format. */
   lastGoalMetDate: string | null;
-  /** Weekly completion flags, usually representing the last seven days. */
-  weekDots: boolean[];
+  /** ISO dates (YYYY-MM-DD) on which the daily goal was completed. */
+  goalMetDates: string[];
 }
 
 /**

@@ -1,0 +1,23 @@
+@if (approaching().length > 0) {
+  <div class="macro-warning macro-warning--yellow" role="alert" aria-live="polite">
+    <span class="material-icons macro-warning__icon">warning_amber</span>
+    <span class="macro-warning__text">
+      {{ 'nutrition.warning_approaching' | translate }}:
+      @for (key of approaching(); track key; let last = $last) {
+        <strong>{{ key | translate }}</strong>@if (!last) {,&nbsp;}
+      }
+    </span>
+  </div>
+}
+
+@if (exceeded().length > 0) {
+  <div class="macro-warning macro-warning--red" role="alert" aria-live="polite">
+    <span class="material-icons macro-warning__icon">error_outline</span>
+    <span class="macro-warning__text">
+      {{ 'nutrition.warning_exceeded' | translate }}:
+      @for (key of exceeded(); track key; let last = $last) {
+        <strong>{{ key | translate }}</strong>@if (!last) {,&nbsp;}
+      }
+    </span>
+  </div>
+}

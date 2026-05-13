@@ -1,6 +1,10 @@
 import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../iam/application/iam.store';
 import { NutritionStore } from '../../nutrition-tracking/application/nutrition.store';
+import { DomainEventBus } from '../../shared/application/domain-event-bus';
+import { PantryUpdated } from '../../shared/domain/pantry-updated.event';
+import { RecipeSuggested } from '../../shared/domain/recipe-suggested.event';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
 import { PantryItem, IngredientCategory } from '../domain/model/pantry-item.entity';
 import { RecipeSuggestion } from '../domain/model/recipe-suggestion.entity';
@@ -20,6 +24,8 @@ export class PantryStore {
   private pantryApi       = inject(PantryApi);
   private iamStore        = inject(IamStore);
   private nutritionStore  = inject(NutritionStore);
+  private eventBus        = inject(DomainEventBus);
+  private translate       = inject(TranslateService);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
@@ -89,6 +95,11 @@ export class PantryStore {
           this._refreshSuggestions();
         }
       });
+    });
+    this.translate.onLangChange.subscribe(() => {
+      if (this.iamStore.currentUser() && this._pantryItems().length > 0) {
+        this._refreshSuggestions();
+      }
     });
   }
 
@@ -163,6 +174,7 @@ export class PantryStore {
           this._pantryItems.update(prev => [...prev, created]);
           this._loading.set(false);
           resolve();
+          this.eventBus.publish(new PantryUpdated(user.id, 'added', nameKey ?? name));
           this._refreshSuggestions();
         },
         error: () => {
@@ -181,6 +193,8 @@ export class PantryStore {
    * @param itemId - Numeric ID of the pantry item to remove.
    */
   async deletePantryItem(itemId: number): Promise<void> {
+    const user    = this.iamStore.currentUser();
+    const removed = this._pantryItems().find(i => i.id === itemId);
     this._loading.set(true);
     return new Promise((resolve) => {
       this.pantryApi.deletePantryItem(itemId).subscribe({
@@ -188,6 +202,9 @@ export class PantryStore {
           this._pantryItems.update(prev => prev.filter(i => i.id !== itemId));
           this._loading.set(false);
           resolve();
+          if (user && removed) {
+            this.eventBus.publish(new PantryUpdated(user.id, 'removed', removed.nameKey ?? removed.name));
+          }
           this._refreshSuggestions();
         },
         error: () => {
@@ -218,19 +235,23 @@ export class PantryStore {
       return;
     }
 
-    const pantryKeys = new Set(
+    const pantryKeys        = new Set(
       this._pantryItems()
         .map(i => i.nameKey)
         .filter((k): k is string => !!k),
     );
+    const userRestrictions  = user.restrictions as string[] ?? [];
 
     this.pantryApi.getRecipeSuggestions(user.goal).subscribe({
       next: (all) => {
-        const matched = all.filter(recipe => {
-          const hits = recipe.ingredients.filter(ing => pantryKeys.has(ing)).length;
-          return hits > 0 && hits / recipe.ingredients.length >= 0.5;
-        });
+        const matched = all.filter(recipe =>
+          recipe.isCompatibleWith(pantryKeys) && !recipe.hasConflictWith(userRestrictions),
+        );
         this._recipeSuggestions.set(matched);
+        const top = matched[0];
+        if (top) {
+          this.eventBus.publish(new RecipeSuggested(user.id, top.name, top.calories, top.protein, top.carbs, top.fat));
+        }
       },
       error: () => this._error.set('Failed to load recipe suggestions.'),
     });

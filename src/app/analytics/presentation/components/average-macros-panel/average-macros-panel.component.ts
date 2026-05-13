@@ -1,11 +1,12 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { MacroAnalysis } from '../../../domain/model/analytics-models';
 
 @Component({
   selector: 'app-average-macros-panel',
   standalone: true,
-  imports: [CommonModule, NgClass],
+  imports: [NgClass, TranslateModule],
   templateUrl: './average-macros-panel.component.html',
   styleUrl: './average-macros-panel.component.css',
 })

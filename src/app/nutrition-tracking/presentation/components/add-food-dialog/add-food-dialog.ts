@@ -1,7 +1,8 @@
-import { Component, computed, EventEmitter, inject, input, Output, signal } from '@angular/core';
+import { Component, computed, EventEmitter, inject, input, OnInit, Output, signal } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { FoodItem } from '../../../domain/model/food-item.entity';
 import { MealType } from '../../../domain/model/meal-type.enum';
+import { NutritionalRiskLevel } from '../../../domain/model/nutritional-risk-level.enum';
 
 /**
  * Payload emitted when the user confirms adding a food to the log.
@@ -27,13 +28,22 @@ export interface AddFoodPayload {
   templateUrl: './add-food-dialog.html',
   styleUrl: './add-food-dialog.css',
 })
-export class AddFoodDialogComponent {
+export class AddFoodDialogComponent implements OnInit {
 
   /** The food item to add. */
   food = input.required<FoodItem>();
 
   /** Pre-selected meal type (from the "+ Add food to X" button). */
   targetMealType = input<MealType>(MealType.LUNCH);
+
+  /** Calories already consumed for the selected date — used for impact indicator. */
+  currentConsumed = input<number>(0);
+
+  /** User's daily calorie goal — used for impact indicator. */
+  dailyGoal = input<number>(1800);
+
+  /** Meal types available to select (time-gated by parent for today). */
+  availableMealTypes = input<MealType[]>([MealType.BREAKFAST, MealType.LUNCH, MealType.SNACK, MealType.DINNER]);
 
   /** Emitted with the full payload when the user confirms. */
   @Output() confirm = new EventEmitter<AddFoodPayload>();
@@ -45,7 +55,7 @@ export class AddFoodDialogComponent {
 
   protected get currentLang(): string { return this.translate.currentLang ?? 'en'; }
 
-  protected mealTypes        = Object.values(MealType);
+  protected readonly RiskLevel = NutritionalRiskLevel;
   protected selectedMealType: MealType = MealType.LUNCH;
   protected quantity = signal(100);
 
@@ -64,9 +74,24 @@ export class AddFoodDialogComponent {
     this.food().getNutrientsForQuantity(this.quantity())
   );
 
+  /** Projected % of daily goal after adding this food (capped at 150%). */
+  protected impactPercent = computed(() => {
+    const goal = this.dailyGoal();
+    if (goal <= 0) return 0;
+    return Math.min(Math.round(((this.currentConsumed() + this.nutrients().calories) / goal) * 100), 150);
+  });
+
+  /** Nutritional risk of adding this food given the current daily consumption. */
+  protected impactLevel = computed((): NutritionalRiskLevel =>
+    this.nutrients().classifyRisk(this.dailyGoal(), this.currentConsumed())
+  );
+
   ngOnInit(): void {
     this.quantity.set(this.food().servingSize > 0 ? this.food().servingSize : 100);
-    this.selectedMealType = this.targetMealType();
+    const preferred = this.targetMealType();
+    this.selectedMealType = this.availableMealTypes().includes(preferred)
+      ? preferred
+      : this.availableMealTypes()[0];
   }
 
   onQuantityChange(event: Event): void {

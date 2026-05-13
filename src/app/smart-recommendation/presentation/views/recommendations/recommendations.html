@@ -14,9 +14,23 @@
         }
       </p>
     </div>
-    <div class="header-badge" [class.badge--travel]="store.isTravelMode()">
-      <span class="badge-icon">{{ headerBadgeIcon() }}</span>
-      <span class="badge-text">{{ headerBadgeLabel() }}</span>
+    <div class="header-chips">
+      @if (store.isTravelMode()) {
+        <div class="travel-chip" role="status" [attr.aria-label]="'recommendations.travel_chip' | translate:{ city: store.travelContext()?.city }">
+          <span>✈</span>
+          <span>{{ 'recommendations.travel_chip' | translate:{ city: store.travelContext()?.city } }}</span>
+          <button class="travel-chip-close" (click)="onDisableAutoTravel()" [attr.aria-label]="'recommendations.travel_disable' | translate">✕</button>
+        </div>
+      }
+      <app-location-picker
+        [locations]="store.availableLocations()"
+        [selectedCity]="store.weatherContext()?.city ?? ''"
+        [currentLabel]="pickerLabel()"
+        [demoTemperature]="store.demoTemperature()"
+        [isTravelMode]="store.isTravelMode()"
+        (citySelected)="onCitySelected($event)"
+        (temperatureChanged)="onTemperatureChanged($event)"
+      />
     </div>
   </header>
 
@@ -39,21 +53,6 @@
       </div>
     }
 
-    <!-- ── Demo bar ─────────────────────────────────────────── -->
-    <div class="demo-bar">
-      <span class="demo-label">{{ 'recommendations.demo_label' | translate }}</span>
-
-      <div class="demo-group">
-        <span class="demo-group-label">{{ 'recommendations.demo_adherence' | translate }}</span>
-        <button class="demo-btn" [class.demo-btn--active]="demoAdherence() === 'on_track'"
-                (click)="setDemoAdherence('on_track')">{{ 'recommendations.demo_on_track' | translate }}</button>
-        <button class="demo-btn demo-btn--warn" [class.demo-btn--active]="demoAdherence() === 'at_risk'"
-                (click)="setDemoAdherence('at_risk')">{{ 'recommendations.demo_at_risk' | translate }}</button>
-        <button class="demo-btn demo-btn--danger" [class.demo-btn--active]="demoAdherence() === 'dropped'"
-                (click)="setDemoAdherence('dropped')">{{ 'recommendations.demo_dropped' | translate }}</button>
-      </div>
-    </div>
-
     <!-- ── Location denied banner ──────────────────────────────── -->
     @if (store.locationDenied() && !store.isTravelMode()) {
       <div class="location-banner">
@@ -73,17 +72,17 @@
         </div>
         <div class="banner-body">
           @if (store.isTravelMode()) {
-            <strong>{{ 'recommendations.banner_travel_active' | translate:{ location: store.travelContext()?.locationLabel(), temp: store.weatherContext()?.temperatureCelsius } }}</strong>
+            <strong>{{ 'recommendations.banner_travel_active' | translate:{ location: store.travelContext()?.locationLabel(), temp: displayTemperature() } }}</strong>
             <p>{{ 'recommendations.banner_travel_desc' | translate:{ city: travelCity() } }}</p>
           } @else {
             <strong>
-              {{ store.weatherContext()?.isHot() ? ('recommendations.its_hot' | translate) : ('recommendations.its_cold' | translate) }} in
+              {{ isDisplayHot() ? ('recommendations.its_hot' | translate) : ('recommendations.its_cold' | translate) }} in
               {{ store.weatherContext()?.city }} —
-              {{ store.weatherContext()?.temperatureCelsius }}°C ·
-              {{ store.weatherContext()?.condition }}
+              {{ displayTemperature() }}°C ·
+              {{ weatherConditionLabel() }}
             </strong>
             <p>
-              @if (store.weatherContext()?.isHot()) {
+              @if (isDisplayHot()) {
                 {{ 'recommendations.banner_hot_desc' | translate }}
               } @else {
                 {{ 'recommendations.banner_cold_desc' | translate }}
@@ -95,7 +94,7 @@
           @if (store.isTravelMode()) {
             {{ 'recommendations.detected_auto' | translate }}
           } @else {
-            {{ store.weatherContext()?.updatedAgo() }}
+            {{ weatherUpdatedAgo() }}
           }
         </div>
       </div>
@@ -211,7 +210,7 @@
           @if (store.activeFilters().length > 0) {
             <div class="filter-tags">
               @for (f of store.activeFilters(); track f) {
-                <span class="filter-tag">{{ f }}</span>
+                <span class="filter-tag">{{ ('restrictions.' + f) | translate }}</span>
               }
             </div>
           } @else {
@@ -234,39 +233,6 @@
             <span class="balance-label">{{ 'recommendations.balance_remaining' | translate }}</span>
             <span class="balance-value balance-value--accent">{{ dailyRemaining() }} kcal</span>
           </div>
-        </div>
-
-        <!-- Travel mode panel -->
-        <div class="panel">
-          <h3 class="panel-title">{{ 'recommendations.travel_panel_title' | translate }}</h3>
-
-          @if (store.isTravelMode()) {
-            <!-- Auto-detected travel active -->
-            <div class="travel-active-row">
-              <div class="travel-city-info">
-                <span class="travel-city-name">
-                  {{ store.travelContext()?.city }}{{ store.travelContext()?.country ? ', ' + store.travelContext()?.country : '' }}
-                </span>
-                <span class="travel-city-sub">{{ 'recommendations.travel_auto_detected' | translate }}</span>
-              </div>
-            </div>
-
-            @if (store.unrecognizedCity()) {
-              <div class="unrecognized-city-msg">
-                <span>{{ 'recommendations.unrecognized_city' | translate }}</span>
-              </div>
-            }
-
-            <button class="btn btn--ghost btn--sm" style="margin-top:10px" (click)="onDisableAutoTravel()">
-              {{ 'recommendations.travel_disable' | translate }}
-            </button>
-
-          } @else {
-            <!-- At home — informational -->
-            <p class="panel-subtitle">
-              {{ 'recommendations.travel_at_home' | translate:{ homeCity: homeCity() } }}
-            </p>
-          }
         </div>
 
       </aside>

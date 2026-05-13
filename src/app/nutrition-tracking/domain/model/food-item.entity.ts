@@ -1,5 +1,6 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 import { DietaryRestriction } from '../../../iam/domain/model/dietary-restriction.enum';
+import { MacronutrientDistribution } from './macronutrient-distribution.value-object';
 
 /**
  * Constructor DTO for creating a {@link FoodItem} instance.
@@ -144,19 +145,17 @@ export class FoodItem implements BaseEntity {
     return (lang === 'es' && this._nameEs) ? this._nameEs : this._name;
   }
 
-  getNutrientsForQuantity(quantity: number): {
-    calories: number; protein: number; carbs: number;
-    fat: number; fiber: number; sugar: number;
-  } {
+  getNutrientsForQuantity(quantity: number): MacronutrientDistribution {
     const f = quantity / 100;
-    return {
-      calories: Math.round(this._caloriesPer100g * f * 10) / 10,
-      protein:  Math.round(this._proteinPer100g  * f * 10) / 10,
-      carbs:    Math.round(this._carbsPer100g    * f * 10) / 10,
-      fat:      Math.round(this._fatPer100g      * f * 10) / 10,
-      fiber:    Math.round(this._fiberPer100g    * f * 10) / 10,
-      sugar:    Math.round(this._sugarPer100g    * f * 10) / 10,
-    };
+    const r = (v: number) => Math.round(v * f * 10) / 10;
+    return new MacronutrientDistribution({
+      calories: r(this._caloriesPer100g),
+      protein:  r(this._proteinPer100g),
+      carbs:    r(this._carbsPer100g),
+      fat:      r(this._fatPer100g),
+      fiber:    r(this._fiberPer100g),
+      sugar:    r(this._sugarPer100g),
+    });
   }
 
   /**

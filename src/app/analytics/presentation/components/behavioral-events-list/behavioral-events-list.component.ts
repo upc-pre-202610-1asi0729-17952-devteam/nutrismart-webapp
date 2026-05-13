@@ -1,11 +1,11 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import { BehavioralEvent } from '../../../domain/model/analytics-models';
 
 @Component({
   selector: 'app-behavioral-events-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [TranslateModule],
   templateUrl: './behavioral-events-list.component.html',
   styleUrl: './behavioral-events-list.component.css',
 })

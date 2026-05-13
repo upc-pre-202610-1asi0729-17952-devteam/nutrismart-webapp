@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'http://localhost:8080/api/v1',
+  apiBaseUrl: 'https://smart-api.nutriproject.xyz/api/v1',
   iamEndpointPath: '/users',
   nutritionLogEndpointPath: '/nutrition-log',
   foodSearchEndpointPath: '/foods',
@@ -14,10 +14,15 @@ export const environment = {
   subscriptionsEndpointPath: '/subscriptions',
   billingHistoryEndpointPath: '/billing-history',
   behavioralProgressEndpointPath: '/behavioral-progress',
+  eatingBehaviorPatternsEndpointPath: '/eating-behavior-patterns',
+  recoveryPlansEndpointPath: '/recovery-plans',
   dailyBalanceEndpointPath: '/daily-balance',
   locationSnapshotsEndpointPath: '/user-location-snapshots',
   weatherSnapshotsEndpointPath: '/weather-snapshots',
   recommendationCardsEndpointPath: '/recommendation-cards',
   recommendationSessionsEndpointPath: '/recommendation-sessions',
   travelContextsEndpointPath: '/travel-contexts',
+  wearableConnectionsEndpointPath: '/wearable-connections',
+  activityLogsEndpointPath: '/activity-logs',
+  metabolicAdaptationLogsEndpointPath: '/metabolic-adaptation-logs',
 };

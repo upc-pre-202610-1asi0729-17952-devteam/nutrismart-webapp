@@ -20,15 +20,16 @@
 }
 
 .page-title {
-  font-size: 1.8rem;
+  font-size: 26px;
   font-weight: 700;
   color: var(--nutrismart-text-dark, #1a2e2e);
+  letter-spacing: -0.3px;
   margin: 0 0 10px;
 }
 
 .page-subtitle {
-  color: var(--nutrismart-text-mid, #4a6060);
-  font-size: 1rem;
+  color: var(--nutrismart-text-light, #8aa8a8);
+  font-size: 13px;
   margin: 0;
 }
 
@@ -157,6 +158,26 @@
 .subscription-shell.manage-mode {
   min-height: unset;
   padding: 32px 24px;
+}
+
+@media (max-width: 1023px) {
+  .subscription-shell.manage-mode {
+    padding-top: 68px;
+  }
+}
+
+@media (max-width: 600px) {
+  .subscription-shell {
+    padding: 24px 16px;
+  }
+
+  .subscription-shell.manage-mode {
+    padding: 68px 16px 24px;
+  }
+
+  .plans-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .plan-card.current-plan {

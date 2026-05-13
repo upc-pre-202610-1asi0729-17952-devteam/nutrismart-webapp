@@ -6,11 +6,13 @@ import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@a
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 const WEIGHT_MAX_KG = 500;
+const MIN_GOAL_KG   = 30;
 const WAIST_MIN_CM  = 30;
 const WAIST_MAX_CM  = 200;
 import { MetabolicStore } from '../../../application/metabolic.store';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { BodyMetric, BmiCategory } from '../../../domain/model/body-metric.entity';
+import { ActivityLevel } from '../../../../iam/domain/model/activity-level.enum';
 
 /**
  * Main Body Progress view — route `/body-progress/progress`.
@@ -43,6 +45,8 @@ export class BodyProgressView implements OnInit {
   protected goalInputModel = signal<string>('');
   protected goalInputError = signal<string>('');
 
+  protected showGoalAutoSetModal = signal<boolean>(false);
+
   // ─── Composition update modal ─────────────────────────────────────────────
 
   protected showCompositionModal  = signal<boolean>(false);
@@ -69,7 +73,7 @@ export class BodyProgressView implements OnInit {
     { key: 'onboarding.visual_obese',      rangeKey: 'onboarding.visual_range_obese',      override: 32.0 },
   ];
 
-  protected get compositionValid(): boolean {
+  protected compositionValid = computed(() => {
     const mode = this.compositionMode();
     if (mode === 'A') {
       const v = parseFloat(this.compositionWaistCm());
@@ -77,7 +81,13 @@ export class BodyProgressView implements OnInit {
     }
     if (mode === 'B') return this.compositionPantSize() !== null;
     return this.compositionVisualLevel() !== null;
-  }
+  });
+
+  // ─── History entry edit state ─────────────────────────────────────────────
+
+  protected editingMetricId  = signal<number | string | null>(null);
+  protected editWeightInput  = signal<string>('');
+  protected editWeightError  = signal<string>('');
 
   // ─── Tooltip state ────────────────────────────────────────────────────────
 
@@ -91,13 +101,21 @@ export class BodyProgressView implements OnInit {
    * Live BMI/TDEE preview — delegates to BodyMetric entity methods to avoid
    * duplicating the Mifflin-St Jeor formula.
    */
+  /** TDEE for the current body metric using the user's actual activity level. */
+  protected currentTdee = computed(() => {
+    const metric        = this.store.currentMetric();
+    const activityLevel = this.iamStore.currentUser()?.activityLevel ?? ActivityLevel.MODERATE;
+    return metric ? metric.tdee(activityLevel) : null;
+  });
+
   protected weightPreview = computed<{ bmi: number; tdee: number } | null>(() => {
-    const raw      = parseFloat(this.weightInput());
+    const raw           = parseFloat(this.weightInput());
     if (!raw || raw <= 0 || raw > WEIGHT_MAX_KG) return null;
-    const heightCm = this.store.currentMetric()?.heightCm;
+    const heightCm      = this.store.currentMetric()?.heightCm;
     if (!heightCm) return null;
+    const activityLevel = this.iamStore.currentUser()?.activityLevel ?? ActivityLevel.MODERATE;
     const temp = new BodyMetric({ id: 0, userId: 0, weightKg: raw, heightCm, loggedAt: new Date().toISOString() });
-    return { bmi: temp.bmi(), tdee: temp.tdee() };
+    return { bmi: temp.bmi(), tdee: temp.tdee(activityLevel) };
   });
 
   protected weightInputInvalid = computed(() => {
@@ -106,12 +124,12 @@ export class BodyProgressView implements OnInit {
   });
 
   protected readonly goalInputInvalid = computed(() => {
-    const val     = this.goalInputModel();
-    const raw     = parseFloat(val);
-    const current = this.store.currentMetric()?.weightKg ?? 0;
+    const val = this.goalInputModel();
     if (!val.trim()) return false;
-    if (isNaN(raw) || raw <= 0) return true;
-    return raw >= current;
+    const raw = parseFloat(val);
+    if (isNaN(raw) || raw <= 0 || raw < MIN_GOAL_KG) return true;
+    const current = this.store.currentMetric()?.weightKg;
+    return current !== undefined && raw >= current;
   });
 
   protected formattedProjectedDate = computed(() => {
@@ -190,6 +208,14 @@ export class BodyProgressView implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.store.initialise();
+    const metric = this.store.currentMetric();
+    const user   = this.iamStore.currentUser();
+    if (metric && user && !this.store.isMuscleGain() && !(metric.targetWeightKg > 0)) {
+      await this.store.applyInitialTarget(user.goal);
+      if ((this.store.currentMetric()?.targetWeightKg ?? 0) > 0) {
+        this.showGoalAutoSetModal.set(true);
+      }
+    }
   }
 
   // ─── Global keyboard handler ──────────────────────────────────────────────
@@ -243,12 +269,21 @@ export class BodyProgressView implements OnInit {
     this.weightError.set('');
   }
 
-  onWeightInputChange(value: string): void {
-    this.weightInput.set(value);
+  onWeightInputChange(event: Event): void {
+    this.weightInput.set((event.target as HTMLInputElement).value);
     this.weightError.set('');
   }
 
   // ─── Inline goal weight edit ──────────────────────────────────────────────
+
+  onConfirmAutoGoal(): void {
+    this.showGoalAutoSetModal.set(false);
+  }
+
+  onAdjustAutoGoal(): void {
+    this.showGoalAutoSetModal.set(false);
+    this.onStartEditGoal();
+  }
 
   onStartEditGoal(): void {
     const target = this.store.currentMetric()?.targetWeightKg;
@@ -264,29 +299,36 @@ export class BodyProgressView implements OnInit {
   }
 
   async onSaveGoalInline(): Promise<void> {
-    const raw     = parseFloat(this.goalInputModel());
-    const current = this.store.currentMetric()?.weightKg ?? 0;
-
-    if (!this.goalInputModel().trim() || isNaN(raw) || raw <= 0) {
-      this.goalInputError.set(this.translate.instant('body_progress.error_weight_invalid'));
+    const raw   = parseFloat(this.goalInputModel());
+    const error = this.validateGoalWeight(raw);
+    if (!this.goalInputModel().trim() || error) {
+      this.goalInputError.set(error || this.translate.instant('body_progress.error_weight_invalid'));
       return;
     }
-    if (raw >= current) {
-      this.goalInputError.set(
-        this.translate.instant('body_progress.error_goal_below_current', { current }),
-      );
-      return;
-    }
-
     this.goalInputError.set('');
     await this.store.setTargetWeight(raw);
     this.isEditingGoal.set(false);
     this.goalInputModel.set('');
   }
 
-  onGoalModelChange(value: string): void {
+  onGoalModelChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
     this.goalInputModel.set(value);
-    this.goalInputError.set('');
+    this.goalInputError.set(value.trim() ? this.validateGoalWeight(parseFloat(value)) : '');
+  }
+
+  private validateGoalWeight(raw: number): string {
+    if (isNaN(raw) || raw <= 0) {
+      return this.translate.instant('body_progress.error_weight_invalid');
+    }
+    if (raw < MIN_GOAL_KG) {
+      return this.translate.instant('body_progress.error_goal_below_min', { min: MIN_GOAL_KG });
+    }
+    const current = this.store.currentMetric()?.weightKg;
+    if (current !== undefined && raw >= current) {
+      return this.translate.instant('body_progress.error_goal_below_current', { current: current.toFixed(1) });
+    }
+    return '';
   }
 
   // ─── Composition update modal ─────────────────────────────────────────────
@@ -301,6 +343,10 @@ export class BodyProgressView implements OnInit {
 
   onCloseCompositionModal(): void {
     this.showCompositionModal.set(false);
+    this.compositionMode.set('A');
+    this.compositionWaistCm.set('');
+    this.compositionPantSize.set(null);
+    this.compositionVisualLevel.set(null);
   }
 
   selectCompositionMode(mode: 'A' | 'B' | 'C'): void {
@@ -366,4 +412,42 @@ export class BodyProgressView implements OnInit {
   isDeltaPositive(delta: number): boolean {
     return delta > 0;
   }
+
+  // ─── History entry edit / delete ─────────────────────────────────────────
+
+  isWithin7Days(isoDate: string): boolean {
+    const diffDays = Math.floor((Date.now() - new Date(isoDate).getTime()) / 86_400_000);
+    return diffDays < 7;
+  }
+
+  onStartEditMetric(metric: BodyMetric): void {
+    this.editingMetricId.set(metric.id);
+    this.editWeightInput.set(metric.weightKg.toString());
+    this.editWeightError.set('');
+  }
+
+  onEditWeightInput(event: Event): void {
+    this.editWeightInput.set((event.target as HTMLInputElement).value);
+    this.editWeightError.set('');
+  }
+
+  onCancelEditMetric(): void {
+    this.editingMetricId.set(null);
+    this.editWeightInput.set('');
+    this.editWeightError.set('');
+  }
+
+  async onSaveEditMetric(metric: BodyMetric): Promise<void> {
+    const raw = parseFloat(this.editWeightInput());
+    if (isNaN(raw) || raw <= 0 || raw > WEIGHT_MAX_KG) {
+      this.editWeightError.set(this.translate.instant('body_progress.error_weight_invalid'));
+      return;
+    }
+    this.editWeightError.set('');
+    await this.store.updateWeight(metric, raw);
+    this.editingMetricId.set(null);
+    this.editWeightInput.set('');
+  }
+
+
 }

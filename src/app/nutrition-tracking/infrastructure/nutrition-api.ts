@@ -47,7 +47,7 @@ export class NutritionApi extends BaseApi {
    * @param userId - The authenticated user's numeric ID.
    * @returns Observable emitting an array of {@link MealRecord} entities.
    */
-  getMealEntries(userId: any): Observable<MealRecord[]> {
+  getMealEntries(userId: number | string): Observable<MealRecord[]> {
     return this.nutritionLogEndpoint.getByUserId(userId);
   }
 

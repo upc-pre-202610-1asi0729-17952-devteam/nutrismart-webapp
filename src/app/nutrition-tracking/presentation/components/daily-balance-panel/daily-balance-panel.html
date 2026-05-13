@@ -1,7 +1,7 @@
 <div class="balance-panel" [class.balance-panel--exceeded]="exceeded()" aria-live="polite">
 
   <h3 class="panel-title" [class.title--danger]="exceeded()">
-    {{ (exceeded() ? 'nutrition.calorie_limit_exceeded' : 'nutrition.search_food') | translate }}
+    {{ (exceeded() ? 'nutrition.calorie_limit_exceeded' : 'nutrition.daily_balance') | translate }}
   </h3>
 
   <div class="balance-rows">
@@ -15,6 +15,15 @@
         {{ consumed() | number }} kcal
       </span>
     </div>
+    @if (active() > 0) {
+      <div class="balance-row">
+        <span class="balance-label balance-label--active">
+          <span class="material-icons balance-label__icon">directions_run</span>
+          {{ 'nutrition.active_burned' | translate }}
+        </span>
+        <span class="balance-value val--active">+{{ active() | number }} kcal</span>
+      </div>
+    }
     <div class="balance-row balance-row--total">
       <span class="balance-label">{{ (exceeded() ? 'nutrition.exceeded' : 'nutrition.remaining') | translate }}</span>
       <span class="balance-value" [class.val--danger]="exceeded()" [class.val--remaining]="!exceeded()">

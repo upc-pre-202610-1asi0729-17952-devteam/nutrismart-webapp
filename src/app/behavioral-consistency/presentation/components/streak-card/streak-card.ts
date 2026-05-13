@@ -1,4 +1,5 @@
 import { Component, computed, input } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 /**
  * Displays the user's current streak and missed-day count with motivational feedback.
@@ -7,6 +8,7 @@ import { Component, computed, input } from '@angular/core';
   selector: 'app-streak-card',
   templateUrl: './streak-card.html',
   styleUrl: './streak-card.css',
+  imports: [TranslatePipe],
 })
 export class StreakCard {
   /** Consecutive successful days. */
@@ -15,23 +17,15 @@ export class StreakCard {
   /** Consecutive missed days. */
   readonly consecutiveMisses = input.required<number>();
 
-  /** Contextual message based on the current streak and misses. */
-  readonly streakMessage = computed(() => {
+  /** i18n key for the contextual motivational message. */
+  readonly streakMessageKey = computed(() => {
     const streak = this.streak();
     const misses = this.consecutiveMisses();
-
-    if (misses >= 2) {
-      return '¡Cuidado! Tu racha está en peligro.';
-    }
-
-    if (streak === 0) {
-      return 'Empieza hoy tu primer registro.';
-    }
-
-    if (streak < 4) return '¡Buen comienzo! No te detengas.';
-    if (streak < 8) return '¡Gran ritmo! Estás creando un hábito.';
-
-    return '¡Eres imparable! Tu constancia es clave.';
+    if (misses >= 2) return 'behavioral.streak.message_danger';
+    if (streak === 0) return 'behavioral.streak.message_start';
+    if (streak < 4)  return 'behavioral.streak.message_beginning';
+    if (streak < 8)  return 'behavioral.streak.message_habit';
+    return 'behavioral.streak.message_unstoppable';
   });
 
   /** Whether there are missed days that should be highlighted. */

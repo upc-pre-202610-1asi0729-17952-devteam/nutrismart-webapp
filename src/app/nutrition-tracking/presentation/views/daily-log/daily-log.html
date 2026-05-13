@@ -6,6 +6,14 @@
       <h1 class="page-title">{{ 'nutrition.page_title' | translate }}</h1>
       <p class="page-subtitle">{{ 'nutrition.page_subtitle' | translate }}</p>
     </div>
+    @if (isEditable()) {
+      <button class="add-food-btn"
+              [class.add-food-btn--pulse]="filteredRecords().length === 0"
+              (click)="openFoodSearch()"
+              type="button">
+        + {{ 'nutrition.add_food_btn' | translate }}
+      </button>
+    }
   </header>
 
   <!-- ── Date Navigator ────────────────────────────────────── -->
@@ -13,7 +21,7 @@
     <button class="date-nav-btn"
             [disabled]="isAtAccountStart()"
             (click)="goToPreviousDay()"
-            aria-label="Previous day">
+            [attr.aria-label]="'nutrition.prev_day' | translate">
       &#8249;
     </button>
     <div class="date-nav-label" [class.date-nav-label--today]="isToday()">
@@ -23,10 +31,21 @@
     <button class="date-nav-btn"
             [disabled]="isToday()"
             (click)="goToNextDay()"
-            aria-label="Next day">
+            [attr.aria-label]="'nutrition.next_day' | translate">
       &#8250;
     </button>
   </div>
+
+  <!-- ── Empty-day banner ─────────────────────────────────── -->
+  @if (filteredRecords().length === 0 && isEditable()) {
+    <div class="no-meals-banner" role="status">
+      <span class="no-meals-banner__icon">🍽</span>
+      <div class="no-meals-banner__body">
+        <strong>{{ 'nutrition.no_meals_banner_title' | translate }}</strong>
+        <span>{{ 'nutrition.no_meals_banner_desc' | translate }}</span>
+      </div>
+    </div>
+  }
 
   <!-- ── Read-only notice ───────────────────────────────────── -->
   @if (!isEditable()) {
@@ -36,20 +55,19 @@
     </div>
   }
 
-  <!-- ── DailyGoalExceeded alert - T22 ──────────────────────── -->
-  @if (isDailyGoalExceeded()) {
-    <div class="alert alert--danger" role="alert" aria-live="polite">
-      <span class="alert-icon">⚠</span>
-      <span>{{ 'nutrition.goal_exceeded_alert' | translate: { kcal: exceededBy() } }}</span>
-    </div>
-  }
-
   <!-- ── DailyGoalMet alert - T22 ───────────────────────────── -->
   @if (!isDailyGoalExceeded() && allMealsLogged() && showGoalMetAlert()) {
     <div class="alert alert--success" role="alert" aria-live="polite">
       <span class="alert-icon">✓</span>
       <span>{{ 'nutrition.goal_met_alert' | translate }}</span>
     </div>
+  }
+
+  <!-- ── Macro threshold warnings (today only) ─────────────── -->
+  @if (isToday()) {
+    <app-macro-warning-banner
+      [approaching]="approachingMacros()"
+      [exceeded]="exceededMacros()" />
   }
 
   <!-- ── Daily Summary bar ───────────────────────────────────── -->
@@ -93,29 +111,48 @@
           [color]="section.color"
           [records]="section.records"
           [isSkipped]="section.skipped"
-          (removeEntry)="onRemoveEntry($event)"
-          (viewEntry)="onViewEntry($event)">
+          (mealRemoved)="onMealRemoved($event)"
+          (entryViewed)="onViewEntry($event)">
         </app-meal-section>
       }
     </main>
 
-    <!-- ── RIGHT: Search + Balance ─────────────────────────── -->
+    <!-- ── RIGHT: Balance ────────────────────────────────────── -->
     <aside class="right-col">
-      <app-food-search-panel
-        (foodSelected)="onFoodSelected($event)">
-      </app-food-search-panel>
-
-      <app-daily-balance-panel></app-daily-balance-panel>
+      <app-daily-balance-panel
+        [consumed]="filteredTotals().calories"
+        [dailyGoal]="dailyGoalTarget()"
+        [active]="selectedActive()">
+      </app-daily-balance-panel>
     </aside>
 
   </div>
+
+  <!-- ── Food Search Modal ────────────────────────────────────── -->
+  @if (showFoodSearchModal()) {
+    <div class="search-modal-backdrop" (click)="closeFoodSearch()" role="dialog" aria-modal="true" [attr.aria-label]="'nutrition.search_modal_title' | translate">
+      <div class="search-modal" (click)="$event.stopPropagation()">
+        <div class="search-modal-header">
+          <h2 class="search-modal-title">{{ 'nutrition.search_modal_title' | translate }}</h2>
+          <span class="search-modal-date">{{ formattedDate() }}</span>
+          <button class="search-modal-close" (click)="closeFoodSearch()" type="button" [attr.aria-label]="'common.close' | translate">✕</button>
+        </div>
+        <app-food-search-panel
+          (foodSelected)="onFoodSelected($event)">
+        </app-food-search-panel>
+      </div>
+    </div>
+  }
 
   <!-- ── Add Food Dialog - T20 ───────────────────────────────── -->
   @if (selectedFood()) {
     <app-add-food-dialog
       [food]="selectedFood()!"
       [targetMealType]="targetMealType()"
-      (confirm)="onConfirmAdd($event)"
+      [availableMealTypes]="availableMealTypes"
+      [currentConsumed]="filteredTotals().calories"
+      [dailyGoal]="dailyGoalTarget()"
+      (confirm)="onMealRecorded($event)"
       (cancel)="onCancelAdd()">
     </app-add-food-dialog>
   }
@@ -136,6 +173,6 @@
     [entry]="selectedEntry()!"
     [isEditable]="isEditable()"
     (close)="selectedEntry.set(null)"
-    (editConfirm)="onEditEntry($event)">
+    (portionAdjusted)="onPortionAdjusted($event)">
   </app-meal-entry-detail>
 }

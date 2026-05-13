@@ -1,0 +1,327 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 46, 46, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.modal-dialog {
+  background: white;
+  border-radius: 20px;
+  padding: 0;
+  width: 430px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+  gap: 0;
+}
+
+/* ── Header ── */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--nutrismart-border);
+}
+
+.modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-header-icon {
+  width: 38px;
+  height: 38px;
+  background: var(--nutrismart-primary-light);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-header-icon .material-icons {
+  font-size: 20px;
+  color: var(--nutrismart-primary);
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--nutrismart-text-dark);
+  letter-spacing: -0.2px;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  background: var(--nutrismart-bg);
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--nutrismart-text-light);
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.modal-close .material-icons { font-size: 18px; }
+.modal-close:hover { background: #fee2e2; color: #ef4444; }
+
+/* ── Form body ── */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 0 24px;
+  margin-top: 20px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nutrismart-text-mid);
+  letter-spacing: 0.1px;
+}
+
+/* ── Select ── */
+.form-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-select-icon {
+  position: absolute;
+  left: 12px;
+  font-size: 18px;
+  color: var(--nutrismart-text-light);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.form-select-arrow {
+  position: absolute;
+  right: 12px;
+  font-size: 18px;
+  color: var(--nutrismart-text-light);
+  pointer-events: none;
+}
+
+.form-select {
+  width: 100%;
+  appearance: none;
+  padding: 11px 40px 11px 40px;
+  border-radius: 10px;
+  border: 1.5px solid var(--nutrismart-border);
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
+  color: var(--nutrismart-text-dark);
+  background: var(--nutrismart-bg);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.form-select:focus { border-color: var(--nutrismart-primary); background: white; }
+
+/* ── Input ── */
+.form-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  border: 1.5px solid var(--nutrismart-border);
+  background: var(--nutrismart-bg);
+  transition: border-color 0.15s;
+}
+
+.form-input-wrap:focus-within { border-color: var(--nutrismart-primary); background: white; }
+.form-input-wrap--error { border-color: #ef4444 !important; background: #fff5f5 !important; }
+
+.form-input-icon {
+  position: absolute;
+  left: 12px;
+  font-size: 18px;
+  color: var(--nutrismart-text-light);
+  pointer-events: none;
+}
+
+.form-input {
+  width: 100%;
+  padding: 11px 50px 11px 40px;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
+  color: var(--nutrismart-text-dark);
+  background: transparent;
+  outline: none;
+}
+
+.form-input-unit {
+  position: absolute;
+  right: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nutrismart-text-light);
+  pointer-events: none;
+}
+
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: #ef4444;
+  margin: 0;
+  font-weight: 500;
+}
+
+.form-error-icon { font-size: 14px; }
+
+/* ── Calories preview ── */
+.cal-preview {
+  margin: 20px 24px 0;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, var(--nutrismart-primary) 0%, var(--nutrismart-primary-dark) 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cal-preview-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cal-preview-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+.cal-preview-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.cal-preview-unit {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+}
+
+.cal-preview-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.cal-preview-flame {
+  font-size: 32px;
+  color: #fbbf24;
+  filter: drop-shadow(0 2px 6px rgba(251,191,36,0.5));
+}
+
+.cal-preview-meta {
+  font-size: 11px;
+  color: rgba(255,255,255,0.65);
+  text-align: right;
+}
+
+/* ── Empty preview hint ── */
+.cal-placeholder {
+  margin: 20px 24px 0;
+  padding: 14px 18px;
+  background: var(--nutrismart-bg);
+  border: 1.5px dashed var(--nutrismart-border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--nutrismart-text-light);
+}
+
+.cal-placeholder-icon { font-size: 18px; }
+
+/* ── Actions ── */
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 20px 24px 24px;
+  margin-top: 4px;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  background: white;
+  color: var(--nutrismart-text-mid);
+  border: 1.5px solid var(--nutrismart-border);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.15s;
+}
+
+.btn-cancel:hover { border-color: var(--nutrismart-primary); color: var(--nutrismart-primary); }
+
+.btn-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 22px;
+  background: var(--nutrismart-primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: background 0.15s;
+}
+
+.btn-save:hover { background: var(--nutrismart-primary-dark); }
+
+.btn-save:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-save .material-icons { font-size: 16px; }
+
+.btn-loading-icon {
+  font-size: 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}

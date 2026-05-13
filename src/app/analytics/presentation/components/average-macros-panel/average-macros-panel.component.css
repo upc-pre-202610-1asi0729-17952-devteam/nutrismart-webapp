@@ -1,20 +1,17 @@
-.average-macros-panel {
-  padding: 18px 20px;
-}
+.average-macros-panel { }
 
 .panel-title {
-  margin: 0 0 24px;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: #1f1f1f;
+  margin: 0 0 18px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
 }
 
 .macro-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .macro-row-header {
@@ -22,45 +19,36 @@
   align-items: center;
   justify-content: space-between;
   font-size: 13px;
+  color: var(--nutrismart-text-mid);
 }
 
 .macro-row-header strong {
   font-size: 13px;
-  color: #1f1f1f;
+  color: var(--nutrismart-text-dark);
 }
 
-.macro-row-header strong.macro-above-target {
-  color: #0f7a67; /* Green for above target, e.g., protein in muscle gain */
-}
+.macro-row-header strong.macro-above-target { color: #0f7a67; }
 
 .macro-dot {
   display: inline-block;
-  width: 18px;
-  height: 18px;
+  width: 10px;
+  height: 10px;
   margin-right: 8px;
   border-radius: 50%;
   vertical-align: middle;
 }
 
-/* Macro color classes (example, adjust as needed) */
-.macro-teal {
-  background: #55938e;
-}
-
-.macro-orange {
-  background: #f4bea4;
-}
-
-.macro-pink {
-  background: #ffb0c4;
-}
+.macro-protein { background: #e07050; }
+.macro-carbs   { background: var(--nutrismart-primary); }
+.macro-fat     { background: #f0b040; }
+.macro-fiber   { background: #70b060; }
 
 .macro-track {
-  height: 6px;
-  margin-top: 6px;
+  height: 5px;
+  margin-top: 5px;
   overflow: hidden;
   border-radius: 999px;
-  background: #eeeae6;
+  background: var(--nutrismart-bg);
 }
 
 .macro-fill {
@@ -69,34 +57,37 @@
 }
 
 .protein-compliance {
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 1px solid #eeeae6;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--nutrismart-border);
 }
 
 .protein-compliance p {
   margin: 0;
-  font-size: 14px;
-  color: #0f7a67; /* Green for positive compliance */
+  font-size: 13px;
+  color: #0f7a67;
   font-weight: 600;
 }
 
 .days-logged-section {
-  margin-top: 20px;
-  padding-top: 15px;
-  border-top: 1px solid #eeeae6;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--nutrismart-border);
 }
 
 .days-logged-section h4 {
   margin: 0 0 10px;
-  font-size: 16px;
-  font-weight: 700;
-  color: #1f1f1f;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nutrismart-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
 
 .week-dots {
   display: flex;
-  gap: 8px;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .week-dot-wrapper {
@@ -107,19 +98,19 @@
 }
 
 .week-dot {
-  width: 14px;
-  height: 14px;
-  border: 2px solid #b9b9b9;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--nutrismart-border);
   border-radius: 50%;
-  background: #ffffff;
+  background: var(--nutrismart-white);
 }
 
 .week-dot.filled {
-  background: #55938e; /* Teal for filled */
-  border-color: #55938e;
+  background: var(--nutrismart-primary);
+  border-color: var(--nutrismart-primary);
 }
 
 .week-dot-wrapper small {
   font-size: 10px;
-  color: #8b8b8b;
+  color: var(--nutrismart-text-light);
 }

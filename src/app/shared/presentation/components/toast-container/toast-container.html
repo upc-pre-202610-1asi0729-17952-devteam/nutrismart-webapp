@@ -1,0 +1,5 @@
+<div class="toast-container" aria-label="Notifications" aria-live="polite">
+  @for (n of notificationService.notifications(); track n.id) {
+    <app-toast-item [notification]="n" />
+  }
+</div>

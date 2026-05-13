@@ -18,7 +18,7 @@
     <div class="records-list" role="list">
       @for (record of records(); track record.id) {
         <div class="record-row" role="listitem" style="cursor:pointer"
-             (click)="viewEntry.emit(record)">
+             (click)="entryViewed.emit(record)">
           <div class="record-info">
             <span class="record-name">{{ getRecordName(record) }}</span>
             <span class="record-qty">{{ record.quantity }} {{ 'units.' + record.unit | translate }}</span>
@@ -29,7 +29,7 @@
           </div>
           <button class="remove-btn"
                   [attr.aria-label]="'Remove ' + record.foodItemName"
-                  (click)="$event.stopPropagation(); onRemove(record.id)">
+                  (click)="$event.stopPropagation(); onMealRemove(record.id)">
             ⊗
           </button>
         </div>

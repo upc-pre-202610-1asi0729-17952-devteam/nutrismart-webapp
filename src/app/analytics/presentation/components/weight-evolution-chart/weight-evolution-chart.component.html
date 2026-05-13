@@ -1,76 +1,75 @@
-<div class="weight-evolution-chart">
-  <h3 class="chart-title" aria-label="Weight Evolution Chart">Weight evolution chart</h3>
+<div class="weight-evolution-chart nutrismart-card">
+  <h3 class="chart-title">{{ 'analytics.weight_chart_title' | translate }}</h3>
 
   @if (chartPoints.length > 0) {
     <div class="chart-container">
-      <svg [attr.viewBox]="'0 0 550 200'" preserveAspectRatio="xMidYMax meet" class="line-chart">
-        <!-- Y-axis labels -->
+      <svg
+        [attr.viewBox]="'0 0 550 200'"
+        preserveAspectRatio="xMidYMax meet"
+        class="line-chart"
+        role="img"
+        [attr.aria-label]="'analytics.weight_chart_aria' | translate">
+        <title>{{ 'analytics.weight_chart_aria' | translate }}</title>
+
         @for (label of getYAxisLabels(); track label) {
           <text
             [attr.x]="30"
             [attr.y]="150 - ((label - minWeight) / (maxWeight - minWeight)) * 150"
             text-anchor="end"
-            fill="#8b8b8b"
+            fill="var(--nutrismart-text-light)"
             font-size="10"
-            aria-label="Weight {{ label }} kg"
+            aria-hidden="true"
           >{{ label }} kg</text>
         }
 
-        <!-- Goal weight line -->
         @if (goalWeight !== undefined && goalLineY !== undefined) {
           <line
             [attr.x1]="40"
             [attr.y1]="goalLineY"
             [attr.x2]="540"
             [attr.y2]="goalLineY"
-            stroke="#c65353"
+            stroke="#e05454"
             stroke-dasharray="4 2"
             stroke-width="1"
-            aria-label="Goal weight line at {{ goalWeight }} kg"
           />
           <text
             [attr.x]="540"
             [attr.y]="goalLineY - 5"
             text-anchor="end"
-            fill="#c65353"
+            fill="#e05454"
             font-size="10"
-            aria-label="Goal weight value"
-          >Goal: {{ goalWeight }} kg</text>
+            aria-hidden="true"
+          >{{ 'analytics.weight_chart_goal' | translate: { value: goalWeight } }}</text>
         }
 
-        <!-- X-axis line -->
-        <line [attr.x1]="40" [attr.y1]="150" [attr.x2]="540" [attr.y2]="150" stroke="#b9b9b9" stroke-width="1" />
+        <line [attr.x1]="40" [attr.y1]="150" [attr.x2]="540" [attr.y2]="150" stroke="var(--nutrismart-border)" stroke-width="1" />
 
-        <!-- Data line -->
         <polyline
           fill="none"
-          stroke="#55938e"
+          stroke="var(--nutrismart-primary)"
           stroke-width="2"
-          [attr.points]="chartPoints.map(p => `${p.x + 40},${p.y}`).join(' ')"
-          aria-label="Weight evolution data line"
+          [attr.points]="chartPoints.map(p => (p.x + 40) + ',' + p.y).join(' ')"
         />
 
-        <!-- Data points -->
         @for (point of chartPoints; track $index) {
           <circle
             [attr.cx]="point.x + 40"
             [attr.cy]="point.y"
             r="4"
-            fill="#55938e"
-            stroke="#ffffff"
+            fill="var(--nutrismart-primary)"
+            stroke="var(--nutrismart-white)"
             stroke-width="2"
-            aria-label="Weight {{ point.weight }} kg on {{ formatDate(point.date) }}"
+            [attr.aria-label]="point.weight + ' kg — ' + formatDate(point.date)"
           />
         }
 
-        <!-- X-axis labels (dates) -->
         @if (minDate && maxDate) {
-          <text [attr.x]="40" [attr.y]="165" fill="#8b8b8b" font-size="10" aria-label="Start date">{{ formatDate(minDate.toISOString()) }}</text>
-          <text [attr.x]="540" [attr.y]="165" text-anchor="end" fill="#8b8b8b" font-size="10" aria-label="End date">{{ formatDate(maxDate.toISOString()) }}</text>
+          <text [attr.x]="40" [attr.y]="168" fill="var(--nutrismart-text-light)" font-size="10" aria-hidden="true">{{ formatDate(minDate.toISOString()) }}</text>
+          <text [attr.x]="540" [attr.y]="168" text-anchor="end" fill="var(--nutrismart-text-light)" font-size="10" aria-hidden="true">{{ formatDate(maxDate.toISOString()) }}</text>
         }
       </svg>
     </div>
   } @else {
-    <div class="no-data-message">No sufficient weight data to display chart.</div>
+    <div class="no-data-message">{{ 'analytics.weight_chart_no_data' | translate }}</div>
   }
 </div>

@@ -1,0 +1,50 @@
+.macro-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.macro-warning + .macro-warning {
+  margin-top: 8px;
+}
+
+/* ── Yellow — approaching (80–99%) ── */
+.macro-warning--yellow {
+  background: #fffbeb;
+  border: 1.5px solid #fcd34d;
+  color: #92400e;
+}
+
+.macro-warning--yellow .macro-warning__icon {
+  color: #d97706;
+}
+
+/* ── Red — exceeded (≥100%) ── */
+.macro-warning--red {
+  background: #fef2f2;
+  border: 1.5px solid #fca5a5;
+  color: #991b1b;
+}
+
+.macro-warning--red .macro-warning__icon {
+  color: #dc2626;
+}
+
+/* ── Shared ── */
+.macro-warning__icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.macro-warning__text {
+  flex: 1;
+}
+
+.macro-warning__text strong {
+  font-weight: 600;
+}

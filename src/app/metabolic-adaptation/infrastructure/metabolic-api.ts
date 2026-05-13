@@ -38,6 +38,7 @@ export class MetabolicApi extends BaseApi {
           .filter(m => new Date(m.loggedAt) >= effectiveCutoff)
           .sort((a, b) => new Date(a.loggedAt).getTime() - new Date(b.loggedAt).getTime()),
       ),
+      retry(2),
       catchError(err => throwError(() => err)),
     );
   }
@@ -53,6 +54,7 @@ export class MetabolicApi extends BaseApi {
           (a, b) => new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime(),
         )[0];
       }),
+      retry(2),
       catchError(err => throwError(() => err)),
     );
   }
@@ -117,13 +119,38 @@ export class MetabolicApi extends BaseApi {
           : metrics;
         return scoped.sort((a, b) => new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime());
       }),
+      retry(2),
       catchError(err => throwError(() => err)),
     );
   }
 
   getComposition(userId: number | string): Observable<BodyComposition | null> {
     return this.compositionEp.getLatestByUserId(userId).pipe(
+      retry(2),
       catchError(err => throwError(() => err)),
     );
   }
+
+  updateWeight(metric: BodyMetric, newWeightKg: number): Observable<BodyMetric> {
+    const projectedDate = metric.targetWeightKg > 0
+      ? new BodyMetric({
+          id: 0, userId: metric.userId, weightKg: newWeightKg,
+          heightCm: metric.heightCm, loggedAt: metric.loggedAt,
+        }).calculateProjectedDate(metric.targetWeightKg).toISOString()
+      : '';
+    const updated = new BodyMetric({
+      id:                       metric.id,
+      userId:                   metric.userId,
+      weightKg:                 newWeightKg,
+      heightCm:                 metric.heightCm,
+      loggedAt:                 metric.loggedAt,
+      targetWeightKg:           metric.targetWeightKg,
+      projectedAchievementDate: projectedDate,
+    });
+    return this.metricEp.update(updated, String(metric.id) as unknown as number).pipe(
+      retry(2),
+      catchError(err => throwError(() => err)),
+    );
+  }
+
 }

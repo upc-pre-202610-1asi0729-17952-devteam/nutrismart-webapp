@@ -1,5 +1,7 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 import { MealType } from './meal-type.enum';
+import { MacronutrientDistribution } from './macronutrient-distribution.value-object';
+import { NutritionalRiskLevel } from './nutritional-risk-level.enum';
 
 /**
  * Constructor DTO for creating a {@link MealRecord} instance.
@@ -153,5 +155,37 @@ export class MealRecord implements BaseEntity {
   get isFromToday(): boolean {
     const today = new Date().toDateString();
     return new Date(this._loggedAt).toDateString() === today;
+  }
+
+  /** All macros for this record as an immutable Value Object. */
+  get macros(): MacronutrientDistribution {
+    return new MacronutrientDistribution({
+      calories: this._calories,
+      protein:  this._protein,
+      carbs:    this._carbs,
+      fat:      this._fat,
+      fiber:    this._fiber,
+      sugar:    this._sugar,
+    });
+  }
+
+  /**
+   * Classifies the nutritional risk this record poses given the current
+   * consumption context.
+   *
+   * HIGH   — adding this meal would meet or exceed the daily goal.
+   * MODERATE — combined total would reach ≥ 80 % of the goal.
+   * SAFE   — combined total stays below 80 %.
+   *
+   * @param dailyGoal      - User's daily calorie target in kcal.
+   * @param alreadyConsumed - Calories already logged for the day.
+   */
+  classifyNutritionalRisk(dailyGoal: number, alreadyConsumed: number): NutritionalRiskLevel {
+    if (dailyGoal <= 0) return NutritionalRiskLevel.SAFE;
+    const totalAfter = alreadyConsumed + this._calories;
+    const ratio = totalAfter / dailyGoal;
+    if (ratio >= 1.0) return NutritionalRiskLevel.HIGH;
+    if (ratio >= 0.8) return NutritionalRiskLevel.MODERATE;
+    return NutritionalRiskLevel.SAFE;
   }
 }

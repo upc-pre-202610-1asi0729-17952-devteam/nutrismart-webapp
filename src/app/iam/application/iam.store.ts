@@ -1,7 +1,17 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, filter, map, tap } from 'rxjs/operators';
+import { DomainEventBus } from '../../shared/application/domain-event-bus';
+import { AccountCreated } from '../../shared/domain/account-created.event';
+import { MetabolicTargetSet } from '../../shared/domain/metabolic-target-set.event';
+import { OnboardingCompleted } from '../../shared/domain/onboarding-completed.event';
+import { ProfileUpdated } from '../../shared/domain/profile-updated.event';
+import { RestrictionsChanged } from '../../shared/domain/restrictions-changed.event';
+import { SessionStarted } from '../../shared/domain/session-started.event';
+import { SessionTerminated } from '../../shared/domain/session-terminated.event';
+import { BenefitsEnabled } from '../../shared/domain/benefits-enabled.event';
+import { Subscription } from '../../subscriptions/domain/model/subscription.entity';
 import { ActivityLevel } from '../domain/model/activity-level.enum';
 import { DietaryRestriction } from '../domain/model/dietary-restriction.enum';
 import { MedicalCondition } from '../domain/model/medical-condition.enum';
@@ -17,6 +27,10 @@ const SESSION_KEY = 'nutrismart_session';
  *
  * Manages authentication state and the current user using Angular signals.
  * All mutations are persisted to the json-server backend via {@link IamApi}.
+ * Physical-attribute changes (weight, height, activityLevel, goal) are
+ * persisted here but macro recalculation is delegated to MetabolicAdaptation
+ * via the {@link DomainEventBus} — IAM receives updated targets back through
+ * {@link MetabolicTargetSet} and applies them via {@link User.applyMetabolicTargets}.
  *
  * Provided in root so a single instance is shared across the application.
  */
@@ -27,6 +41,9 @@ export class IamStore {
 
   /** Angular router used for post-auth navigation. */
   private router = inject(Router);
+
+  /** Shared event bus for cross-context communication. */
+  private eventBus = inject(DomainEventBus);
 
   /** Currently authenticated user, or `null` when logged out. */
   private _currentUser = signal<User | null>(null);
@@ -40,8 +57,15 @@ export class IamStore {
   /** Last error message from a failed async operation, or `null`. */
   private _error = signal<string | null>(null);
 
+  /** Consecutive failed login attempts for the current email session. */
+  private _failedLoginAttempts = signal<number>(0);
+
+  /** Timestamp until which login is blocked, or null when not blocked. */
+  private _blockedUntil = signal<Date | null>(null);
+
   constructor() {
     this.restoreSession();
+    this.subscribeToMetabolicTargets();
   }
 
   // ─── Public readonly signals ───────────────────────────────────────────────
@@ -57,6 +81,34 @@ export class IamStore {
 
   /** Read-only signal holding the most recent error message, or `null`. */
   readonly error = this._error.asReadonly();
+
+  /** True while the account is temporarily locked due to too many failed login attempts. */
+  readonly isLoginBlocked = computed(() => {
+    const until = this._blockedUntil();
+    return until ? new Date() < until : false;
+  });
+
+  /** The timestamp until which login is blocked, or null. */
+  readonly loginBlockedUntil = this._blockedUntil.asReadonly();
+
+  // ─── Cross-context subscriptions ──────────────────────────────────────────
+
+  /**
+   * Applies updated macro targets published by MetabolicAdaptation and
+   * persists them so the IAM user record stays in sync.
+   * Root services live for the full app lifetime, so no takeUntilDestroyed is needed.
+   */
+  private subscribeToMetabolicTargets(): void {
+    this.eventBus.events$
+      .pipe(filter((e): e is MetabolicTargetSet => e instanceof MetabolicTargetSet))
+      .subscribe((e) => {
+        const user = this._currentUser();
+        if (!user || user.id !== e.userId) return;
+        user.applyMetabolicTargets(e);
+        this._currentUser.set(user);
+        this.persist();
+      });
+  }
 
   // ─── Session persistence ───────────────────────────────────────────────────
 
@@ -78,8 +130,6 @@ export class IamStore {
       carbsTarget: user.carbsTarget,
       fatTarget: user.fatTarget,
       fiberTarget: user.fiberTarget,
-      streak: user.streak,
-      consecutiveMisses: user.consecutiveMisses,
       birthday: user.birthday,
       biologicalSex: user.biologicalSex,
       createdAt: user.createdAt,
@@ -118,20 +168,29 @@ export class IamStore {
    */
   login(email: string, password: string): Observable<User> {
     void password;
+
+    if (this.isLoginBlocked()) {
+      this._error.set('auth.error_account_blocked');
+      return throwError(() => new Error('auth.error_account_blocked'));
+    }
+
     this._loading.set(true);
     this._error.set(null);
 
     return this.iamApi.getUsers().pipe(
       map((users) => {
         const user = users.find((u) => u.email === email);
-        if (!user) throw new Error('Invalid email or password.');
+        if (!user) throw new Error('auth.error_invalid_credentials');
         return user;
       }),
       tap((user) => {
+        this._failedLoginAttempts.set(0);
+        this._blockedUntil.set(null);
         this._currentUser.set(user);
         this._isAuthenticated.set(true);
         this._loading.set(false);
         this.saveSession(user);
+        this.eventBus.publish(new SessionStarted(user.id, user.email));
         const incomplete = !user.birthday || !user.biologicalSex;
         if (incomplete) this.router.navigate(['/onboarding']);
         else if (!user.plan) this.router.navigate(['/subscription']);
@@ -139,7 +198,14 @@ export class IamStore {
       }),
       catchError((err) => {
         this._loading.set(false);
-        this._error.set(err.message);
+        const attempts = this._failedLoginAttempts() + 1;
+        this._failedLoginAttempts.set(attempts);
+        if (attempts >= 5) {
+          this._blockedUntil.set(new Date(Date.now() + 15 * 60 * 1000));
+          this._error.set('auth.error_account_blocked');
+        } else {
+          this._error.set(err.message);
+        }
         return throwError(() => err);
       }),
     );
@@ -178,8 +244,6 @@ export class IamStore {
       carbsTarget: 250,
       fatTarget: 65,
       fiberTarget: 25,
-      streak: 0,
-      consecutiveMisses: 0,
       createdAt: new Date().toISOString().slice(0, 10),
     });
 
@@ -189,6 +253,9 @@ export class IamStore {
         this._isAuthenticated.set(true);
         this._loading.set(false);
         this.saveSession(created);
+        this.eventBus.publish(
+          new AccountCreated(created.id, created.email, created.firstName, created.lastName, created.goal),
+        );
         this.router.navigate(['/onboarding']);
       }),
       catchError((err) => {
@@ -203,9 +270,11 @@ export class IamStore {
    * Logs the current user out, clears all state, and navigates to login.
    */
   logout(): void {
+    const userId = this._currentUser()?.id ?? 0;
     this._isAuthenticated.set(false);
     this._currentUser.set(null);
     this.clearSession();
+    this.eventBus.publish(new SessionTerminated(userId));
     this.router.navigate(['/auth/login']);
   }
 
@@ -232,7 +301,7 @@ export class IamStore {
   /**
    * Updates basic profile fields and persists the change.
    *
-   * @param updates - Partial object with firstName, lastName and/or email.
+   * @param updates - Partial object with displayable profile fields.
    */
   updateProfile(
     updates: Partial<{
@@ -241,21 +310,29 @@ export class IamStore {
       email: string;
       birthday: string;
       biologicalSex: string;
+      homeCity: string;
     }>,
   ): void {
     const user = this._currentUser();
     if (!user) return;
-    if (updates.firstName !== undefined) user.firstName = updates.firstName;
-    if (updates.lastName !== undefined) user.lastName = updates.lastName;
-    if (updates.email !== undefined) user.email = updates.email;
-    if (updates.birthday !== undefined) user.birthday = updates.birthday;
-    if (updates.biologicalSex !== undefined) user.biologicalSex = updates.biologicalSex;
+    const changedFields: string[] = [];
+    if (updates.firstName !== undefined) { user.firstName = updates.firstName; changedFields.push('firstName'); }
+    if (updates.lastName !== undefined) { user.lastName = updates.lastName; changedFields.push('lastName'); }
+    if (updates.email !== undefined) { user.email = updates.email; changedFields.push('email'); }
+    if (updates.birthday !== undefined) { user.birthday = updates.birthday; changedFields.push('birthday'); }
+    if (updates.biologicalSex !== undefined) { user.biologicalSex = updates.biologicalSex; changedFields.push('biologicalSex'); }
+    if (updates.homeCity !== undefined) { user.homeCity = updates.homeCity; changedFields.push('homeCity'); }
     this._currentUser.set(user);
     this.persist();
+    if (changedFields.length > 0) {
+      this.eventBus.publish(new ProfileUpdated(user.id, changedFields));
+    }
   }
 
   /**
-   * Updates physical attributes, recalculates macros, and persists.
+   * Updates physical attributes and persists. Macro recalculation is NOT
+   * done here — MetabolicAdaptation listens to the published event and
+   * responds with {@link MetabolicTargetSet}.
    *
    * @param w     - New body weight in kilograms.
    * @param h     - New height in centimetres.
@@ -264,18 +341,61 @@ export class IamStore {
   updatePhysicalDetails(w: number, h: number, level: ActivityLevel): void {
     const user = this._currentUser();
     if (!user) return;
-    user.weight = w;
-    user.height = h;
-    user.activityLevel = level;
-    user.recalculateMacros();
+    const updated = new User({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      goal: user.goal,
+      weight: w,
+      height: h,
+      activityLevel: level,
+      plan: user.plan,
+      restrictions: user.restrictions,
+      medicalConditions: user.medicalConditions,
+      dailyCalorieTarget: user.dailyCalorieTarget,
+      proteinTarget: user.proteinTarget,
+      carbsTarget: user.carbsTarget,
+      fatTarget: user.fatTarget,
+      fiberTarget: user.fiberTarget,
+      birthday: user.birthday,
+      biologicalSex: user.biologicalSex,
+      createdAt: user.createdAt,
+      homeCity: user.homeCity,
+      goalStartedAt: user.goalStartedAt,
+    });
+    this._currentUser.set(updated);
+    this.persist();
+
+    const isCompletingOnboarding = !user.plan && !!user.birthday && !!user.biologicalSex;
+    if (isCompletingOnboarding) {
+      this.eventBus.publish(
+        new OnboardingCompleted(updated.id, w, h, level, updated.biologicalSex, updated.birthday, updated.goal),
+      );
+    } else {
+      this.eventBus.publish(new ProfileUpdated(updated.id, ['weight', 'height', 'activityLevel']));
+    }
+  }
+
+  /**
+   * Persists only the body weight field from the latest body-metric entry.
+   * Called by MetabolicAdaptation after logWeight() to keep the IAM record
+   * in sync without triggering macro recalculation or publishing events.
+   *
+   * @param weightKg - Latest body weight in kilograms.
+   */
+  updateWeightOnly(weightKg: number): void {
+    const user = this._currentUser();
+    if (!user) return;
+    user.weight = weightKg;
     this._currentUser.set(user);
     this.persist();
   }
 
   /**
-   * Changes the fitness goal, stamps goalStartedAt to today, recalculates
-   * macros, and persists. Creates a new User instance so Angular's signal
-   * equality check detects the change.
+   * Changes the fitness goal, stamps goalStartedAt to today, and persists.
+   * Macro recalculation is orchestrated by {@link MetabolicStore.switchGoal},
+   * which calls this method then publishes {@link GoalSwitched}.
    *
    * @param goal - The new {@link UserGoal}.
    */
@@ -299,15 +419,12 @@ export class IamStore {
       carbsTarget: user.carbsTarget,
       fatTarget: user.fatTarget,
       fiberTarget: user.fiberTarget,
-      streak: user.streak,
-      consecutiveMisses: user.consecutiveMisses,
       birthday: user.birthday,
       biologicalSex: user.biologicalSex,
       createdAt: user.createdAt,
       homeCity: user.homeCity,
       goalStartedAt: new Date().toISOString().slice(0, 10),
     });
-    updated.recalculateMacros();
     this._currentUser.set(updated);
     this.persist();
   }
@@ -323,6 +440,7 @@ export class IamStore {
     user.addRestriction(r);
     this._currentUser.set(user);
     this.persist();
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.effectiveRestrictions(), user.medicalConditions));
   }
 
   /**
@@ -336,6 +454,7 @@ export class IamStore {
     user.removeRestriction(r);
     this._currentUser.set(user);
     this.persist();
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.effectiveRestrictions(), user.medicalConditions));
   }
 
   /**
@@ -349,6 +468,7 @@ export class IamStore {
     user.addMedicalCondition(c);
     this._currentUser.set(user);
     this.persist();
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.effectiveRestrictions(), user.medicalConditions));
   }
 
   /**
@@ -371,6 +491,7 @@ export class IamStore {
     user.removeMedicalCondition(c);
     this._currentUser.set(user);
     this.persist();
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.effectiveRestrictions(), user.medicalConditions));
   }
 
   /**
@@ -384,6 +505,7 @@ export class IamStore {
     user.restrictions = restrictions;
     this._currentUser.set(user);
     this.persist();
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.effectiveRestrictions(), user.medicalConditions));
   }
 
   /**
@@ -397,10 +519,12 @@ export class IamStore {
     user.medicalConditions = conditions;
     this._currentUser.set(user);
     this.persist();
+    this.eventBus.publish(new RestrictionsChanged(user.id, user.effectiveRestrictions(), user.medicalConditions));
   }
 
   /**
-   * Upgrades the subscription plan and persists.
+   * Upgrades the subscription plan, persists, and publishes {@link BenefitsEnabled}
+   * so other bounded contexts can unlock plan-gated features.
    *
    * @param plan - The new {@link SubscriptionPlan}.
    */
@@ -410,5 +534,7 @@ export class IamStore {
     user.plan = plan;
     this._currentUser.set(user);
     this.persist();
+    const features = Subscription.featuresFor(plan);
+    this.eventBus.publish(new BenefitsEnabled(user.id, plan, features));
   }
 }

@@ -1,10 +1,11 @@
-<div class="period-toggle">
+<div class="period-toggle" role="group" [attr.aria-label]="'analytics.period_7_days' | translate">
   @for (period of periods; track period.value) {
     <button
       type="button"
       [class.active]="selectedPeriod === period.value"
+      [attr.aria-pressed]="selectedPeriod === period.value"
       (click)="onSelectPeriod(period.value)">
-      {{ period.label }}
+      {{ period.labelKey | translate }}
     </button>
   }
 </div>

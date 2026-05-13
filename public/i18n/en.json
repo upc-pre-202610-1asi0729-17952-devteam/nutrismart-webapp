@@ -8,11 +8,13 @@
     "recommendations": "Recommendations",
     "body_progress": "Body progress",
     "pantry": "Pantry",
-    "wearable": "Wearable",
+    "wearable": "Physical Activity",
     "analytics": "Analytics",
     "subscription": "Subscription",
     "profile": "Profile",
-    "logout": "Log out"
+    "logout": "Log out",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu"
   },
   "common": {
     "save": "Save",
@@ -66,6 +68,7 @@
     "error_password_min": "Password must be at least 8 characters",
     "error_passwords_mismatch": "Passwords do not match",
     "error_invalid_credentials": "Invalid email or password",
+    "error_account_blocked": "Account temporarily locked. Try again in 15 minutes.",
     "error_email_taken": "This email is already registered",
     "checking_email": "Checking availability…",
     "error_terms": "You must accept the terms",
@@ -117,6 +120,9 @@
     "error_sex_required": "Biological sex is required",
     "error_weight_range": "Weight must be between 30 and 300 kg",
     "error_height_range": "Height must be between 100 and 250 cm",
+    "home_city": "Home city",
+    "home_city_placeholder": "Search city...",
+    "error_home_city_required": "Home city is required",
     "continue_btn": "Continue →",
     "back_btn": "← Back",
     "looks_good_btn": "Looks good →",
@@ -155,7 +161,9 @@
     "visual_range_lean": "13–18%",
     "visual_range_average": "18–23%",
     "visual_range_overweight": "23–28%",
-    "visual_range_obese": "28%+"
+    "visual_range_obese": "28%+",
+    "home_city_loading": "Loading cities...",
+    "error_home_city_invalid": "Select a valid city from the list"
   },
   "subscription": {
     "title": "Choose your plan",
@@ -208,6 +216,8 @@
     "email": "Email address",
     "birthday": "Date of birth",
     "biological_sex": "Biological sex",
+    "home_city": "Home city",
+    "home_city_hint": "Used to detect when you are travelling and show local recommendations.",
     "weight": "Weight (kg)",
     "height": "Height (cm)",
     "activity_level": "Activity level",
@@ -223,7 +233,30 @@
     "password_changed": "Password updated successfully.",
     "logout_all_btn": "Log out of all sessions",
     "delete_account": "Delete account",
-    "apply_language": "Apply"
+    "apply_language": "Apply",
+    "weight_tooltip": "Log your weight in Body Progress to keep this updated.",
+    "weight_tooltip_aria": "How to update weight",
+    "home_city_required": "Once set, your home city cannot be removed.",
+    "medical_warnings": {
+      "TYPE_2_DIABETES": "Limit added sugars and simple carbohydrates to help manage blood glucose levels.",
+      "HIGH_BLOOD_PRESSURE": "Limit sodium intake to under 2,300 mg per day to support healthy blood pressure.",
+      "COELIAC_DISEASE": "Gluten-free diet is enforced. All foods containing gluten are automatically blocked.",
+      "KIDNEY_DISEASE": "Moderate your protein intake to reduce the workload on your kidneys.",
+      "GOUT": "Limit high-purine foods such as red meat, shellfish, and alcohol to manage uric acid levels.",
+      "HYPOTHYROIDISM": "Be mindful of excess soy and raw cruciferous vegetables, which may affect thyroid function.",
+      "nutrient": {
+        "sugar": "Added sugars",
+        "sodium": "Sodium",
+        "gluten": "Gluten",
+        "protein": "Protein",
+        "purines": "Purines",
+        "soy": "Soy / goitrogens"
+      },
+      "severity": {
+        "ADVISORY": "Advisory",
+        "STRICT": "Enforced"
+      }
+    }
   },
   "medical": {
     "TYPE_2_DIABETES": "Type 2 Diabetes",
@@ -285,7 +318,7 @@
     "calories_remaining_desc": "kcal available today",
     "net_balance_label": "NET BALANCE",
     "no_activity_synced": "No activity synced",
-    "fit_badge": "🏃 −{{calories}} Google Fit",
+    "fit_badge": "−{{calories}} kcal burned",
     "todays_log": "Today's log",
     "no_meals_title": "No meals logged in {{days}} days",
     "no_meals_desc": "Your plan is ready. Start with something small — one meal is enough.",
@@ -309,7 +342,81 @@
     "streak_dropped_desc": "{{days}} days inactive",
     "streak_dropped_footer": "Your plan is ready when you are",
     "streak_recovered_desc": "Recovery streak started — keep going!",
-    "streak_recovered_footer": "You're back on track"
+    "streak_recovered_footer": "You're back on track",
+    "loading_progress": "Loading your dashboard…",
+    "load_error": "Could not load your data. Please try again.",
+    "retry": "Retry",
+    "view_daily_log_btn": "View daily log",
+    "net_balance_desc": "kcal net today",
+    "meal_more": "+{{count}} more",
+    "weekly_completion": "weekly completion",
+    "pattern": {
+      "CONSISTENT": "Consistent",
+      "WEEKDAY_ONLY": "Weekdays only",
+      "RECOVERING": "Recovering",
+      "IRREGULAR": "Irregular",
+      "analyzed_at": "Pattern analysed on {{date}}",
+      "improving": "Your habit is building momentum.",
+      "declining": "Your habit is losing ground.",
+      "label": "Habit pattern"
+    }
+  },
+  "behavioral": {
+    "reengagement": {
+      "icon_at_risk": "⚠️",
+      "icon_dropped": "🚀",
+      "title_at_risk": "Don't lose momentum!",
+      "title_dropped": "Time to restart",
+      "desc_at_risk": "You've missed a couple of logs. Complete one small action today to protect your streak.",
+      "desc_dropped": "You've been inactive for a while. Restart with a simple goal: log your next meal.",
+      "btn_at_risk": "Log now",
+      "btn_dropped": "Get back on track"
+    },
+    "recovery": {
+      "plan_title": "Your recovery plan",
+      "action": {
+        "reduce_calorie_target": "Reduce your daily calorie target to a more reachable level.",
+        "focus_single_meal": "Focus on logging just one meal per day consistently.",
+        "simplify_tracking": "Simplify your tracking — just log the main meals for now.",
+        "log_any_meal": "Log any meal today, no matter how small. Just start."
+      }
+    },
+    "streak": {
+      "days_label": "Streak days",
+      "message_danger": "Watch out! Your streak is at risk.",
+      "message_start": "Start your first log today.",
+      "message_beginning": "Good start! Keep going.",
+      "message_habit": "Great pace! You're building a habit.",
+      "message_unstoppable": "You're unstoppable! Consistency is key.",
+      "missed_one": "day missed",
+      "missed_other": "days missed"
+    },
+    "status": {
+      "on_track_title": "✓ On Track",
+      "at_risk_title": "⚠ At Risk",
+      "dropped_title": "✖ Dropped",
+      "on_track_message": "Keep it up! Your consistency is stable. Continue logging your daily meals.",
+      "at_risk_message": "Nutritional adherence at risk. You have missed 3 consecutive logs. Let's get back on track!",
+      "dropped_message": "Behavioral drop detected. 7 days of inactivity. Access your reactivation plan to recover your streak.",
+      "unknown_message": "Please log your first meal of the day to update your status."
+    },
+    "week_strip": {
+      "title": "Weekly Activity",
+      "aria_label": "Week consistency: {{completed}} of 7 days completed"
+    },
+    "summary_card": {
+      "title": "Weekly Summary",
+      "days_completed": "{{completed}}/7 days completed",
+      "high_consistency": "High Consistency",
+      "moderate_consistency": "Moderate Consistency",
+      "at_risk_consistency": "At-Risk Consistency"
+    },
+    "action_panel": {
+      "title": "Today's Actions",
+      "goal_met": "Goal Met",
+      "skip_log": "Skip Log",
+      "sync_fit": "Sync Fit"
+    }
   },
   "nutrition": {
     "page_title": "Daily Log",
@@ -341,9 +448,17 @@
     "entry_deleted": "Entry deleted",
     "daily_goal": "Daily Goal",
     "consumed": "Consumed",
+    "active_burned": "Active burned",
     "remaining": "Remaining",
     "exceeded": "Exceeded",
     "percent_consumed": "{{ percent }}% of your goal consumed",
+    "daily_balance": "Daily Balance",
+    "no_meals_banner_title": "No meals logged yet",
+    "no_meals_banner_desc": "Start by adding your first meal for this day.",
+    "add_food_btn": "Add food",
+    "search_modal_title": "Add food to your log",
+    "impact_approaching": "Will reach {{percent}}% of your daily goal",
+    "impact_exceeded": "Will exceed your daily goal ({{percent}}%)",
     "calorie_limit_exceeded": "Calorie limit exceeded",
     "exceeded_warning": "You have exceeded your goal. Consider a lighter dinner.",
     "restrictions_warning": "Some results contain ingredients that match your active restrictions: {{ restrictions }}",
@@ -351,10 +466,11 @@
     "add_food_to": "+ Add food to {{ meal }}",
     "first_meal_hint": "Add your first meal using the search below!",
     "not_yet_logged": "Not yet logged",
-    "meal_skipped": "Missed window · MealSkipped emitted",
-    "meal_skipped_text": "Not logged · MealSkipped event emitted",
-    "goal_exceeded_alert": "Daily goal exceeded. DailyGoalExceeded event emitted · You consumed {{ kcal }} kcal over target.",
-    "goal_met_alert": "Daily goal met! DailyGoalMet event emitted · AdherenceStatus: ON_TRACK.",
+    "meal_skipped": "Missed window",
+    "meal_skipped_text": "Not logged for this window",
+    "goal_met_alert": "Daily goal met! All meals logged.",
+    "warning_approaching": "Approaching daily limit for",
+    "warning_exceeded": "Daily limit exceeded for",
     "base_info": "Base: {{ size }}{{ unit }} · {{ calories }} kcal · P {{ protein }}g · C {{ carbs }}g · G {{ fat }}g",
     "macro_preview": "Nutritional preview",
     "restricted_blocked_title": "Restricted food",
@@ -365,13 +481,26 @@
     "logged_at": "Logged at {{ time }}",
     "add_to_daily_log": "Add to Daily Log",
     "date_today": "Today",
+    "prev_day": "Previous day",
+    "next_day": "Next day",
     "edit_entry": "Edit entry",
     "save_changes": "Save changes",
     "entry_read_only": "This entry is older than 7 days and can no longer be edited",
     "new_quantity": "New quantity",
     "adding_to": "Adding to: {{ meal }}",
     "quantity_unit": "Quantity ({{ unit }})",
-    "meal_type": "Meal type"
+    "meal_type": "Meal type",
+    "guardrail": {
+      "calorie_overage": "Adding this meal will exceed your daily calorie budget by {{overage}} kcal ({{percent}}% of target).",
+      "calorie_overage_rec": "Consider a smaller portion or a lighter option.",
+      "restriction_conflict": "This food conflicts with your active dietary restriction.",
+      "restriction_conflict_rec": "Choose a compatible alternative or update your restrictions in Profile.",
+      "medical_risk": "This food may be inadvisable given your active medical conditions.",
+      "medical_risk_rec": "Review your dietary warnings in Profile for more details.",
+      "severity_block": "Cannot add this meal.",
+      "severity_warning": "Heads up before you log.",
+      "severity_info": "Something to keep in mind."
+    }
   },
   "recommendations": {
     "page_title": "Recommendations",
@@ -440,13 +569,29 @@
     "location_search_back": "Back",
     "location_search_quick": "Quick select",
     "error_load_failed": "Could not load recommendations. Please try again.",
-    "banner_travel_active": "Travel mode active — {{ location }}, {{ temp }}°C"
+    "banner_travel_active": "Travel mode active — {{ location }}, {{ temp }}°C",
+    "condition_hot": "Sunny",
+    "condition_cold": "Cold",
+    "condition_mild": "Partly cloudy",
+    "updated_just_now": "Just updated",
+    "updated_mins_ago": "Updated {{ mins }} min ago",
+    "location_picker_title": "Your location",
+    "location_picker_temp": "Temperature (demo)",
+    "location_picker_close": "Close",
+    "travel_chip": "Traveling to {{ city }}",
+    "context_adjustment": {
+      "travel": "Travel mode adjustment",
+      "weather": "Weather-based adjustment",
+      "calorie_adjusted": "Calorie target adjusted to {{ kcal }} kcal",
+      "factor": "{{ factor }}× applied to base target"
+    }
   },
   "body_progress": {
     "page_title": "Body Progress",
     "page_subtitle": "Weight, metrics, and body composition tracking",
     "update_height_btn": "Update height",
     "log_weight_btn": "+ Log weight",
+    "update_weight_btn": "↺ Update today's weight",
     "stale_banner": "Your last weight entry was {{ date }}. For accurate metrics, we recommend logging your current weight.",
     "log_now": "Log now",
     "metric_weight": "CURRENT WEIGHT",
@@ -489,6 +634,11 @@
     "error_weight_max": "Please enter a valid weight (max 500 kg).",
     "error_weight_invalid": "Please enter a valid weight.",
     "error_goal_below_current": "Goal weight must be lower than your current weight ({{ current }} kg).",
+    "error_goal_below_min": "Goal weight must be at least {{ min }} kg.",
+    "goal_auto_set_title": "Goal weight set automatically",
+    "goal_auto_set_desc": "Based on a healthy BMI (24.9), we've set your goal weight to {{ weight }} kg. You can adjust it anytime.",
+    "goal_auto_set_confirm": "Got it",
+    "goal_auto_set_adjust": "Adjust",
     "composition_panel": "Update body composition",
     "waist_label": "Waist (cm)",
     "neck_label": "Neck (cm)",
@@ -559,7 +709,32 @@
     "history_title": "Full Weight History",
     "history_subtitle": "All entries for the current goal cycle",
     "history_empty": "No weight entries yet for this goal cycle.",
-    "back_to_progress": "← Back to progress"
+    "back_to_progress": "← Back to progress",
+    "aria_edit_entry": "Edit weight entry",
+    "aria_delete_entry": "Delete weight entry",
+    "aria_save_edit": "Save",
+    "aria_cancel_edit": "Cancel",
+    "today_entry_updated": "Today's entry updated.",
+    "error_already_logged_today": "You already have an entry for today. It will be updated.",
+    "adaptation_log": {
+      "title": "Metabolic Adaptation History",
+      "no_history": "No target changes recorded yet.",
+      "calorie_delta": "{{ delta }} kcal",
+      "trigger": {
+        "ONBOARDING":              "Initial setup",
+        "PROFILE_CHANGE":          "Profile update",
+        "GOAL_SWITCH":             "Goal change",
+        "STAGNATION_RESPONSE":     "Stagnation adjustment",
+        "ACTIVITY_TREND":          "Activity trend",
+        "BODY_COMPOSITION_UPDATE": "Body composition update"
+      }
+    },
+    "activity_trend": {
+      "detected":          "High activity trend detected",
+      "average_burned":    "Avg. {{ kcal }} kcal/day burned over the last 7 days",
+      "tdee_adjusted":     "Daily calorie target adjusted by +{{ delta }} kcal",
+      "threshold_reached": "Activity threshold reached (≥ 300 kcal/day avg)"
+    }
   },
   "smart_scan": {
     "page_title": "Smart Scan",
@@ -618,27 +793,27 @@
     "mixed_salad": "Mixed salad"
   },
   "ingredient_categories": {
-    "grain":          "Grain",
+    "grain": "Grain",
     "animal_protein": "Animal protein",
-    "vegetable":      "Vegetable",
-    "fruit":          "Fruit",
-    "dairy":          "Dairy",
-    "legume":         "Legume",
-    "seasoning":      "Seasoning",
-    "other":          "Other"
+    "vegetable": "Vegetable",
+    "fruit": "Fruit",
+    "dairy": "Dairy",
+    "legume": "Legume",
+    "seasoning": "Seasoning",
+    "other": "Other"
   },
   "pantry_items": {
-    "white_rice":      "White rice",
-    "chicken_breast":  "Chicken breast",
-    "lemon":           "Lemon",
-    "onion":           "Onion",
-    "garlic":          "Garlic",
-    "quinoa":          "Quinoa"
+    "white_rice": "White rice",
+    "chicken_breast": "Chicken breast",
+    "lemon": "Lemon",
+    "onion": "Onion",
+    "garlic": "Garlic",
+    "quinoa": "Quinoa"
   },
   "recipes": {
-    "chicken_quinoa":    "Chicken breast with quinoa",
+    "chicken_quinoa": "Chicken breast with quinoa",
     "rice_chicken_bowl": "Rice and chicken bowl",
-    "chicken_salad":     "Chicken and salad",
+    "chicken_salad": "Chicken and salad",
     "lemon_garlic_rice": "Lemon garlic rice"
   },
   "pantry": {
@@ -701,5 +876,222 @@
     "g": "g",
     "ml": "ml",
     "serving": "serving"
+  },
+  "analytics": {
+    "page_title": "Analytics & Progress",
+    "period_7_days": "7 days",
+    "period_30_days": "30 days",
+    "period_90_days": "90 days",
+    "metric_avg_calories_label": "AVG. CALORIE INTAKE",
+    "metric_avg_calories_on_track": "✓ Within target",
+    "metric_avg_calories_at_risk": "⚠ Above target",
+    "metric_avg_protein_label": "AVG. PROTEIN INTAKE",
+    "metric_avg_protein_on_track": "✓ On target",
+    "metric_avg_protein_above": "✓ Above target",
+    "metric_avg_protein_below": "⚠ Below target",
+    "metric_streak_label": "CURRENT STREAK",
+    "metric_streak_unit": "days",
+    "metric_streak_description": "Consecutive days logged",
+    "macros": {
+      "protein": "Protein",
+      "carbs": "Carbohydrates",
+      "fat": "Fat",
+      "fiber": "Fiber"
+    },
+    "metric_weight_label": "WEIGHT THIS PERIOD",
+    "metric_weight_down": "▼ Down",
+    "metric_weight_up": "▲ Up",
+    "metric_weight_none": "— No change",
+    "chart_calories_title": "Daily Calories",
+    "chart_calories_last_7": "Last 7 Days",
+    "chart_calories_last_30": "Last 30 Days",
+    "chart_calories_last_90": "Last 90 Days",
+    "chart_calories_goal": "Goal: {{ value }} kcal",
+    "chart_calories_average": "Average: {{ value }} kcal",
+    "chart_legend_goal": "Goal",
+    "chart_legend_over": "Over goal",
+    "chart_legend_on_target": "On target",
+    "chart_legend_no_data": "No data",
+    "chart_calories_aria": "Daily calorie intake bar chart",
+    "macros_title": "Avg. Macros",
+    "macros_days_logged": "Days with complete log:",
+    "weight_chart_title": "Weight Evolution",
+    "weight_chart_aria": "Weight evolution line chart",
+    "weight_chart_no_data": "Not enough weight data to display the chart.",
+    "weight_chart_goal": "Goal: {{ value }} kg",
+    "adherence_title": "Monthly Adherence",
+    "adherence_no_data": "No adherence history for this period.",
+    "behavioral_title": "Behavioral Events",
+    "behavioral_no_data": "No behavioral events recorded for this period.",
+    "export_btn_label": "Export to PDF",
+    "export_btn_premium_required": "Requires Premium plan",
+    "export_modal_title": "Export PDF Report",
+    "export_from_date": "From Date",
+    "export_to_date": "To Date",
+    "export_include": "Include in report:",
+    "export_option_daily": "Daily calorie summaries",
+    "export_option_macros": "Macro averages",
+    "export_option_weight": "Weight evolution chart",
+    "export_option_adherence": "Adherence history",
+    "export_option_activity": "Activity data",
+    "export_cancel": "Cancel",
+    "export_generate": "Generate PDF",
+    "loading": "Loading analytics...",
+    "error_load": "Failed to load analytics. Please try again.",
+    "empty": "No analytics data available for this period.",
+    "status_on_track": "On track",
+    "status_at_risk": "At risk",
+    "status_dropped": "Dropped",
+    "status_recovered": "Recovered"
+  },
+  "restaurant": {
+    "error_scan_failed": "Failed to analyse the menu photo. Please try again.",
+    "error_log_failed": "Failed to log the selected dish. Please try again."
+  },
+  "subscriptions": {
+    "title": "Choose your plan",
+    "plan_basic": "Basic",
+    "plan_pro": "Pro",
+    "plan_premium": "Premium",
+    "cta_select": "Select plan",
+    "cta_cancel": "Cancel subscription",
+    "current_plan": "Your current plan",
+    "features_nutrition_log": "Nutrition log",
+    "features_basic_dashboard": "Basic dashboard",
+    "features_bmi_bmr_tdee": "BMI, BMR & TDEE calculator",
+    "features_smart_scan": "Smart plate scan",
+    "features_travel_mode": "Travel mode",
+    "features_weather_recs": "Weather-based recommendations",
+    "features_pantry": "Pantry & recipe suggestions",
+    "features_wearable_sync": "Google Fit sync",
+    "features_restaurant_menu": "Restaurant menu analysis",
+    "features_unlimited_history": "Unlimited history",
+    "features_pdf_reports": "PDF reports",
+    "error_load_failed": "Failed to load subscription details.",
+    "error_update_failed": "Failed to update your plan. Please try again.",
+    "success_activated": "Plan activated successfully.",
+    "success_cancelled": "Subscription cancelled."
+  },
+  "physical_activity": {
+    "title": "Physical Activity",
+    "subtitle": "Track your workouts and see how they affect your daily calorie balance.",
+    "chip": {
+      "connected": "Wearable connected",
+      "disconnected": "No wearable"
+    },
+    "log_activity_btn": "Log activity",
+    "error_load": "Could not load activity data. Please try again.",
+    "error_connect": "Could not connect to Google Fit. Please try again.",
+    "error_disconnect": "Could not disconnect the device. Please try again.",
+    "error_sync": "Sync failed. Please try again.",
+    "error_log_activity": "Could not save the activity. Please try again.",
+    "google_fit": {
+      "title": "Connect Google Fit",
+      "desc": "Sync your physical activity. Connect your Google Fit account to automatically import your daily steps and active calories. The calorie balance on your dashboard will update in real time.",
+      "connect_btn": "Connect to Google Fit",
+      "feature_steps": "Daily steps imported automatically",
+      "feature_calories": "Active calories added to your balance",
+      "feature_sync": "Syncs every hour in the background"
+    },
+    "manual": {
+      "badge": "Manual log",
+      "title": "No wearable device?",
+      "desc": "You can log your activity manually. The system will estimate the calories burned based on the type of exercise and your current body weight.",
+      "cardio_label": "Cardio and walking",
+      "cardio_hint": "Enter the type and duration; the system calculates using METs",
+      "strength_label": "Strength training and others",
+      "strength_hint": "Weights, swimming, cycling and over 20 other types",
+      "log_btn": "Log activity manually"
+    },
+    "connected": {
+      "badge": "Connected · Google Fit",
+      "last_synced": "Last synced:",
+      "sync_now": "Sync now",
+      "disconnect": "Disconnect",
+      "active_calories": "ACTIVE CALORIES",
+      "burned_today": "Burned today",
+      "net_target": "NET DAILY TARGET",
+      "active": "active"
+    },
+    "sync_failed": {
+      "badge": "Sync failed · Using last known data",
+      "last_success": "Last successful sync:",
+      "retry_btn": "Retry sync",
+      "desc": "Google Fit connection interrupted. Active calorie data may be outdated.",
+      "ago": "ago"
+    },
+    "paywall": {
+      "title": "Wearable Sync requires Premium",
+      "desc": "Connect Google Fit to automatically import steps and active calories. Available from $9.99/month.",
+      "upgrade_btn": "Upgrade to Premium",
+      "feature_sync": "Google Fit sync included",
+      "feature_auto": "Automatic calorie import every hour",
+      "feature_balance": "Real-time adjusted daily balance",
+      "note": "Includes Smart Scan and all premium features"
+    },
+    "history": {
+      "this_week": "This week",
+      "title": "Activity History",
+      "empty": "No activity logged yet.",
+      "see_all_btn": "See all",
+      "page_of": "Page {{current}} of {{total}}",
+      "col_type": "Activity",
+      "col_duration": "Duration",
+      "col_calories": "Calories",
+      "col_date": "Date",
+      "min": "min",
+      "prev_page": "Previous page",
+      "next_page": "Next page"
+    },
+    "modal": {
+      "title": "Log physical activity",
+      "activity_label": "Activity type",
+      "activity_placeholder": "Select an activity",
+      "duration_label": "Duration (minutes)",
+      "duration_placeholder": "e.g. 30",
+      "estimated_calories": "Estimated calories burned",
+      "based_on": "Based on your weight:",
+      "save_btn": "Save",
+      "error_duration": "Enter a valid duration greater than 0.",
+      "error_duration_max": "Duration cannot exceed 480 minutes.",
+      "preview_hint": "Select an activity and enter duration to see estimated calories"
+    },
+    "activity_types": {
+      "running": "Running",
+      "cycling": "Cycling",
+      "swimming": "Swimming",
+      "walking": "Walking",
+      "weight_training": "Weight training",
+      "hiit": "HIIT",
+      "yoga": "Yoga",
+      "elliptical": "Elliptical",
+      "rowing": "Rowing",
+      "boxing": "Boxing",
+      "pilates": "Pilates",
+      "dancing": "Dancing",
+      "basketball": "Basketball",
+      "football": "Football",
+      "tennis": "Tennis",
+      "volleyball": "Volleyball",
+      "hiking": "Hiking",
+      "jump_rope": "Jump rope",
+      "stair_climbing": "Stair climbing",
+      "stretching": "Stretching",
+      "crossfit": "CrossFit",
+      "martial_arts": "Martial arts"
+    }
+  },
+  "notifications": {
+    "restricted_item": "This food is not compatible with your active dietary restriction.",
+    "goal_exceeded": "You exceeded your daily calorie goal by {{kcal}} kcal.",
+    "meal_skipped_breakfast": "You didn't log your breakfast. Did you forget?",
+    "meal_skipped_lunch": "You didn't log your lunch. Did you forget?",
+    "meal_skipped_snack": "You didn't log your snack. Did you forget?",
+    "meal_skipped_dinner": "You didn't log your dinner. Did you forget?",
+    "drop_detected": "You've been off track for {{days}} days. Need a more flexible plan?",
+    "abandonment_risk": "We've missed you. Your nutritional plan is ready whenever you are.",
+    "consistency_recovered": "Welcome back! Every day counts. Today is a great day.",
+    "streak_milestone": "{{days}} consecutive days! You're building a real habit.",
+    "strategy_adjustment": "Your body has adapted. We suggest reviewing your nutritional strategy."
   }
 }

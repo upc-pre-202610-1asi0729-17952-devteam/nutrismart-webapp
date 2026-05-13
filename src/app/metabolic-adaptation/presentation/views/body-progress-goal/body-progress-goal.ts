@@ -6,6 +6,7 @@ import { IamStore } from '../../../../iam/application/iam.store';
 import { UserGoal } from '../../../../iam/domain/model/user-goal.enum';
 import { MetabolicStore } from '../../../application/metabolic.store';
 
+
 @Component({
   selector: 'app-body-progress-goal',
   imports: [NgClass, TranslatePipe],
@@ -74,8 +75,7 @@ export class GoalSelectionScreen {
   private async commitGoal(goal: UserGoal): Promise<void> {
     this.submitting.set(true);
     try {
-      this.iamStore.changeGoal(goal);
-      await this.metabolicStore.applyInitialTarget(goal);
+      await this.metabolicStore.switchGoal(goal);
       this.router.navigate(['/body-progress', 'progress']);
     } finally {
       this.submitting.set(false);

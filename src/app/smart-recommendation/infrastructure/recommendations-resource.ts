@@ -36,12 +36,19 @@ export interface RecommendationSessionResource extends BaseResource {
   is_active: boolean;
 }
 
-export interface RecommendationCardResource extends BaseResource {
+export interface FoodCardResource {
+  id: number | string;
   name: string;
-  description: string;
+  name_es: string;
   kcal: number;
-  protein: string;
+  protein_g: number;
+}
+
+export interface RecommendationCardResource extends BaseResource {
+  food_id: number | string;
   badge: string;
+  description: string;
+  description_es: string;
   weather_type: string | null;
   travel_city: string | null;
   card_type: string;

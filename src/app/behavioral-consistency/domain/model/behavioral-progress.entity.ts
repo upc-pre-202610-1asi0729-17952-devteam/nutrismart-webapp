@@ -17,8 +17,8 @@ export interface BehavioralProgressProps {
   consecutiveMisses: number;
   /** Last date where the user met the daily goal, in ISO format. */
   lastGoalMetDate?: string | null;
-  /** Weekly completion flags, usually representing the last seven days. */
-  weekDots: boolean[];
+  /** ISO dates (YYYY-MM-DD) on which the daily goal was completed. */
+  goalMetDates?: string[];
 }
 
 /**
@@ -40,83 +40,86 @@ export class BehavioralProgress implements BaseEntity {
   private _consecutiveMisses: number;
   /** @see BehavioralProgressProps.lastGoalMetDate */
   private _lastGoalMetDate: string;
-  /** @see BehavioralProgressProps.weekDots */
-  private _weekDots: boolean[];
+  /** @see BehavioralProgressProps.goalMetDates */
+  private _goalMetDates: string[];
 
-  /**
-   * Creates a new BehavioralProgress domain entity.
-   *
-   * @param props - All data required to initialise the entity.
-   */
   constructor(props: BehavioralProgressProps) {
-    this._id = props.id ?? 0;
-    this._userId = props.userId;
-    this._adherenceStatus = props.adherenceStatus;
-    this._streak = props.streak;
+    this._id                = props.id ?? 0;
+    this._userId            = props.userId;
+    this._adherenceStatus   = props.adherenceStatus;
+    this._streak            = props.streak;
     this._consecutiveMisses = props.consecutiveMisses;
-    this._lastGoalMetDate = props.lastGoalMetDate ?? '';
-    this._weekDots = [...props.weekDots];
+    this._lastGoalMetDate   = props.lastGoalMetDate ?? '';
+    this._goalMetDates      = [...(props.goalMetDates ?? [])];
   }
 
   // ─── Getters & Setters ────────────────────────────────────────────────────
 
-  /** Unique numeric identifier assigned by the backend. */
   get id(): number { return this._id; }
-  /** @param value - New identifier value. */
   set id(value: number) { this._id = value; }
 
-  /** Identifier of the user this behavioral progress belongs to. */
   get userId(): number { return this._userId; }
-  /** @param value - New user identifier value. */
   set userId(value: number) { this._userId = value; }
 
-  /** Current behavioral adherence status. */
   get adherenceStatus(): AdherenceStatus { return this._adherenceStatus; }
-  /** @param value - New adherence status. */
   set adherenceStatus(value: AdherenceStatus) { this._adherenceStatus = value; }
 
-  /** Number of consecutive days where the user met the expected behavior. */
   get streak(): number { return this._streak; }
-  /** @param value - New streak value. */
   set streak(value: number) { this._streak = Math.max(0, value); }
 
-  /** Number of consecutive missed days. */
   get consecutiveMisses(): number { return this._consecutiveMisses; }
-  /** @param value - New consecutive misses value. */
   set consecutiveMisses(value: number) { this._consecutiveMisses = Math.max(0, value); }
 
-  /** Last date where the user met the daily goal, in ISO format. */
   get lastGoalMetDate(): string { return this._lastGoalMetDate; }
-  /** @param value - New last goal met date. */
   set lastGoalMetDate(value: string) { this._lastGoalMetDate = value; }
 
-  /** Weekly completion flags. Returns a copy of the internal array. */
-  get weekDots(): boolean[] { return [...this._weekDots]; }
-  /** @param value - Replacement weekly completion flags. */
-  set weekDots(value: boolean[]) { this._weekDots = [...value]; }
+  /** Sorted copy of all ISO dates where the daily goal was completed. */
+  get goalMetDates(): string[] { return [...this._goalMetDates]; }
+  set goalMetDates(value: string[]) { this._goalMetDates = [...value]; }
 
   // ─── Computed / Behaviour Methods ─────────────────────────────────────────
 
   /**
-   * Number of completed days in the current weekly view.
+   * Seven booleans representing Monday–Sunday of the current calendar week.
    *
-   * @returns Count of `true` values in weekDots.
+   * Derived from {@link goalMetDates} so it never gets out of sync with
+   * the persisted history.
+   *
+   * @returns Array of 7 booleans, index 0 = Monday, index 6 = Sunday.
    */
-  get completedDaysThisWeek(): number {
-    return this._weekDots.filter(Boolean).length;
+  get weekDots(): boolean[] {
+    const today      = new Date();
+    const dayOfWeek  = (today.getUTCDay() + 6) % 7; // Mon = 0 … Sun = 6
+    const monday     = new Date(Date.UTC(
+      today.getUTCFullYear(),
+      today.getUTCMonth(),
+      today.getUTCDate() - dayOfWeek,
+    ));
+
+    return Array.from({ length: 7 }, (_, i) => {
+      const d       = new Date(monday);
+      d.setUTCDate(monday.getUTCDate() + i);
+      const dateStr = d.toISOString().slice(0, 10);
+      return this._goalMetDates.includes(dateStr);
+    });
   }
 
   /**
-   * Weekly completion percentage based on the current weekDots array.
+   * Number of completed days in the current weekly view.
+   *
+   * @returns Count of `true` values in {@link weekDots}.
+   */
+  get completedDaysThisWeek(): number {
+    return this.weekDots.filter(Boolean).length;
+  }
+
+  /**
+   * Weekly completion percentage based on the current week dots.
    *
    * @returns Percentage from 0 to 100.
    */
   get weeklyCompletionRate(): number {
-    if (this._weekDots.length === 0) {
-      return 0;
-    }
-
-    return Math.round((this.completedDaysThisWeek / this._weekDots.length) * 100);
+    return Math.round((this.completedDaysThisWeek / 7) * 100);
   }
 
   /**
@@ -135,35 +138,54 @@ export class BehavioralProgress implements BaseEntity {
    */
   needsReEngagement(): boolean {
     return this._adherenceStatus === AdherenceStatus.AT_RISK ||
-      this._adherenceStatus === AdherenceStatus.OFF_TRACK;
+      this._adherenceStatus === AdherenceStatus.DROPPED;
+  }
+
+  /**
+   * Whether the dashboard should display an alert banner for this status.
+   *
+   * @returns `true` for any status other than ON_TRACK.
+   */
+  hasAlert(): boolean {
+    return this._adherenceStatus !== AdherenceStatus.ON_TRACK;
+  }
+
+  /**
+   * Next streak milestone expressed as a multiple of 7 days.
+   *
+   * @returns The next 7-day boundary above the current streak.
+   */
+  get nextStreakMilestone(): number {
+    return Math.ceil((this._streak + 1) / 7) * 7;
   }
 
   /**
    * Marks today's behavioral goal as completed.
    *
-   * Increases the streak, resets missed days, updates the last goal date,
-   * and recalculates the adherence status.
+   * No-ops if `date` is already recorded in {@link goalMetDates}.
    *
-   * @param date - Goal completion date in ISO format.
+   * @param date - Goal completion date in ISO format (YYYY-MM-DD).
    */
   markGoalMet(date: string): void {
-    this._streak += 1;
+    if (this._goalMetDates.includes(date)) return;
+
+    this._goalMetDates      = [...this._goalMetDates, date];
+    this._streak           += 1;
     this._consecutiveMisses = 0;
-    this._lastGoalMetDate = date;
-    this.pushWeekDot(true);
+    this._lastGoalMetDate   = date;
     this.recalculateAdherenceStatus();
   }
 
   /**
    * Marks today's behavioral goal as missed.
    *
-   * Resets the streak, increases consecutive misses, updates the weekly view,
-   * and recalculates the adherence status.
+   * Resets the streak, increases consecutive misses, and recalculates
+   * the adherence status. No mutation of {@link goalMetDates} is needed
+   * since absences are implicit.
    */
   markGoalMissed(): void {
-    this._streak = 0;
+    this._streak            = 0;
     this._consecutiveMisses += 1;
-    this.pushWeekDot(false);
     this.recalculateAdherenceStatus();
   }
 
@@ -171,13 +193,13 @@ export class BehavioralProgress implements BaseEntity {
    * Recalculates adherence status from the current streak and missed days.
    *
    * Rules:
-   * - OFF_TRACK: 3 or more consecutive misses.
-   * - AT_RISK: 1 or 2 consecutive misses.
+   * - DROPPED: 7 or more consecutive misses.
+   * - AT_RISK: 1–6 consecutive misses.
    * - ON_TRACK: no consecutive misses.
    */
   recalculateAdherenceStatus(): void {
-    if (this._consecutiveMisses >= 3) {
-      this._adherenceStatus = AdherenceStatus.OFF_TRACK;
+    if (this._consecutiveMisses >= 7) {
+      this._adherenceStatus = AdherenceStatus.DROPPED;
       return;
     }
 
@@ -196,14 +218,5 @@ export class BehavioralProgress implements BaseEntity {
    */
   behavioralSummary(): string {
     return `${this._streak} day streak | ${this._consecutiveMisses} misses | ${this.weeklyCompletionRate}% weekly completion`;
-  }
-
-  /**
-   * Adds a new weekly completion value, keeping only the latest seven entries.
-   *
-   * @param completed - Whether the goal was completed.
-   */
-  private pushWeekDot(completed: boolean): void {
-    this._weekDots = [...this._weekDots, completed].slice(-7);
   }
 }

@@ -1,7 +1,6 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, computed, inject, OnInit } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AnalyticsStore } from '../../../application/analytics.store';
-import { IamStore } from '../../../../iam/application/iam.store';
 import { AnalyticsPeriod } from '../../../domain/model/analytics-models';
 import { MetricCardComponent } from '../../components/metric-card/metric-card.component';
 import { PeriodToggleComponent } from '../../components/period-toggle/period-toggle.component';
@@ -11,14 +10,13 @@ import { AverageMacrosPanelComponent } from '../../components/average-macros-pan
 import { WeightEvolutionChartComponent } from '../../components/weight-evolution-chart/weight-evolution-chart.component';
 import { AdherenceHistoryTimelineComponent } from '../../components/adherence-history-timeline/adherence-history-timeline.component';
 import { BehavioralEventsListComponent } from '../../components/behavioral-events-list/behavioral-events-list.component';
-import {ExportPdfReportViewComponent} from '../export-pdf-report-view/export-pdf-report-view.component';
-import { SubscriptionPlan } from '../../../../iam/domain/model/subscription-plan.enum';
+import { ExportPdfReportViewComponent, ExportPdfRequest } from '../export-pdf-report-view/export-pdf-report-view.component';
 
 @Component({
   selector: 'app-analytics-dashboard',
   standalone: true,
   imports: [
-    CommonModule,
+    TranslateModule,
     MetricCardComponent,
     PeriodToggleComponent,
     ExportPdfButtonComponent,
@@ -34,105 +32,89 @@ import { SubscriptionPlan } from '../../../../iam/domain/model/subscription-plan
 })
 export class AnalyticsDashboardComponent implements OnInit {
   protected readonly analyticsStore = inject(AnalyticsStore);
-  protected readonly iamStore = inject(IamStore);
+  private readonly translate = inject(TranslateService);
 
-  protected readonly currentUser = this.iamStore.currentUser;
-  protected readonly analyticsData = this.analyticsStore.currentAnalyticsData;
-  protected readonly loading = this.analyticsStore.loading;
-  protected readonly error = this.analyticsStore.error;
-  protected readonly selectedPeriod = this.analyticsStore.selectedPeriod;
+  protected readonly analyticsData      = this.analyticsStore.currentAnalyticsData;
+  protected readonly loading            = this.analyticsStore.loading;
+  protected readonly error              = this.analyticsStore.error;
+  protected readonly selectedPeriod     = this.analyticsStore.selectedPeriod;
+  protected readonly showExportPdfModal = this.analyticsStore.exportPdfModalOpen;
+  protected readonly isPremiumUser      = this.analyticsStore.isPremiumUser;
+  protected readonly allowedPeriods     = this.analyticsStore.allowedPeriods;
 
-  // Signal to control the visibility of the Export PDF modal
-  public _showExportPdfModal = signal<boolean>(false);
-  public readonly showExportPdfModal = this._showExportPdfModal.asReadonly();
+  readonly dailyCaloriesGoal = computed(() =>
+    this.analyticsData()?.dailyCaloriesHistory?.[0]?.goal ?? 1800
+  );
 
-  // Computed signal to determine if the user is premium (for PDF export button)
-  public readonly isPremiumUser = computed(() => this.iamStore.currentUser()?.plan === SubscriptionPlan.PREMIUM);
+  readonly showAdherenceHistory = computed(() => this.selectedPeriod() !== '7_DAYS');
 
-  // Computed signal for daily calories goal, handling potential empty history
-  public readonly dailyCaloriesGoal = computed(() => {
-    const data = this.analyticsData();
-    return data?.dailyCaloriesHistory?.[0]?.goal ?? 1800;
-  });
-
-  // Computed signals for metric cards
-  protected readonly averageCalorieIntakeVm = computed(() => {
-    const data = this.analyticsData();
+  readonly averageCalorieIntakeVm = computed(() => {
+    const avg  = this.analyticsData()?.averageCalorieIntake ?? 0;
+    const goal = this.dailyCaloriesGoal();
+    const isOver = avg > goal;
     return {
-      label: 'AVERAGE CALORIE INTAKE',
-      value: `${data?.averageCalorieIntake ?? 0} kcal`,
-      description: '✓ Within target', // This needs dynamic logic based on actual data
-      statusClass: 'status-on-track',
+      label: this.translate.instant('analytics.metric_avg_calories_label'),
+      value: `${avg} kcal`,
+      description: this.translate.instant(
+        isOver ? 'analytics.metric_avg_calories_at_risk' : 'analytics.metric_avg_calories_on_track'
+      ),
+      statusClass: isOver ? 'status-at-risk' : 'status-on-track',
     };
   });
 
-  protected readonly averageProteinIntakeVm = computed(() => {
-    const data = this.analyticsData();
-    const protein = data?.macroAnalysis.find(m => m.name === 'Protein');
-    const value = protein ? `${protein.consumed}g` : '0g';
-    let description = '✓ On target';
-    let statusClass = 'status-on-track';
-
-    // Example dynamic logic for protein intake
-    if (protein && protein.consumed < protein.target * 0.9) { // e.g., less than 90% of target
-      description = '⚠ Below target';
+  readonly averageProteinIntakeVm = computed(() => {
+    const protein  = this.analyticsData()?.macroAnalysis.find(m => m.key === 'protein');
+    const consumed = protein?.consumed ?? 0;
+    const target   = protein?.target ?? 1;
+    const ratio    = consumed / target;
+    let descKey: string;
+    let statusClass: string;
+    if (protein?.isAboveTarget || ratio >= 1) {
+      descKey = 'analytics.metric_avg_protein_above';
+      statusClass = 'status-on-track';
+    } else if (ratio < 0.9) {
+      descKey = 'analytics.metric_avg_protein_below';
       statusClass = 'status-at-risk';
-    } else if (protein && protein.isAboveTarget) {
-      description = '✓ Above target';
+    } else {
+      descKey = 'analytics.metric_avg_protein_on_track';
       statusClass = 'status-on-track';
     }
-
     return {
-      label: 'AVERAGE PROTEIN INTAKE',
-      value: value,
-      description: description,
-      statusClass: statusClass,
+      label: this.translate.instant('analytics.metric_avg_protein_label'),
+      value: protein ? `${consumed}g` : '0g',
+      description: this.translate.instant(descKey),
+      statusClass,
     };
   });
 
-  protected readonly currentStreakVm = computed(() => {
-    const data = this.analyticsData();
+  readonly currentStreakVm = computed(() => ({
+    label: this.translate.instant('analytics.metric_streak_label'),
+    value: `${this.analyticsData()?.currentStreak ?? 0} ${this.translate.instant('analytics.metric_streak_unit')}`,
+    description: this.translate.instant('analytics.metric_streak_description'),
+    statusClass: 'status-on-track',
+  }));
+
+  readonly weightChangeVm = computed(() => {
+    const data      = this.analyticsData();
+    const change    = data?.weightChange ?? 0;
+    const direction = data?.weightChangeDirection ?? 'none';
+    const status    = data?.weightChangeStatus ?? 'neutral';
+    const sign      = change > 0 ? '+' : '';
+    let descKey: string;
+    if (direction === 'down') descKey = 'analytics.metric_weight_down';
+    else if (direction === 'up') descKey = 'analytics.metric_weight_up';
+    else descKey = 'analytics.metric_weight_none';
     return {
-      label: 'CURRENT STREAK',
-      value: `${data?.currentStreak ?? 0} days`,
-      description: 'Consecutive days logged',
-      statusClass: 'status-on-track', // Streak is generally positive
+      label: this.translate.instant('analytics.metric_weight_label'),
+      value: `${sign}${change} kg`,
+      description: this.translate.instant(descKey),
+      statusClass: status === 'positive' ? 'status-on-track'
+        : status === 'negative' ? 'status-at-risk'
+        : 'status-neutral',
     };
   });
-
-  protected readonly weightChangeVm = computed(() => {
-    const data = this.analyticsData();
-    const change = data?.weightChange ?? 0;
-    const direction = data?.weightChangeDirection;
-    const status = data?.weightChangeStatus;
-
-    let value = `${change > 0 ? '+' : ''}${change} kg`;
-    let description = '';
-    let statusClass = '';
-
-    if (direction === 'down') {
-      description = '▼ Down compared to last week';
-      statusClass = status === 'positive' ? 'status-on-track' : 'status-at-risk'; // Green for weight loss, red for muscle gain
-    } else if (direction === 'up') {
-      description = '▲ Up compared to last week';
-      statusClass = status === 'positive' ? 'status-on-track' : 'status-at-risk'; // Green for muscle gain, red for weight loss
-    } else {
-      description = '— No change this week';
-      statusClass = 'status-neutral';
-    }
-
-    return {
-      label: 'WEIGHT THIS WEEK',
-      value: value,
-      description: description,
-      statusClass: statusClass,
-    };
-  });
-
-  protected readonly showAdherenceHistory = computed(() => this.selectedPeriod() === '30_DAYS');
 
   ngOnInit(): void {
-    // Load initial data for 7 days
     this.analyticsStore.loadAnalyticsData('7_DAYS').subscribe();
   }
 
@@ -140,15 +122,18 @@ export class AnalyticsDashboardComponent implements OnInit {
     this.analyticsStore.loadAnalyticsData(period).subscribe();
   }
 
-  public onExportPdf(): void {
-    this._showExportPdfModal.set(true);
+  onExportPdf(): void {
+    this.analyticsStore.openExportPdfModal();
   }
 
-  public onCloseExportPdfModal(): void {
-    this._showExportPdfModal.set(false);
+  onCloseExportPdfModal(): void {
+    this.analyticsStore.closeExportPdfModal();
   }
 
-  public onReportGenerated(): void {
-    this._showExportPdfModal.set(false);
+  onExportRequest(req: ExportPdfRequest): void {
+    this.analyticsStore.exportReport(req.fromDate, req.toDate).subscribe({
+      next: () => this.analyticsStore.closeExportPdfModal(),
+      error: () => {},
+    });
   }
 }

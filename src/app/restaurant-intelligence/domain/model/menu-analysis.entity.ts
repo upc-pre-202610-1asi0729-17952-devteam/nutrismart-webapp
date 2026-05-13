@@ -1,14 +1,21 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 import { DietaryRestriction } from '../../../iam/domain/model/dietary-restriction.enum';
 
-/**
- * A single dish detected in a restaurant menu photo.
- *
- * Value object embedded within {@link MenuAnalysis}.
- *
- * @author Del Aguila Del Aguila, Olenka Priscilla
- */
-export interface RankedDish {
+export interface RankedDishProps {
+  rank: number;
+  name: string;
+  nameKey: string | null;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  compatibilityScore: number;
+  justification: string;
+  justificationKey: string | null;
+  conflictingRestrictions?: DietaryRestriction[];
+}
+
+export class RankedDish {
   readonly rank: number;
   readonly name: string;
   readonly nameKey: string | null;
@@ -19,26 +26,49 @@ export interface RankedDish {
   readonly compatibilityScore: number;
   readonly justification: string;
   readonly justificationKey: string | null;
+  readonly conflictingRestrictions: DietaryRestriction[];
+
+  constructor(props: RankedDishProps) {
+    this.rank                   = props.rank;
+    this.name                   = props.name;
+    this.nameKey                = props.nameKey;
+    this.calories               = props.calories;
+    this.protein                = props.protein;
+    this.carbs                  = props.carbs;
+    this.fat                    = props.fat;
+    this.compatibilityScore     = props.compatibilityScore;
+    this.justification          = props.justification;
+    this.justificationKey       = props.justificationKey;
+    this.conflictingRestrictions = [...(props.conflictingRestrictions ?? [])];
+  }
+
+  formattedScore(): string {
+    return `${this.compatibilityScore}%`;
+  }
+
+  firstConflict(activeRestrictions: DietaryRestriction[]): DietaryRestriction | null {
+    return this.conflictingRestrictions.find(r => activeRestrictions.includes(r)) ?? null;
+  }
 }
 
-/**
- * A dish flagged as incompatible with the user's dietary restrictions.
- *
- * Value object embedded within {@link MenuAnalysis}.
- *
- * @author Del Aguila Del Aguila, Olenka Priscilla
- */
-export interface RestrictedDish {
+export interface RestrictedDishProps {
+  name: string;
+  nameKey: string | null;
+  restriction: DietaryRestriction;
+}
+
+export class RestrictedDish {
   readonly name: string;
   readonly nameKey: string | null;
   readonly restriction: DietaryRestriction;
+
+  constructor(props: RestrictedDishProps) {
+    this.name        = props.name;
+    this.nameKey     = props.nameKey;
+    this.restriction = props.restriction;
+  }
 }
 
-/**
- * Constructor DTO for creating a {@link MenuAnalysis} instance.
- *
- * @author Del Aguila Del Aguila, Olenka Priscilla
- */
 export interface MenuAnalysisProps {
   id: number;
   rankedDishes: RankedDish[];
@@ -47,15 +77,6 @@ export interface MenuAnalysisProps {
   restaurantName: string;
 }
 
-/**
- * Aggregate root for a restaurant-menu scan session.
- *
- * Non-anemic: exposes domain queries ({@link bestDish}, {@link alternatives},
- * {@link compatibilityLabel}) so the presentation layer never has to sort or
- * filter raw data.
- *
- * @author Del Aguila Del Aguila, Olenka Priscilla
- */
 export class MenuAnalysis implements BaseEntity {
   private _id: number;
   private _rankedDishes: RankedDish[];
@@ -64,14 +85,14 @@ export class MenuAnalysis implements BaseEntity {
   private _restaurantName: string;
 
   constructor(props: MenuAnalysisProps) {
-    this._id              = props.id;
-    this._rankedDishes    = [...props.rankedDishes].sort((a, b) => a.rank - b.rank);
+    this._id               = props.id;
+    this._rankedDishes     = [...props.rankedDishes].sort((a, b) => a.rank - b.rank);
     this._restrictedDishes = [...props.restrictedDishes];
-    this._scannedAt       = props.scannedAt;
-    this._restaurantName  = props.restaurantName;
+    this._scannedAt        = props.scannedAt;
+    this._restaurantName   = props.restaurantName;
   }
 
-  // ─── Getters & Setters ────────────────────────────────────────────────────
+  // ─── Getters ──────────────────────────────────────────────────────────────
 
   get id(): number { return this._id; }
   set id(v: number) { this._id = v; }
@@ -87,39 +108,49 @@ export class MenuAnalysis implements BaseEntity {
 
   // ─── Domain Behaviour ─────────────────────────────────────────────────────
 
-  /**
-   * The top-ranked dish (CompatibleDishesRanked[0]).
-   *
-   * @returns The best-match dish, or `null` when no compatible dishes were found.
-   */
   get bestDish(): RankedDish | null {
     return this._rankedDishes[0] ?? null;
   }
 
-  /**
-   * All ranked dishes except the best match (rank > 1).
-   */
   get alternatives(): RankedDish[] {
     return this._rankedDishes.slice(1);
   }
 
-  /** Whether there are any flagged restricted dishes. */
   get hasRestrictedDishes(): boolean {
     return this._restrictedDishes.length > 0;
   }
 
-  /** Whether at least one compatible dish was found. */
   get hasCompatibleDishes(): boolean {
     return this._rankedDishes.length > 0;
   }
 
   /**
-   * Formatted compatibility percentage label for a dish.
+   * Filters the ranked dishes against active dietary restrictions and returns
+   * a new MenuAnalysis where incompatible dishes are moved to restrictedDishes.
    *
-   * @param dish - A ranked dish from this analysis.
-   * @returns e.g. "87%"
+   * Implements restaurantMenu.analyzeCompatibility() from the domain model.
    */
-  compatibilityLabel(dish: RankedDish): string {
-    return `${dish.compatibilityScore}%`;
+  analyzeCompatibility(activeRestrictions: DietaryRestriction[]): MenuAnalysis {
+    if (activeRestrictions.length === 0) return this;
+
+    const compatible: RankedDish[]   = [];
+    const restricted: RestrictedDish[] = [];
+
+    for (const dish of this._rankedDishes) {
+      const conflict = dish.firstConflict(activeRestrictions);
+      if (conflict) {
+        restricted.push(new RestrictedDish({ name: dish.name, nameKey: dish.nameKey, restriction: conflict }));
+      } else {
+        compatible.push(dish);
+      }
+    }
+
+    return new MenuAnalysis({
+      id:               this._id,
+      scannedAt:        this._scannedAt,
+      restaurantName:   this._restaurantName,
+      rankedDishes:     compatible.map((d, i) => new RankedDish({ ...d, rank: i + 1 })),
+      restrictedDishes: restricted,
+    });
   }
 }

@@ -1,4 +1,10 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
+import { MacronutrientDistribution } from './macronutrient-distribution.value-object';
+import { MacroThreshold } from './macro-threshold';
+import { MacroWarning, MacroName } from './macro-warning.value-object';
+import { GuardrailSeverity } from './guardrail-severity.enum';
+import { GuardrailType } from './guardrail-type.enum';
+import { PreLogGuardrail } from './pre-log-guardrail.value-object';
 
 /**
  * Constructor DTO for creating a {@link DailyIntake} instance.
@@ -110,6 +116,24 @@ export class DailyIntake implements BaseEntity {
   }
 
   /**
+   * Updates the daily calorie goal, e.g. when a new metabolic target arrives.
+   *
+   * @param newGoal - New daily calorie target in kcal.
+   */
+  updateGoal(newGoal: number): void {
+    this._dailyGoal = newGoal;
+  }
+
+  /**
+   * Updates the active (exercise) calorie adjustment for the day.
+   *
+   * @param calories - Total active calories burned today.
+   */
+  updateActive(calories: number): void {
+    this._active = calories;
+  }
+
+  /**
    * Human-readable balance summary.
    *
    * @returns e.g. "74% of your goal consumed" or "Exceeded by 220 kcal".
@@ -118,5 +142,86 @@ export class DailyIntake implements BaseEntity {
     return this.exceeded
       ? `Exceeded by ${this.netCalories} kcal`
       : `${this.percentConsumed}% of your goal consumed`;
+  }
+
+  /**
+   * Evaluates all macros against their daily targets and returns any that have
+   * crossed the {@link MacroThreshold.APPROACHING} (80%) or {@link MacroThreshold.EXCEEDED} (100%) boundary.
+   *
+   * Calories are checked against the entity's own `dailyGoal`; all other macros
+   * use the provided `targets` map.
+   *
+   * @param consumed - Snapshot of nutrients consumed so far today.
+   * @param targets  - User's macro targets in grams (protein, carbs, fat, fiber).
+   * @returns Ordered list of {@link MacroWarning} value objects, one per affected macro.
+   */
+  checkWarnings(
+    consumed: { calories: number; protein: number; carbs: number; fat: number; fiber: number },
+    targets: { protein: number; carbs: number; fat: number; fiber: number },
+  ): MacroWarning[] {
+    const checks: Array<{ macro: MacroName; value: number; target: number }> = [
+      { macro: 'calories',      value: consumed.calories, target: this._dailyGoal },
+      { macro: 'protein',       value: consumed.protein,  target: targets.protein },
+      { macro: 'carbohydrates', value: consumed.carbs,    target: targets.carbs },
+      { macro: 'fats',          value: consumed.fat,      target: targets.fat },
+      { macro: 'fiber',         value: consumed.fiber,    target: targets.fiber },
+    ];
+
+    return checks
+      .filter(c => c.target > 0)
+      .flatMap(c => {
+        const ratio = c.value / c.target;
+        if (ratio >= MacroThreshold.EXCEEDED)    return [new MacroWarning(c.macro, 'exceeded',    ratio * 100)];
+        if (ratio >= MacroThreshold.APPROACHING) return [new MacroWarning(c.macro, 'approaching', ratio * 100)];
+        return [];
+      });
+  }
+
+  /**
+   * Evaluates whether adding an upcoming meal would exceed the adjusted daily calorie budget.
+   *
+   * The adjusted budget is `dailyGoal + active`. Returns a {@link GuardrailSeverity.WARNING}
+   * guardrail when the projected total would exceed it, `null` otherwise.
+   *
+   * @param upcomingCalories      - Calories in the meal about to be logged.
+   * @param alreadyConsumedCalories - Calories already logged for the day (from live signals, not persisted state).
+   * @returns A {@link PreLogGuardrail} of type CALORIE_OVERAGE, or `null` when within budget.
+   */
+  evaluateCalorieOverage(upcomingCalories: number, alreadyConsumedCalories: number): PreLogGuardrail | null {
+    const budget    = this._dailyGoal + this._active;
+    if (budget <= 0) return null;
+    const projected = alreadyConsumedCalories + upcomingCalories;
+    if (projected <= budget) return null;
+    return new PreLogGuardrail({
+      type:              GuardrailType.CALORIE_OVERAGE,
+      severity:          GuardrailSeverity.WARNING,
+      messageKey:        'nutrition.guardrail.calorie_overage',
+      recommendationKey: 'nutrition.guardrail.calorie_overage_rec',
+      params: {
+        percent: Math.round((projected / budget) * 100),
+        overage: Math.round(projected - budget),
+      },
+    });
+  }
+
+  /**
+   * Validates whether the consumed macros stay within the user's daily targets.
+   *
+   * Each key is `true` when the consumed value is within the target (not exceeded).
+   *
+   * @param consumed - Actual macros consumed for the day.
+   * @param targets  - User's macro targets (protein, carbs, fat, fiber in grams).
+   */
+  validateMacronutrients(
+    consumed: MacronutrientDistribution,
+    targets: { protein: number; carbs: number; fat: number; fiber: number },
+  ): { calories: boolean; protein: boolean; carbs: boolean; fat: boolean; fiber: boolean } {
+    return {
+      calories: consumed.calories <= this._dailyGoal,
+      protein:  consumed.protein  <= targets.protein,
+      carbs:    consumed.carbs    <= targets.carbs,
+      fat:      consumed.fat      <= targets.fat,
+      fiber:    consumed.fiber    <= targets.fiber,
+    };
   }
 }

@@ -1,4 +1,5 @@
 import { Component, output } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 /**
  * Provides user-triggered behavioral actions for the dashboard.
@@ -8,6 +9,7 @@ import { Component, output } from '@angular/core';
   selector: 'app-behavioral-action-panel',
   templateUrl: './behavioral-action-panel.html',
   styleUrl: './behavioral-action-panel.css',
+  imports: [TranslatePipe],
 })
 export class BehavioralActionPanel {
   /** Emits when the user records a positive consistency action. */

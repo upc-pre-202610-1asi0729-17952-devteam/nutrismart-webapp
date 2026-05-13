@@ -78,6 +78,21 @@
               </div>
             </div>
 
+            <div class="form-group">
+              <label class="form-label">{{ 'profile.home_city' | translate }}</label>
+              <input type="text" formControlName="homeCity" class="form-input"
+                     list="known-cities-list" autocomplete="off" />
+              <datalist id="known-cities-list">
+                @for (city of knownCities(); track city) {
+                  <option [value]="city"></option>
+                }
+              </datalist>
+              <span class="field-hint">{{ 'profile.home_city_hint' | translate }}</span>
+              @if (personalForm.get('homeCity')?.invalid && personalForm.get('homeCity')?.touched) {
+                <span class="field-error">{{ 'profile.home_city_required' | translate }}</span>
+              }
+            </div>
+
             <div class="plan-info-card">
               <span class="plan-badge">{{ iamStore.currentUser()?.plan }}</span>
               <span class="plan-renewal">{{ 'profile.nav_personal' | translate }}</span>
@@ -100,8 +115,21 @@
           <form [formGroup]="physicalForm" novalidate>
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">{{ 'profile.weight' | translate }}</label>
-                <input type="number" formControlName="weight" class="form-input" />
+                <div class="weight-label-row">
+                  <label class="form-label">{{ 'profile.weight' | translate }}</label>
+                  <span class="weight-tooltip-wrap">
+                    <button type="button" class="weight-info-btn"
+                            [attr.aria-label]="'profile.weight_tooltip_aria' | translate"
+                            aria-describedby="weight-tooltip">
+                      <span class="material-icons" aria-hidden="true">info_outline</span>
+                    </button>
+                    <span role="tooltip" id="weight-tooltip" class="weight-tooltip">
+                      {{ 'profile.weight_tooltip' | translate }}
+                    </span>
+                  </span>
+                </div>
+                <input type="number" class="form-input form-input-readonly"
+                       [value]="metabolicStore.currentMetric()?.weightKg ?? iamStore.currentUser()?.weight" readonly />
               </div>
               <div class="form-group">
                 <label class="form-label">{{ 'profile.height' | translate }}</label>

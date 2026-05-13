@@ -7,7 +7,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { routes } from './app.routes';
 import { AnalyticsApi } from './analytics/infrastructure/analytics-api';
-import { AnalyticsApiMockService } from './analytics/infrastructure/analytics-api-mock.service';
+import { AnalyticsApiHttpService } from './analytics/infrastructure/analytics-api-http.service';
 
 function initLanguage(translate: TranslateService) {
   return async () => {
@@ -37,9 +37,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideTranslateService(),
     provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),
-    // Provide the mock implementation for AnalyticsApi
-    { provide: AnalyticsApi, useClass: AnalyticsApiMockService },
-  ]
+    { provide: AnalyticsApi, useClass: AnalyticsApiHttpService },
     {
       provide: APP_INITIALIZER,
       useFactory: initLanguage,

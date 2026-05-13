@@ -1,0 +1,84 @@
+<div class="cc-card">
+
+  <!-- ── Status bar ── -->
+  <div class="cc-status-bar">
+    <div class="cc-status-left">
+      <span class="cc-pulse" aria-hidden="true"></span>
+      <div class="cc-status-info">
+        <span class="cc-status-label">{{ 'physical_activity.connected.badge' | translate }}</span>
+        <span class="cc-sync-time">
+          {{ 'physical_activity.connected.last_synced' | translate }} {{ syncLabel() }}
+        </span>
+      </div>
+    </div>
+    <div class="cc-status-actions">
+      <button class="cc-btn-outline" type="button"
+              [disabled]="isLoading()"
+              (click)="onSyncNow()">
+        <span class="material-icons cc-btn-icon">sync</span>
+        {{ 'physical_activity.connected.sync_now' | translate }}
+      </button>
+      <button class="cc-btn-ghost" type="button"
+              (click)="onDisconnect()">
+        {{ 'physical_activity.connected.disconnect' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Metrics grid ── -->
+  <div class="cc-metrics">
+
+    <div class="cc-metric cc-metric--green">
+      <span class="cc-metric-label">{{ 'physical_activity.connected.active_calories' | translate }}</span>
+      <span class="cc-metric-value">
+        +{{ netCalories() | number:'1.0-0' }}
+        <span class="cc-metric-unit">kcal</span>
+      </span>
+      <span class="cc-metric-sub">{{ 'physical_activity.connected.burned_today' | translate }}</span>
+    </div>
+
+    <div class="cc-metric">
+      <span class="cc-metric-label">{{ 'physical_activity.connected.net_target' | translate }}</span>
+      <span class="cc-metric-value">
+        {{ netDailyTarget() | number:'1.0-0' }}
+        <span class="cc-metric-unit">kcal</span>
+      </span>
+      <span class="cc-metric-sub">
+        {{ baseTarget() | number:'1.0-0' }} + {{ netCalories() | number:'1.0-0' }}
+        {{ 'physical_activity.connected.active' | translate }}
+      </span>
+    </div>
+
+  </div>
+
+  <!-- ── Activity history ── -->
+  <div class="cc-history">
+    <h4 class="cc-history-title">{{ 'physical_activity.history.this_week' | translate }}</h4>
+
+    @if (weekLogs().length > 0) {
+      <div class="cc-log-list">
+        @for (log of weekLogs(); track log.id) {
+          <div class="cc-log-row">
+            <div class="cc-log-day">{{ formatLogDate(log.timestamp) }}</div>
+            <div class="cc-log-info">
+              <span class="cc-log-type">
+                {{ ('physical_activity.activity_types.' + log.activityType) | translate }}
+              </span>
+              <span class="cc-log-duration">{{ log.durationMinutes }} min</span>
+            </div>
+            <div class="cc-log-cal">
+              <span class="material-icons cc-log-cal-icon">local_fire_department</span>
+              {{ log.caloriesBurned | number:'1.0-0' }} kcal
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="cc-history-empty">
+        <span class="material-icons cc-history-empty-icon">directions_walk</span>
+        <span>{{ 'physical_activity.history.empty' | translate }}</span>
+      </div>
+    }
+  </div>
+
+</div>

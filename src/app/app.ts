@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Layout } from './shared/presentation/components/layout/layout';
+import { ToastContainer } from './shared/presentation/components/toast-container/toast-container';
+import { AppSchedulerService } from './shared/application/app-scheduler.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs';
 
@@ -18,13 +20,16 @@ const PUBLIC_PREFIXES = ['/auth', '/onboarding', '/subscription'];
  */
 @Component({
   selector: 'app-root',
-  imports: [Layout, RouterOutlet],
+  imports: [Layout, RouterOutlet, ToastContainer],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
 export class App {
   /** ngx-translate service used to configure supported languages. */
   private translate = inject(TranslateService);
+
+  /** Eagerly instantiates the scheduler so time-based domain checks start on app load. */
+  private readonly _scheduler = inject(AppSchedulerService);
 
   /** Angular router used to watch navigation events. */
   private router = inject(Router);

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -8,6 +8,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { CityLookupApi } from '../../../../shared/infrastructure/city-lookup-api';
 
 /**
  * Validates that the date entered corresponds to a person at least `minAge`
@@ -107,12 +109,13 @@ interface VisualLevel {
   templateUrl: './onboarding.html',
   styleUrl: './onboarding.css',
 })
-export class Onboarding {
+export class Onboarding implements OnInit {
   iamStore       = inject(IamStore);
   metabolicStore = inject(MetabolicStore);
 
-  private router = inject(Router);
-  private fb     = inject(FormBuilder);
+  private router        = inject(Router);
+  private fb            = inject(FormBuilder);
+  private cityLookupApi = inject(CityLookupApi);
 
   /** Expose enum to template. */
   readonly UserGoal = UserGoal;
@@ -148,13 +151,30 @@ export class Onboarding {
 
   // ─── Step 1 state ─────────────────────────────────────────────────────────
 
-  selectedActivity = signal<ActivityLevel>(ActivityLevel.MODERATE);
+  selectedActivity    = signal<ActivityLevel>(ActivityLevel.MODERATE);
+  availableCities     = signal<string[]>([]);
+  citiesLoading       = signal(true);
+  citySearchQuery     = signal('');
+  showCitySuggestions = signal(false);
+
+  readonly filteredCities = computed(() => {
+    const q = this.citySearchQuery().toLowerCase().trim();
+    if (!q) return this.availableCities();
+    return this.availableCities().filter(c => c.toLowerCase().includes(q));
+  });
+
+  private readonly cityValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const cities = this.availableCities();
+    if (cities.length === 0) return null;
+    return cities.includes(control.value) ? null : { invalidCity: true };
+  };
 
   bodyForm = this.fb.group({
     birthday:      ['', [Validators.required, minAgeValidator(13)]],
     biologicalSex: ['', Validators.required],
     weight:        [null as number | null, [Validators.required, Validators.min(30), Validators.max(300)]],
     height:        [null as number | null, [Validators.required, Validators.min(100), Validators.max(250)]],
+    homeCity:      ['', [Validators.required, this.cityValidator]],
   });
 
   // ─── Step 2 state ─────────────────────────────────────────────────────────
@@ -245,6 +265,18 @@ export class Onboarding {
     { key: 'onboarding.visual_obese',        rangeKey: 'onboarding.visual_range_obese',        override: 32.0 },
   ];
 
+  // ─── Lifecycle ────────────────────────────────────────────────────────────
+
+  async ngOnInit(): Promise<void> {
+    try {
+      const cities = await firstValueFrom(this.cityLookupApi.getKnownCities());
+      this.availableCities.set(cities);
+      this.bodyForm.get('homeCity')!.updateValueAndValidity();
+    } finally {
+      this.citiesLoading.set(false);
+    }
+  }
+
   // ─── Navigation ───────────────────────────────────────────────────────────
 
   back(): void {
@@ -263,8 +295,8 @@ export class Onboarding {
 
     if (step === 1) {
       if (this.bodyForm.invalid) { this.bodyForm.markAllAsTouched(); return; }
-      const { birthday, biologicalSex, weight, height } = this.bodyForm.value;
-      this.iamStore.updateProfile({ birthday: birthday!, biologicalSex: biologicalSex! });
+      const { birthday, biologicalSex, weight, height, homeCity } = this.bodyForm.value;
+      this.iamStore.updateProfile({ birthday: birthday!, biologicalSex: biologicalSex!, homeCity: homeCity! });
       this.iamStore.updatePhysicalDetails(weight!, height!, this.selectedActivity());
       this.currentStep.update(s => s + 1);
       return;
@@ -272,6 +304,7 @@ export class Onboarding {
 
     if (step === 2) {
       this.iamStore.changeGoal(this.selectedGoal());
+      this.metabolicStore.recalculateForGoal(this.selectedGoal());
       this.currentStep.set(isMuscle ? 3 : 4);
       return;
     }
@@ -302,6 +335,24 @@ export class Onboarding {
 
   selectActivity(level: ActivityLevel): void {
     this.selectedActivity.set(level);
+  }
+
+  onCityInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.citySearchQuery.set(value);
+    this.bodyForm.get('homeCity')!.setValue('');
+    this.showCitySuggestions.set(true);
+  }
+
+  selectCity(city: string): void {
+    this.citySearchQuery.set(city);
+    this.bodyForm.get('homeCity')!.setValue(city);
+    this.bodyForm.get('homeCity')!.markAsTouched();
+    this.showCitySuggestions.set(false);
+  }
+
+  onCityBlur(): void {
+    setTimeout(() => this.showCitySuggestions.set(false), 150);
   }
 
   // ─── Step 2 helpers ───────────────────────────────────────────────────────

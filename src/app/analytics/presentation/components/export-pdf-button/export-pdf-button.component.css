@@ -2,26 +2,27 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
-  border: 1px solid #55938e;
-  border-radius: 8px;
-  background: #55938e;
+  padding: 7px 16px;
+  border: 1px solid var(--nutrismart-primary);
+  border-radius: var(--nutrismart-radius-sm);
+  background: var(--nutrismart-primary);
   color: #ffffff;
-  font-size: 14px;
-  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  transition: background 0.15s, border-color 0.15s;
 }
 
 .export-pdf-button:hover:not(:disabled) {
-  background: #4a807b;
-  border-color: #4a807b;
+  background: var(--nutrismart-primary-dark);
+  border-color: var(--nutrismart-primary-dark);
 }
 
 .export-pdf-button:disabled {
-  background: #cccccc;
-  border-color: #cccccc;
-  color: #888888;
+  background: var(--nutrismart-border);
+  border-color: var(--nutrismart-border);
+  color: var(--nutrismart-text-light);
   cursor: not-allowed;
 }
 

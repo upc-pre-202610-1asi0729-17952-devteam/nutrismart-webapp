@@ -1,106 +1,94 @@
 :host {
   display: block;
   min-height: 100%;
-  background: #fafafa;
-  color: #1f1f1f;
-  font-family: inherit;
+  background: var(--nutrismart-bg);
 }
 
 .analytics-dashboard-container {
-  padding: 22px 32px 28px; /* Moved padding here from .analytics-shell */
+  padding: 32px 36px;
+  max-width: 1200px;
 }
 
+/* ── Header ─────────────────────────────────────────────────────────────────── */
 .dashboard-header {
   display: flex;
-  justify-content: space-between; /* Puts title left, actions right */
-  align-items: center; /* Vertically centers items */
-  margin-bottom: 20px; /* Space below the header */
-  flex-wrap: wrap; /* Allow wrapping on smaller screens */
-  gap: 16px; /* Space between title and actions if they wrap */
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.dashboard-title {
+.page-title {
   margin: 0;
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+  letter-spacing: -0.3px;
 }
 
 .header-actions {
   display: flex;
-  align-items: center; /* Vertically centers period toggle and export button */
-  gap: 12px; /* Space between period toggle and export button */
+  align-items: center;
+  gap: 12px;
 }
 
-.loading-indicator,
-.error-message,
-.no-data-message {
+/* ── State messages ──────────────────────────────────────────────────────────── */
+.state-message {
   text-align: center;
-  padding: 40px;
-  font-size: 18px;
-  color: #8b8b8b;
+  padding: 48px 20px;
+  font-size: 14px;
+  color: var(--nutrismart-text-light);
+  background: var(--nutrismart-white);
+  border: 1px solid var(--nutrismart-border);
+  border-radius: var(--nutrismart-radius);
 }
 
-.error-message {
+.state-error {
   color: #c65353;
   font-weight: 600;
+  border-color: #f5c6c6;
+  background: #fff5f5;
 }
 
+/* ── Metric cards ────────────────────────────────────────────────────────────── */
 .metric-cards-grid {
-  display: grid; /* Use grid for responsive horizontal layout */
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* 4 cards, responsive */
-  gap: 16px; /* Spacing between cards */
-  margin-bottom: 28px; /* Space below the cards */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
+/* ── Charts ──────────────────────────────────────────────────────────────────── */
 .charts-grid {
   display: grid;
-  grid-template-columns: 1.65fr 1fr; /* Similar to behavioral dashboard */
+  grid-template-columns: 1.65fr 1fr;
   gap: 18px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
-.chart-panel {
-  border: 1px solid #b9b9b9;
-  border-radius: 12px;
-  background: #ffffff;
-  padding: 18px 20px;
-  min-height: 200px; /* Base height for panels */
+/* ── Adherence / behavioral ──────────────────────────────────────────────────── */
+.adherence-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 20px;
 }
 
-.chart-panel.full-width {
-  grid-column: 1 / -1; /* Span full width for specific charts */
-}
-
-/* Responsive adjustments */
+/* ── Responsive ──────────────────────────────────────────────────────────────── */
 @media (max-width: 960px) {
-  .dashboard-header { /* Targeting the new header class */
-    flex-direction: column;
-    align-items: flex-start;
-  }
+  .dashboard-header { flex-direction: column; align-items: flex-start; }
+  .header-actions   { width: 100%; justify-content: space-between; }
+  .charts-grid      { grid-template-columns: 1fr; }
+  .adherence-section{ grid-template-columns: 1fr; }
+}
 
-  .dashboard-header .header-actions { /* Targeting the new actions container */
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .charts-grid {
-    grid-template-columns: 1fr; /* Stack charts vertically on small screens */
-  }
+@media (max-width: 1023px) {
+  .analytics-dashboard-container { padding-top: 68px; }
 }
 
 @media (max-width: 600px) {
-  .analytics-dashboard-container { /* Targeting the new main container */
-    padding: 16px;
-  }
-
-  .dashboard-title { /* Targeting the new title class */
-    font-size: 24px;
-  }
-
-  .dashboard-header .header-actions { /* Targeting the new actions container */
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
+  .analytics-dashboard-container { padding: 68px 16px 16px; }
+  .dashboard-title  { font-size: 18px; }
+  .header-actions   { flex-direction: column; align-items: flex-start; gap: 8px; }
 }

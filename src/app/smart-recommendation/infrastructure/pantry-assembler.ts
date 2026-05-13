@@ -1,3 +1,4 @@
+import { TranslateService } from '@ngx-translate/core';
 import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
 import { PantryItem, IngredientCategory } from '../domain/model/pantry-item.entity';
@@ -58,35 +59,41 @@ export class PantryItemAssembler
 export class RecipeSuggestionAssembler
   implements BaseAssembler<RecipeSuggestion, RecipeSuggestionResource, RecipeSuggestionsResponse>
 {
+  constructor(private readonly translate: TranslateService) {}
+
   toEntityFromResource(r: RecipeSuggestionResource): RecipeSuggestion {
+    const es   = this.translate.currentLang === 'es';
+    const name = es && r.name_es ? r.name_es : r.name;
     return new RecipeSuggestion({
-      id:              r.id,
-      name:            r.name,
-      nameKey:         r.name_key,
-      calories:        r.calories,
-      protein:         r.protein,
-      carbs:           r.carbs,
-      fat:             r.fat,
-      ingredients:     [...r.ingredients],
-      goalType:        r.goal_type as UserGoal,
-      prepTimeMinutes: r.prep_time_minutes,
-      coversMacroPct:  r.covers_macro_pct,
+      id:                   r.id,
+      name,
+      nameKey:              r.name_key,
+      calories:             r.calories,
+      protein:              r.protein,
+      carbs:                r.carbs,
+      fat:                  r.fat,
+      ingredients:          [...r.ingredients],
+      goalType:             r.goal_type as UserGoal,
+      prepTimeMinutes:      r.prep_time_minutes,
+      coversMacroPct:       r.covers_macro_pct,
+      restrictionsConflict: [...(r.restrictions_conflict ?? [])],
     });
   }
 
   toResourceFromEntity(e: RecipeSuggestion): RecipeSuggestionResource {
     return {
-      id:                e.id,
-      name:              e.name,
-      name_key:          e.nameKey,
-      calories:          e.calories,
-      protein:           e.protein,
-      carbs:             e.carbs,
-      fat:               e.fat,
-      ingredients:       e.ingredients,
-      goal_type:         e.goalType,
-      prep_time_minutes: e.prepTimeMinutes,
-      covers_macro_pct:  e.coversMacroPct,
+      id:                    e.id,
+      name:                  e.name,
+      name_key:              e.nameKey,
+      calories:              e.calories,
+      protein:               e.protein,
+      carbs:                 e.carbs,
+      fat:                   e.fat,
+      ingredients:           e.ingredients,
+      goal_type:             e.goalType,
+      prep_time_minutes:     e.prepTimeMinutes,
+      covers_macro_pct:      e.coversMacroPct,
+      restrictions_conflict: e.restrictionsConflict,
     };
   }
 
@@ -97,6 +104,6 @@ export class RecipeSuggestionAssembler
 
 export class IngredientCatalogAssembler {
   toEntityFromResource(r: IngredientCatalogResource): IngredientCatalogItem {
-    return new IngredientCatalogItem(r.id, r.name_key, r.category as IngredientCategory);
+    return new IngredientCatalogItem(r.id, r.name_key, r.category as IngredientCategory, r.calories_per_100g);
   }
 }

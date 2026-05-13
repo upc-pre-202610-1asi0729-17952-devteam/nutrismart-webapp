@@ -1,17 +1,15 @@
 import { Component, computed, input } from '@angular/core';
-import {NgClass} from '@angular/common';
+import { NgClass } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 
 /**
  * Displays aggregated behavioral consistency indicators.
- * Based on NutriSmart Weekly Progress specs.
  */
 @Component({
   selector: 'app-behavioral-summary-card',
   templateUrl: './behavioral-summary-card.html',
   styleUrl: './behavioral-summary-card.css',
-  imports: [
-    NgClass
-  ]
+  imports: [NgClass, TranslatePipe],
 })
 export class BehavioralSummaryCard {
   /** Number of completed days in the current weekly view. */
@@ -23,22 +21,15 @@ export class BehavioralSummaryCard {
   /** Compact domain summary. */
   readonly summary = input.required<string>();
 
-  /** Progress label based on weekly completion rate according to NutriSmart thresholds. */
-  readonly progressLabel = computed(() => {
+  /** i18n key for the progress label based on weekly completion rate. */
+  readonly progressLabelKey = computed(() => {
     const rate = this.weeklyCompletionRate();
-
-    if (rate >= 80) {
-      return 'Alta Consistencia';
-    }
-
-    if (rate >= 50) {
-      return 'Consistencia Moderada';
-    }
-
-    return 'Consistencia en Riesgo';
+    if (rate >= 80) return 'behavioral.summary_card.high_consistency';
+    if (rate >= 50) return 'behavioral.summary_card.moderate_consistency';
+    return 'behavioral.summary_card.at_risk_consistency';
   });
 
-  /** Color variant based on rate for the UI */
+  /** Color variant based on rate for the UI. */
   readonly rateVariant = computed(() => {
     const rate = this.weeklyCompletionRate();
     if (rate >= 80) return 'success';

@@ -92,6 +92,36 @@
 .chip-value { font-size: 18px; font-weight: 700; color: #1a1a1a; }
 .chip-label { font-size: 12px; color: #6b7280; }
 
+.impact-bar {
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+}
+.impact-bar--warning { background: #fffbeb; border-color: #fcd34d; }
+.impact-bar--danger  { background: #fef2f2; border-color: #fca5a5; }
+
+.impact-track {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.impact-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #22c55e;
+  transition: width .3s ease;
+}
+.impact-bar--warning .impact-fill { background: #f59e0b; }
+.impact-bar--danger  .impact-fill { background: #ef4444; }
+
+.impact-label { font-size: 12px; color: #374151; }
+.impact-bar--warning .impact-label { color: #92400e; }
+.impact-bar--danger  .impact-label { color: #b91c1c; }
+
 .dialog-actions { display: flex; gap: 10px; justify-content: flex-end; }
 
 .btn {

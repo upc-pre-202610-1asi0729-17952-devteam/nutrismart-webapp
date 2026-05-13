@@ -1,3 +1,4 @@
+import { MacroDistribution } from '../../../shared/domain/metabolic-target-set.event';
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 
 /**
@@ -141,5 +142,28 @@ export class NutritionPlan implements BaseEntity {
    */
   summary(): string {
     return `${this.#dailyCalorieTarget} kcal | P:${this.#proteinTargetG}g C:${this.#carbsTargetG}g F:${this.#fatTargetG}g Fiber:${this.#fiberTargetG}g`;
+  }
+
+  /**
+   * Builds an active {@link NutritionPlan} from a computed {@link MacroDistribution}.
+   * Used by MetabolicStore to materialise an in-memory plan whenever targets change
+   * without requiring a round-trip to the backend.
+   *
+   * @param userId  - Owner user identifier.
+   * @param targets - Computed macro distribution (from MetabolicTargets or MetabolicTargetSet).
+   * @returns A new active NutritionPlan instance.
+   */
+  static fromTargets(userId: number, targets: MacroDistribution): NutritionPlan {
+    return new NutritionPlan({
+      id: 0,
+      userId,
+      dailyCalorieTarget: targets.dailyCalorieTarget,
+      proteinTargetG: targets.proteinTarget,
+      carbsTargetG: targets.carbsTarget,
+      fatTargetG: targets.fatTarget,
+      fiberTargetG: targets.fiberTarget,
+      isActive: true,
+      createdAt: new Date().toISOString().slice(0, 10),
+    });
   }
 }

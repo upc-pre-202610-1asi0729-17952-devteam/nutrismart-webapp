@@ -1,3 +1,4 @@
+import { ActivityLevel } from '../../../iam/domain/model/activity-level.enum';
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 
 /**
@@ -43,8 +44,13 @@ export interface BodyMetricProps {
  *
  * @author Espinoza Cruz, Angela Milagros
  */
-const TDEE_ACTIVITY_MULTIPLIER = 1.55;
-const DEFAULT_WEEKLY_RATE_KG   = 0.25;
+const ACTIVITY_MULTIPLIERS: Record<ActivityLevel, number> = {
+  [ActivityLevel.SEDENTARY]:   1.2,
+  [ActivityLevel.MODERATE]:    1.375,
+  [ActivityLevel.ACTIVE]:      1.55,
+  [ActivityLevel.VERY_ACTIVE]: 1.725,
+};
+const DEFAULT_WEEKLY_RATE_KG = 0.25;
 
 export class BodyMetric implements BaseEntity {
   #id: number;
@@ -128,8 +134,13 @@ export class BodyMetric implements BaseEntity {
     return Math.round(10 * this.#weightKg + 6.25 * this.#heightCm - 161);
   }
 
-  tdee(): number {
-    return Math.round(this.bmr() * TDEE_ACTIVITY_MULTIPLIER);
+  /**
+   * Calculates Total Daily Energy Expenditure using the user's actual activity level.
+   *
+   * @param activityLevel - The user's self-reported activity level.
+   */
+  tdee(activityLevel: ActivityLevel): number {
+    return Math.round(this.bmr() * ACTIVITY_MULTIPLIERS[activityLevel]);
   }
 
   /**
@@ -188,5 +199,28 @@ export class BodyMetric implements BaseEntity {
    */
   isValidWeightLossTarget(target: number): boolean {
     return target > 0 && target < this.#weightKg;
+  }
+
+  /**
+   * Returns the weight delta between this entry and a previous one,
+   * rounded to one decimal place.
+   *
+   * @param previous - The earlier metric to compare against.
+   */
+  calculateDelta(previous: BodyMetric): number {
+    return Math.round((this.#weightKg - previous.weightKg) * 10) / 10;
+  }
+
+  /**
+   * Returns `true` when this metric shows progress toward the active goal
+   * relative to a starting weight.
+   *
+   * @param isGainingMuscle - `true` for MUSCLE_GAIN goals, `false` for WEIGHT_LOSS.
+   * @param startWeightKg   - The reference weight at the start of the window.
+   */
+  isProgressingToward(isGainingMuscle: boolean, startWeightKg: number): boolean {
+    return isGainingMuscle
+      ? this.#weightKg > startWeightKg
+      : this.#weightKg < startWeightKg;
   }
 }
