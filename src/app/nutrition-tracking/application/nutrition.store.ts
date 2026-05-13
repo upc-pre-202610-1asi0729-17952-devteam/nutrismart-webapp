@@ -562,31 +562,36 @@ export class NutritionStore {
    * or {@link DailyGoalMet} at most once per session day.
    */
   private checkAndPublishDailyGoalEvents(userId: number): void {
-    const today  = new Date().toISOString().slice(0, 10);
-    const intake = this.getDailyIntakeFor(new Date());
-    if (!intake) return;
+    const today    = new Date().toISOString().slice(0, 10);
+    const intake   = this.getDailyIntakeFor(new Date());
+    const user     = this.iamStore.currentUser();
+    // Fall back to user targets when no daily-balance record exists for today.
+    // This ensures DailyGoalMet can fire even on days without a pre-seeded record.
+    const dailyGoal = intake?.dailyGoal ?? user?.dailyCalorieTarget ?? 1800;
+    const exceeded  = intake?.exceeded  ?? false;
 
-    if (intake.exceeded && !this._goalExceededToday()) {
+    if (exceeded && !this._goalExceededToday()) {
       this._goalExceededToday.set(true);
-      this.eventBus.publish(new DailyGoalExceeded(userId, intake.netCalories, today));
-      const exceededBy = Math.abs(Math.round(intake.remaining));
+      this.eventBus.publish(new DailyGoalExceeded(userId, intake!.netCalories, today));
+      const exceededBy = Math.abs(Math.round(intake!.remaining));
       this.notificationService.notify('warning', 'notifications.goal_exceeded', { kcal: exceededBy });
       return;
     }
 
-    if (!intake.exceeded) {
+    if (!exceeded) {
       const totals       = this.dailyTotals();
-      const adherencePct = intake.dailyGoal > 0
-        ? Math.round((totals.calories / intake.dailyGoal) * 100)
+      const remaining    = intake ? intake.remaining : dailyGoal - totals.calories;
+      const adherencePct = dailyGoal > 0
+        ? Math.round((totals.calories / dailyGoal) * 100)
         : 0;
-      this.eventBus.publish(new DailyProgressUpdated(userId, intake.remaining, adherencePct, today));
+      this.eventBus.publish(new DailyProgressUpdated(userId, remaining, adherencePct, today));
     }
 
     if (this.allMealsLogged() && !this._allMealsMetToday()) {
       this._allMealsMetToday.set(true);
       const totals       = this.dailyTotals();
-      const adherencePct = intake.dailyGoal > 0
-        ? Math.round((totals.calories / intake.dailyGoal) * 100)
+      const adherencePct = dailyGoal > 0
+        ? Math.round((totals.calories / dailyGoal) * 100)
         : 0;
       this.eventBus.publish(new DailyGoalMet(userId, today, totals.calories, adherencePct));
     }

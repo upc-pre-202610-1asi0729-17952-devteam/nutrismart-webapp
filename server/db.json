@@ -539,6 +539,29 @@
       "createdAt": "2026-05-12",
       "home_city": "Cusco",
       "goal_started_at": "2026-05-12"
+    },
+    {
+      "id": "xfozkpybz",
+      "firstName": "Angel",
+      "lastName": "Villarreal",
+      "email": "angelv@gmail.com",
+      "goal": "WEIGHT_LOSS",
+      "weight": 66,
+      "height": 175,
+      "activityLevel": "SEDENTARY",
+      "plan": "PREMIUM",
+      "restrictions": [],
+      "medicalConditions": [],
+      "dailyCalorieTarget": 1611,
+      "proteinTarget": 106,
+      "carbsTarget": 196,
+      "fatTarget": 45,
+      "fiberTarget": 25,
+      "birthday": "2005-02-19",
+      "biologicalSex": "male",
+      "createdAt": "2026-05-12",
+      "home_city": "Arequipa",
+      "goal_started_at": "2026-05-12"
     }
   ],
   "nutrition-log": [
@@ -5913,6 +5936,23 @@
       "sugar": 2.6,
       "loggedAt": "2026-05-12T20:00:00.000Z",
       "userId": "Mv9paKyK60k"
+    },
+    {
+      "foodItemId": "4",
+      "foodItemName": "Grilled chicken breast",
+      "foodItemNameEs": "Pechuga de pollo a la plancha",
+      "mealType": "DINNER",
+      "quantity": 150,
+      "unit": "g",
+      "calories": 247.5,
+      "protein": 46.5,
+      "carbs": 0,
+      "fat": 5.4,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-13T00:00:55.754Z",
+      "userId": "vgsdgwm02",
+      "id": "Z17w866Mz-M"
     }
   ],
   "foods": [
@@ -7140,6 +7180,15 @@
       "loggedAt": "2026-05-12T08:00:00.000Z",
       "targetWeightKg": 65,
       "projectedAchievementDate": "2026-11-01"
+    },
+    {
+      "id": "C8k1hj1pqO8",
+      "user_id": "xfozkpybz",
+      "weight_kg": 66,
+      "height_cm": 175,
+      "logged_at": "2026-05-12T23:57:07.122Z",
+      "target_weight_kg": 66,
+      "projected_achievement_date": "2026-05-13T00:09:16.542Z"
     }
   ],
   "recommendations": [
@@ -8217,6 +8266,14 @@
       "startDate": "2026-05-12",
       "nextRenewal": "2026-06-11",
       "id": "QwPEPcSh8Kg"
+    },
+    {
+      "userId": "xfozkpybz",
+      "plan": "PREMIUM",
+      "status": "ACTIVE",
+      "startDate": "2026-05-12",
+      "nextRenewal": "2026-06-11",
+      "id": "lYxK9LsvmRg"
     }
   ],
   "billing-history": [
@@ -10043,6 +10100,261 @@
         false
       ],
       "id": "ZDSfAq7fGUE"
+    },
+    {
+      "userId": "frank001xf",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "ZpJtABo6TBY"
+    },
+    {
+      "userId": "vgsdgwm02",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "7WdozonVyU8"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "bjsVRapQcZo"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "8Z5-jVzCr3k"
+    },
+    {
+      "userId": "Mv9paKyK60k",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "YxR_3Hqjy54"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "Sz0OMWjKjHk"
+    },
+    {
+      "userId": "vgsdgwm02",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "tcaB6b3xyFU"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "4J4d-HG0Vps"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "0-hnK9qb4Nw"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "CiMitfNEIMQ"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "ElFJF2iEmuo"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "RkWbUG_oYNA"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "nCkEME2Y7c4"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "DX75adB0yNk"
+    },
+    {
+      "userId": "xfozkpybz",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "weekDots": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "id": "k2dY4Vf4BB0"
     }
   ],
   "eating-behavior-patterns": [
@@ -10156,14 +10468,6 @@
       "daily_goal": 1800,
       "consumed": 0,
       "active": 300
-    },
-    {
-      "id": "2",
-      "userId": "Mv9paKyK60k",
-      "date": "2026-05-08",
-      "daily_goal": 3150,
-      "consumed": 0,
-      "active": 400
     },
     {
       "id": "10ci3ag",
@@ -10852,6 +11156,86 @@
       "daily_goal": 1880,
       "consumed": 911,
       "active": 150
+    },
+    {
+      "id": "ke2szdqvk",
+      "userId": "Mv9paKyK60k",
+      "date": "2026-05-03",
+      "daily_goal": 1584,
+      "consumed": 1196,
+      "active": 0
+    },
+    {
+      "id": "6gupkg5r8",
+      "userId": "Mv9paKyK60k",
+      "date": "2026-05-04",
+      "daily_goal": 1584,
+      "consumed": 1196,
+      "active": 0
+    },
+    {
+      "id": "6sepd9vjd",
+      "userId": "Mv9paKyK60k",
+      "date": "2026-05-05",
+      "daily_goal": 1584,
+      "consumed": 1196,
+      "active": 0
+    },
+    {
+      "id": "2lcf99r4z",
+      "userId": "Mv9paKyK60k",
+      "date": "2026-05-06",
+      "daily_goal": 1584,
+      "consumed": 1196,
+      "active": 0
+    },
+    {
+      "id": "ryx784dm5",
+      "userId": "Mv9paKyK60k",
+      "date": "2026-05-07",
+      "daily_goal": 1584,
+      "consumed": 1196,
+      "active": 0
+    },
+    {
+      "id": "oyv5z5kzd",
+      "userId": "Mv9paKyK60k",
+      "date": "2026-05-08",
+      "daily_goal": 1584,
+      "consumed": 1196,
+      "active": 0
+    },
+    {
+      "id": "2s6z4ul0p",
+      "userId": "Mv9paKyK60k",
+      "date": "2026-05-09",
+      "daily_goal": 1584,
+      "consumed": 1196,
+      "active": 0
+    },
+    {
+      "id": "9xmcbmnee",
+      "userId": "Mv9paKyK60k",
+      "date": "2026-05-10",
+      "daily_goal": 1584,
+      "consumed": 1196,
+      "active": 0
+    },
+    {
+      "id": "wwwuyxckb",
+      "userId": "Mv9paKyK60k",
+      "date": "2026-05-11",
+      "daily_goal": 1584,
+      "consumed": 1196,
+      "active": 0
+    },
+    {
+      "id": "2gjnktp9c",
+      "userId": "Mv9paKyK60k",
+      "date": "2026-05-12",
+      "daily_goal": 1584,
+      "consumed": 1196,
+      "active": 0
     }
   ],
   "body-compositions": [
@@ -11526,7 +11910,7 @@
       "user_id": "Mv9paKyK60k",
       "provider": "google_fit",
       "status": "CONNECTED",
-      "last_synced_at": "2026-05-11T09:37:00.000Z",
+      "last_synced_at": "2026-05-12T23:48:26.247Z",
       "authorized_at": "2026-05-01T08:00:00.000Z"
     },
     {
@@ -12130,6 +12514,76 @@
       "newFat": 48,
       "changedAt": "2026-05-12T23:06:06.183Z",
       "id": "fIzuMOJicwM"
+    },
+    {
+      "userId": "xfozkpybz",
+      "triggeredBy": "ONBOARDING",
+      "previousCalories": 2000,
+      "newCalories": 1659,
+      "previousProtein": 100,
+      "newProtein": 112,
+      "previousCarbs": 250,
+      "newCarbs": 199,
+      "previousFat": 65,
+      "newFat": 46,
+      "changedAt": "2026-05-12T23:56:43.683Z",
+      "id": "A03l78JPdbE"
+    },
+    {
+      "userId": "xfozkpybz",
+      "triggeredBy": "PROFILE_CHANGE",
+      "previousCalories": 2000,
+      "newCalories": 1659,
+      "previousProtein": 100,
+      "newProtein": 112,
+      "previousCarbs": 250,
+      "newCarbs": 199,
+      "previousFat": 65,
+      "newFat": 46,
+      "changedAt": "2026-05-12T23:56:51.272Z",
+      "id": "D0mxvjj4uMg"
+    },
+    {
+      "userId": "xfozkpybz",
+      "triggeredBy": "ONBOARDING",
+      "previousCalories": 2000,
+      "newCalories": 1611,
+      "previousProtein": 100,
+      "newProtein": 106,
+      "previousCarbs": 250,
+      "newCarbs": 196,
+      "previousFat": 65,
+      "newFat": 45,
+      "changedAt": "2026-05-12T23:56:57.969Z",
+      "id": "H2oqAckOHJo"
+    },
+    {
+      "userId": "xfozkpybz",
+      "triggeredBy": "PROFILE_CHANGE",
+      "previousCalories": 1611,
+      "newCalories": 1611,
+      "previousProtein": 106,
+      "newProtein": 106,
+      "previousCarbs": 196,
+      "newCarbs": 196,
+      "previousFat": 45,
+      "newFat": 45,
+      "changedAt": "2026-05-12T23:56:58.557Z",
+      "id": "KkQb33f6JjU"
+    },
+    {
+      "userId": "xfozkpybz",
+      "triggeredBy": "BODY_METRICS_UPDATE",
+      "previousCalories": 1611,
+      "newCalories": 1611,
+      "previousProtein": 106,
+      "newProtein": 106,
+      "previousCarbs": 196,
+      "newCarbs": 196,
+      "previousFat": 45,
+      "newFat": 45,
+      "changedAt": "2026-05-12T23:57:07.146Z",
+      "id": "tbpup3Zgiq8"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
