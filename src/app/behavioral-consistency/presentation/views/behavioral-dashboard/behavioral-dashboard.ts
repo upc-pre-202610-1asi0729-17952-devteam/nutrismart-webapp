@@ -9,6 +9,11 @@ import { BehavioralConsistencyStore } from '../../../application/behavioral-cons
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
 import { MacroWarningBanner } from '../../../../shared/presentation/components/macro-warning-banner/macro-warning-banner';
 import { ReEngagementCard } from '../../components/re-engagement-card/re-engagement-card';
+import { AdherenceStatusCard } from '../../components/adherence-status-card/adherence-status-card';
+import { BehavioralSummaryCard } from '../../components/behavioral-summary-card/behavioral-summary-card';
+import { StreakCard } from '../../components/streak-card/streak-card';
+import { ConsistencyWeekStrip } from '../../components/consistency-week-strip/consistency-week-strip';
+import { BehavioralActionPanel } from '../../components/behavioral-action-panel/behavioral-action-panel';
 import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
 import { MealType } from '../../../../nutrition-tracking/domain/model/meal-type.enum';
 import { MealRecord } from '../../../../nutrition-tracking/domain/model/meal-record.entity';
@@ -76,7 +81,17 @@ interface StreakVm {
 
 @Component({
   selector: 'app-behavioral-dashboard',
-  imports: [NgClass, TranslatePipe, MacroWarningBanner, ReEngagementCard],
+  imports: [
+    NgClass,
+    TranslatePipe,
+    MacroWarningBanner,
+    ReEngagementCard,
+    AdherenceStatusCard,
+    BehavioralSummaryCard,
+    StreakCard,
+    ConsistencyWeekStrip,
+    BehavioralActionPanel,
+  ],
   templateUrl: './behavioral-dashboard.html',
   styleUrl: './behavioral-dashboard.css',
 })
@@ -154,11 +169,15 @@ export class BehavioralDashboard implements OnInit {
     this.currentProgress()?.adherenceStatus ?? AdherenceStatus.ON_TRACK,
   );
 
-  private readonly streak = computed(() => this.currentProgress()?.streak ?? 0);
+  protected readonly streak = computed(() => this.currentProgress()?.streak ?? 0);
 
-  private readonly consecutiveMisses = computed(() =>
+  protected readonly consecutiveMisses = computed(() =>
     this.currentProgress()?.consecutiveMisses ?? 0,
   );
+
+  protected readonly completedDaysThisWeek = this.behavioralStore.completedDaysThisWeek;
+  protected readonly weeklyCompletionRate  = this.behavioralStore.weeklyCompletionRate;
+  protected readonly behavioralSummary     = this.behavioralStore.behavioralSummary;
 
   protected readonly greetingVm = computed<GreetingVm>(() => {
     const status = this.status();
@@ -246,6 +265,18 @@ export class BehavioralDashboard implements OnInit {
 
   protected onRetry(): void {
     this.loadData();
+  }
+
+  protected onGoalMet(): void {
+    this.behavioralStore.markGoalMet();
+  }
+
+  protected onGoalMissed(): void {
+    this.behavioralStore.markGoalMissed();
+  }
+
+  protected onRefreshRequested(): void {
+    void this.nutritionStore.loadDailyBalance();
   }
 
   protected macroPercent(consumed: number, target: number): number {

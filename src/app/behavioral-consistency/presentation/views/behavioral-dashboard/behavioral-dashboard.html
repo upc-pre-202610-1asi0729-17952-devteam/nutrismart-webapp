@@ -182,6 +182,34 @@
       </article>
     </section>
 
+    <section class="behavioral-section">
+      <app-adherence-status-card [status]="status()"></app-adherence-status-card>
+
+      <div class="behavioral-row">
+        <app-streak-card
+          [streak]="streak()"
+          [consecutiveMisses]="consecutiveMisses()">
+        </app-streak-card>
+
+        <app-behavioral-summary-card
+          [completedDaysThisWeek]="completedDaysThisWeek()"
+          [weeklyCompletionRate]="weeklyCompletionRate()"
+          [summary]="behavioralSummary()">
+        </app-behavioral-summary-card>
+      </div>
+
+      <app-consistency-week-strip
+        [weekDots]="streakVm().weekDots"
+        [dayLabels]="weekLabels()">
+      </app-consistency-week-strip>
+
+      <app-behavioral-action-panel
+        (goalMet)="onGoalMet()"
+        (goalMissed)="onGoalMissed()"
+        (refreshRequested)="onRefreshRequested()">
+      </app-behavioral-action-panel>
+    </section>
+
     <section class="streak-card" [ngClass]="streak.streakClass">
       <div class="streak-left">
         <span>{{ 'dashboard.active_streak_label' | translate }}</span>
