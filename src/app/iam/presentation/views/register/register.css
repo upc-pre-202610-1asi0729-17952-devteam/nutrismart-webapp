@@ -1,0 +1,296 @@
+.auth-lang {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 10;
+}
+
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--nutrismart-bg, #f5f7f7);
+  padding: 24px;
+}
+
+.auth-card {
+  background: var(--nutrismart-white, #ffffff);
+  border-radius: var(--nutrismart-radius, 14px);
+  box-shadow: var(--nutrismart-shadow, 0 2px 12px rgba(80, 139, 137, 0.08));
+  padding: 40px;
+  width: 100%;
+  max-width: 480px;
+}
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.auth-brand {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--nutrismart-primary, #508B89);
+}
+
+.auth-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  text-align: center;
+  margin: 0 0 6px;
+}
+
+.auth-subtitle {
+  color: var(--nutrismart-text-mid, #4a6060);
+  text-align: center;
+  margin: 0 0 20px;
+  font-size: 0.9rem;
+}
+
+.auth-error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+}
+
+.btn-google {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  background: var(--nutrismart-white, #ffffff);
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 16px;
+}
+
+.btn-google:hover {
+  background: var(--nutrismart-primary-lighter, #f0f6f6);
+}
+
+.google-icon {
+  font-weight: 700;
+  color: var(--nutrismart-primary, #508B89);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  color: var(--nutrismart-text-light, #8aa8a8);
+  font-size: 0.875rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--nutrismart-border, #e0eaea);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  font-size: 0.95rem;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  background: var(--nutrismart-white, #ffffff);
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--nutrismart-primary, #508B89);
+}
+
+.form-input.is-invalid {
+  border-color: #dc2626;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper .form-input {
+  padding-right: 44px;
+}
+
+.eye-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px;
+  line-height: 1;
+  color: var(--nutrismart-text-mid, #4a6060);
+}
+
+.password-hints {
+  list-style: none;
+  padding: 8px 0 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.password-hints li {
+  font-size: 0.78rem;
+  color: #dc2626;
+  padding-left: 16px;
+  position: relative;
+}
+
+.password-hints li::before {
+  content: '✗';
+  position: absolute;
+  left: 0;
+}
+
+.password-hints li.met {
+  color: #16a34a;
+}
+
+.password-hints li.met::before {
+  content: '✓';
+}
+
+.field-error {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #dc2626;
+}
+
+.field-checking {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: var(--nutrismart-text-light, #8aa8a8);
+}
+
+.form-check {
+  margin-bottom: 20px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin-top: 2px;
+  accent-color: var(--nutrismart-primary, #508B89);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.link {
+  color: var(--nutrismart-primary, #508B89);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.btn-primary {
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+  width: 100%;
+  border: none;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--nutrismart-primary-dark, #3d6e6c);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.875rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+}
+
+.auth-back {
+  text-align: center;
+  margin-top: 12px;
+}
+
+.btn-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.875rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+  text-decoration: none;
+  padding: 8px 16px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-back-link:hover {
+  background: var(--nutrismart-primary-lighter, #f0f6f6);
+  border-color: var(--nutrismart-primary, #508B89);
+  color: var(--nutrismart-primary, #508B89);
+}

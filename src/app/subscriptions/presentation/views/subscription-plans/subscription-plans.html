@@ -1,0 +1,100 @@
+<div class="subscription-shell">
+  <!-- Loading state -->
+  @if (store.loading()) {
+    <div class="loading-overlay" role="status" aria-live="polite">
+      <span>{{ 'common.loading' | translate }}</span>
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (store.error()) {
+    <div class="error-banner" role="alert">
+      {{ store.error() | translate }}
+    </div>
+  }
+
+  <div class="subscription-header">
+    <h1 class="page-title">{{ 'subscriptions.title' | translate }}</h1>
+    <p class="page-subtitle">{{ 'subscription.subtitle' | translate }}</p>
+  </div>
+
+  <!-- Current plan indicator (manage mode) -->
+  @if (store.hasActivePlan()) {
+    <div class="current-plan-banner" role="status">
+      <strong>{{ 'subscriptions.current_plan' | translate }}:</strong>
+      {{ ('subscriptions.plan_' + (currentPlan() ?? '' | lowercase)) | translate }}
+    </div>
+  }
+
+  <!-- Plans grid -->
+  <div class="plans-grid">
+    @for (plan of plans; track plan.plan) {
+      <div
+        class="plan-card"
+        [class.featured]="plan.featured"
+        [class.current-plan]="plan.plan === currentPlan()"
+      >
+        @if (plan.plan === currentPlan()) {
+          <span class="plan-badge current-badge">{{ 'subscriptions.current_plan' | translate }}</span>
+        } @else if (plan.badgeKey) {
+          <span class="plan-badge">{{ plan.badgeKey | translate }}</span>
+        }
+
+        <h3 class="plan-name">{{ plan.nameKey | translate }}</h3>
+        <div class="plan-price">
+          <span class="price-amount">{{ plan.price }}</span>
+          <span class="price-period">{{ 'subscription.per_month' | translate }}</span>
+        </div>
+
+        <ul class="plan-features" aria-label="{{ plan.nameKey | translate }} features">
+          @for (feature of plan.featureKeys; track feature) {
+            <li>{{ feature | translate }}</li>
+          }
+        </ul>
+
+        <button
+          type="button"
+          class="btn-plan"
+          [class.btn-plan-featured]="plan.featured"
+          [class.btn-plan-current]="plan.plan === currentPlan()"
+          [disabled]="plan.plan === currentPlan() || store.loading()"
+          (click)="selectPlan(plan.plan)"
+          [attr.aria-label]="(plan.nameKey | translate) + ' — ' + (plan.ctaKey | translate)"
+        >
+          {{ (plan.plan === currentPlan() ? 'subscriptions.current_plan' : plan.ctaKey) | translate }}
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- Cancel subscription (manage mode, active plan) -->
+  @if (store.hasActivePlan()) {
+    <div class="cancel-section">
+      <button type="button" class="btn-cancel" (click)="requestCancel()">
+        {{ 'subscriptions.cta_cancel' | translate }}
+      </button>
+    </div>
+  }
+
+  <div class="subscription-footer">
+    <p class="legal-text">{{ 'subscription.legal' | translate }}</p>
+  </div>
+
+  <!-- Cancel confirmation dialog -->
+  @if (showCancelConfirm()) {
+    <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="cancel-dialog-title">
+      <div class="modal-card">
+        <h2 id="cancel-dialog-title">{{ 'subscriptions.cta_cancel' | translate }}</h2>
+        <p>{{ 'subscriptions.success_cancelled' | translate }}</p>
+        <div class="modal-actions">
+          <button type="button" class="btn-confirm-cancel" (click)="confirmCancel()">
+            {{ 'common.confirm' | translate }}
+          </button>
+          <button type="button" class="btn-dismiss" (click)="dismissCancel()">
+            {{ 'common.cancel' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

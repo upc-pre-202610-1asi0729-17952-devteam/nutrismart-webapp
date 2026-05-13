@@ -1,0 +1,57 @@
+.adherence-history-timeline { }
+
+.panel-title {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+}
+
+.timeline-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: 160px;
+  overflow-y: auto;
+  padding-bottom: 4px;
+}
+
+.timeline-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 36px;
+  flex-shrink: 0;
+}
+
+.timeline-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-bottom: 4px;
+  border: 1px solid var(--nutrismart-border);
+  cursor: default;
+  transition: transform 0.15s;
+}
+
+.timeline-dot:hover { transform: scale(1.15); }
+
+.timeline-date {
+  font-size: 9px;
+  color: var(--nutrismart-text-light);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.status-on-track  { background: var(--nutrismart-primary); border-color: var(--nutrismart-primary); }
+.status-at-risk   { background: #f59e0b; border-color: #f59e0b; }
+.status-dropped   { background: #e05454; border-color: #e05454; }
+.status-recovered { background: #0f7a67; border-color: #0f7a67; }
+.status-unknown   { background: var(--nutrismart-border); }
+
+.no-data-message {
+  padding: 24px 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--nutrismart-text-light);
+}

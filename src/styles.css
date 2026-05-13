@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', 'Helvetica Neue', sans-serif;
+  background-color: var(--nutrismart-bg);
+}
+
+.nutrismart-card {
+  background: var(--nutrismart-white);
+  border-radius: var(--nutrismart-radius);
+  border: 1px solid var(--nutrismart-border);
+  box-shadow: var(--nutrismart-shadow);
+  padding: 20px 22px;
+}
+
+.nutrismart-btn-primary {
+  background: var(--nutrismart-primary) !important;
+  color: white !important;
+  border-radius: var(--nutrismart-radius-sm) !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-weight: 600 !important;
+}
+
+.nutrismart-btn-primary:hover {
+  background: var(--nutrismart-primary-dark) !important;
+}

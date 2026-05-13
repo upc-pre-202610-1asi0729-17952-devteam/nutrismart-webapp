@@ -1,0 +1,16 @@
+<div class="behavioral-events-list nutrismart-card">
+  <h3 class="panel-title">{{ 'analytics.behavioral_title' | translate }}</h3>
+
+  @if (behavioralEvents.length > 0) {
+    <ul class="event-list" role="list">
+      @for (event of behavioralEvents; track $index) {
+        <li class="event-item">
+          <span class="event-date">{{ formatDate(event.date) }}</span>
+          <span class="event-description">{{ event.description }}</span>
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="no-data-message">{{ 'analytics.behavioral_no_data' | translate }}</div>
+  }
+</div>

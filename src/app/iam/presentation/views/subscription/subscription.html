@@ -1,0 +1,58 @@
+<div class="subscription-shell" [class.manage-mode]="!isSetupMode">
+  <div class="subscription-header">
+    @if (isSetupMode) {
+      <div class="brand">NutriSmart</div>
+    }
+    <h1 class="page-title">
+      {{ (isSetupMode ? 'subscription.title' : 'subscription.manage_title') | translate }}
+    </h1>
+    <p class="page-subtitle">
+      {{ (isSetupMode ? 'subscription.subtitle' : 'subscription.manage_subtitle') | translate }}
+    </p>
+  </div>
+
+  <div class="plans-grid">
+    @for (plan of plans; track plan.plan) {
+      <div class="plan-card" [class.featured]="plan.featured" [class.current-plan]="plan.plan === currentPlan()">
+        @if (plan.plan === currentPlan()) {
+          <span class="plan-badge current-badge">{{ 'subscription.cta_current_plan' | translate }}</span>
+        } @else if (plan.badgeKey) {
+          <span class="plan-badge">{{ plan.badgeKey | translate }}</span>
+        }
+
+        <h3 class="plan-name">{{ plan.nameKey | translate }}</h3>
+        <div class="plan-price">
+          <span class="price-amount">{{ plan.price }}</span>
+          <span class="price-period">{{ 'subscription.per_month' | translate }}</span>
+        </div>
+        <p class="plan-desc">{{ plan.descKey | translate }}</p>
+
+        <ul class="plan-features">
+          @for (feature of plan.features; track feature) {
+            <li>{{ feature | translate }}</li>
+          }
+        </ul>
+
+        <button
+          type="button"
+          class="btn-plan"
+          [class.btn-plan-featured]="plan.featured"
+          [class.btn-plan-current]="plan.plan === currentPlan()"
+          [disabled]="plan.plan === currentPlan()"
+          (click)="selectPlan(plan.plan)"
+        >
+          {{ (plan.plan === currentPlan() ? 'subscription.cta_current_plan' : plan.ctaKey) | translate }}
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="subscription-footer">
+    <p class="legal-text">{{ 'subscription.legal' | translate }}</p>
+    @if (isSetupMode) {
+      <button type="button" class="maybe-later" (click)="maybeLater()">
+        {{ 'subscription.maybe_later' | translate }}
+      </button>
+    }
+  </div>
+</div>

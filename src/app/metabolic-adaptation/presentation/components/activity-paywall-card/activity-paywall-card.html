@@ -1,0 +1,36 @@
+<div class="pw-wrap">
+  <div class="pw-card">
+
+    <div class="pw-glow" aria-hidden="true"></div>
+
+    <div class="pw-lock" aria-hidden="true">
+      <span class="material-icons pw-lock-icon">lock</span>
+    </div>
+
+    <h3 class="pw-title">{{ 'physical_activity.paywall.title' | translate }}</h3>
+    <p class="pw-desc">{{ 'physical_activity.paywall.desc' | translate }}</p>
+
+    <ul class="pw-features" aria-hidden="true">
+      <li class="pw-feature">
+        <span class="material-icons pw-feature-icon">check_circle</span>
+        {{ 'physical_activity.paywall.feature_sync' | translate }}
+      </li>
+      <li class="pw-feature">
+        <span class="material-icons pw-feature-icon">check_circle</span>
+        {{ 'physical_activity.paywall.feature_auto' | translate }}
+      </li>
+      <li class="pw-feature">
+        <span class="material-icons pw-feature-icon">check_circle</span>
+        {{ 'physical_activity.paywall.feature_balance' | translate }}
+      </li>
+    </ul>
+
+    <a routerLink="/my-plan" class="pw-btn">
+      {{ 'physical_activity.paywall.upgrade_btn' | translate }}
+      <span class="material-icons pw-btn-icon">arrow_forward</span>
+    </a>
+
+    <p class="pw-note">{{ 'physical_activity.paywall.note' | translate }}</p>
+
+  </div>
+</div>

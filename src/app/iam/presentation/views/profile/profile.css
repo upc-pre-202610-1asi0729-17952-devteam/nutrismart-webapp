@@ -1,0 +1,691 @@
+.profile-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--nutrismart-bg, #f5f7f7);
+}
+
+/* ─── Left panel ─────────────────────────────────────────────────────────── */
+
+.profile-nav {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--nutrismart-white, #ffffff);
+  border-right: 1px solid var(--nutrismart-border, #e0eaea);
+  padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.profile-avatar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--nutrismart-border, #e0eaea);
+}
+
+.avatar-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.avatar-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.avatar-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+}
+
+.avatar-plan {
+  font-size: 0.75rem;
+  color: var(--nutrismart-primary, #508B89);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s;
+  color: var(--nutrismart-text-mid, #4a6060);
+  font-size: 0.9rem;
+}
+
+.nav-item:hover {
+  background: var(--nutrismart-primary-lighter, #f0f6f6);
+}
+
+.nav-item.active {
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  color: var(--nutrismart-primary, #508B89);
+  font-weight: 600;
+}
+
+.nav-icon {
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+}
+
+/* ─── Right content panel ─────────────────────────────────────────────────── */
+
+.profile-content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.panel-section {
+  max-width: 640px;
+}
+
+.panel-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  margin: 0 0 24px;
+}
+
+.panel-desc {
+  font-size: 0.9rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+  margin: 0 0 20px;
+}
+
+.subsection-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  margin: 0 0 12px;
+}
+
+.success-banner {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  margin-bottom: 20px;
+}
+
+/* ─── Forms ───────────────────────────────────────────────────────────────── */
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  font-size: 0.9rem;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  background: var(--nutrismart-white, #ffffff);
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--nutrismart-primary, #508B89);
+}
+
+.form-input.is-invalid {
+  border-color: #dc2626;
+}
+
+.form-input-readonly {
+  background: var(--nutrismart-bg, #f5f7f7);
+  color: var(--nutrismart-text-light, #8aa8a8);
+  cursor: not-allowed;
+}
+
+.field-error {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #dc2626;
+}
+
+/* ─── Weight label tooltip ───────────────────────────────────────────────── */
+
+.weight-label-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.weight-label-row .form-label {
+  margin-bottom: 0;
+}
+
+.weight-tooltip-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.weight-info-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--nutrismart-text-light, #8aa8a8);
+  display: flex;
+  align-items: center;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.weight-info-btn:hover,
+.weight-info-btn:focus-visible {
+  color: var(--nutrismart-primary, #508B89);
+  outline: none;
+}
+
+.weight-info-btn .material-icons {
+  font-size: 1rem;
+}
+
+.weight-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(100% + 6px);
+  background: var(--nutrismart-text-dark, #1a2e2e);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 400;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 20;
+}
+
+.weight-tooltip-wrap:hover .weight-tooltip,
+.weight-tooltip-wrap:focus-within .weight-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.plan-info-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+
+.plan-badge {
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.plan-renewal {
+  font-size: 0.875rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+}
+
+/* ─── Physical panel ──────────────────────────────────────────────────────── */
+
+.goal-section {
+  margin-bottom: 20px;
+}
+
+.goal-toggle {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.goal-btn {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  background: var(--nutrismart-white, #ffffff);
+  color: var(--nutrismart-text-mid, #4a6060);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.goal-btn.active {
+  border-color: var(--nutrismart-primary, #508B89);
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  color: var(--nutrismart-primary, #508B89);
+  font-weight: 600;
+}
+
+.goal-confirm-text {
+  font-size: 0.82rem;
+  color: var(--nutrismart-primary, #508B89);
+  margin-top: 8px;
+}
+
+.goal-lock-note {
+  font-size: 0.8rem;
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+/* ─── Goal lock modal ─────────────────────────────────────────────────────── */
+
+.profile-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+}
+
+.profile-modal {
+  background: var(--nutrismart-white, #ffffff);
+  border-radius: 14px;
+  padding: 32px 28px 24px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+}
+
+.profile-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+  margin: 0 0 12px;
+}
+
+.profile-modal-desc {
+  font-size: 13px;
+  color: var(--nutrismart-text-mid);
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.profile-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.profile-modal-btn {
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: 'Poppins', sans-serif;
+  transition: background 0.15s;
+}
+
+.profile-modal-btn--cancel {
+  background: var(--nutrismart-bg);
+  color: var(--nutrismart-text-mid);
+  border: 1px solid var(--nutrismart-border);
+}
+
+.profile-modal-btn--cancel:hover { background: var(--nutrismart-border); }
+
+.profile-modal-btn--confirm {
+  background: var(--nutrismart-primary);
+  color: white;
+}
+
+.profile-modal-btn--confirm:hover { background: var(--nutrismart-primary-dark); }
+
+/* ─── Dietary panel ───────────────────────────────────────────────────────── */
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.active-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  color: var(--nutrismart-primary, #508B89);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.chip-remove {
+  background: none;
+  border: none;
+  color: var(--nutrismart-primary, #508B89);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.empty-text {
+  font-size: 0.85rem;
+  color: var(--nutrismart-text-light, #8aa8a8);
+  margin: 0;
+}
+
+.btn-add {
+  background: none;
+  border: 1.5px dashed var(--nutrismart-primary, #508B89);
+  color: var(--nutrismart-primary, #508B89);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-bottom: 14px;
+  transition: background 0.2s;
+}
+
+.btn-add:hover {
+  background: var(--nutrismart-primary-lighter, #f0f6f6);
+}
+
+.chip-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.picker-chip {
+  padding: 6px 14px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: 20px;
+  background: var(--nutrismart-white, #ffffff);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.picker-chip.active {
+  border-color: var(--nutrismart-primary, #508B89);
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+}
+
+.chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.restriction-chip {
+  padding: 8px 16px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: 20px;
+  background: var(--nutrismart-white, #ffffff);
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.restriction-chip.selected {
+  border-color: var(--nutrismart-primary, #508B89);
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+}
+
+.add-condition-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-add-inline {
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 10px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notif-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--nutrismart-white, #ffffff);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  border: 1px solid var(--nutrismart-border, #e0eaea);
+  font-size: 0.9rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+}
+
+.toggle-btn {
+  border: none;
+  border-radius: 20px;
+  padding: 5px 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--nutrismart-border, #e0eaea);
+  color: var(--nutrismart-text-mid, #4a6060);
+  transition: background 0.2s;
+}
+
+.toggle-btn.on {
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+}
+
+/* ─── Language panel ──────────────────────────────────────────────────────── */
+
+.lang-options {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  cursor: pointer;
+}
+
+.lang-option input[type="radio"] {
+  accent-color: var(--nutrismart-primary, #508B89);
+  width: 16px;
+  height: 16px;
+}
+
+/* ─── Security panel ──────────────────────────────────────────────────────── */
+
+.security-divider {
+  height: 1px;
+  background: var(--nutrismart-border, #e0eaea);
+  margin: 28px 0;
+}
+
+.danger-text {
+  color: #dc2626;
+}
+
+.btn-outline-danger {
+  border: 1.5px solid #dc2626;
+  background: transparent;
+  color: #dc2626;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-bottom: 8px;
+}
+
+.btn-outline-danger:hover {
+  background: #fef2f2;
+}
+
+.btn-delete-account {
+  border: 1.5px solid #dc2626;
+  background: transparent;
+  color: #dc2626;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .profile-shell {
+    padding-top: 68px;
+  }
+}
+
+@media (max-width: 960px) {
+  .profile-shell {
+    flex-direction: column;
+  }
+
+  .profile-nav {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--nutrismart-border, #e0eaea);
+    padding: 20px 16px;
+    gap: 16px;
+  }
+
+  .nav-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .nav-item {
+    padding: 8px 12px;
+    font-size: 0.82rem;
+  }
+
+  .profile-content {
+    padding: 24px 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-nav {
+    padding: 16px;
+  }
+
+  .profile-content {
+    padding: 16px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-section {
+    max-width: 100%;
+  }
+}
+
+/* ─── Save button ─────────────────────────────────────────────────────────── */
+
+.btn-save {
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 11px 28px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 8px;
+}
+
+.btn-save:hover {
+  background: var(--nutrismart-primary-dark, #3d6e6c);
+}

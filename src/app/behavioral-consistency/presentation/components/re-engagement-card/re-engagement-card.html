@@ -1,0 +1,22 @@
+@if (isVisible()) {
+  <div class="re-engagement-banner" [class.is-at-risk]="isAtRisk()">
+    <div class="banner-icon">{{ iconKey() | translate }}</div>
+
+    <div class="banner-body">
+      <h4 class="banner-title">{{ titleKey() | translate }}</h4>
+      <p class="banner-desc">{{ descKey() | translate }}</p>
+
+      @if (hasPlanActions()) {
+        <ul class="banner-actions">
+          @for (action of planActions(); track action.type) {
+            <li class="banner-action-item">{{ action.descriptionKey | translate }}</li>
+          }
+        </ul>
+      }
+    </div>
+
+    <button class="banner-action" (click)="acceptAction()">
+      {{ btnKey() | translate }}
+    </button>
+  </div>
+}

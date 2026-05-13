@@ -1,0 +1,44 @@
+.balance-panel {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.balance-panel--exceeded { border: 1.5px solid #fca5a5; }
+
+.panel-title { font-size: 16px; font-weight: 600; color: #1a1a1a; margin: 0 0 14px; }
+.title--danger { color: #ef4444; }
+
+.balance-rows { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+
+.balance-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+.balance-row--total { font-weight: 600; }
+
+.balance-label { color: #6b7280; }
+
+.balance-label--active {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.balance-label__icon {
+  font-size: 14px;
+  color: #2d9e8f;
+}
+.balance-value { font-weight: 500; color: #1a1a1a; }
+
+.val--danger    { color: #ef4444 !important; font-weight: 700 !important; }
+.val--active    { color: #2d9e8f; }
+.val--remaining { color: #2d9e8f; font-weight: 700; }
+
+.progress-bar {
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.progress-fill { height: 100%; border-radius: 4px; transition: width .3s ease; }
+
+.balance-footer { font-size: 13px; color: #6b7280; margin: 0; }

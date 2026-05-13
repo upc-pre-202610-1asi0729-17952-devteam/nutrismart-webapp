@@ -1,0 +1,9 @@
+<div class="wearable-chip" [class.wearable-chip--active]="isConnected()"
+     role="status"
+     [attr.aria-label]="(isConnected() ? 'physical_activity.chip.connected' : 'physical_activity.chip.disconnected') | translate">
+  <span class="material-icons wearable-chip__icon">watch</span>
+  <span class="wearable-chip__label">
+    {{ (isConnected() ? 'physical_activity.chip.connected' : 'physical_activity.chip.disconnected') | translate }}
+  </span>
+  <span class="wearable-chip__dot"></span>
+</div>

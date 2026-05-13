@@ -1,0 +1,31 @@
+.period-toggle {
+  display: flex;
+  gap: 4px;
+  background: var(--nutrismart-bg);
+  border: 1px solid var(--nutrismart-border);
+  border-radius: var(--nutrismart-radius-sm);
+  padding: 3px;
+}
+
+.period-toggle button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--nutrismart-text-mid);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.period-toggle button:hover {
+  background: var(--nutrismart-primary-lighter);
+  color: var(--nutrismart-primary);
+}
+
+.period-toggle button.active {
+  background: var(--nutrismart-primary);
+  color: #ffffff;
+}

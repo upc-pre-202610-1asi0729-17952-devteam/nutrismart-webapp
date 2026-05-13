@@ -1,0 +1,49 @@
+.export-pdf-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border: 1px solid var(--nutrismart-primary);
+  border-radius: var(--nutrismart-radius-sm);
+  background: var(--nutrismart-primary);
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.export-pdf-button:hover:not(:disabled) {
+  background: var(--nutrismart-primary-dark);
+  border-color: var(--nutrismart-primary-dark);
+}
+
+.export-pdf-button:disabled {
+  background: var(--nutrismart-border);
+  border-color: var(--nutrismart-border);
+  color: var(--nutrismart-text-light);
+  cursor: not-allowed;
+}
+
+.export-pdf-button mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* Basic spinner styles */
+.spinner {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 2px solid #ffffff;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+  margin-left: 5px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

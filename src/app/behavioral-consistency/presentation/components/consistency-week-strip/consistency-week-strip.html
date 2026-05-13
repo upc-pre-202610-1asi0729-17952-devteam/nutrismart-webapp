@@ -1,0 +1,18 @@
+<div class="week-strip-container"
+     [attr.aria-label]="'behavioral.week_strip.aria_label' | translate: { completed: completedCount() }">
+  <div class="strip-header">
+    <span class="strip-title">{{ 'behavioral.week_strip.title' | translate }}</span>
+    <span class="count-badge">{{ completedCount() }}/7</span>
+  </div>
+
+  <div class="dots-row">
+    @for (completed of weekDots(); track $index) {
+      <div class="day-col">
+        <span class="day-label">{{ dayLabels()[$index] }}</span>
+        <div class="dot" [class.is-completed]="completed"
+             [class.is-pending]="!completed">
+        </div>
+      </div>
+    }
+  </div>
+</div>

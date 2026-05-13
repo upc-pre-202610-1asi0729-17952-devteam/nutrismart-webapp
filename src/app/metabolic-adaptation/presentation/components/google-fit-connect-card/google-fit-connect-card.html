@@ -1,0 +1,34 @@
+<div class="gf-card">
+  <div class="gf-card-top">
+    <div class="gf-icon-wrap" aria-hidden="true">
+      <span class="material-icons gf-icon">watch</span>
+    </div>
+    <div class="gf-badge">Google Fit</div>
+  </div>
+
+  <h3 class="gf-title">{{ 'physical_activity.google_fit.title' | translate }}</h3>
+  <p class="gf-desc">{{ 'physical_activity.google_fit.desc' | translate }}</p>
+
+  <ul class="gf-feature-list" aria-hidden="true">
+    <li class="gf-feature">
+      <span class="material-icons gf-feature-icon">directions_walk</span>
+      <span>{{ 'physical_activity.google_fit.feature_steps' | translate }}</span>
+    </li>
+    <li class="gf-feature">
+      <span class="material-icons gf-feature-icon">local_fire_department</span>
+      <span>{{ 'physical_activity.google_fit.feature_calories' | translate }}</span>
+    </li>
+    <li class="gf-feature">
+      <span class="material-icons gf-feature-icon">sync</span>
+      <span>{{ 'physical_activity.google_fit.feature_sync' | translate }}</span>
+    </li>
+  </ul>
+
+  <button
+    class="gf-btn"
+    type="button"
+    (click)="onConnect()">
+    <span class="material-icons gf-btn-icon">link</span>
+    {{ 'physical_activity.google_fit.connect_btn' | translate }}
+  </button>
+</div>

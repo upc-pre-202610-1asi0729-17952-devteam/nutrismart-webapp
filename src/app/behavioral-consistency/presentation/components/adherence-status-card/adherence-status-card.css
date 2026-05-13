@@ -1,0 +1,55 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.status-card-container {
+  padding: 16px 20px;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.status-badge {
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.status-message {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin: 0;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+}
+
+/* Dinamic States based on statusClass() */
+
+/* ON_TRACK - Teal Theme */
+.on-track {
+  background-color: #e6f2f1; /* Light teal tint */
+  border-color: var(--nutrismart-primary, #508B89);
+}
+.on-track .status-badge {
+  color: var(--nutrismart-primary, #508B89);
+}
+
+/* AT_RISK - Orange/Amber Theme */
+.at-risk {
+  background-color: #fff9f0;
+  border-color: #f59e0b;
+}
+.at-risk .status-badge {
+  color: #d97706;
+}
+
+/* DROPPED - Red/Pink Theme */
+.dropped {
+  background-color: #fff1f2;
+  border-color: #f43f5e;
+}
+.dropped .status-badge {
+  color: #e11d48;
+}

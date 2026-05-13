@@ -1,0 +1,82 @@
+:host {
+  display: block;
+}
+
+.action-panel-container {
+  padding: 20px;
+  background: white;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.panel-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.actions-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  flex: 1;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 6px;
+}
+
+.action-btn .icon {
+  font-size: 1.2rem;
+}
+
+.action-btn .label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-mid, #4a6060);
+}
+
+/* Hover & Active States */
+.action-btn:hover {
+  transform: translateY(-2px);
+  background-color: #f9fbfb;
+}
+
+.btn-success:hover {
+  border-color: var(--nutrismart-primary, #508B89);
+}
+
+.btn-success:hover .icon {
+  color: var(--nutrismart-primary, #508B89);
+}
+
+.btn-warning:hover {
+  border-color: #f59e0b;
+}
+
+.btn-warning:hover .icon {
+  color: #f59e0b;
+}
+
+.btn-sync:hover {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.btn-sync .icon {
+  color: #3b82f6;
+}

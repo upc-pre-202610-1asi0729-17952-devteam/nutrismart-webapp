@@ -1,0 +1,12 @@
+.footer-content {
+  width: 100%;
+  background-color: var(--nutrismart-primary);
+  color: white;
+  text-align: center;
+  padding: 12px;
+  font-size: 12px;
+}
+
+.footer-content a {
+  color: rgba(255, 255, 255, 0.85);
+}

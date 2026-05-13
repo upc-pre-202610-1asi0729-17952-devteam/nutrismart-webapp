@@ -1,0 +1,254 @@
+.cc-card {
+  background: var(--nutrismart-white);
+  border: 1px solid var(--nutrismart-border);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--nutrismart-shadow);
+}
+
+/* ── Status bar ── */
+.cc-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-bottom: 1px solid #bbf7d0;
+}
+
+.cc-status-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Animated pulse dot */
+.cc-pulse {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+}
+
+.cc-pulse::before,
+.cc-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #16a34a;
+}
+
+.cc-pulse::after {
+  animation: pulse-ring 1.8s ease-out infinite;
+  background: transparent;
+  border: 2px solid #16a34a;
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+.cc-status-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.cc-status-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #15803d;
+}
+
+.cc-sync-time {
+  font-size: 11px;
+  color: #4ade80;
+  color: #166534;
+}
+
+.cc-status-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cc-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: white;
+  border: 1.5px solid #86efac;
+  border-radius: 8px;
+  color: #15803d;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.15s;
+}
+
+.cc-btn-outline:hover { background: #f0fdf4; border-color: #4ade80; }
+.cc-btn-outline:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.cc-btn-icon { font-size: 15px; }
+
+.cc-btn-ghost {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  transition: color 0.15s;
+}
+
+.cc-btn-ghost:hover { color: #ef4444; }
+
+/* ── Metrics grid ── */
+.cc-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--nutrismart-border);
+  border-bottom: 1px solid var(--nutrismart-border);
+}
+
+.cc-metric {
+  background: var(--nutrismart-white);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.cc-metric-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--nutrismart-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+.cc-metric-value {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.cc-metric--green .cc-metric-value { color: #16a34a; }
+
+.cc-metric-unit {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--nutrismart-text-light);
+}
+
+.cc-metric-sub {
+  font-size: 11px;
+  color: var(--nutrismart-text-light);
+  margin-top: 2px;
+}
+
+/* ── History ── */
+.cc-history {
+  padding: 20px 24px;
+}
+
+.cc-history-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+  margin: 0 0 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cc-log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cc-log-row {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--nutrismart-bg);
+  transition: background 0.12s;
+}
+
+.cc-log-row:last-child { border-bottom: none; }
+
+.cc-log-row:hover {
+  background: var(--nutrismart-bg);
+  border-radius: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin-left: -8px;
+  margin-right: -8px;
+}
+
+.cc-log-day {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--nutrismart-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cc-log-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cc-log-type {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--nutrismart-text-dark);
+  text-transform: capitalize;
+}
+
+.cc-log-duration {
+  font-size: 11px;
+  color: var(--nutrismart-text-light);
+}
+
+.cc-log-cal {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #16a34a;
+}
+
+.cc-log-cal-icon {
+  font-size: 15px;
+  color: #f97316;
+}
+
+.cc-history-empty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 0;
+  color: var(--nutrismart-text-light);
+  font-size: 13px;
+}
+
+.cc-history-empty-icon { font-size: 20px; }

@@ -1,0 +1,13 @@
+<button
+  type="button"
+  class="export-pdf-button"
+  [disabled]="!isPremiumUser || isLoading"
+  [title]="tooltipText"
+  [attr.aria-label]="tooltipText"
+  (click)="onClick()">
+  <mat-icon aria-hidden="true">picture_as_pdf</mat-icon>
+  <span>{{ 'analytics.export_btn_label' | translate }}</span>
+  @if (isLoading) {
+    <span class="spinner" aria-hidden="true"></span>
+  }
+</button>

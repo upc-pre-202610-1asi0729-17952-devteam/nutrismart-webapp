@@ -1,0 +1,206 @@
+.history-panel {
+  background: var(--nutrismart-surface, #fff);
+  border: 1.5px solid var(--nutrismart-border, #e5e7eb);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* ── Header ── */
+.history-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--nutrismart-border, #e5e7eb);
+}
+
+.history-panel__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--nutrismart-text-dark);
+  margin: 0;
+}
+
+/* ── Empty state ── */
+.history-panel__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  gap: 12px;
+  color: var(--nutrismart-text-light);
+}
+
+.history-panel__empty-icon {
+  font-size: 40px;
+  opacity: 0.4;
+}
+
+.history-panel__empty-text {
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ── Table ── */
+.history-panel__table-wrapper {
+  overflow-x: auto;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.history-table__head th {
+  padding: 10px 24px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--nutrismart-text-light);
+  background: #f9fafb;
+  white-space: nowrap;
+}
+
+.history-table__row {
+  border-top: 1px solid var(--nutrismart-border, #e5e7eb);
+  transition: background 0.15s;
+}
+
+.history-table__row:hover {
+  background: #f9fafb;
+}
+
+.history-table__row td {
+  padding: 13px 24px;
+  color: var(--nutrismart-text-dark);
+}
+
+/* ── Type cell ── */
+.history-table__type {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.activity-badge {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--nutrismart-primary, #2d9e8f);
+  flex-shrink: 0;
+}
+
+.history-table__calories {
+  font-weight: 600;
+  color: var(--nutrismart-primary, #2d9e8f);
+}
+
+.history-table__date {
+  color: var(--nutrismart-text-light);
+  white-space: nowrap;
+}
+
+.history-table__duration {
+  color: var(--nutrismart-text-dark);
+}
+
+/* ── Footer ── */
+.history-panel__footer {
+  display: flex;
+  justify-content: center;
+  padding: 16px 24px;
+  border-top: 1px solid var(--nutrismart-border, #e5e7eb);
+}
+
+.see-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--nutrismart-primary, #2d9e8f);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.see-all-btn:hover {
+  background: #f0fdfb;
+}
+
+.see-all-btn__icon {
+  font-size: 16px;
+}
+
+/* ── Pagination ── */
+.history-panel__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--nutrismart-border, #e5e7eb);
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1.5px solid var(--nutrismart-border, #e5e7eb);
+  background: #fff;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--nutrismart-text-dark);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #f0fdfb;
+  border-color: var(--nutrismart-primary, #2d9e8f);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: var(--nutrismart-text-light);
+  min-width: 120px;
+  text-align: center;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .history-panel__header {
+    padding: 14px 16px 12px;
+  }
+
+  .history-table__head th {
+    padding: 8px 12px;
+    font-size: 10px;
+  }
+
+  .history-table__row td {
+    padding: 10px 12px;
+    font-size: 12.5px;
+  }
+
+  .history-panel__footer,
+  .history-panel__pagination {
+    padding: 12px 16px;
+  }
+}

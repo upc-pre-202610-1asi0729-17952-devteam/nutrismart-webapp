@@ -1,0 +1,242 @@
+<div class="rec-page">
+
+  <!-- ── Page header ─────────────────────────────────────────── -->
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">{{ 'recommendations.page_title' | translate }}</h1>
+      <p class="page-subtitle">
+        @if (store.isTravelMode()) {
+          {{ 'recommendations.subtitle_travel' | translate }}
+        } @else if (!isPro()) {
+          {{ 'recommendations.subtitle_upgrade' | translate }}
+        } @else {
+          {{ 'recommendations.subtitle_pro' | translate }}
+        }
+      </p>
+    </div>
+    <div class="header-chips">
+      @if (store.isTravelMode()) {
+        <div class="travel-chip" role="status" [attr.aria-label]="'recommendations.travel_chip' | translate:{ city: store.travelContext()?.city }">
+          <span>✈</span>
+          <span>{{ 'recommendations.travel_chip' | translate:{ city: store.travelContext()?.city } }}</span>
+          <button class="travel-chip-close" (click)="onDisableAutoTravel()" [attr.aria-label]="'recommendations.travel_disable' | translate">✕</button>
+        </div>
+      }
+      <app-location-picker
+        [locations]="store.availableLocations()"
+        [selectedCity]="store.weatherContext()?.city ?? ''"
+        [currentLabel]="pickerLabel()"
+        [demoTemperature]="store.demoTemperature()"
+        [isTravelMode]="store.isTravelMode()"
+        (citySelected)="onCitySelected($event)"
+        (temperatureChanged)="onTemperatureChanged($event)"
+      />
+    </div>
+  </header>
+
+  <!-- ── Plan Basic gate ─────────────────────────────────────── -->
+  @if (!isPro()) {
+    <div class="plan-gate">
+      <div class="plan-gate-icon">📍</div>
+      <h2 class="plan-gate-title">{{ 'recommendations.gate_title' | translate }}</h2>
+      <p class="plan-gate-desc">{{ 'recommendations.gate_desc' | translate }}</p>
+      <a routerLink="/subscription" class="btn btn--primary">{{ 'recommendations.gate_cta' | translate }}</a>
+    </div>
+  }
+
+  @if (isPro()) {
+
+    <!-- ── Error banner ───────────────────────────────────────── -->
+    @if (store.error()) {
+      <div class="error-banner" role="alert">
+        <span>{{ store.error()! | translate }}</span>
+      </div>
+    }
+
+    <!-- ── Location denied banner ──────────────────────────────── -->
+    @if (store.locationDenied() && !store.isTravelMode()) {
+      <div class="location-banner">
+        <span class="location-banner-icon">📍</span>
+        <span class="location-banner-text">{{ 'recommendations.location_denied_msg' | translate }}</span>
+        <a routerLink="/recommendations/location-search" class="btn btn--primary btn--sm">
+          {{ 'recommendations.enable_location' | translate }}
+        </a>
+      </div>
+    }
+
+    <!-- ── Weather / Travel context banner ────────────────────── -->
+    @if (!store.locationDenied() || store.isTravelMode()) {
+      <div class="context-banner" [ngClass]="weatherBannerClass()">
+        <div class="banner-icon-wrap">
+          <span class="banner-icon">{{ store.isTravelMode() ? '📍' : weatherIcon() }}</span>
+        </div>
+        <div class="banner-body">
+          @if (store.isTravelMode()) {
+            <strong>{{ 'recommendations.banner_travel_active' | translate:{ location: store.travelContext()?.locationLabel(), temp: displayTemperature() } }}</strong>
+            <p>{{ 'recommendations.banner_travel_desc' | translate:{ city: travelCity() } }}</p>
+          } @else {
+            <strong>
+              {{ isDisplayHot() ? ('recommendations.its_hot' | translate) : ('recommendations.its_cold' | translate) }} in
+              {{ store.weatherContext()?.city }} —
+              {{ displayTemperature() }}°C ·
+              {{ weatherConditionLabel() }}
+            </strong>
+            <p>
+              @if (isDisplayHot()) {
+                {{ 'recommendations.banner_hot_desc' | translate }}
+              } @else {
+                {{ 'recommendations.banner_cold_desc' | translate }}
+              }
+            </p>
+          }
+        </div>
+        <div class="banner-updated">
+          @if (store.isTravelMode()) {
+            {{ 'recommendations.detected_auto' | translate }}
+          } @else {
+            {{ weatherUpdatedAgo() }}
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ── Main two-column layout ──────────────────────────────── -->
+    <div class="rec-grid">
+
+      <!-- ── LEFT: Cards column ───────────────────────────────── -->
+      <main class="cards-col">
+
+        <!-- ── Loading skeleton ──────────────────────────────── -->
+        @if (store.loading()) {
+          @for (_ of [1, 2, 3]; track $index) {
+            <div class="rec-card rec-card--skeleton">
+              <div class="skeleton skeleton--icon"></div>
+              <div class="skeleton-body">
+                <div class="skeleton skeleton--title"></div>
+                <div class="skeleton skeleton--desc"></div>
+              </div>
+            </div>
+          }
+        }
+
+        <!-- ── DROPPED intervention card (T35) ──────────────── -->
+        @if (store.showInterventionCard() && store.interventionCard()) {
+          <div class="alert-card alert-card--red">
+            <div class="alert-card-header">
+              <span class="alert-badge alert-badge--red">{{ 'recommendations.intervention_badge' | translate }}</span>
+            </div>
+            <h3 class="alert-card-title">{{ 'recommendations.intervention_title' | translate }}</h3>
+            <p class="alert-card-desc">
+              {{ 'recommendations.intervention_desc' | translate:{ days: session()?.consecutiveMisses ?? 5, kcal: session()?.simplifiedKcalTarget ?? 1400 } }}
+            </p>
+            <div class="alert-card-meal">
+              <span class="meal-name">{{ store.interventionCard()!.name }}</span>
+              <span class="meal-desc">{{ store.interventionCard()!.description }}</span>
+              <span class="meal-kcal">{{ store.interventionCard()!.kcal }} kcal</span>
+              <span class="meal-protein tag">{{ store.interventionCard()!.protein }}</span>
+            </div>
+            <p class="event-label">{{ session()?.interventionEventLabel() }}</p>
+            <button class="btn btn--red btn--full" (click)="onAcceptSimplifiedPlan()">
+              {{ 'recommendations.accept_simplified' | translate }}
+            </button>
+          </div>
+        }
+
+        <!-- ── AT_RISK preventive card (T34) ─────────────────── -->
+        @if (store.showPreventiveCard() && store.preventiveCard()) {
+          <div class="alert-card alert-card--orange">
+            <div class="alert-card-header">
+              <span class="alert-badge alert-badge--orange">{{ 'recommendations.preventive_badge' | translate }}</span>
+            </div>
+            <h3 class="alert-card-title">{{ 'recommendations.preventive_title' | translate }}</h3>
+            <p class="alert-card-desc">
+              {{ 'recommendations.preventive_desc' | translate:{ days: session()?.consecutiveMisses ?? 2 } }}
+            </p>
+            <div class="alert-card-meal">
+              <span class="meal-name">{{ store.preventiveCard()!.name }}</span>
+              <span class="meal-desc">{{ store.preventiveCard()!.description }}</span>
+              <span class="meal-kcal">{{ store.preventiveCard()!.kcal }} kcal</span>
+              <span class="meal-protein tag">{{ store.preventiveCard()!.protein }}</span>
+            </div>
+            <p class="event-label">{{ session()?.preventiveEventLabel() }}</p>
+            <button class="btn btn--orange btn--full" (click)="onLogPreventiveNow()">
+              {{ 'recommendations.log_now' | translate }}
+            </button>
+          </div>
+        }
+
+        <!-- ── Section title ─────────────────────────────────── -->
+        <div class="section-header">
+          <h2 class="section-title">{{ sectionTitle() }}</h2>
+          <p class="section-subtitle">{{ sectionSubtitle() }}</p>
+        </div>
+
+        <!-- ── Recommendation cards ───────────────────────────── -->
+        @for (card of store.activeCards(); track card.id) {
+          <div class="rec-card">
+            <div class="rec-card-icon">
+              <span>{{ store.isTravelMode() ? '🍲' : '↗' }}</span>
+            </div>
+            <div class="rec-card-body">
+              <h3 class="rec-card-name">{{ card.name }}</h3>
+              <p class="rec-card-desc">{{ card.description }}</p>
+              <div class="rec-card-tags">
+                <span class="tag tag--kcal">{{ card.kcal }} kcal</span>
+                <span class="tag tag--protein">{{ card.protein }}</span>
+                <span class="tag">{{ card.badge }}</span>
+              </div>
+            </div>
+            <button class="btn btn--primary btn--add" (click)="onAddToLog(card.id)">
+              {{ 'common.add_to_log' | translate }}
+            </button>
+          </div>
+        }
+
+        @if (store.activeCards().length === 0 && !store.loading()) {
+          <div class="empty-state">
+            <p>{{ 'recommendations.empty_state' | translate }}</p>
+          </div>
+        }
+
+      </main>
+
+      <!-- ── RIGHT: Filters + Balance + Travel panel ───────────── -->
+      <aside class="right-col">
+
+        <!-- Active filters -->
+        <div class="panel">
+          <h3 class="panel-title">{{ 'recommendations.filters_title' | translate }}</h3>
+          <p class="panel-subtitle">{{ 'recommendations.filters_from_profile' | translate }}</p>
+          @if (store.activeFilters().length > 0) {
+            <div class="filter-tags">
+              @for (f of store.activeFilters(); track f) {
+                <span class="filter-tag">{{ ('restrictions.' + f) | translate }}</span>
+              }
+            </div>
+          } @else {
+            <p class="panel-empty">{{ 'recommendations.filters_empty' | translate }}</p>
+          }
+        </div>
+
+        <!-- Daily balance -->
+        <div class="panel">
+          <h3 class="panel-title">{{ 'recommendations.balance_title' | translate }}</h3>
+          <div class="balance-row">
+            <span class="balance-label">{{ 'recommendations.balance_target' | translate }}</span>
+            <span class="balance-value">{{ dailyTarget() }} kcal</span>
+          </div>
+          <div class="balance-row">
+            <span class="balance-label">{{ 'recommendations.balance_consumed' | translate }}</span>
+            <span class="balance-value">{{ dailyConsumed() }} kcal</span>
+          </div>
+          <div class="balance-row">
+            <span class="balance-label">{{ 'recommendations.balance_remaining' | translate }}</span>
+            <span class="balance-value balance-value--accent">{{ dailyRemaining() }} kcal</span>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  }
+
+</div>

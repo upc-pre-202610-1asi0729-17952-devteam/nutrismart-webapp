@@ -1,0 +1,91 @@
+<div class="history-page">
+
+  <header class="history-header">
+    <a routerLink="/body-progress/progress" class="back-link">
+      {{ 'body_progress.back_to_progress' | translate }}
+    </a>
+    <h1 class="history-title">{{ 'body_progress.history_title' | translate }}</h1>
+    <p class="history-subtitle">{{ 'body_progress.history_subtitle' | translate }}</p>
+  </header>
+
+  @if (store.loading()) {
+    <div class="loading-state">
+      @for (_ of [1, 2, 3, 4, 5]; track $index) {
+        <div class="skeleton-row">
+          <div class="skeleton skeleton--date"></div>
+          <div class="skeleton skeleton--weight"></div>
+          <div class="skeleton skeleton--delta"></div>
+        </div>
+      }
+    </div>
+  } @else if (rows().length === 0) {
+    <div class="empty-state">
+      <p>{{ 'body_progress.history_empty' | translate }}</p>
+    </div>
+  } @else {
+    <div class="history-card">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th class="col-date">{{ 'body_progress.updated_today' | translate }}</th>
+            <th class="col-weight">Kg</th>
+            <th class="col-delta">Δ</th>
+            <th class="col-actions"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.metric.id) {
+            <tr>
+              <td class="cell-date">{{ formatDate(row.metric.loggedAt) }}</td>
+
+              @if (editingMetricId() === row.metric.id) {
+                <td class="cell-weight" colspan="2">
+                  <div class="history-edit-row">
+                    <input class="history-edit-input"
+                           type="number"
+                           [value]="editWeightInput()"
+                           (input)="onEditWeightInput($event)"
+                           min="0.1" max="500" step="0.1"
+                           [attr.aria-label]="'body_progress.aria_edit_entry' | translate" />
+                    @if (editWeightError()) {
+                      <span class="history-edit-error">{{ editWeightError() }}</span>
+                    }
+                  </div>
+                </td>
+              } @else {
+                <td class="cell-weight">{{ row.metric.weightKg | number:'1.1-1' }} kg</td>
+                <td class="cell-delta"
+                    [class.delta--pos]="isDeltaPositive(row.delta)"
+                    [class.delta--neg]="isDeltaNegative(row.delta)">
+                  {{ formatDelta(row.delta) }}
+                </td>
+              }
+
+              <td class="cell-actions">
+                @if (editingMetricId() === row.metric.id) {
+                  <button class="icon-btn icon-btn--sm" type="button"
+                          [attr.aria-label]="'body_progress.aria_save_edit' | translate"
+                          (click)="onSaveEditMetric(row.metric)">
+                    <span class="material-icons">check</span>
+                  </button>
+                  <button class="icon-btn icon-btn--sm" type="button"
+                          [attr.aria-label]="'body_progress.aria_cancel_edit' | translate"
+                          (click)="onCancelEditMetric()">
+                    <span class="material-icons">close</span>
+                  </button>
+                } @else if (isWithin7Days(row.metric.loggedAt)) {
+                  <button class="icon-btn icon-btn--sm" type="button"
+                          [attr.aria-label]="'body_progress.aria_edit_entry' | translate"
+                          (click)="onStartEditMetric(row.metric)">
+                    <span class="material-icons">edit</span>
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>

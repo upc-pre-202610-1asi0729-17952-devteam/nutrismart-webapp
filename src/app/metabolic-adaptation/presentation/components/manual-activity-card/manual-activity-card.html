@@ -1,0 +1,36 @@
+<div class="manual-card">
+  <div class="manual-card-top">
+    <div class="manual-icon-wrap" aria-hidden="true">
+      <span class="material-icons manual-icon">directions_run</span>
+    </div>
+    <div class="manual-badge">{{ 'physical_activity.manual.badge' | translate }}</div>
+  </div>
+
+  <h3 class="manual-title">{{ 'physical_activity.manual.title' | translate }}</h3>
+  <p class="manual-desc">{{ 'physical_activity.manual.desc' | translate }}</p>
+
+  <div class="manual-categories">
+    <div class="manual-cat">
+      <span class="material-icons manual-cat-icon">self_improvement</span>
+      <div>
+        <span class="manual-cat-label">{{ 'physical_activity.manual.cardio_label' | translate }}</span>
+        <span class="manual-cat-hint">{{ 'physical_activity.manual.cardio_hint' | translate }}</span>
+      </div>
+    </div>
+    <div class="manual-cat">
+      <span class="material-icons manual-cat-icon">fitness_center</span>
+      <div>
+        <span class="manual-cat-label">{{ 'physical_activity.manual.strength_label' | translate }}</span>
+        <span class="manual-cat-hint">{{ 'physical_activity.manual.strength_hint' | translate }}</span>
+      </div>
+    </div>
+  </div>
+
+  <button
+    class="manual-btn"
+    type="button"
+    (click)="onOpenModal()">
+    <span class="material-icons manual-btn-icon">add_circle_outline</span>
+    {{ 'physical_activity.manual.log_btn' | translate }}
+  </button>
+</div>

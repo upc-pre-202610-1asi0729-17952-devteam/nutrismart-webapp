@@ -1,0 +1,57 @@
+<div class="export-pdf-overlay" [class.visible]="isVisible" role="dialog" aria-modal="true" [attr.aria-label]="'analytics.export_modal_title' | translate">
+  <div class="export-pdf-modal">
+    <h2 class="modal-title">{{ 'analytics.export_modal_title' | translate }}</h2>
+
+    <div class="date-selection">
+      <mat-form-field appearance="fill">
+        <mat-label>{{ 'analytics.export_from_date' | translate }}</mat-label>
+        <input matInput [matDatepicker]="fromPicker" [(ngModel)]="fromDate">
+        <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+        <mat-datepicker #fromPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>{{ 'analytics.export_to_date' | translate }}</mat-label>
+        <input matInput [matDatepicker]="toPicker" [(ngModel)]="toDate">
+        <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+        <mat-datepicker #toPicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div class="report-options">
+      <h3>{{ 'analytics.export_include' | translate }}</h3>
+      @for (option of reportOptions; track option.labelKey) {
+        <div class="option-item">
+          <input
+            type="checkbox"
+            [(ngModel)]="option.selected"
+            [id]="option.labelKey"
+            [attr.aria-label]="option.labelKey | translate"
+          >
+          <label [for]="option.labelKey">{{ option.labelKey | translate }}</label>
+        </div>
+      }
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="cancel-button" (click)="onCancel()">
+        {{ 'analytics.export_cancel' | translate }}
+      </button>
+      <button
+        type="button"
+        class="generate-button"
+        [disabled]="isGenerateButtonDisabled"
+        (click)="onGeneratePdf()">
+        @if (isLoading) {
+          <span class="spinner" aria-hidden="true"></span>
+        } @else {
+          {{ 'analytics.export_generate' | translate }}
+        }
+      </button>
+    </div>
+
+    @if (errorKey) {
+      <div class="error-message" role="alert">{{ errorKey | translate }}</div>
+    }
+  </div>
+</div>

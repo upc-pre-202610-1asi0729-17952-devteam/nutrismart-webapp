@@ -1,0 +1,126 @@
+.pw-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.pw-card {
+  background: var(--nutrismart-white);
+  border: 1px solid var(--nutrismart-border);
+  border-radius: 20px;
+  padding: 48px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 18px;
+  width: 440px;
+  max-width: 100%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--nutrismart-shadow-md);
+}
+
+/* Gradient glow behind the lock */
+.pw-glow {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(80,139,137,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.pw-lock {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--nutrismart-primary-light) 0%, #c7e8e7 100%);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(80,139,137,0.2);
+}
+
+.pw-lock-icon {
+  font-size: 30px;
+  color: var(--nutrismart-primary);
+}
+
+.pw-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.pw-desc {
+  font-size: 13.5px;
+  color: var(--nutrismart-text-mid);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 320px;
+}
+
+/* ── Feature list ── */
+.pw-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.pw-feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--nutrismart-text-dark);
+  text-align: left;
+}
+
+.pw-feature-icon {
+  font-size: 18px;
+  color: var(--nutrismart-primary);
+  flex-shrink: 0;
+}
+
+/* ── CTA ── */
+.pw-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  background: var(--nutrismart-primary);
+  color: white;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 14px rgba(80,139,137,0.35);
+  margin-top: 4px;
+}
+
+.pw-btn:hover {
+  background: var(--nutrismart-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(80,139,137,0.45);
+}
+
+.pw-btn-icon { font-size: 17px; }
+
+.pw-note {
+  font-size: 11px;
+  color: var(--nutrismart-text-light);
+  margin: 0;
+}

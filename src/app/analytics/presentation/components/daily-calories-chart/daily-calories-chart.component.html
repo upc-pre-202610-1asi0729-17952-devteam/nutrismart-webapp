@@ -1,0 +1,106 @@
+<div class="daily-calories-chart nutrismart-card">
+  <h3 class="chart-title">
+    {{ 'analytics.chart_calories_title' | translate }}
+    —
+    @if (period === '7_DAYS') {
+      {{ 'analytics.chart_calories_last_7' | translate }}
+    } @else if (period === '30_DAYS') {
+      {{ 'analytics.chart_calories_last_30' | translate }}
+    } @else {
+      {{ 'analytics.chart_calories_last_90' | translate }}
+    }
+    · {{ 'analytics.chart_calories_goal' | translate: { value: goal } }}
+  </h3>
+
+  @if (chartData.length === 0) {
+    <div class="no-data-message">{{ 'analytics.empty' | translate }}</div>
+  } @else {
+    <div class="chart-container">
+      <svg
+        [attr.viewBox]="'0 0 ' + (chartData.length * 40 + 10) + ' 200'"
+        preserveAspectRatio="xMidYMax meet"
+        class="bar-chart"
+        role="img"
+        [attr.aria-label]="'analytics.chart_calories_aria' | translate">
+        <title>{{ 'analytics.chart_calories_aria' | translate }}</title>
+
+        <line
+          [attr.x1]="0"
+          [attr.y1]="150 - (goal / maxCalories) * 150"
+          [attr.x2]="chartData.length * 40 + 10"
+          [attr.y2]="150 - (goal / maxCalories) * 150"
+          stroke="var(--nutrismart-text-light)"
+          stroke-dasharray="4 2"
+          stroke-width="1"
+        />
+        <text
+          [attr.x]="chartData.length * 40 + 5"
+          [attr.y]="150 - (goal / maxCalories) * 150 - 5"
+          text-anchor="end"
+          fill="var(--nutrismart-text-light)"
+          font-size="10"
+        >{{ goal }} kcal</text>
+
+        @for (entry of chartData; track $index) {
+          @let barWidth = 30;
+          @let barX = $index * 40 + 5;
+          @let barHeight = (entry.height / 100) * 150;
+          @let barY = 150 - barHeight;
+
+          <rect
+            [attr.x]="barX"
+            [attr.y]="barY"
+            [attr.width]="barWidth"
+            [attr.height]="barHeight"
+            [ngClass]="{
+              'bar-over-goal': entry.status === 'over',
+              'bar-on-target': entry.status === 'on-target',
+              'bar-no-data': entry.status === 'no-data'
+            }"
+            rx="3" ry="3"
+            [attr.aria-label]="entry.day + ': ' + entry.label + ' kcal'"
+          />
+          <text
+            [attr.x]="barX + barWidth / 2"
+            [attr.y]="barY - 5"
+            text-anchor="middle"
+            fill="var(--nutrismart-text-dark)"
+            font-size="10"
+            aria-hidden="true"
+          >{{ entry.label }}</text>
+          <text
+            [attr.x]="barX + barWidth / 2"
+            y="175"
+            text-anchor="middle"
+            fill="var(--nutrismart-text-light)"
+            font-size="11"
+            aria-hidden="true"
+          >{{ entry.day }}</text>
+        }
+      </svg>
+    </div>
+
+    <div class="chart-legend" aria-hidden="true">
+      <span class="legend-item">
+        <span class="legend-color-box legend-goal"></span>
+        {{ 'analytics.chart_legend_goal' | translate }}: {{ goal }} kcal
+      </span>
+      <span class="legend-item">
+        <span class="legend-color-box legend-over-goal"></span>
+        {{ 'analytics.chart_legend_over' | translate }}
+      </span>
+      <span class="legend-item">
+        <span class="legend-color-box legend-on-target"></span>
+        {{ 'analytics.chart_legend_on_target' | translate }}
+      </span>
+      <span class="legend-item">
+        <span class="legend-color-box legend-no-data"></span>
+        {{ 'analytics.chart_legend_no_data' | translate }}
+      </span>
+    </div>
+
+    <div class="chart-footer">
+      {{ 'analytics.chart_calories_average' | translate: { value: averageCalories } }}
+    </div>
+  }
+</div>

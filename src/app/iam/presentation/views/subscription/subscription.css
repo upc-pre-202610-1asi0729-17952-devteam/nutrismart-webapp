@@ -1,0 +1,202 @@
+.subscription-shell {
+  min-height: 100vh;
+  background: var(--nutrismart-bg, #f5f7f7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 24px;
+}
+
+.subscription-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.brand {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--nutrismart-primary, #508B89);
+  margin-bottom: 16px;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  letter-spacing: -0.3px;
+  margin: 0 0 10px;
+}
+
+.page-subtitle {
+  color: var(--nutrismart-text-light, #8aa8a8);
+  font-size: 13px;
+  margin: 0;
+}
+
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  max-width: 900px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.plan-card {
+  background: var(--nutrismart-white, #ffffff);
+  border: 2px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius, 14px);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.plan-card.featured {
+  border-color: var(--nutrismart-primary, #508B89);
+  box-shadow: 0 4px 24px rgba(80, 139, 137, 0.18);
+}
+
+.plan-badge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.plan-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  margin: 0 0 8px;
+  text-align: center;
+}
+
+.plan-price {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--nutrismart-primary, #508B89);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plan-features li {
+  font-size: 0.9rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+}
+
+.btn-plan {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--nutrismart-primary, #508B89);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  background: transparent;
+  color: var(--nutrismart-primary, #508B89);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-plan:hover {
+  background: var(--nutrismart-primary-light, #e8f2f2);
+}
+
+.btn-plan.btn-plan-featured {
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+}
+
+.btn-plan.btn-plan-featured:hover {
+  background: var(--nutrismart-primary-dark, #3d6e6c);
+}
+
+.subscription-footer {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.legal-text {
+  font-size: 0.8rem;
+  color: var(--nutrismart-text-light, #8aa8a8);
+  margin: 0;
+}
+
+.maybe-later {
+  background: none;
+  border: none;
+  color: var(--nutrismart-text-mid, #4a6060);
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.maybe-later:hover {
+  color: var(--nutrismart-text-dark, #1a2e2e);
+}
+
+.subscription-shell.manage-mode {
+  min-height: unset;
+  padding: 32px 24px;
+}
+
+@media (max-width: 1023px) {
+  .subscription-shell.manage-mode {
+    padding-top: 68px;
+  }
+}
+
+@media (max-width: 600px) {
+  .subscription-shell {
+    padding: 24px 16px;
+  }
+
+  .subscription-shell.manage-mode {
+    padding: 68px 16px 24px;
+  }
+
+  .plans-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.plan-card.current-plan {
+  border-color: var(--nutrismart-primary, #508B89);
+  background: var(--nutrismart-primary-light, #e8f2f2);
+}
+
+.current-badge {
+  background: var(--nutrismart-text-dark, #1a2e2e) !important;
+}
+
+.btn-plan.btn-plan-current {
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  border-color: var(--nutrismart-primary, #508B89);
+  color: var(--nutrismart-primary, #508B89);
+  cursor: default;
+  opacity: 0.8;
+}
+
+.btn-plan:disabled {
+  cursor: default;
+}

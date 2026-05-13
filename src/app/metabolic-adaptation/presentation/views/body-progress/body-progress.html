@@ -1,0 +1,597 @@
+<div class="bp-page">
+
+  <!-- ── Page header ─────────────────────────────────────────── -->
+  <header class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">{{ 'body_progress.page_title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'body_progress.page_subtitle' | translate }}</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn--primary" [disabled]="store.loading()" (click)="onOpenLogModal()">
+        {{ (store.hasLoggedToday() ? 'body_progress.update_weight_btn' : 'body_progress.log_weight_btn') | translate }}
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Error banner ──────────────────────────────────────── -->
+  @if (store.error()) {
+    <div class="error-banner" role="alert">
+      <span class="material-icons error-banner-icon">error_outline</span>
+      <span>{{ store.error()! | translate }}</span>
+    </div>
+  }
+
+  <!-- ── No-data banner: last log > 14 days ─────────────────── -->
+  @if (store.isStale()) {
+    <div class="stale-banner" role="alert">
+      <span class="material-icons stale-banner-icon">warning_amber</span>
+      <span class="stale-banner-text">
+        {{ 'body_progress.stale_banner' | translate:{ date: formattedUpdatedLabel() } }}
+      </span>
+      <button class="btn btn--primary btn--sm" (click)="onOpenLogModal()">
+        {{ (store.hasLoggedToday() ? 'body_progress.update_weight_btn' : 'body_progress.log_now') | translate }}
+      </button>
+    </div>
+  }
+
+  <!-- ── Stagnation banner: logs exist but no progress ──────── -->
+  @if (!store.isStale() && store.hasStagnated()) {
+    <div class="stagnation-banner" role="alert">
+      <span class="material-icons stale-banner-icon">trending_flat</span>
+      <span class="stale-banner-text">
+        {{ (store.isMuscleGain() ? 'body_progress.stagnation_banner_gain' : 'body_progress.stagnation_banner_loss') | translate }}
+      </span>
+    </div>
+  }
+
+  <!-- ── Metric cards ───────────────────────────────────────── -->
+  <div class="metric-cards">
+
+    <!-- Current Weight -->
+    <div class="metric-card" [class.metric-card--stale]="store.isStale()">
+      <div class="metric-card-label">{{ 'body_progress.metric_weight' | translate }}</div>
+      <div class="metric-card-value">
+        {{ store.currentMetric()?.weightKg | number:'1.1-1' }}
+        <span class="metric-card-unit">kg</span>
+      </div>
+      <div class="metric-card-sub" [class.metric-card-sub--warn]="store.isStale()">
+        {{ formattedUpdatedLabel() }}
+      </div>
+    </div>
+
+    <!-- BMI -->
+    <div class="metric-card" [class.metric-card--stale]="bmiOutdated()">
+      <div class="tooltip-trigger">
+        <span class="metric-card-label">{{ 'body_progress.metric_bmi' | translate }}</span>
+        <button class="icon-btn" type="button"
+                [attr.aria-label]="'body_progress.aria_more_info' | translate"
+                (click)="toggleTooltip('bmi')">
+          <span class="material-icons">info_outline</span>
+        </button>
+      </div>
+      @if (activeTooltip() === 'bmi') {
+        <p class="metric-tooltip">{{ 'body_progress.tooltip_bmi' | translate }}</p>
+      }
+      <div class="metric-card-header-row">
+        @if (store.currentMetric()) {
+          <span class="metric-badge" [ngClass]="bmiCategoryClass()">{{ bmiBadgeLabel() }}</span>
+        }
+      </div>
+      <div class="metric-card-value">{{ store.currentMetric()?.bmi() | number:'1.1-1' }}</div>
+      <div class="metric-card-sub" [class.metric-card-sub--warn]="bmiOutdated()">
+        {{ bmiCategoryLabel() }}
+      </div>
+    </div>
+
+    <!-- Card 3: BMR (WEIGHT_LOSS) · % BODY FAT (MUSCLE_GAIN) -->
+    @if (store.isMuscleGain()) {
+      <div class="metric-card">
+        <div class="tooltip-trigger">
+          <span class="metric-card-label">{{ 'body_progress.metric_body_fat' | translate }}</span>
+          <button class="icon-btn" type="button"
+                  [attr.aria-label]="'body_progress.aria_more_info' | translate"
+                  (click)="toggleTooltip('body_fat')">
+            <span class="material-icons">info_outline</span>
+          </button>
+        </div>
+        @if (activeTooltip() === 'body_fat') {
+          <p class="metric-tooltip">{{ 'body_progress.tooltip_body_fat' | translate }}</p>
+        }
+        <div class="metric-card-value">
+          {{ store.composition()?.bodyFatPercent() | number:'1.1-1' }}
+          <span class="metric-card-unit">%</span>
+        </div>
+        <div class="metric-card-sub">{{ 'body_progress.us_navy' | translate }}</div>
+      </div>
+    } @else {
+      <div class="metric-card">
+        <div class="tooltip-trigger">
+          <span class="metric-card-label">{{ 'body_progress.metric_bmr' | translate }}</span>
+          <button class="icon-btn" type="button"
+                  [attr.aria-label]="'body_progress.aria_more_info' | translate"
+                  (click)="toggleTooltip('bmr')">
+            <span class="material-icons">info_outline</span>
+          </button>
+        </div>
+        @if (activeTooltip() === 'bmr') {
+          <p class="metric-tooltip">{{ 'body_progress.tooltip_bmr' | translate }}</p>
+        }
+        <div class="metric-card-value">
+          {{ store.currentMetric()?.bmr() | number:'1.0-0' }}
+          <span class="metric-card-unit">{{ 'body_progress.kcal_day' | translate }}</span>
+        </div>
+        <div class="metric-card-sub">{{ 'body_progress.basal_metabolic_rate' | translate }}</div>
+      </div>
+    }
+
+    <!-- Card 4: TDEE (WEIGHT_LOSS) · LEAN MASS (MUSCLE_GAIN) -->
+    @if (store.isMuscleGain()) {
+      <div class="metric-card">
+        <div class="tooltip-trigger">
+          <span class="metric-card-label">{{ 'body_progress.metric_lean_mass' | translate }}</span>
+          <button class="icon-btn" type="button"
+                  [attr.aria-label]="'body_progress.aria_more_info' | translate"
+                  (click)="toggleTooltip('lean_mass')">
+            <span class="material-icons">info_outline</span>
+          </button>
+        </div>
+        @if (activeTooltip() === 'lean_mass') {
+          <p class="metric-tooltip">{{ 'body_progress.tooltip_lean_mass' | translate }}</p>
+        }
+        <div class="metric-card-value">
+          {{ store.composition()?.leanMassKg() | number:'1.1-1' }}
+          <span class="metric-card-unit">kg</span>
+        </div>
+        <div class="metric-card-sub">{{ 'body_progress.lean_mass_desc' | translate }}</div>
+      </div>
+    } @else {
+      <div class="metric-card">
+        <div class="tooltip-trigger">
+          <span class="metric-card-label">{{ 'body_progress.metric_tdee' | translate }}</span>
+          <button class="icon-btn" type="button"
+                  [attr.aria-label]="'body_progress.aria_more_info' | translate"
+                  (click)="toggleTooltip('tdee')">
+            <span class="material-icons">info_outline</span>
+          </button>
+        </div>
+        @if (activeTooltip() === 'tdee') {
+          <p class="metric-tooltip">{{ 'body_progress.tooltip_tdee' | translate }}</p>
+        }
+        <div class="metric-card-value">
+          {{ currentTdee() | number:'1.0-0' }}
+          <span class="metric-card-unit">{{ 'body_progress.kcal_day' | translate }}</span>
+        </div>
+        <div class="metric-card-sub">{{ 'body_progress.tdee_desc' | translate }}</div>
+      </div>
+    }
+
+  </div>
+
+  <!-- ── Layout: single column ──────────────────────────────── -->
+  <div class="bp-grid--single">
+
+    <main class="main-col">
+
+      <!-- Weight Evolution chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h2 class="chart-title">{{ 'body_progress.chart_title' | translate }}</h2>
+          <mat-button-toggle-group
+            [value]="store.selectedDays()"
+            (change)="onDaysChange($event)"
+            class="day-toggle-mat">
+            <mat-button-toggle [value]="7">{{ 'body_progress.days_7' | translate }}</mat-button-toggle>
+            <mat-button-toggle [value]="30">{{ 'body_progress.days_30' | translate }}</mat-button-toggle>
+            <mat-button-toggle [value]="90">{{ 'body_progress.days_90' | translate }}</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+
+        @if (store.loading()) {
+          <div class="chart-loading" role="status"
+               [attr.aria-label]="'body_progress.loading_chart' | translate">
+            <span class="material-icons chart-loading-icon">refresh</span>
+          </div>
+        } @else if (store.metricsHistory().length >= 2) {
+          <div class="chart-wrap">
+            <svg viewBox="0 0 800 140" class="chart-svg">
+              @if (store.currentMetric()?.targetWeightKg) {
+                <line
+                  x1="0" [attr.y1]="store.chartPoints().targetY"
+                  x2="800" [attr.y2]="store.chartPoints().targetY"
+                  stroke="#f9a8d4" stroke-width="1.5" stroke-dasharray="6,4" />
+              }
+              <polygon
+                [attr.points]="'0,130 ' + store.chartPoints().points + ' 780,130'"
+                fill="rgba(45,158,143,0.08)" />
+              <polyline
+                [attr.points]="store.chartPoints().points"
+                fill="none" stroke="#2d9e8f" stroke-width="2" stroke-linejoin="round" />
+              @for (pt of store.chartPoints().points.split(' '); track $index) {
+                @if (pt) {
+                  <circle
+                    [attr.cx]="pt.split(',')[0]"
+                    [attr.cy]="pt.split(',')[1]"
+                    r="4" fill="white" stroke="#2d9e8f" stroke-width="2" />
+                }
+              }
+            </svg>
+            <div class="chart-y-labels">
+              <span>{{ (store.chartPoints().maxW | number:'1.0-0') }}</span>
+              <span>{{ (((store.chartPoints().maxW + store.chartPoints().minW) / 2) | number:'1.0-0') }}</span>
+              <span>{{ (store.chartPoints().minW | number:'1.0-0') }}</span>
+            </div>
+            <div class="chart-x-labels">
+              @for (label of formattedChartDates(); track $index) {
+                <span>{{ label }}</span>
+              }
+            </div>
+          </div>
+        } @else {
+          <div class="chart-empty">
+            <p>{{ 'body_progress.chart_empty' | translate }}</p>
+          </div>
+        }
+
+        @if (store.isStale()) {
+          <div class="chart-stale-note">{{ 'body_progress.chart_stale' | translate }}</div>
+        }
+
+        <!-- Goal row — WEIGHT_LOSS only -->
+        @if (!store.isMuscleGain()) {
+          <div class="chart-goal-row">
+            <div class="chart-goal-left">
+              <span class="chart-goal-label">{{ 'body_progress.goal_weight' | translate }}</span>
+
+              @if (!isEditingGoal()) {
+                <div class="chart-goal-value-row">
+                  <span class="chart-goal-value">
+                    {{ store.currentMetric()?.targetWeightKg
+                        ? (store.currentMetric()!.targetWeightKg | number:'1.1-1') + ' kg'
+                        : ('body_progress.not_set' | translate) }}
+                  </span>
+                  <button class="icon-btn" type="button"
+                          [attr.aria-label]="'body_progress.aria_edit_goal' | translate"
+                          (click)="onStartEditGoal()">
+                    <span class="material-icons">edit</span>
+                  </button>
+                </div>
+              } @else {
+                <div class="goal-inline-edit">
+                  <input class="goal-inline-input"
+                         type="number"
+                         [value]="goalInputModel()"
+                         (input)="onGoalModelChange($event)"
+                         [placeholder]="'body_progress.placeholder_goal' | translate"
+                         min="30" [max]="(store.currentMetric()?.weightKg ?? 500) - 0.1" step="0.1" />
+                  <button class="icon-btn icon-btn--confirm" type="button"
+                          [attr.aria-label]="'body_progress.aria_confirm' | translate"
+                          [disabled]="goalInputInvalid()"
+                          (click)="onSaveGoalInline()">
+                    <span class="material-icons">check</span>
+                  </button>
+                  <button class="icon-btn" type="button"
+                          [attr.aria-label]="'body_progress.aria_cancel' | translate"
+                          (click)="onCancelGoalInline()">
+                    <span class="material-icons">close</span>
+                  </button>
+                </div>
+                @if (goalInputError()) {
+                  <p class="goal-inline-error">{{ goalInputError() }}</p>
+                }
+              }
+            </div>
+
+            <div class="chart-goal-right">
+              <span class="chart-goal-label">{{ 'body_progress.projected_date_label' | translate }}</span>
+              <strong class="chart-goal-date">~{{ formattedProjectedDate() }}</strong>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Log History table — WEIGHT_LOSS only -->
+      @if (!store.isMuscleGain()) {
+        <div class="history-card">
+          <div class="history-header">
+            <h2 class="history-title">{{ 'body_progress.log_history' | translate }}</h2>
+            <a routerLink="/body-progress/history" class="link-btn">{{ 'common.view_all' | translate }}</a>
+          </div>
+          <table class="history-table">
+            <tbody>
+              @for (row of store.recentHistory(); track row.metric.id) {
+                <tr>
+                  <td class="history-date">{{ formatHistoryDate(row.metric.loggedAt) }}</td>
+                  @if (editingMetricId() === row.metric.id) {
+                    <td class="history-weight" colspan="2">
+                      <div class="history-edit-row">
+                        <input class="history-edit-input"
+                               type="number"
+                               [value]="editWeightInput()"
+                               (input)="onEditWeightInput($event)"
+                               min="0.1" max="500" step="0.1"
+                               [attr.aria-label]="'body_progress.aria_edit_entry' | translate" />
+                        @if (editWeightError()) {
+                          <span class="history-edit-error">{{ editWeightError() }}</span>
+                        }
+                      </div>
+                    </td>
+                  } @else {
+                    <td class="history-weight">{{ row.metric.weightKg | number:'1.1-1' }} kg</td>
+                    <td class="history-delta"
+                        [class.history-delta--pos]="isDeltaPositive(row.delta)"
+                        [class.history-delta--neg]="!isDeltaPositive(row.delta) && row.delta !== 0">
+                      {{ formatDelta(row.delta) }}
+                    </td>
+                  }
+                  <td class="history-actions">
+                    @if (editingMetricId() === row.metric.id) {
+                      <button class="icon-btn icon-btn--sm" type="button"
+                              [attr.aria-label]="'body_progress.aria_save_edit' | translate"
+                              (click)="onSaveEditMetric(row.metric)">
+                        <span class="material-icons">check</span>
+                      </button>
+                      <button class="icon-btn icon-btn--sm" type="button"
+                              [attr.aria-label]="'body_progress.aria_cancel_edit' | translate"
+                              (click)="onCancelEditMetric()">
+                        <span class="material-icons">close</span>
+                      </button>
+                    } @else if (isWithin7Days(row.metric.loggedAt)) {
+                      <button class="icon-btn icon-btn--sm" type="button"
+                              [attr.aria-label]="'body_progress.aria_edit_entry' | translate"
+                              (click)="onStartEditMetric(row.metric)">
+                        <span class="material-icons">edit</span>
+                      </button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <!-- Body Composition section — MUSCLE_GAIN only -->
+      @if (store.isMuscleGain()) {
+        @if (store.composition()?.hasFatIncreaseAlert()) {
+          <div class="fat-alert-banner" role="alert">
+            <span class="material-icons fat-alert-icon">warning</span>
+            <span>{{ 'body_progress.fat_alert' | translate }}</span>
+          </div>
+        }
+        <div class="composition-card">
+          <div class="composition-header">
+            <div>
+              <h2 class="composition-title">{{ 'body_progress.composition_title' | translate }}</h2>
+              <p class="composition-subtitle">{{ 'body_progress.composition_subtitle' | translate }}</p>
+            </div>
+            <button class="link-btn" (click)="onOpenCompositionModal()">
+              {{ 'body_progress.update_measurements' | translate }}
+            </button>
+          </div>
+          <div class="composition-grid">
+            <div class="composition-item">
+              <span class="composition-item-label">{{ 'body_progress.lean_mass' | translate }}</span>
+              <strong class="composition-item-value">
+                {{ store.composition() ? (store.composition()!.leanMassKg() | number:'1.1-1') + ' kg' : '--' }}
+              </strong>
+            </div>
+            <div class="composition-item">
+              <span class="composition-item-label">{{ 'body_progress.fat_mass' | translate }}</span>
+              <strong class="composition-item-value">
+                {{ store.composition() ? (store.composition()!.fatMassKg() | number:'1.1-1') + ' kg' : '--' }}
+              </strong>
+            </div>
+            <div class="composition-item">
+              <span class="composition-item-label">{{ 'body_progress.fat_percent' | translate }}</span>
+              <strong class="composition-item-value">
+                {{ store.composition() ? (store.composition()!.bodyFatPercent() | number:'1.1-1') + '%' : '--' }}
+              </strong>
+              <span class="composition-item-sub">{{ 'body_progress.healthy_range' | translate }}</span>
+            </div>
+            <div class="composition-item">
+              <div class="tooltip-trigger">
+                <span class="composition-item-label">{{ 'body_progress.lean_bulk' | translate }}</span>
+                <button class="icon-btn" type="button"
+                        [attr.aria-label]="'body_progress.aria_more_info' | translate"
+                        (click)="toggleTooltip('lean_bulk')">
+                  <span class="material-icons">info_outline</span>
+                </button>
+              </div>
+              @if (activeTooltip() === 'lean_bulk') {
+                <p class="metric-tooltip">{{ 'body_progress.tooltip_lean_bulk' | translate }}</p>
+              }
+              @if (store.composition()) {
+                <strong class="composition-item-value">
+                  {{ (store.composition()!.hasFatIncreaseAlert() ? 'body_progress.lean_bulk_excessive' : 'body_progress.lean_bulk_in_range') | translate }}
+                </strong>
+                <span class="composition-item-sub"
+                      [class.composition-item-sub--good]="!store.composition()!.hasFatIncreaseAlert()">
+                  {{ (store.composition()!.hasFatIncreaseAlert() ? 'body_progress.lean_bulk_reducing_surplus' : 'body_progress.lean_bulk_optimal') | translate }}
+                </span>
+              } @else {
+                <strong class="composition-item-value">--</strong>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+    </main>
+
+  </div>
+
+</div>
+
+<!-- ── Goal auto-set notification modal ──────────────────────── -->
+@if (showGoalAutoSetModal()) {
+  <div class="modal-backdrop">
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="goal-auto-set-title">
+      <div class="modal-header">
+        <h3 class="modal-title" id="goal-auto-set-title">
+          {{ 'body_progress.goal_auto_set_title' | translate }}
+        </h3>
+      </div>
+      <p class="modal-desc">
+        {{ 'body_progress.goal_auto_set_desc' | translate:{
+          weight: (store.currentMetric()?.targetWeightKg ?? 0 | number:'1.1-1')
+        } }}
+      </p>
+      <div class="modal-actions">
+        <button class="btn btn--outline" (click)="onAdjustAutoGoal()">
+          {{ 'body_progress.goal_auto_set_adjust' | translate }}
+        </button>
+        <button class="btn btn--primary" (click)="onConfirmAutoGoal()">
+          {{ 'body_progress.goal_auto_set_confirm' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ── Composition update modal ──────────────────────────────── -->
+@if (showCompositionModal()) {
+  <div class="modal-backdrop" (click)="onCloseCompositionModal()">
+    <div class="modal-dialog modal-dialog--wide" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h3 class="modal-title">{{ 'body_progress.update_measurements' | translate }}</h3>
+        <button class="icon-btn" type="button"
+                [attr.aria-label]="'common.close' | translate"
+                (click)="onCloseCompositionModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <div class="mode-tabs" role="tablist">
+        <button type="button" role="tab" class="mode-tab"
+                [class.active]="compositionMode() === 'A'"
+                [attr.aria-selected]="compositionMode() === 'A'"
+                (click)="selectCompositionMode('A')">
+          {{ 'onboarding.mode_cm' | translate }}
+        </button>
+        <button type="button" role="tab" class="mode-tab"
+                [class.active]="compositionMode() === 'B'"
+                [attr.aria-selected]="compositionMode() === 'B'"
+                (click)="selectCompositionMode('B')">
+          {{ 'onboarding.mode_pant_size' | translate }}
+        </button>
+        <button type="button" role="tab" class="mode-tab"
+                [class.active]="compositionMode() === 'C'"
+                [attr.aria-selected]="compositionMode() === 'C'"
+                (click)="selectCompositionMode('C')">
+          {{ 'onboarding.mode_visual' | translate }}
+        </button>
+      </div>
+
+      <div class="mode-panel">
+        @switch (compositionMode()) {
+
+          @case ('A') {
+            <div>
+              <label class="panel-label">{{ 'onboarding.waist_cm_label' | translate }}</label>
+              <input class="panel-input"
+                     type="number"
+                     [value]="compositionWaistCm()"
+                     (input)="onCompositionWaistInput($event)"
+                     [placeholder]="'onboarding.waist_cm_placeholder' | translate"
+                     min="30" max="200" step="0.5" />
+            </div>
+          }
+
+          @case ('B') {
+            <div class="pant-size-grid">
+              @for (entry of pantSizes; track entry.size) {
+                <button type="button" class="pant-size-btn"
+                        [class.selected]="compositionPantSize() === entry.size"
+                        (click)="selectCompositionPantSize(entry.size)">
+                  {{ entry.size }}
+                </button>
+              }
+            </div>
+            <p class="mode-disclaimer">{{ 'onboarding.pant_size_disclaimer' | translate }}</p>
+          }
+
+          @case ('C') {
+            <div class="visual-grid">
+              @for (level of visualLevels; track level.key; let i = $index) {
+                <button type="button" class="visual-card"
+                        [class.selected]="compositionVisualLevel() === i"
+                        (click)="selectCompositionVisualLevel(i)">
+                  <span class="visual-label">{{ level.key | translate }}</span>
+                  <span class="visual-range">{{ level.rangeKey | translate }}</span>
+                </button>
+              }
+            </div>
+            <p class="mode-disclaimer">{{ 'onboarding.visual_disclaimer' | translate }}</p>
+          }
+
+        }
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn--outline" (click)="onCloseCompositionModal()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button class="btn btn--primary"
+                [disabled]="!compositionValid() || store.loading()"
+                (click)="onSaveComposition()">
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}
+
+<!-- ── Log weight modal ───────────────────────────────────────── -->
+@if (showLogModal()) {
+  <div class="modal-backdrop" (click)="onCloseLogModal()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h3 class="modal-title">{{ 'body_progress.log_weight_panel' | translate }}</h3>
+        <button class="icon-btn" type="button"
+                [attr.aria-label]="'common.close' | translate"
+                (click)="onCloseLogModal()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+
+      <label class="panel-label">{{ 'body_progress.current_weight_label' | translate }}</label>
+
+      <input class="panel-input"
+             [class.panel-input--error]="weightError()"
+             type="number"
+             [placeholder]="weightPlaceholder()"
+             [value]="weightInput()"
+             (input)="onWeightInputChange($event)"
+             min="0.1" max="500" step="0.1"
+             autofocus />
+
+      @if (weightError()) {
+        <p class="input-error">{{ weightError() }}</p>
+      }
+
+      @if (isWeightTyping() && weightPreview() && !weightError()) {
+        <div class="weight-preview">
+          {{ 'body_progress.weight_preview' | translate:{
+              bmi:  (weightPreview()!.bmi  | number:'1.1-1'),
+              tdee: (weightPreview()!.tdee | number:'1.0-0')
+          } }}
+        </div>
+      }
+
+      <div class="modal-actions">
+        <button class="btn btn--outline" (click)="onCloseLogModal()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button class="btn btn--primary"
+                [disabled]="weightInputInvalid() || store.loading()"
+                (click)="onSaveWeight()">
+          {{ 'body_progress.save_entry' | translate }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

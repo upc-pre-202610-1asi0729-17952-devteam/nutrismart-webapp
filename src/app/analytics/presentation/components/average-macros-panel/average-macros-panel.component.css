@@ -1,0 +1,116 @@
+.average-macros-panel { }
+
+.panel-title {
+  margin: 0 0 18px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark);
+}
+
+.macro-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.macro-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--nutrismart-text-mid);
+}
+
+.macro-row-header strong {
+  font-size: 13px;
+  color: var(--nutrismart-text-dark);
+}
+
+.macro-row-header strong.macro-above-target { color: #0f7a67; }
+
+.macro-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 8px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.macro-protein { background: #e07050; }
+.macro-carbs   { background: var(--nutrismart-primary); }
+.macro-fat     { background: #f0b040; }
+.macro-fiber   { background: #70b060; }
+
+.macro-track {
+  height: 5px;
+  margin-top: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--nutrismart-bg);
+}
+
+.macro-fill {
+  height: 100%;
+  border-radius: inherit;
+}
+
+.protein-compliance {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--nutrismart-border);
+}
+
+.protein-compliance p {
+  margin: 0;
+  font-size: 13px;
+  color: #0f7a67;
+  font-weight: 600;
+}
+
+.days-logged-section {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--nutrismart-border);
+}
+
+.days-logged-section h4 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nutrismart-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.week-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.week-dot-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.week-dot {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--nutrismart-border);
+  border-radius: 50%;
+  background: var(--nutrismart-white);
+}
+
+.week-dot.filled {
+  background: var(--nutrismart-primary);
+  border-color: var(--nutrismart-primary);
+}
+
+.week-dot-wrapper small {
+  font-size: 10px;
+  color: var(--nutrismart-text-light);
+}

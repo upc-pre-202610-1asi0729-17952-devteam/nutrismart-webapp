@@ -1,0 +1,115 @@
+<div class="modal-backdrop" (click)="onCancel()">
+  <div class="modal-dialog" role="dialog" aria-modal="true"
+       [attr.aria-label]="'physical_activity.modal.title' | translate"
+       (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-header-icon" aria-hidden="true">
+          <span class="material-icons">fitness_center</span>
+        </div>
+        <h3 class="modal-title">{{ 'physical_activity.modal.title' | translate }}</h3>
+      </div>
+      <button class="modal-close" type="button"
+              [attr.aria-label]="'common.close' | translate"
+              (click)="onCancel()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <!-- Activity type -->
+    <div class="form-group">
+      <label class="form-label" for="activity-select">
+        {{ 'physical_activity.modal.activity_label' | translate }}
+      </label>
+      <div class="form-select-wrap">
+        <span class="material-icons form-select-icon">sports</span>
+        <select
+          id="activity-select"
+          class="form-select"
+          (change)="onActivityChange($event)">
+          <option value="" disabled selected>
+            {{ 'physical_activity.modal.activity_placeholder' | translate }}
+          </option>
+          @for (key of activityKeys; track key) {
+            <option [value]="key">
+              {{ ('physical_activity.activity_types.' + key) | translate }}
+            </option>
+          }
+        </select>
+        <span class="material-icons form-select-arrow">expand_more</span>
+      </div>
+    </div>
+
+    <!-- Duration -->
+    <div class="form-group">
+      <label class="form-label" for="duration-input">
+        {{ 'physical_activity.modal.duration_label' | translate }}
+      </label>
+      <div class="form-input-wrap" [class.form-input-wrap--error]="durationError()">
+        <span class="material-icons form-input-icon">timer</span>
+        <input
+          id="duration-input"
+          class="form-input"
+          type="number"
+          min="1"
+          max="480"
+          step="1"
+          [placeholder]="'physical_activity.modal.duration_placeholder' | translate"
+          (input)="onDurationInput($event)" />
+        <span class="form-input-unit">min</span>
+      </div>
+      @if (durationError()) {
+        <p class="form-error">
+          <span class="material-icons form-error-icon">error_outline</span>
+          {{ durationError() | translate }}
+        </p>
+      }
+    </div>
+
+    <!-- Calories preview -->
+    @if (estimatedCalories() > 0) {
+      <div class="cal-preview">
+        <div class="cal-preview-left">
+          <span class="cal-preview-label">{{ 'physical_activity.modal.estimated_calories' | translate }}</span>
+          <span class="cal-preview-value">{{ estimatedCalories() | number:'1.0-0' }}</span>
+          <span class="cal-preview-unit">kcal</span>
+        </div>
+        <div class="cal-preview-right">
+          <span class="material-icons cal-preview-flame">local_fire_department</span>
+          <div class="cal-preview-meta">
+            {{ 'physical_activity.modal.based_on' | translate }}
+            {{ userWeightKg() | number:'1.1-1' }} kg
+            @if (metValue() > 0) {
+              · MET {{ metValue() | number:'1.1-1' }}
+            }
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="cal-placeholder">
+        <span class="material-icons cal-placeholder-icon">calculate</span>
+        <span>{{ 'physical_activity.modal.preview_hint' | translate }}</span>
+      </div>
+    }
+
+    <!-- Actions -->
+    <div class="modal-actions">
+      <button class="btn-cancel" type="button" (click)="onCancel()">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button class="btn-save" type="button"
+              [disabled]="!isValid() || isLoading()"
+              (click)="onSave()">
+        @if (isLoading()) {
+          <span class="material-icons btn-loading-icon">refresh</span>
+        } @else {
+          <span class="material-icons">add_task</span>
+        }
+        {{ 'physical_activity.modal.save_btn' | translate }}
+      </button>
+    </div>
+
+  </div>
+</div>

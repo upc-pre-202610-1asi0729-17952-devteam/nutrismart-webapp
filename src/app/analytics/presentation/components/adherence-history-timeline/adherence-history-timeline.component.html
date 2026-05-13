@@ -1,0 +1,21 @@
+<div class="adherence-history-timeline nutrismart-card">
+  <h3 class="panel-title">{{ 'analytics.adherence_title' | translate }}</h3>
+
+  @if (timelineEntries.length > 0) {
+    <div class="timeline-container" role="list" [attr.aria-label]="'analytics.adherence_title' | translate">
+      @for (entry of timelineEntries; track $index) {
+        <div class="timeline-entry" role="listitem">
+          <div
+            class="timeline-dot"
+            [ngClass]="entry.statusClass"
+            [title]="entry.tooltip"
+            [attr.aria-label]="entry.tooltip"
+          ></div>
+          <small class="timeline-date" aria-hidden="true">{{ entry.date }}</small>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="no-data-message">{{ 'analytics.adherence_no_data' | translate }}</div>
+  }
+</div>

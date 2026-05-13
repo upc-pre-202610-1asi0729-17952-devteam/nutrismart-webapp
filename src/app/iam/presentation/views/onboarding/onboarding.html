@@ -1,0 +1,342 @@
+<div class="auth-lang">
+  <app-language-switcher />
+</div>
+
+<div class="onboarding-shell">
+  <!-- Progress bar -->
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" [style.width.%]="progressPercent"></div>
+  </div>
+
+  <div class="onboarding-header">
+    <span class="step-label">{{ 'onboarding.step_of' | translate: { current: displayStep, total: totalSteps } }}</span>
+  </div>
+
+  <div class="onboarding-card">
+
+    @switch (currentStep()) {
+
+      <!-- STEP 1: About you + Body -->
+      @case (1) {
+        <div class="step-content">
+          <h2 class="step-title">{{ 'onboarding.about_you_title' | translate }}</h2>
+          <p class="step-subtitle">{{ 'onboarding.about_you_desc' | translate }}</p>
+
+          <form [formGroup]="bodyForm" novalidate>
+            <div class="form-group">
+              <label class="form-label">{{ 'onboarding.birthdate' | translate }} *</label>
+              <input type="date" formControlName="birthday" class="form-input"
+                     [class.is-invalid]="bodyForm.get('birthday')?.invalid && bodyForm.get('birthday')?.touched" />
+              @if (bodyForm.get('birthday')?.touched) {
+                @if (bodyForm.get('birthday')?.errors?.['required']) {
+                  <span class="field-error">{{ 'onboarding.error_birthday_required' | translate }}</span>
+                } @else if (bodyForm.get('birthday')?.errors?.['minAge']) {
+                  <span class="field-error">{{ 'onboarding.error_birthday_min_age' | translate }}</span>
+                } @else if (bodyForm.get('birthday')?.errors?.['invalidDate']) {
+                  <span class="field-error">{{ 'onboarding.error_birthday_invalid' | translate }}</span>
+                }
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">{{ 'onboarding.biological_sex' | translate }} *</label>
+              <select formControlName="biologicalSex" class="form-input"
+                      [class.is-invalid]="bodyForm.get('biologicalSex')?.invalid && bodyForm.get('biologicalSex')?.touched">
+                <option value="">{{ 'onboarding.select_option' | translate }}</option>
+                <option value="male">{{ 'onboarding.biological_sex_male' | translate }}</option>
+                <option value="female">{{ 'onboarding.biological_sex_female' | translate }}</option>
+                <option value="other">{{ 'onboarding.biological_sex_other' | translate }}</option>
+              </select>
+              @if (bodyForm.get('biologicalSex')?.invalid && bodyForm.get('biologicalSex')?.touched) {
+                <span class="field-error">{{ 'onboarding.error_sex_required' | translate }}</span>
+              }
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">{{ 'onboarding.weight' | translate }} *</label>
+                <input type="number" formControlName="weight" class="form-input"
+                       [class.is-invalid]="bodyForm.get('weight')?.invalid && bodyForm.get('weight')?.touched"
+                       placeholder="70" />
+                @if (bodyForm.get('weight')?.touched && bodyForm.get('weight')?.errors?.['required']) {
+                  <span class="field-error">{{ 'common.required' | translate }}</span>
+                } @else if (bodyForm.get('weight')?.touched && (bodyForm.get('weight')?.errors?.['min'] || bodyForm.get('weight')?.errors?.['max'])) {
+                  <span class="field-error">{{ 'onboarding.error_weight_range' | translate }}</span>
+                }
+              </div>
+              <div class="form-group">
+                <label class="form-label">{{ 'onboarding.height' | translate }} *</label>
+                <input type="number" formControlName="height" class="form-input"
+                       [class.is-invalid]="bodyForm.get('height')?.invalid && bodyForm.get('height')?.touched"
+                       placeholder="170" />
+                @if (bodyForm.get('height')?.touched && bodyForm.get('height')?.errors?.['required']) {
+                  <span class="field-error">{{ 'common.required' | translate }}</span>
+                } @else if (bodyForm.get('height')?.touched && (bodyForm.get('height')?.errors?.['min'] || bodyForm.get('height')?.errors?.['max'])) {
+                  <span class="field-error">{{ 'onboarding.error_height_range' | translate }}</span>
+                }
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">{{ 'onboarding.home_city' | translate }} *</label>
+              <div class="city-autocomplete">
+                <input
+                  type="text"
+                  class="form-input"
+                  [class.is-invalid]="bodyForm.get('homeCity')?.invalid && bodyForm.get('homeCity')?.touched"
+                  [value]="citySearchQuery()"
+                  [placeholder]="(citiesLoading() ? 'onboarding.home_city_loading' : 'onboarding.home_city_placeholder') | translate"
+                  [disabled]="citiesLoading()"
+                  (input)="onCityInput($event)"
+                  (focus)="showCitySuggestions.set(true)"
+                  (blur)="onCityBlur()"
+                  autocomplete="off"
+                />
+                @if (showCitySuggestions() && filteredCities().length > 0) {
+                  <ul class="city-suggestions" role="listbox">
+                    @for (city of filteredCities(); track city) {
+                      <li
+                        class="city-suggestion-item"
+                        role="option"
+                        (mousedown)="selectCity(city)"
+                      >{{ city }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+              @if (bodyForm.get('homeCity')?.touched) {
+                @if (bodyForm.get('homeCity')?.errors?.['required']) {
+                  <span class="field-error">{{ 'onboarding.error_home_city_required' | translate }}</span>
+                } @else if (bodyForm.get('homeCity')?.errors?.['invalidCity']) {
+                  <span class="field-error">{{ 'onboarding.error_home_city_invalid' | translate }}</span>
+                }
+              }
+            </div>
+          </form>
+
+          <p class="form-label" style="margin-top: 16px;">{{ 'onboarding.activity_level' | translate }}</p>
+          <div class="activity-grid">
+            @for (card of activityCards; track card.level) {
+              <button
+                type="button"
+                class="activity-card"
+                [class.selected]="selectedActivity() === card.level"
+                (click)="selectActivity(card.level)"
+              >
+                <span class="activity-label">{{ card.labelKey | translate }}</span>
+                <span class="activity-desc">{{ card.descKey | translate }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- STEP 2: Your goal -->
+      @case (2) {
+        <div class="step-content">
+          <h2 class="step-title">{{ 'onboarding.step1_title' | translate }}</h2>
+          <p class="step-subtitle">{{ 'onboarding.step1_desc' | translate }}</p>
+
+          <div class="goal-grid">
+            <button
+              type="button"
+              class="goal-card"
+              [class.selected]="selectedGoal() === UserGoal.WEIGHT_LOSS"
+              (click)="selectGoal(UserGoal.WEIGHT_LOSS)"
+            >
+              <span class="goal-label">{{ 'onboarding.goal_weight_loss' | translate }}</span>
+              <span class="goal-desc">{{ 'onboarding.goal_weight_loss_desc' | translate }}</span>
+            </button>
+
+            <button
+              type="button"
+              class="goal-card"
+              [class.selected]="selectedGoal() === UserGoal.MUSCLE_GAIN"
+              (click)="selectGoal(UserGoal.MUSCLE_GAIN)"
+            >
+              <span class="goal-label">{{ 'onboarding.goal_muscle_gain' | translate }}</span>
+              <span class="goal-desc">{{ 'onboarding.goal_muscle_gain_desc' | translate }}</span>
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- STEP 3: Body composition (MUSCLE_GAIN only) -->
+      @case (3) {
+        <div class="step-content">
+          <h2 class="step-title">{{ 'onboarding.composition_title' | translate }}</h2>
+          <p class="step-subtitle">{{ 'onboarding.composition_why' | translate }}</p>
+
+          <div class="mode-tabs" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              class="mode-tab"
+              [class.active]="selectedMode() === 'A'"
+              [attr.aria-selected]="selectedMode() === 'A'"
+              (click)="selectMode('A')"
+            >
+              {{ 'onboarding.mode_cm' | translate }}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              class="mode-tab"
+              [class.active]="selectedMode() === 'B'"
+              [attr.aria-selected]="selectedMode() === 'B'"
+              (click)="selectMode('B')"
+            >
+              {{ 'onboarding.mode_pant_size' | translate }}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              class="mode-tab"
+              [class.active]="selectedMode() === 'C'"
+              [attr.aria-selected]="selectedMode() === 'C'"
+              (click)="selectMode('C')"
+            >
+              {{ 'onboarding.mode_visual' | translate }}
+            </button>
+          </div>
+
+          <div class="mode-panel" role="tabpanel">
+            @switch (selectedMode()) {
+
+              @case ('A') {
+                <div class="form-group">
+                  <label class="form-label">{{ 'onboarding.waist_cm_label' | translate }}</label>
+                  <input
+                    type="number"
+                    class="form-input"
+                    [value]="waistCmInput()"
+                    (input)="onWaistCmInput($event)"
+                    [placeholder]="'onboarding.waist_cm_placeholder' | translate"
+                  />
+                </div>
+              }
+
+              @case ('B') {
+                <div class="pant-size-grid">
+                  @for (entry of pantSizes; track entry.size) {
+                    <button
+                      type="button"
+                      class="pant-size-btn"
+                      [class.selected]="selectedPantSize() === entry.size"
+                      (click)="selectPantSize(entry.size)"
+                    >
+                      {{ entry.size }}
+                    </button>
+                  }
+                </div>
+                <p class="mode-disclaimer">{{ 'onboarding.pant_size_disclaimer' | translate }}</p>
+              }
+
+              @case ('C') {
+                <div class="visual-grid">
+                  @for (level of visualLevels; track level.key; let i = $index) {
+                    <button
+                      type="button"
+                      class="visual-card"
+                      [class.selected]="selectedVisualLevel() === i"
+                      (click)="selectVisualLevel(i)"
+                    >
+                      <span class="visual-label">{{ level.key | translate }}</span>
+                      <span class="visual-range">{{ level.rangeKey | translate }}</span>
+                    </button>
+                  }
+                </div>
+                <p class="mode-disclaimer">{{ 'onboarding.visual_disclaimer' | translate }}</p>
+              }
+
+            }
+          </div>
+        </div>
+      }
+
+      <!-- STEP 4: Dietary restrictions & Medical conditions -->
+      @case (4) {
+        <div class="step-content">
+          <h2 class="step-title">{{ 'onboarding.step3_title' | translate }}</h2>
+          <p class="step-subtitle">{{ 'onboarding.restrictions_desc' | translate }}</p>
+
+          <h3 class="subsection-title">{{ 'profile.restrictions_title' | translate }}</h3>
+          <div class="chip-grid">
+            @for (chip of restrictionChips; track chip.value) {
+              <button
+                type="button"
+                class="restriction-chip"
+                [class.selected]="isRestrictionSelected(chip.value)"
+                (click)="toggleRestriction(chip.value)"
+              >
+                {{ chip.labelKey | translate }}
+              </button>
+            }
+          </div>
+
+          <h3 class="subsection-title" style="margin-top: 24px;">{{ 'profile.conditions_title' | translate }}</h3>
+          <div class="chip-grid">
+            @for (chip of conditionChips; track chip.value) {
+              <button
+                type="button"
+                class="restriction-chip"
+                [class.selected]="isConditionSelected(chip.value)"
+                (click)="toggleCondition(chip.value)"
+              >
+                {{ chip.labelKey | translate }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- STEP 5: Summary -->
+      @case (5) {
+        <div class="step-content step-summary">
+          <h2 class="step-title">{{ 'onboarding.summary_title' | translate }}</h2>
+          <p class="step-subtitle">{{ 'onboarding.summary_desc' | translate }}</p>
+
+          <div class="summary-card">
+            <div class="summary-details">
+              <div class="macro-item">
+                <span class="macro-value">{{ iamStore.currentUser()?.dailyCalorieTarget }}</span>
+                <span class="macro-label">{{ 'onboarding.tdee_label' | translate }}</span>
+              </div>
+              <div class="macro-item">
+                <span class="macro-value">{{ iamStore.currentUser()?.proteinTarget }}g</span>
+                <span class="macro-label">{{ 'onboarding.protein_label' | translate }}</span>
+              </div>
+              <div class="macro-item">
+                <span class="macro-value">{{ iamStore.currentUser()?.carbsTarget }}g</span>
+                <span class="macro-label">{{ 'onboarding.carbs_label' | translate }}</span>
+              </div>
+              <div class="macro-item">
+                <span class="macro-value">{{ iamStore.currentUser()?.fatTarget }}g</span>
+                <span class="macro-label">{{ 'onboarding.fat_label' | translate }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+    }
+
+    <!-- Footer buttons -->
+    <div class="onboarding-footer">
+      @if (currentStep() > 1) {
+        <button type="button" class="btn-back" (click)="back()">
+          {{ 'onboarding.back_btn' | translate }}
+        </button>
+      } @else {
+        <span></span>
+      }
+
+      <button type="button" class="btn-continue" [disabled]="continueDisabled" (click)="continue()">
+        @if (displayStep === totalSteps) {
+          {{ 'onboarding.finish_btn' | translate }}
+        } @else {
+          {{ 'onboarding.continue_btn' | translate }}
+        }
+      </button>
+    </div>
+  </div>
+</div>

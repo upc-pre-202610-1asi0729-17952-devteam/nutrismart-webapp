@@ -1,0 +1,51 @@
+<div class="balance-panel" [class.balance-panel--exceeded]="exceeded()" aria-live="polite">
+
+  <h3 class="panel-title" [class.title--danger]="exceeded()">
+    {{ (exceeded() ? 'nutrition.calorie_limit_exceeded' : 'nutrition.daily_balance') | translate }}
+  </h3>
+
+  <div class="balance-rows">
+    <div class="balance-row">
+      <span class="balance-label">{{ 'nutrition.daily_goal' | translate }}</span>
+      <span class="balance-value">{{ dailyGoal() | number }} kcal</span>
+    </div>
+    <div class="balance-row">
+      <span class="balance-label">{{ 'nutrition.consumed' | translate }}</span>
+      <span class="balance-value" [class.val--danger]="exceeded()">
+        {{ consumed() | number }} kcal
+      </span>
+    </div>
+    @if (active() > 0) {
+      <div class="balance-row">
+        <span class="balance-label balance-label--active">
+          <span class="material-icons balance-label__icon">directions_run</span>
+          {{ 'nutrition.active_burned' | translate }}
+        </span>
+        <span class="balance-value val--active">+{{ active() | number }} kcal</span>
+      </div>
+    }
+    <div class="balance-row balance-row--total">
+      <span class="balance-label">{{ (exceeded() ? 'nutrition.exceeded' : 'nutrition.remaining') | translate }}</span>
+      <span class="balance-value" [class.val--danger]="exceeded()" [class.val--remaining]="!exceeded()">
+        {{ exceeded() ? '+' : '' }}{{ netCalories() }} kcal
+      </span>
+    </div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill"
+         [style.width.%]="percentConsumed()"
+         [style.backgroundColor]="exceeded() ? '#ef4444' : '#2d9e8f'"
+         role="progressbar"
+         [attr.aria-valuenow]="consumed()"
+         [attr.aria-valuemax]="dailyGoal()">
+    </div>
+  </div>
+
+  <p class="balance-footer">
+    {{ exceeded()
+       ? ('nutrition.exceeded_warning' | translate)
+       : ('nutrition.percent_consumed' | translate: { percent: percentConsumed() }) }}
+  </p>
+
+</div>

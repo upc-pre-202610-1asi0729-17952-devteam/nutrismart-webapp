@@ -1,0 +1,31 @@
+<div class="sfb-banner" role="alert">
+
+  <div class="sfb-icon-col">
+    <div class="sfb-icon-wrap" aria-hidden="true">
+      <span class="material-icons sfb-icon">sync_problem</span>
+    </div>
+  </div>
+
+  <div class="sfb-body">
+    <div class="sfb-title">{{ 'physical_activity.sync_failed.badge' | translate }}</div>
+    <div class="sfb-desc">{{ 'physical_activity.sync_failed.desc' | translate }}</div>
+    <div class="sfb-time">
+      {{ 'physical_activity.sync_failed.last_success' | translate }}
+      {{ hoursSinceSync() }}h {{ 'physical_activity.sync_failed.ago' | translate }}
+    </div>
+  </div>
+
+  <div class="sfb-actions">
+    <button class="sfb-retry-btn" type="button"
+            [disabled]="isLoading()"
+            (click)="onRetry()">
+      <span class="material-icons sfb-retry-icon">refresh</span>
+      {{ 'physical_activity.sync_failed.retry_btn' | translate }}
+    </button>
+    <button class="sfb-disconnect-btn" type="button"
+            (click)="onDisconnect()">
+      {{ 'physical_activity.connected.disconnect' | translate }}
+    </button>
+  </div>
+
+</div>

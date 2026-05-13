@@ -1,0 +1,119 @@
+<div class="goal-page">
+
+  <!-- ── Header ─────────────────────────────────────────────────── -->
+  <header class="goal-header">
+    <h1 class="goal-title">{{ 'body_progress.goal_selection_title' | translate }}</h1>
+    <p class="goal-subtitle">{{ 'body_progress.goal_selection_subtitle' | translate }}</p>
+  </header>
+
+  <!-- ── Goal lock banner ───────────────────────────────────────── -->
+  @if (isLocked() && currentGoal()) {
+    <div class="lock-banner">
+      <span class="lock-banner-icon">🔒</span>
+      <span class="lock-banner-text">
+        {{ 'body_progress.goal_lock_desc' | translate:{
+            date:       goalStartedAt(),
+            days:       daysLeft(),
+            unlockDate: unlockDate()
+          } }}
+      </span>
+      <span class="lock-banner-badge">
+        {{ 'body_progress.goal_lock_badge' | translate:{ days: daysLeft() } }}
+      </span>
+    </div>
+  }
+
+  <!-- ── Goal cards ─────────────────────────────────────────────── -->
+  <div class="goal-cards">
+
+    <!-- Lose weight -->
+    <button
+      type="button"
+      class="goal-card"
+      [ngClass]="{ 'goal-card--selected': isSelected(UserGoal.WEIGHT_LOSS) }"
+      (click)="selectGoal(UserGoal.WEIGHT_LOSS)"
+      [attr.aria-pressed]="isSelected(UserGoal.WEIGHT_LOSS)">
+
+      <div class="goal-card-check"
+           [ngClass]="{ 'goal-card-check--visible': isSelected(UserGoal.WEIGHT_LOSS) }">
+        ✓
+      </div>
+
+      <div class="goal-card-icon goal-card-icon--loss">
+        <span class="material-icons">monitor_weight</span>
+      </div>
+
+      <div class="goal-card-body">
+        <h2 class="goal-card-title">{{ 'body_progress.lose_weight' | translate }}</h2>
+        <div class="goal-card-tags">
+          <span class="goal-tag">{{ 'body_progress.tag_caloric_deficit' | translate }}</span>
+          <span class="goal-tag">{{ 'body_progress.tag_fat_loss' | translate }}</span>
+          <span class="goal-tag">{{ 'body_progress.tag_sustainable' | translate }}</span>
+        </div>
+      </div>
+
+    </button>
+
+    <!-- Gain muscle -->
+    <button
+      type="button"
+      class="goal-card"
+      [ngClass]="{ 'goal-card--selected': isSelected(UserGoal.MUSCLE_GAIN) }"
+      (click)="selectGoal(UserGoal.MUSCLE_GAIN)"
+      [attr.aria-pressed]="isSelected(UserGoal.MUSCLE_GAIN)">
+
+      <div class="goal-card-check"
+           [ngClass]="{ 'goal-card-check--visible': isSelected(UserGoal.MUSCLE_GAIN) }">
+        ✓
+      </div>
+
+      <div class="goal-card-icon goal-card-icon--gain">
+        <span class="material-icons">fitness_center</span>
+      </div>
+
+      <div class="goal-card-body">
+        <h2 class="goal-card-title">{{ 'body_progress.gain_muscle' | translate }}</h2>
+        <div class="goal-card-tags">
+          <span class="goal-tag">{{ 'body_progress.tag_caloric_surplus' | translate }}</span>
+          <span class="goal-tag">{{ 'body_progress.tag_high_protein' | translate }}</span>
+          <span class="goal-tag">{{ 'body_progress.tag_hypertrophy' | translate }}</span>
+        </div>
+      </div>
+
+    </button>
+
+  </div>
+
+  <!-- ── Continue ───────────────────────────────────────────────── -->
+  <div class="goal-actions">
+    <button
+      type="button"
+      class="btn-continue"
+      [class.btn-continue--active]="hasSelection() && !submitting()"
+      [disabled]="!hasSelection() || submitting()"
+      (click)="onContinue()">
+      {{ (submitting() ? 'body_progress.continuing' : 'body_progress.continue_btn') | translate }}
+    </button>
+  </div>
+
+  <!-- ── Goal switch confirmation modal ────────────────────────── -->
+  @if (showConfirm()) {
+    <div class="modal-overlay" (click)="onCancelSwitch()">
+      <div class="modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+        <h3 class="modal-title">{{ 'body_progress.goal_switch_confirm_title' | translate }}</h3>
+        <p class="modal-desc">
+          {{ 'body_progress.goal_switch_confirm_desc' | translate:{ goal: goalName(selectedGoal()) } }}
+        </p>
+        <div class="modal-actions">
+          <button class="modal-btn modal-btn--cancel" (click)="onCancelSwitch()">
+            {{ 'body_progress.goal_switch_cancel_btn' | translate }}
+          </button>
+          <button class="modal-btn modal-btn--confirm" (click)="onConfirmSwitch()">
+            {{ 'body_progress.goal_switch_confirm_btn' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>
