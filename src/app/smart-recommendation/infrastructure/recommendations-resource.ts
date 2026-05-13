@@ -46,7 +46,6 @@ export interface FoodCardResource {
 
 export interface RecommendationCardResource extends BaseResource {
   food_id: number | string;
-  food?: FoodCardResource;
   badge: string;
   description: string;
   description_es: string;

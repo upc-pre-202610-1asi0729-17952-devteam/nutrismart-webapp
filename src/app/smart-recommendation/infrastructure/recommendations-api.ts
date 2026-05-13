@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { forkJoin, Observable, throwError } from 'rxjs';
 import { catchError, map, retry } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment.development';
@@ -85,55 +85,53 @@ export class RecommendationsApi extends BaseApi {
   getWeatherRecommendations(weatherType: WeatherType): Observable<RecommendationCard[]> {
     const params = new HttpParams()
       .set('weather_type', weatherType)
-      .set('card_type', 'weather')
-      .set('_expand', 'food');
-    return this.http
-      .get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params })
-      .pipe(
-        map(list => list.map(r => this.toCard(r)).filter((c): c is RecommendationCard => c !== null)),
-        retry(2),
-        catchError(err => throwError(() => err)),
-      );
+      .set('card_type', 'weather');
+    return forkJoin([
+      this.http.get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params }),
+      this.getFoods(),
+    ]).pipe(
+      map(([cards, foods]) => cards.map(r => this.toCard(r, foods)).filter((c): c is RecommendationCard => c !== null)),
+      retry(2),
+      catchError(err => throwError(() => err)),
+    );
   }
 
   getTravelRecommendations(cityId: string): Observable<RecommendationCard[]> {
     const params = new HttpParams()
       .set('travel_city', cityId)
-      .set('card_type', 'travel')
-      .set('_expand', 'food');
-    return this.http
-      .get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params })
-      .pipe(
-        map(list => list.map(r => this.toCard(r)).filter((c): c is RecommendationCard => c !== null)),
-        retry(2),
-        catchError(err => throwError(() => err)),
-      );
+      .set('card_type', 'travel');
+    return forkJoin([
+      this.http.get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params }),
+      this.getFoods(),
+    ]).pipe(
+      map(([cards, foods]) => cards.map(r => this.toCard(r, foods)).filter((c): c is RecommendationCard => c !== null)),
+      retry(2),
+      catchError(err => throwError(() => err)),
+    );
   }
 
   getPreventiveRecommendation(): Observable<RecommendationCard> {
-    const params = new HttpParams()
-      .set('card_type', 'preventive')
-      .set('_expand', 'food');
-    return this.http
-      .get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params })
-      .pipe(
-        map(list => list.map(r => this.toCard(r)).filter((c): c is RecommendationCard => c !== null)[0]),
-        retry(2),
-        catchError(err => throwError(() => err)),
-      );
+    const params = new HttpParams().set('card_type', 'preventive');
+    return forkJoin([
+      this.http.get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params }),
+      this.getFoods(),
+    ]).pipe(
+      map(([cards, foods]) => cards.map(r => this.toCard(r, foods)).filter((c): c is RecommendationCard => c !== null)[0]),
+      retry(2),
+      catchError(err => throwError(() => err)),
+    );
   }
 
   getInterventionRecommendation(): Observable<RecommendationCard> {
-    const params = new HttpParams()
-      .set('card_type', 'intervention')
-      .set('_expand', 'food');
-    return this.http
-      .get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params })
-      .pipe(
-        map(list => list.map(r => this.toCard(r)).filter((c): c is RecommendationCard => c !== null)[0]),
-        retry(2),
-        catchError(err => throwError(() => err)),
-      );
+    const params = new HttpParams().set('card_type', 'intervention');
+    return forkJoin([
+      this.http.get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params }),
+      this.getFoods(),
+    ]).pipe(
+      map(([cards, foods]) => cards.map(r => this.toCard(r, foods)).filter((c): c is RecommendationCard => c !== null)[0]),
+      retry(2),
+      catchError(err => throwError(() => err)),
+    );
   }
 
   getRecommendationSession(userId: string): Observable<RecommendationSession | null> {
@@ -229,8 +227,14 @@ export class RecommendationsApi extends BaseApi {
       );
   }
 
-  private toCard(r: RecommendationCardResource): RecommendationCard | null {
-    const food = r.food;
+  private getFoods(): Observable<FoodCardResource[]> {
+    return this.http
+      .get<FoodCardResource[]>(`${BASE}${environment.foodSearchEndpointPath}`)
+      .pipe(retry(2), catchError(err => throwError(() => err)));
+  }
+
+  private toCard(r: RecommendationCardResource, foods: FoodCardResource[]): RecommendationCard | null {
+    const food = foods.find(f => String(f.id) === String(r.food_id));
     if (!food) return null;
     const es = this.translate.currentLang === 'es';
     return {
