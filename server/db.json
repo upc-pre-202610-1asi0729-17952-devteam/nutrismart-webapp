@@ -6152,6 +6152,57 @@
       "loggedAt": "2026-05-13T01:19:30.158Z",
       "userId": "3tx6ew4jr",
       "id": "YOHzna1k_u8"
+    },
+    {
+      "foodItemId": "3",
+      "foodItemName": "Skim milk",
+      "foodItemNameEs": "Leche descremada",
+      "mealType": "BREAKFAST",
+      "quantity": 200,
+      "unit": "ml",
+      "calories": 68,
+      "protein": 6.8,
+      "carbs": 10,
+      "fat": 0.2,
+      "fiber": 0,
+      "sugar": 10,
+      "loggedAt": "2026-05-13T02:43:35.432Z",
+      "userId": "ze68pmju4",
+      "id": "tzGS-C69uwY"
+    },
+    {
+      "foodItemId": "4",
+      "foodItemName": "Grilled chicken breast",
+      "foodItemNameEs": "Pechuga de pollo a la plancha",
+      "mealType": "LUNCH",
+      "quantity": 150,
+      "unit": "g",
+      "calories": 247.5,
+      "protein": 46.5,
+      "carbs": 0,
+      "fat": 5.4,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-05-13T02:43:44.813Z",
+      "userId": "ze68pmju4",
+      "id": "bqkzQR9Jsmw"
+    },
+    {
+      "foodItemId": "3",
+      "foodItemName": "Skim milk",
+      "foodItemNameEs": "Leche descremada",
+      "mealType": "DINNER",
+      "quantity": 200,
+      "unit": "ml",
+      "calories": 68,
+      "protein": 6.8,
+      "carbs": 10,
+      "fat": 0.2,
+      "fiber": 0,
+      "sugar": 10,
+      "loggedAt": "2026-05-13T02:43:49.139Z",
+      "userId": "ze68pmju4",
+      "id": "NP-UuzfMto0"
     }
   ],
   "foods": [
@@ -7396,7 +7447,7 @@
       "height_cm": 170,
       "logged_at": "2026-05-13T00:50:39.144Z",
       "target_weight_kg": 70,
-      "projected_achievement_date": "2026-05-13T01:06:45.617Z"
+      "projected_achievement_date": "2026-05-13T02:44:14.907Z"
     },
     {
       "id": "5g8ZatyNoCY",
@@ -10200,13 +10251,15 @@
       "goalMetDates": []
     },
     {
+      "id": "73TLedVJFIw",
       "userId": "ze68pmju4",
       "adherenceStatus": "ON_TRACK",
-      "streak": 0,
+      "streak": 1,
       "consecutiveMisses": 0,
-      "lastGoalMetDate": "",
-      "id": "73TLedVJFIw",
-      "goalMetDates": []
+      "lastGoalMetDate": "2026-05-13",
+      "goalMetDates": [
+        "2026-05-13"
+      ]
     },
     {
       "userId": "ze68pmju4",
@@ -10297,6 +10350,15 @@
     {
       "id": "QYzRPsqq33c",
       "userId": "3tx6ew4jr",
+      "weeklyCompletionRate": 14,
+      "currentStreak": 1,
+      "consecutiveMisses": 0,
+      "patternType": "RECOVERING",
+      "analyzedAt": "2026-05-13"
+    },
+    {
+      "id": "IFVk88uFZXI",
+      "userId": "ze68pmju4",
       "weeklyCompletionRate": 14,
       "currentStreak": 1,
       "consecutiveMisses": 0,
