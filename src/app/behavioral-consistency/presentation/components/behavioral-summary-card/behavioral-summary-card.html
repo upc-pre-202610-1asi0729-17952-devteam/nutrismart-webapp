@@ -1,6 +1,6 @@
 <div class="summary-card" [ngClass]="rateVariant()">
   <div class="card-header">
-    <span class="card-title">Resumen Semanal</span>
+    <span class="card-title">{{ 'behavioral.summary_card.title' | translate }}</span>
     <span class="status-indicator"></span>
   </div>
 
@@ -19,8 +19,10 @@
         </svg>
       </div>
       <div class="rate-info">
-        <span class="rate-label">{{ progressLabel() }}</span>
-        <span class="days-count">{{ completedDaysThisWeek() }}/7 días cumplidos</span>
+        <span class="rate-label">{{ progressLabelKey() | translate }}</span>
+        <span class="days-count">
+          {{ 'behavioral.summary_card.days_completed' | translate: { completed: completedDaysThisWeek() } }}
+        </span>
       </div>
     </div>
 

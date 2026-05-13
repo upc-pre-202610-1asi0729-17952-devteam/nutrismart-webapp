@@ -1,10 +1,10 @@
 <div class="status-card-container" [ngClass]="statusClass()">
   <div class="status-header">
     <span class="status-badge">
-      {{ title() }}
+      {{ titleKey() | translate }}
     </span>
   </div>
   <div class="status-content">
-    <p class="status-message">{{ message() }}</p>
+    <p class="status-message">{{ messageKey() | translate }}</p>
   </div>
 </div>

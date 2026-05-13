@@ -1,54 +1,41 @@
 import { Component, computed, input } from '@angular/core';
+import { NgClass } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
-import {NgClass} from '@angular/common';
 
 /**
  * Displays the user's current behavioral adherence status.
- * Based on NutriSmart Behavioral Consistency specs (Section 1).
  */
 @Component({
   selector: 'app-adherence-status-card',
   templateUrl: './adherence-status-card.html',
   styleUrl: './adherence-status-card.css',
-  imports: [
-    NgClass
-  ]
+  imports: [NgClass, TranslatePipe],
 })
 export class AdherenceStatusCard {
   /** Current adherence status from Domain. */
   readonly status = input.required<AdherenceStatus>();
 
-  /** * Mapping titles to the specific behavior detected in pantallas.md
-   */
-  readonly title = computed(() => {
+  /** i18n key for the status badge title. */
+  readonly titleKey = computed(() => {
     switch (this.status()) {
-      case AdherenceStatus.ON_TRACK:
-        return '✓ ON_TRACK';
-      case AdherenceStatus.AT_RISK:
-        return '⚠ AT_RISK';
-      case AdherenceStatus.DROPPED:
-        return '✖ DROPPED';
-      default:
-        return 'Status Unknown';
+      case AdherenceStatus.ON_TRACK: return 'behavioral.status.on_track_title';
+      case AdherenceStatus.AT_RISK:  return 'behavioral.status.at_risk_title';
+      case AdherenceStatus.DROPPED:  return 'behavioral.status.dropped_title';
+      default:                       return 'behavioral.status.on_track_title';
     }
   });
 
-  /** * Messages based on the DDD events described in the source:
-   * BehavioralDropDetected (3 misses) and NutritionalAbandonmentRisk (7 days)
-   */
-  readonly message = computed(() => {
+  /** i18n key for the descriptive status message. */
+  readonly messageKey = computed(() => {
     switch (this.status()) {
-      case AdherenceStatus.ON_TRACK:
-        return 'Keep it up! Your consistency is stable. Continue logging your daily meals.';
-      case AdherenceStatus.AT_RISK:
-        return 'Nutritional adherence at risk. You have missed 3 consecutive logs. Let\'s get back on track!';
-      case AdherenceStatus.DROPPED:
-        return 'Behavioral drop detected. 7 days of inactivity. Access your reactivation plan to recover your streak.';
-      default:
-        return 'Please log your first meal of the day to update your status.';
+      case AdherenceStatus.ON_TRACK: return 'behavioral.status.on_track_message';
+      case AdherenceStatus.AT_RISK:  return 'behavioral.status.at_risk_message';
+      case AdherenceStatus.DROPPED:  return 'behavioral.status.dropped_message';
+      default:                       return 'behavioral.status.unknown_message';
     }
   });
 
-  /** Returns CSS class name based on status for dynamic styling */
+  /** CSS class name derived from status for dynamic styling. */
   readonly statusClass = computed(() => this.status().toLowerCase().replace('_', '-'));
 }

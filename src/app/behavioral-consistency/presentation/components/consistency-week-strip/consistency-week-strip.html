@@ -1,6 +1,7 @@
-<div class="week-strip-container" [attr.aria-label]="ariaLabel()">
+<div class="week-strip-container"
+     [attr.aria-label]="'behavioral.week_strip.aria_label' | translate: { completed: completedCount() }">
   <div class="strip-header">
-    <span class="strip-title">Actividad Semanal</span>
+    <span class="strip-title">{{ 'behavioral.week_strip.title' | translate }}</span>
     <span class="count-badge">{{ completedCount() }}/7</span>
   </div>
 

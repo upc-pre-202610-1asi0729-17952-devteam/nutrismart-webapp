@@ -3,16 +3,17 @@
     <div class="streak-icon">🔥</div>
     <div class="streak-count">
       <span class="number">{{ streak() }}</span>
-      <span class="label">Días de racha</span>
+      <span class="label">{{ 'behavioral.streak.days_label' | translate }}</span>
     </div>
   </div>
 
   <div class="streak-footer">
-    <p class="message">{{ streakMessage() }}</p>
+    <p class="message">{{ streakMessageKey() | translate }}</p>
 
     @if (hasMisses()) {
       <div class="misses-badge">
-        {{ consecutiveMisses() }} {{ consecutiveMisses() === 1 ? 'día perdido' : 'días perdidos' }}
+        {{ consecutiveMisses() }}
+        {{ consecutiveMisses() === 1 ? ('behavioral.streak.missed_one' | translate) : ('behavioral.streak.missed_other' | translate) }}
       </div>
     }
   </div>
