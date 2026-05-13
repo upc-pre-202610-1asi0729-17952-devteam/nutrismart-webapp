@@ -90,7 +90,7 @@ export class RecommendationsApi extends BaseApi {
     return this.http
       .get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params })
       .pipe(
-        map(list => list.map(r => this.toCard(r))),
+        map(list => list.map(r => this.toCard(r)).filter((c): c is RecommendationCard => c !== null)),
         retry(2),
         catchError(err => throwError(() => err)),
       );
@@ -104,7 +104,7 @@ export class RecommendationsApi extends BaseApi {
     return this.http
       .get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params })
       .pipe(
-        map(list => list.map(r => this.toCard(r))),
+        map(list => list.map(r => this.toCard(r)).filter((c): c is RecommendationCard => c !== null)),
         retry(2),
         catchError(err => throwError(() => err)),
       );
@@ -117,7 +117,7 @@ export class RecommendationsApi extends BaseApi {
     return this.http
       .get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params })
       .pipe(
-        map(list => this.toCard(list[0])),
+        map(list => list.map(r => this.toCard(r)).filter((c): c is RecommendationCard => c !== null)[0]),
         retry(2),
         catchError(err => throwError(() => err)),
       );
@@ -130,7 +130,7 @@ export class RecommendationsApi extends BaseApi {
     return this.http
       .get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params })
       .pipe(
-        map(list => this.toCard(list[0])),
+        map(list => list.map(r => this.toCard(r)).filter((c): c is RecommendationCard => c !== null)[0]),
         retry(2),
         catchError(err => throwError(() => err)),
       );
@@ -229,8 +229,9 @@ export class RecommendationsApi extends BaseApi {
       );
   }
 
-  private toCard(r: RecommendationCardResource): RecommendationCard {
-    const food: FoodCardResource = r.food!;
+  private toCard(r: RecommendationCardResource): RecommendationCard | null {
+    const food = r.food;
+    if (!food) return null;
     const es = this.translate.currentLang === 'es';
     return {
       id:          r.id,

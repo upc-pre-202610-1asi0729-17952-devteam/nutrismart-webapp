@@ -37,7 +37,7 @@ export interface RecommendationSessionResource extends BaseResource {
 }
 
 export interface FoodCardResource {
-  id: number;
+  id: number | string;
   name: string;
   name_es: string;
   kcal: number;
@@ -45,7 +45,7 @@ export interface FoodCardResource {
 }
 
 export interface RecommendationCardResource extends BaseResource {
-  food_id: number;
+  food_id: number | string;
   food?: FoodCardResource;
   badge: string;
   description: string;
