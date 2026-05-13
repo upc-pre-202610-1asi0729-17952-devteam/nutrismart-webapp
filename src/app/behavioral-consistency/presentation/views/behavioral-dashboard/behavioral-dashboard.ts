@@ -1,8 +1,9 @@
-import { Component, computed, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { BehavioralConsistencyStore } from '../../../application/behavioral-consistency.store';
@@ -86,7 +87,6 @@ interface StreakVm {
   styleUrl: './behavioral-dashboard.css',
 })
 export class BehavioralDashboard implements OnInit {
-  private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
   private readonly translateService = inject(TranslateService);
 
@@ -242,7 +242,7 @@ export class BehavioralDashboard implements OnInit {
   protected readonly exceededMacros    = computed(() => this.nutritionStore.todayMacroWarnings().exceeded);
 
   ngOnInit(): void {
-    this.loadData();
+    void this.loadData();
   }
 
   protected onLogMeal(): void {
@@ -250,7 +250,7 @@ export class BehavioralDashboard implements OnInit {
   }
 
   protected onRetry(): void {
-    this.loadData();
+    void this.loadData();
   }
 
   protected macroPercent(consumed: number, target: number): number {
@@ -261,16 +261,19 @@ export class BehavioralDashboard implements OnInit {
     return this.currentUser()?.firstName ?? '';
   }
 
-  private loadData(): void {
+  private async loadData(): Promise<void> {
     const user = this.currentUser();
     if (!user) return;
-    this.behavioralStore
-      .ensureProgressForUser(user.id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe();
+
+    await firstValueFrom(this.behavioralStore.ensureProgressForUser(user.id));
     this.behavioralStore.loadRecoveryPlan(user.id);
-    void this.nutritionStore.loadMealHistory();
-    void this.nutritionStore.loadDailyBalance();
+
+    await Promise.all([
+      this.nutritionStore.loadMealHistory(),
+      this.nutritionStore.loadDailyBalance(),
+    ]);
+
+    this.nutritionStore.runEndOfDayCheck();
   }
 
   private buildMealsVm(locale: string): DashboardMealVm[] {

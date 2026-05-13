@@ -53,7 +53,7 @@ export class BehavioralConsistencyStore {
   }
 
   /** Current behavioral progress for the active user, or `null` if not loaded. */
-  private _currentProgress = signal<BehavioralProgress | null>(null);
+  private _currentProgress = signal<BehavioralProgress | null>(null, { equal: () => false });
 
   /** Latest eating behavior pattern for the active user, or `null` if not analysed yet. */
   private _currentPattern = signal<EatingBehaviorPattern | null>(null);
