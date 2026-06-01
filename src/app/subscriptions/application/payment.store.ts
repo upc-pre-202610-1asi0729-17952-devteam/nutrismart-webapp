@@ -6,12 +6,8 @@ import { PaymentIntent } from '../domain/model/payment-intent.entity';
 import { PaymentMethod } from '../domain/model/payment-method.value-object';
 import { SubscriptionsStore } from './subscriptions.store';
 
-/** USD prices per plan tier, kept in sync with the UI plan cards. */
-const PLAN_PRICES: Record<SubscriptionPlan, number> = {
-  [SubscriptionPlan.BASIC]:   7.99,
-  [SubscriptionPlan.PRO]:    14.99,
-  [SubscriptionPlan.PREMIUM]: 19.99,
-};
+/** Alias for the canonical plan prices defined on the domain entity. */
+const PLAN_PRICES = Subscription.MONTHLY_PRICES;
 
 /**
  * State store for the multi-step payment flow.

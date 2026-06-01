@@ -47,8 +47,16 @@ const PLAN_FEATURES: Record<SubscriptionPlan, string[]> = {
  *
  * Encapsulates plan lifecycle: activation, cancellation, and renewal.
  * Feature entitlement is derived from the plan tier via {@link featuresFor}.
+ * Monthly prices are exposed via {@link MONTHLY_PRICES} so all layers
+ * use a single source of truth instead of local duplicates.
  */
 export class Subscription {
+  /** Canonical monthly prices (USD) per plan tier. */
+  static readonly MONTHLY_PRICES: Record<SubscriptionPlan, number> = {
+    [SubscriptionPlan.BASIC]:    7.99,
+    [SubscriptionPlan.PRO]:     14.99,
+    [SubscriptionPlan.PREMIUM]: 19.99,
+  };
   id: number;
   userId: number;
   plan: SubscriptionPlan;

@@ -129,6 +129,22 @@ export class SubscriptionsStore {
 
       this._subscription.set(saved);
       this.iamStore.upgradePlan(plan);
+
+      // Record this payment in billing history so the profile panel shows it
+      try {
+        const record = await firstValueFrom(
+          this.billingHistoryApi.createRecord({
+            userId:   String(user.id),
+            date:     now,
+            plan,
+            amount:   Subscription.MONTHLY_PRICES[plan],
+            currency: 'USD',
+            status:   'PAID',
+          }),
+        );
+        this._billingHistory.set([record, ...this._billingHistory()]);
+      } catch { /* billing history creation is non-critical; ignore failures */ }
+
       this.eventBus.publish(new SubscriptionActivated(user.id, plan, features, now));
       this.eventBus.publish(new BenefitsEnabled(user.id, plan, features));
     } catch {
