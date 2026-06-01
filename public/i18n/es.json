@@ -897,6 +897,8 @@
     "placeholder_number": "1234 5678 9012 3456",
     "placeholder_expiry": "MM/AA",
     "placeholder_cvv": "123",
+    "expiry_short": "Venc.",
+    "card_preview_label": "Resumen de tarjeta",
     "btn_continue": "Continuar a revisión",
     "error_required": "Este campo es obligatorio.",
     "error_invalid_card": "Ingresa un número de tarjeta válido de 16 dígitos.",

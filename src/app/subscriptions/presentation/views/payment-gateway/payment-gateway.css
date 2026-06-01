@@ -6,187 +6,152 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 48px 16px 64px;
+  padding: 40px 16px 64px;
 }
 
-/* ─── Wrapper — mobile: single column ───────────────────────────────────── */
+/* ─── Wrapper — mobile: single column, panel on top ─────────────────────── */
 
 .pg-wrapper {
   width: 100%;
   max-width: 460px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
-/* Card preview comes first on mobile (order: -1 since it's second in DOM) */
-.pg-scene {
+/* Card panel goes above the form on mobile */
+.pg-card-panel {
   order: -1;
 }
 
-/* ─── Card preview (3-D flip) ────────────────────────────────────────────── */
+/* ─── Card summary panel ─────────────────────────────────────────────────── */
 
-.pg-scene {
-  perspective: 900px;
-  width: 100%;
-  aspect-ratio: 1.586;
+.pg-card-panel {
+  background: var(--nutrismart-white, #fff);
+  border: 1px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius, 14px);
+  padding: 14px 18px;
+
+  /* Mobile: horizontal strip */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* Brand */
+
+.pg-cp-brand {
+  display: flex;
+  align-items: center;
   flex-shrink: 0;
 }
 
-.pg-card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-  filter: drop-shadow(0 12px 28px rgba(26, 46, 46, 0.22));
+.pg-cp-brand-svg {
+  display: block;
 }
 
-.pg-card-inner--flipped {
-  transform: rotateY(180deg);
-}
-
-.pg-face {
-  position: absolute;
-  inset: 0;
-  border-radius: 14px;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  padding: 20px 24px;
-  background: linear-gradient(135deg, #1a2e2e 0%, #2d4f4e 55%, #3d6e6c 100%);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  font-family: 'Courier New', Courier, monospace;
-}
-
-.pg-face--back {
-  transform: rotateY(180deg);
-  padding: 0;
-  justify-content: flex-start;
-}
-
-/* Front face */
-
-.pg-face-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.pg-chip {
+.pg-cp-brand-svg--visa {
   width: 44px;
   height: auto;
-  border-radius: 4px;
 }
 
-.pg-brand {
-  font-size: 0.95rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.9);
-  font-family: system-ui, sans-serif;
+.pg-cp-brand-svg--generic {
+  width: 32px;
+  height: auto;
+  color: var(--nutrismart-text-mid, #4a6060);
 }
 
-.pg-number {
-  font-size: clamp(0.95rem, 3.5vw, 1.2rem);
-  letter-spacing: 3px;
-  color: #fff;
-  text-align: center;
+/* MC and AMEX default size */
+.pg-cp-brand-svg:not(.pg-cp-brand-svg--visa):not(.pg-cp-brand-svg--generic) {
+  width: 38px;
+  height: auto;
+}
+
+/* Number */
+
+.pg-cp-number {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  margin: 0;
   flex: 1;
+  min-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Holder name — hidden on mobile, shown on desktop */
+
+.pg-cp-name {
+  display: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-mid, #4a6060);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Expiry + CVV row */
+
+.pg-cp-meta-row {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
-.pg-face-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-.pg-meta {
+.pg-cp-meta-field {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 2px;
 }
 
-.pg-meta-label {
-  font-size: 0.58rem;
+.pg-cp-meta-label {
+  font-size: 0.6rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.55);
-  font-family: system-ui, sans-serif;
+  letter-spacing: 0.8px;
+  color: var(--nutrismart-text-light, #8aa8a8);
 }
 
-.pg-meta-value {
-  font-size: 0.78rem;
-  color: #fff;
-  letter-spacing: 0.5px;
-  max-width: 160px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.pg-cp-meta-val {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-dark, #1a2e2e);
 }
 
-/* Back face */
-
-.pg-stripe {
-  height: 44px;
-  background: #111;
-  margin-top: 28px;
+.pg-cp-meta-val--mono {
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 2px;
 }
 
-.pg-cvv-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 20px;
+/* CVV box — highlights when focused */
+
+.pg-cp-cvv {
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: 8px;
+  padding: 5px 12px;
+  transition: border-color 0.15s, background 0.15s;
 }
 
-.pg-cvv-tape {
-  flex: 1;
-  height: 36px;
-  background: repeating-linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.07) 0px,
-    rgba(255, 255, 255, 0.07) 2px,
-    transparent 2px,
-    transparent 6px
-  );
-  border-radius: 3px;
+.pg-cp-cvv--focus {
+  border-color: var(--nutrismart-primary, #508B89);
+  background: var(--nutrismart-primary-light, #e8f2f2);
 }
 
-.pg-cvv-box {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 4px;
-  padding: 6px 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-  min-width: 64px;
-}
+/* Security note — hidden on mobile */
 
-.pg-cvv-label {
-  font-size: 0.55rem;
-  letter-spacing: 1px;
-  color: #4a6060;
-  font-family: system-ui, sans-serif;
-  text-transform: uppercase;
-}
-
-.pg-cvv-value {
-  font-size: 1rem;
-  letter-spacing: 4px;
-  color: #1a2e2e;
-}
-
-.pg-brand--back {
-  position: absolute;
-  bottom: 16px;
-  right: 20px;
+.pg-cp-security {
+  display: none;
 }
 
 /* ─── Form card ──────────────────────────────────────────────────────────── */
@@ -200,8 +165,6 @@
   flex-direction: column;
   gap: 18px;
 }
-
-/* Header */
 
 .pg-header {
   display: flex;
@@ -317,8 +280,6 @@
   color: #ef4444;
 }
 
-/* Submit */
-
 .pg-btn-submit {
   width: 100%;
   padding: 12px;
@@ -337,8 +298,6 @@
   background: var(--nutrismart-primary-dark, #3d6e6c);
 }
 
-/* Security note */
-
 .pg-security {
   display: flex;
   align-items: center;
@@ -354,7 +313,7 @@
   flex-shrink: 0;
 }
 
-/* ─── Desktop: two-column layout ─────────────────────────────────────────── */
+/* ─── Desktop: two-column grid ───────────────────────────────────────────── */
 
 @media (min-width: 800px) {
   .pg-shell {
@@ -364,11 +323,11 @@
 
   .pg-wrapper {
     display: grid;
-    grid-template-columns: 1fr 340px;
+    grid-template-columns: 1fr 240px;
     grid-template-areas: "form preview";
     align-items: center;
-    gap: 40px;
-    max-width: 820px;
+    gap: 28px;
+    max-width: 780px;
   }
 
   .pg-form-card {
@@ -376,12 +335,48 @@
     padding: 32px;
   }
 
-  .pg-scene {
+  /* Panel: vertical layout in right column */
+  .pg-card-panel {
     grid-area: preview;
-    order: 0;         /* reset mobile order */
-    position: sticky;
-    top: 24px;
-    align-self: start;
+    order: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 24px 20px;
+    align-self: stretch; /* fill full row height */
+  }
+
+  .pg-cp-number {
+    font-size: 0.82rem;
+    letter-spacing: 1.5px;
+    min-width: unset;
+    white-space: normal;
+    word-break: break-all;
+  }
+
+  .pg-cp-name {
+    display: block;
+  }
+
+  .pg-cp-meta-row {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* Security note appears at the bottom of the panel */
+  .pg-cp-security {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    color: var(--nutrismart-text-light, #8aa8a8);
+    margin-top: auto; /* push to bottom */
+  }
+
+  .pg-cp-security svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
   }
 }
 
@@ -398,5 +393,10 @@
 
   .pg-row {
     grid-template-columns: 1fr;
+  }
+
+  .pg-cp-number {
+    font-size: 0.78rem;
+    letter-spacing: 1px;
   }
 }

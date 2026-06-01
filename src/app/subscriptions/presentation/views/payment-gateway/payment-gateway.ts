@@ -81,9 +81,6 @@ export class PaymentGateway implements OnInit {
   /** Expiry as typed, or placeholder. */
   readonly displayExpiry = computed(() => this.formValues().expiry || 'MM/YY');
 
-  /** CVV as typed, or placeholder bullets. */
-  readonly displayCvv = computed(() => this.formValues().cvv || '•••');
-
   /** Detected card brand from BIN prefix. */
   readonly displayBrand = computed(() => {
     const d = (this.formValues().cardNumber ?? '').replace(/\s/g, '');
