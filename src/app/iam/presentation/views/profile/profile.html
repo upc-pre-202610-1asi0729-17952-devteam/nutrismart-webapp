@@ -265,7 +265,15 @@
         </section>
       }
 
-      <!-- PANEL 5: Security and privacy -->
+      <!-- PANEL 5: Subscription -->
+      @case ('subscription') {
+        <section class="panel-section">
+          <h2 class="panel-title">{{ 'profile.nav_subscription' | translate }}</h2>
+          <app-subscription-plans />
+        </section>
+      }
+
+      <!-- PANEL 6: Security and privacy -->
       @case ('security') {
         <section class="panel-section">
           <h2 class="panel-title">{{ 'profile.security_title' | translate }}</h2>

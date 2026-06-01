@@ -54,7 +54,6 @@
           <div class="user-name">{{ iamStore.currentUser()?.fullName }}</div>
           <div class="user-links">
             <a [routerLink]="'/profile'" (click)="closeSidebar()">{{ 'nav.profile' | translate }}</a>
-            · <a [routerLink]="'/my-plan'" (click)="closeSidebar()">{{ 'nav.subscription' | translate }}</a>
             · <a href="#" (click)="iamStore.logout()">{{ 'nav.logout' | translate }}</a>
           </div>
         </div>

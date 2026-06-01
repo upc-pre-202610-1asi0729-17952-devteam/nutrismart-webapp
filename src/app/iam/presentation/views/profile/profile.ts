@@ -2,6 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageSwitcher } from '../../../../shared/presentation/components/language-switcher/language-switcher';
+import { SubscriptionPlans } from '../../../../subscriptions/presentation/views/subscription-plans/subscription-plans';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { MetabolicStore } from '../../../../metabolic-adaptation/application/metabolic.store';
 import { CityLookupApi } from '../../../../shared/infrastructure/city-lookup-api';
@@ -13,7 +14,7 @@ import { UserGoal } from '../../../../iam/domain/model/user-goal.enum';
 /**
  * Valid panel identifiers for the profile settings navigation.
  */
-export type ProfilePanel = 'personal' | 'physical' | 'dietary' | 'language' | 'security';
+export type ProfilePanel = 'personal' | 'physical' | 'dietary' | 'language' | 'subscription' | 'security';
 
 /**
  * Navigation item descriptor for the left-panel sidebar.
@@ -39,12 +40,13 @@ interface PanelNavItem {
  * 2. Physical details and goals — weight, height, activity, goal
  * 3. Dietary restrictions — restrictions and medical conditions
  * 4. Language — EN / ES switch via ngx-translate
- * 5. Security and privacy — change password, session info, danger zone
+ * 5. Subscription — plan management via {@link SubscriptionPlans}
+ * 6. Security and privacy — change password, session info, danger zone
  */
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe, LanguageSwitcher],
+  imports: [ReactiveFormsModule, TranslatePipe, LanguageSwitcher, SubscriptionPlans],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
@@ -177,11 +179,12 @@ export class Profile implements OnInit {
    * Left-panel navigation items.
    */
   readonly navItems: PanelNavItem[] = [
-    { id: 'personal', label: 'profile.nav_personal', icon: '' },
-    { id: 'physical', label: 'profile.nav_physical', icon: '' },
-    { id: 'dietary', label: 'profile.nav_dietary', icon: '' },
-    { id: 'language', label: 'profile.nav_language', icon: '' },
-    { id: 'security', label: 'profile.nav_security', icon: '' },
+    { id: 'personal',     label: 'profile.nav_personal',     icon: '' },
+    { id: 'physical',     label: 'profile.nav_physical',     icon: '' },
+    { id: 'dietary',      label: 'profile.nav_dietary',      icon: '' },
+    { id: 'language',     label: 'profile.nav_language',     icon: '' },
+    { id: 'subscription', label: 'profile.nav_subscription', icon: '' },
+    { id: 'security',     label: 'profile.nav_security',     icon: '' },
   ];
 
   /**
