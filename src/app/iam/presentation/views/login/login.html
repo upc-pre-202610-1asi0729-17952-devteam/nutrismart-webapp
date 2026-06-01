@@ -13,7 +13,7 @@
     <p class="auth-subtitle">{{ 'auth.login_subtitle' | translate }}</p>
 
     @if (loginError()) {
-      <div class="auth-error">{{ loginError() }}</div>
+      <div class="auth-error" role="alert">{{ loginError() | translate }}</div>
     }
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
