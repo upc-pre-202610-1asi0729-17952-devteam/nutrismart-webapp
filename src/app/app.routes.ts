@@ -83,7 +83,7 @@ export const routes: Routes = [
   { path: 'nutrition',   redirectTo: '/nutrition-log/daily',          pathMatch: 'prefix' },
   { path: 'smart-scan',  redirectTo: '/nutrition-log/smart-scan',     pathMatch: 'prefix' },
   { path: 'pantry',      redirectTo: '/recommendations/pantry',       pathMatch: 'prefix' },
-  { path: 'wearable', loadChildren: wearableRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
+  { path: 'wearable', loadChildren: wearableRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PREMIUM' } },
   { path: 'analytics', loadChildren: analyticsRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
   { path: 'subscription', loadChildren: subscriptionsRoutes, canActivate: [authGuard] },
   { path: 'my-plan', loadChildren: myPlanRoutes, canActivate: [authGuard, subscriptionGuard] },
