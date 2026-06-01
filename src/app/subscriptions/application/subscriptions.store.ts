@@ -116,7 +116,12 @@ export class SubscriptionsStore {
       const now      = new Date().toISOString().slice(0, 10);
       const features = Subscription.featuresFor(plan);
       let saved: Subscription;
-      const existing = this._subscription();
+
+      // Resolve the subscription to update: use in-memory state when available,
+      // otherwise fetch from the server (e.g. upgrade-gate flow that bypasses
+      // SubscriptionPlans.ngOnInit and never calls initialise()).
+      const existing = this._subscription()
+        ?? await firstValueFrom(this.api.getSubscription(String(user.id)));
 
       if (existing) {
         existing.activate(plan);
@@ -130,7 +135,7 @@ export class SubscriptionsStore {
       this._subscription.set(saved);
       this.iamStore.upgradePlan(plan);
 
-      // Record this payment in billing history so the profile panel shows it
+      // Record this payment in billing history so the profile panel shows it.
       try {
         const record = await firstValueFrom(
           this.billingHistoryApi.createRecord({
@@ -147,8 +152,11 @@ export class SubscriptionsStore {
 
       this.eventBus.publish(new SubscriptionActivated(user.id, plan, features, now));
       this.eventBus.publish(new BenefitsEnabled(user.id, plan, features));
-    } catch {
+    } catch (err) {
       this._error.set('subscriptions.error_update_failed');
+      // Re-throw so PaymentStore.confirmPayment can detect the failure and
+      // avoid showing a false confirmation screen to the user.
+      throw err;
     } finally {
       this._loading.set(false);
     }

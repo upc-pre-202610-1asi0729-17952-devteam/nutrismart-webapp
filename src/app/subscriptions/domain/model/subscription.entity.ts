@@ -3,8 +3,8 @@ import { SubscriptionPlan } from '../../../iam/domain/model/subscription-plan.en
 export type SubscriptionStatus = 'active' | 'cancelled' | 'expired';
 
 export interface SubscriptionProps {
-  id: number;
-  userId: number;
+  id: number | string;
+  userId: number | string;
   plan: SubscriptionPlan;
   status: SubscriptionStatus;
   startDate: string;
@@ -57,8 +57,8 @@ export class Subscription {
     [SubscriptionPlan.PRO]:     14.99,
     [SubscriptionPlan.PREMIUM]: 19.99,
   };
-  id: number;
-  userId: number;
+  id: number | string;
+  userId: number | string;
   plan: SubscriptionPlan;
   status: SubscriptionStatus;
   startDate: string;

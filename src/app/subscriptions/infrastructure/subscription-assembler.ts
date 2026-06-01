@@ -25,8 +25,8 @@ export class SubscriptionAssembler {
    */
   toEntityFromResource(resource: SubscriptionResource): Subscription {
     return new Subscription({
-      id:            Number(resource.id),
-      userId:        Number(resource.userId),
+      id:            resource.id,
+      userId:        resource.userId,
       plan:          resource.plan as SubscriptionPlan,
       status:        STATUS_MAP[resource.status] ?? 'expired',
       startDate:     resource.startDate,
