@@ -288,9 +288,13 @@ export class IamStore {
     const user = this._currentUser();
     if (!user) return;
     this.iamApi.updateUser(user).subscribe({
-      next: (updated) => {
-        this._currentUser.set(updated);
-        this.saveSession(updated);
+      next: () => {
+        // The signal was already updated synchronously before persist() was called.
+        // Re-applying the API response would risk reverting a more recent change
+        // (e.g. upgradePlan called mid-flight). Sync localStorage from the current
+        // in-memory state, which is always the authoritative source of truth.
+        const current = this._currentUser();
+        if (current) this.saveSession(current);
       },
       error: (err) => this._error.set(err.message),
     });

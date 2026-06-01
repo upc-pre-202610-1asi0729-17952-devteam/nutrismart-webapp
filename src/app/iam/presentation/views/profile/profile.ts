@@ -59,6 +59,15 @@ export class Profile implements OnInit {
 
   readonly knownCities = signal<string[]>([]);
 
+  /**
+   * i18n key for the current user's plan name (e.g. `subscription.plan_basic`).
+   * Updates reactively whenever the underlying IAM signal changes.
+   */
+  readonly planNameKey = computed(() => {
+    const plan = this.iamStore.currentUser()?.plan;
+    return plan ? `subscription.plan_${plan.toLowerCase()}` : '';
+  });
+
   /** Form builder for constructing panel-specific reactive forms. */
   private fb = inject(FormBuilder);
 
