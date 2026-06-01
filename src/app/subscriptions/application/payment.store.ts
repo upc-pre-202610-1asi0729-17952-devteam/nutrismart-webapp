@@ -5,6 +5,7 @@ import { PaymentGatewayPort } from '../domain/ports/payment-gateway.port';
 import { PaymentIntent } from '../domain/model/payment-intent.entity';
 import { PaymentMethod } from '../domain/model/payment-method.value-object';
 import { SubscriptionsStore } from './subscriptions.store';
+import { Subscription } from '../domain/model/subscription.entity';
 
 /** Alias for the canonical plan prices defined on the domain entity. */
 const PLAN_PRICES = Subscription.MONTHLY_PRICES;
