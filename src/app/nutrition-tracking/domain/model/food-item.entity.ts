@@ -34,6 +34,10 @@ export interface FoodItemProps {
   sugarPer100g: number;
   /** Dietary restrictions this food conflicts with. */
   restrictions: DietaryRestriction[];
+  /** Canonical machine-readable key for pantry and recipe matching (e.g. "white_rice"). */
+  nameKey?: string;
+  /** Food category (e.g. "Grain", "Animal protein"). */
+  category?: string;
 }
 
 /**
@@ -58,6 +62,8 @@ export class FoodItem implements BaseEntity {
   private _fiberPer100g: number;
   private _sugarPer100g: number;
   private _restrictions: DietaryRestriction[];
+  private _nameKey:      string | undefined;
+  private _category:     string | undefined;
 
   constructor(props: FoodItemProps) {
     this._id             = props.id;
@@ -73,6 +79,8 @@ export class FoodItem implements BaseEntity {
     this._fiberPer100g    = props.fiberPer100g;
     this._sugarPer100g    = props.sugarPer100g;
     this._restrictions    = [...props.restrictions];
+    this._nameKey         = props.nameKey;
+    this._category        = props.category;
   }
 
   // ─── Getters & Setters ────────────────────────────────────────────────────
@@ -124,6 +132,14 @@ export class FoodItem implements BaseEntity {
   /** Sugar grams per 100 g. */
   get sugarPer100g(): number { return this._sugarPer100g; }
   set sugarPer100g(v: number) { this._sugarPer100g = v; }
+
+  /** Canonical machine-readable key for pantry and recipe matching. */
+  get nameKey(): string | undefined { return this._nameKey; }
+  set nameKey(v: string | undefined) { this._nameKey = v; }
+
+  /** Food category (e.g. "Grain", "Animal protein"). */
+  get category(): string | undefined { return this._category; }
+  set category(v: string | undefined) { this._category = v; }
 
   /** Dietary restrictions this food conflicts with. Returns a copy. */
   get restrictions(): DietaryRestriction[] { return [...this._restrictions]; }

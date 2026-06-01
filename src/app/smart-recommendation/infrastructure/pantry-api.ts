@@ -6,11 +6,13 @@ import { catchError, map, retry } from 'rxjs/operators';
 import { environment } from '../../../environments/environment.development';
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
+import { FoodItem } from '../../nutrition-tracking/domain/model/food-item.entity';
+import { FoodItemAssembler } from '../../nutrition-tracking/infrastructure/nutrition-assembler';
+import { FoodItemResource } from '../../nutrition-tracking/infrastructure/nutrition-resource';
 import { PantryItem } from '../domain/model/pantry-item.entity';
 import { RecipeSuggestion } from '../domain/model/recipe-suggestion.entity';
-import { IngredientCatalogAssembler, PantryItemAssembler, RecipeSuggestionAssembler } from './pantry-assembler';
-import { IngredientCatalogResource, PantryItemResource, RecipeSuggestionResource } from './pantry-resource';
-import { IngredientCatalogItem } from '../domain/model/ingredient-catalog-item.entity';
+import { PantryItemAssembler, RecipeSuggestionAssembler } from './pantry-assembler';
+import { PantryItemResource, RecipeSuggestionResource } from './pantry-resource';
 
 @Injectable({ providedIn: 'root' })
 export class PantryApi extends BaseApi {
@@ -18,10 +20,10 @@ export class PantryApi extends BaseApi {
   private readonly _translate         = inject(TranslateService);
   private readonly _pantryAssembler   = new PantryItemAssembler();
   private readonly _recipeAssembler   = new RecipeSuggestionAssembler(this._translate);
-  private readonly _catalogAssembler  = new IngredientCatalogAssembler();
+  private readonly _foodAssembler     = new FoodItemAssembler();
   private readonly _pantryUrl         = `${environment.apiBaseUrl}${environment.pantryEndpointPath}`;
   private readonly _recipesUrl        = `${environment.apiBaseUrl}${environment.recipesEndpointPath}`;
-  private readonly _catalogUrl        = `${environment.apiBaseUrl}${environment.ingredientCatalogEndpointPath}`;
+  private readonly _foodsUrl          = `${environment.apiBaseUrl}${environment.foodSearchEndpointPath}`;
 
   getPantryItems(userId: number): Observable<PantryItem[]> {
     return this._http.get<PantryItemResource[]>(`${this._pantryUrl}?userId=${userId}`).pipe(
@@ -53,10 +55,10 @@ export class PantryApi extends BaseApi {
     );
   }
 
-  getIngredientCatalog(): Observable<IngredientCatalogItem[]> {
-    return this._http.get<IngredientCatalogResource[]>(this._catalogUrl).pipe(
-      map(rs => rs.map(r => this._catalogAssembler.toEntityFromResource(r))),
-      catchError(this._handleError('getIngredientCatalog')),
+  getFoodCatalog(): Observable<FoodItem[]> {
+    return this._http.get<FoodItemResource[]>(this._foodsUrl).pipe(
+      map(rs => rs.map(r => this._foodAssembler.toEntityFromResource(r))),
+      catchError(this._handleError('getFoodCatalog')),
     );
   }
 

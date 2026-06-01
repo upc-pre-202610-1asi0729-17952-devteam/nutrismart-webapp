@@ -8,11 +8,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { FoodItem } from '../../../../nutrition-tracking/domain/model/food-item.entity';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { UserGoal } from '../../../../iam/domain/model/user-goal.enum';
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
 import { PantryStore } from '../../../application/pantry.store';
-import { IngredientCatalogItem } from '../../../domain/model/ingredient-catalog-item.entity';
+import { IngredientCategory } from '../../../domain/model/pantry-item.entity';
 import { RecipeSuggestion } from '../../../domain/model/recipe-suggestion.entity';
 
 /**
@@ -51,7 +52,7 @@ export class Pantry implements OnInit {
 
   protected searchText    = signal<string>('');
   protected showDropdown  = signal<boolean>(false);
-  protected selectedItem  = signal<IngredientCatalogItem | null>(null);
+  protected selectedItem  = signal<FoodItem | null>(null);
 
   protected filteredCatalog = computed(() => {
     const query = this.searchText().toLowerCase().trim();
@@ -121,7 +122,7 @@ export class Pantry implements OnInit {
     this.showDropdown.set(false);
   }
 
-  onOptionMousedown(event: MouseEvent, item: IngredientCatalogItem): void {
+  onOptionMousedown(event: MouseEvent, item: FoodItem): void {
     event.preventDefault();
     this.selectedItem.set(item);
     this.searchText.set(this.translate.instant('pantry_items.' + item.nameKey));
@@ -134,7 +135,7 @@ export class Pantry implements OnInit {
     const item = this.selectedItem();
     if (!item) return;
     const displayName = this.translate.instant('pantry_items.' + item.nameKey);
-    await this.pantryStore.addPantryItem(displayName, item.category, 100, item.caloriesPer100g, item.nameKey);
+    await this.pantryStore.addPantryItem(displayName, item.category as IngredientCategory, 100, item.caloriesPer100g, item.nameKey);
     this.searchText.set('');
     this.selectedItem.set(null);
     this.showDropdown.set(false);

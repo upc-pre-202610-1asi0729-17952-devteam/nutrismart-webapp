@@ -19,6 +19,10 @@ export interface FoodItemResource extends BaseResource {
   fiber_per_100g: number;
   sugar_per_100g: number;
   restrictions: string[];
+  /** Machine-readable key matching pantry/recipe ingredient identifiers. */
+  name_key?: string;
+  /** Food category (e.g. "Grain"). */
+  category?: string;
 }
 
 /** Envelope for the `/foods` collection endpoint. */

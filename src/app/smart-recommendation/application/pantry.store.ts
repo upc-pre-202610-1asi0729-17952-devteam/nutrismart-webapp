@@ -6,9 +6,9 @@ import { DomainEventBus } from '../../shared/application/domain-event-bus';
 import { PantryUpdated } from '../../shared/domain/pantry-updated.event';
 import { RecipeSuggested } from '../../shared/domain/recipe-suggested.event';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
+import { FoodItem } from '../../nutrition-tracking/domain/model/food-item.entity';
 import { PantryItem, IngredientCategory } from '../domain/model/pantry-item.entity';
 import { RecipeSuggestion } from '../domain/model/recipe-suggestion.entity';
-import { IngredientCatalogItem } from '../domain/model/ingredient-catalog-item.entity';
 import { PantryApi } from '../infrastructure/pantry-api';
 
 /**
@@ -31,7 +31,7 @@ export class PantryStore {
 
   private _pantryItems       = signal<PantryItem[]>([]);
   private _recipeSuggestions = signal<RecipeSuggestion[]>([]);
-  private _catalog           = signal<IngredientCatalogItem[]>([]);
+  private _catalog           = signal<FoodItem[]>([]);
   private _loading           = signal<boolean>(false);
   private _error             = signal<string | null>(null);
   private _searchQuery       = signal<string>('');
@@ -107,7 +107,7 @@ export class PantryStore {
 
   /** Loads the ingredient catalog from the API. */
   fetchCatalog(): void {
-    this.pantryApi.getIngredientCatalog().subscribe({
+    this.pantryApi.getFoodCatalog().subscribe({
       next:  (items) => this._catalog.set(items),
       error: () => this._error.set('Failed to load ingredient catalog.'),
     });

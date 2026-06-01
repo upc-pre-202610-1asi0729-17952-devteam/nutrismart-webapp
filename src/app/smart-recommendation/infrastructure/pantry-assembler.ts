@@ -3,13 +3,11 @@ import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
 import { PantryItem, IngredientCategory } from '../domain/model/pantry-item.entity';
 import { RecipeSuggestion } from '../domain/model/recipe-suggestion.entity';
-import { IngredientCatalogItem } from '../domain/model/ingredient-catalog-item.entity';
 import {
   PantryItemResource,
   PantryItemsResponse,
   RecipeSuggestionResource,
   RecipeSuggestionsResponse,
-  IngredientCatalogResource,
 } from './pantry-resource';
 
 /**
@@ -102,8 +100,3 @@ export class RecipeSuggestionAssembler
   }
 }
 
-export class IngredientCatalogAssembler {
-  toEntityFromResource(r: IngredientCatalogResource): IngredientCatalogItem {
-    return new IngredientCatalogItem(r.id, r.name_key, r.category as IngredientCategory, r.calories_per_100g);
-  }
-}

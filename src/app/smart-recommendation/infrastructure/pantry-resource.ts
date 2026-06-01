@@ -45,8 +45,3 @@ export interface RecipeSuggestionsResponse extends BaseResponse {
   suggestions: RecipeSuggestionResource[];
 }
 
-export interface IngredientCatalogResource extends BaseResource {
-  name_key: string;
-  category: string;
-  calories_per_100g: number;
-}

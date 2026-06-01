@@ -34,6 +34,8 @@ export class FoodItemAssembler
       fiberPer100g:    r.fiber_per_100g,
       sugarPer100g:    r.sugar_per_100g,
       restrictions:    r.restrictions.map(s => s as DietaryRestriction),
+      nameKey:         r.name_key,
+      category:        r.category,
     });
   }
 
@@ -51,6 +53,8 @@ export class FoodItemAssembler
       fiber_per_100g:    e.fiberPer100g,
       sugar_per_100g:    e.sugarPer100g,
       restrictions:      e.restrictions,
+      name_key:          e.nameKey,
+      category:          e.category,
     };
   }
 

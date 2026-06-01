@@ -196,7 +196,9 @@
       "fat_per_100g": 2.5,
       "fiber_per_100g": 1.7,
       "sugar_per_100g": 0.5,
-      "restrictions": []
+      "restrictions": [],
+      "name_key": "cooked_oatmeal",
+      "category": "Grain"
     },
     {
       "id": "12",
@@ -211,7 +213,43 @@
       "fat_per_100g": 4,
       "fiber_per_100g": 1.5,
       "sugar_per_100g": 2,
-      "restrictions": []
+      "restrictions": [],
+      "name_key": "chicken_cucumber_salad",
+      "category": "Animal protein"
+    },
+    {
+      "id": "3",
+      "name": "White rice, cooked",
+      "name_es": "Arroz blanco cocido",
+      "source": "USDA FoodData",
+      "serving_size": 150,
+      "serving_unit": "g",
+      "calories_per_100g": 130,
+      "protein_per_100g": 2.7,
+      "carbs_per_100g": 28.2,
+      "fat_per_100g": 0.3,
+      "fiber_per_100g": 0.4,
+      "sugar_per_100g": 0,
+      "restrictions": [],
+      "name_key": "white_rice",
+      "category": "Grain"
+    },
+    {
+      "id": "4",
+      "name": "Chicken breast, raw",
+      "name_es": "Pechuga de pollo cruda",
+      "source": "USDA FoodData",
+      "serving_size": 120,
+      "serving_unit": "g",
+      "calories_per_100g": 165,
+      "protein_per_100g": 31,
+      "carbs_per_100g": 0,
+      "fat_per_100g": 3.6,
+      "fiber_per_100g": 0,
+      "sugar_per_100g": 0,
+      "restrictions": [],
+      "name_key": "chicken_breast",
+      "category": "Animal protein"
     }
   ],
   "body-metrics": [
@@ -245,20 +283,6 @@
   ],
   "recommendations": [],
   "pantry": [],
-  "ingredient-catalog": [
-    {
-      "id": "1",
-      "name_key": "white_rice",
-      "category": "Grain",
-      "calories_per_100g": 130
-    },
-    {
-      "id": "2",
-      "name_key": "chicken_breast",
-      "category": "Animal protein",
-      "calories_per_100g": 165
-    }
-  ],
   "recipes": [
     {
       "id": "1",
@@ -409,7 +433,7 @@
       "userId": "imtrh8k4o",
       "adherenceStatus": "AT_RISK",
       "streak": 0,
-      "consecutiveMisses": 5,
+      "consecutiveMisses": 6,
       "lastGoalMetDate": "",
       "goalMetDates": []
     }
@@ -420,7 +444,7 @@
       "userId": "imtrh8k4o",
       "weeklyCompletionRate": 0,
       "currentStreak": 0,
-      "consecutiveMisses": 5,
+      "consecutiveMisses": 6,
       "patternType": "IRREGULAR",
       "analyzedAt": "2026-06-01"
     }
@@ -485,6 +509,26 @@
       "activatedAt": "2026-06-01T20:53:45.529Z",
       "resolvedAt": null,
       "id": "XYeR8wChMvg"
+    },
+    {
+      "userId": "imtrh8k4o",
+      "trigger": "BEHAVIORAL_DROP",
+      "status": "ACTIVE",
+      "actions": [
+        {
+          "type": "LOG_ANY_MEAL",
+          "descriptionKey": "behavioral.recovery.action.log_any_meal",
+          "priority": 1
+        },
+        {
+          "type": "SIMPLIFY_TRACKING",
+          "descriptionKey": "behavioral.recovery.action.simplify_tracking",
+          "priority": 2
+        }
+      ],
+      "activatedAt": "2026-06-01T21:23:19.539Z",
+      "resolvedAt": null,
+      "id": "MnAb0xVBR88"
     }
   ],
   "daily-balance": [
