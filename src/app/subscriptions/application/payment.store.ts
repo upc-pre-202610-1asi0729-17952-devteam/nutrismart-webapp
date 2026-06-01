@@ -1,0 +1,147 @@
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
+import { SubscriptionPlan } from '../../iam/domain/model/subscription-plan.enum';
+import { PaymentGatewayPort } from '../domain/ports/payment-gateway.port';
+import { PaymentIntent } from '../domain/model/payment-intent.entity';
+import { PaymentMethod } from '../domain/model/payment-method.value-object';
+import { SubscriptionsStore } from './subscriptions.store';
+
+/** USD prices per plan tier, kept in sync with the UI plan cards. */
+const PLAN_PRICES: Record<SubscriptionPlan, number> = {
+  [SubscriptionPlan.BASIC]:   7.99,
+  [SubscriptionPlan.PRO]:    14.99,
+  [SubscriptionPlan.PREMIUM]: 19.99,
+};
+
+/**
+ * State store for the multi-step payment flow.
+ *
+ * Orchestrates: plan selection → card entry → gateway processing → confirmation.
+ * The actual subscription activation is delegated to {@link SubscriptionsStore}
+ * after a successful payment.
+ *
+ * Provided in root so state survives navigation between payment steps.
+ */
+@Injectable({ providedIn: 'root' })
+export class PaymentStore {
+  private readonly gateway           = inject(PaymentGatewayPort);
+  private readonly subscriptionsStore = inject(SubscriptionsStore);
+
+  // ─── Private Signals ──────────────────────────────────────────────────────
+
+  private _selectedPlan  = signal<SubscriptionPlan | null>(null);
+  private _paymentMethod = signal<PaymentMethod | null>(null);
+  private _processing    = signal<boolean>(false);
+  private _confirmed     = signal<boolean>(false);
+  private _error         = signal<string | null>(null);
+
+  // ─── Public Read-only Signals ─────────────────────────────────────────────
+
+  /** The plan the user chose on the plan selection screen. */
+  readonly selectedPlan  = this._selectedPlan.asReadonly();
+
+  /** The card data entered on the payment form. */
+  readonly paymentMethod = this._paymentMethod.asReadonly();
+
+  /** True while the gateway request is in flight. */
+  readonly processing    = this._processing.asReadonly();
+
+  /** True after a successful payment confirmation. */
+  readonly confirmed     = this._confirmed.asReadonly();
+
+  /** Last error i18n key, or null. */
+  readonly error         = this._error.asReadonly();
+
+  // ─── Computed Signals ─────────────────────────────────────────────────────
+
+  /** Monthly price for the selected plan in USD. */
+  readonly selectedPrice = computed(() => {
+    const plan = this._selectedPlan();
+    return plan ? PLAN_PRICES[plan] : 0;
+  });
+
+  /** True when both plan and payment method are set, ready for checkout. */
+  readonly readyForCheckout = computed(
+    () => this._selectedPlan() !== null && this._paymentMethod() !== null,
+  );
+
+  // ─── Actions ──────────────────────────────────────────────────────────────
+
+  /**
+   * Sets the plan selected by the user on the plan selection screen.
+   *
+   * @param plan - The {@link SubscriptionPlan} tier chosen.
+   */
+  setPlan(plan: SubscriptionPlan): void {
+    this._selectedPlan.set(plan);
+    this._paymentMethod.set(null);
+    this._confirmed.set(false);
+    this._error.set(null);
+  }
+
+  /**
+   * Stores the card details entered on the payment gateway form.
+   *
+   * @param method - The validated {@link PaymentMethod} value object.
+   */
+  setPaymentMethod(method: PaymentMethod): void {
+    this._paymentMethod.set(method);
+    this._error.set(null);
+  }
+
+  /**
+   * Sends the payment intent to the gateway and, on success, activates the
+   * subscription via {@link SubscriptionsStore}.
+   *
+   * @param userId - Numeric user ID used to create the intent.
+   * @returns Promise resolving to `true` on success, `false` on failure.
+   */
+  async confirmPayment(userId: number): Promise<boolean> {
+    const plan   = this._selectedPlan();
+    const method = this._paymentMethod();
+    if (!plan || !method) return false;
+
+    this._processing.set(true);
+    this._error.set(null);
+
+    const intent = new PaymentIntent({
+      id:        `pi_${Date.now()}`,
+      userId:    String(userId),
+      plan,
+      amount:    PLAN_PRICES[plan],
+      currency:  'USD',
+      status:    'pending',
+      createdAt: new Date().toISOString().slice(0, 10),
+    });
+
+    try {
+      const result = await firstValueFrom(this.gateway.processPayment(intent, method));
+      if (result.success) {
+        intent.succeed();
+        await this.subscriptionsStore.selectPlan(plan);
+        this._confirmed.set(true);
+        return true;
+      }
+      this._error.set(
+        result.errorCode === 'card_declined'
+          ? 'payment.error_card_declined'
+          : 'payment.error_processing_failed',
+      );
+      return false;
+    } catch {
+      this._error.set('payment.error_processing_failed');
+      return false;
+    } finally {
+      this._processing.set(false);
+    }
+  }
+
+  /** Clears all payment flow state. Call after the flow completes or is abandoned. */
+  reset(): void {
+    this._selectedPlan.set(null);
+    this._paymentMethod.set(null);
+    this._processing.set(false);
+    this._confirmed.set(false);
+    this._error.set(null);
+  }
+}

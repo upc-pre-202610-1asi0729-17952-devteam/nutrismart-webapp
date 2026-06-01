@@ -1,0 +1,117 @@
+<div class="pg-shell">
+  <div class="pg-card">
+    <!-- Header -->
+    <div class="pg-header">
+      <div class="pg-lock-icon" aria-hidden="true">🔒</div>
+      <h1 class="pg-title">{{ 'payment.title' | translate }}</h1>
+      <p class="pg-subtitle">{{ 'payment.subtitle' | translate }}</p>
+    </div>
+
+    <!-- Plan summary chip -->
+    @if (selectedPlan()) {
+      <div class="pg-plan-chip" role="status">
+        <span class="pg-plan-name">{{ ('subscription.plan_' + selectedPlan()!.toLowerCase()) | translate }}</span>
+        <span class="pg-plan-price">${{ selectedPrice() | number:'1.2-2' }} {{ 'subscription.per_month' | translate }}</span>
+      </div>
+    }
+
+    <!-- Card form -->
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate autocomplete="off">
+
+      <!-- Cardholder name -->
+      <div class="pg-field">
+        <label class="pg-label" for="holderName">{{ 'payment.card_holder' | translate }}</label>
+        <input
+          id="holderName"
+          class="pg-input"
+          [class.pg-input--error]="invalid('holderName')"
+          type="text"
+          autocomplete="cc-name"
+          [placeholder]="'payment.placeholder_holder' | translate"
+          formControlName="holderName"
+          [attr.aria-invalid]="invalid('holderName')"
+          aria-describedby="holderName-err"
+        />
+        @if (invalid('holderName')) {
+          <span id="holderName-err" class="pg-error" role="alert">{{ 'payment.error_required' | translate }}</span>
+        }
+      </div>
+
+      <!-- Card number -->
+      <div class="pg-field">
+        <label class="pg-label" for="cardNumber">{{ 'payment.card_number' | translate }}</label>
+        <input
+          id="cardNumber"
+          class="pg-input pg-input--mono"
+          [class.pg-input--error]="invalid('cardNumber')"
+          type="text"
+          inputmode="numeric"
+          autocomplete="cc-number"
+          maxlength="19"
+          [placeholder]="'payment.placeholder_number' | translate"
+          formControlName="cardNumber"
+          (input)="onCardInput($event)"
+          [attr.aria-invalid]="invalid('cardNumber')"
+          aria-describedby="cardNumber-err"
+        />
+        @if (invalid('cardNumber')) {
+          <span id="cardNumber-err" class="pg-error" role="alert">{{ 'payment.error_invalid_card' | translate }}</span>
+        }
+      </div>
+
+      <!-- Expiry + CVV -->
+      <div class="pg-row">
+        <div class="pg-field">
+          <label class="pg-label" for="expiry">{{ 'payment.expiry' | translate }}</label>
+          <input
+            id="expiry"
+            class="pg-input pg-input--mono"
+            [class.pg-input--error]="invalid('expiry')"
+            type="text"
+            inputmode="numeric"
+            autocomplete="cc-exp"
+            maxlength="5"
+            [placeholder]="'payment.placeholder_expiry' | translate"
+            formControlName="expiry"
+            (input)="onExpiryInput($event)"
+            [attr.aria-invalid]="invalid('expiry')"
+            aria-describedby="expiry-err"
+          />
+          @if (invalid('expiry')) {
+            <span id="expiry-err" class="pg-error" role="alert">{{ 'payment.error_invalid_expiry' | translate }}</span>
+          }
+        </div>
+
+        <div class="pg-field">
+          <label class="pg-label" for="cvv">{{ 'payment.cvv' | translate }}</label>
+          <input
+            id="cvv"
+            class="pg-input pg-input--mono"
+            [class.pg-input--error]="invalid('cvv')"
+            type="password"
+            inputmode="numeric"
+            autocomplete="cc-csc"
+            maxlength="3"
+            [placeholder]="'payment.placeholder_cvv' | translate"
+            formControlName="cvv"
+            [attr.aria-invalid]="invalid('cvv')"
+            aria-describedby="cvv-err"
+          />
+          @if (invalid('cvv')) {
+            <span id="cvv-err" class="pg-error" role="alert">{{ 'payment.error_invalid_cvv' | translate }}</span>
+          }
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="pg-btn-submit">
+        {{ 'payment.btn_continue' | translate }}
+      </button>
+    </form>
+
+    <!-- Security note -->
+    <p class="pg-security-note" aria-label="{{ 'payment.security_note' | translate }}">
+      🔐 {{ 'payment.security_note' | translate }}
+    </p>
+  </div>
+</div>

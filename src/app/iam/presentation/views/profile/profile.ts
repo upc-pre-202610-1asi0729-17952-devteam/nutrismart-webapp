@@ -2,7 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageSwitcher } from '../../../../shared/presentation/components/language-switcher/language-switcher';
-import { SubscriptionPlans } from '../../../../subscriptions/presentation/views/subscription-plans/subscription-plans';
+import { BillingPanel } from '../../../../subscriptions/presentation/views/billing-panel/billing-panel';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { MetabolicStore } from '../../../../metabolic-adaptation/application/metabolic.store';
 import { CityLookupApi } from '../../../../shared/infrastructure/city-lookup-api';
@@ -46,7 +46,7 @@ interface PanelNavItem {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe, LanguageSwitcher, SubscriptionPlans],
+  imports: [ReactiveFormsModule, TranslatePipe, LanguageSwitcher, BillingPanel],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })

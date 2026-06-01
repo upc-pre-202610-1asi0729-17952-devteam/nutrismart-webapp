@@ -1,0 +1,158 @@
+.pg-shell {
+  min-height: 100vh;
+  background: var(--nutrismart-bg, #f5f7f7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+.pg-card {
+  background: var(--nutrismart-white, #ffffff);
+  border: 1px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius, 14px);
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.pg-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pg-lock-icon {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.pg-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  margin: 0;
+}
+
+.pg-subtitle {
+  font-size: 0.85rem;
+  color: var(--nutrismart-text-light, #8aa8a8);
+  margin: 0;
+}
+
+.pg-plan-chip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  border: 1px solid var(--nutrismart-primary, #508B89);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 10px 14px;
+}
+
+.pg-plan-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+}
+
+.pg-plan-price {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--nutrismart-primary, #508B89);
+}
+
+.pg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pg-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.pg-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-mid, #4a6060);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.pg-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  font-size: 0.95rem;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  background: var(--nutrismart-white, #ffffff);
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.pg-input:focus {
+  border-color: var(--nutrismart-primary, #508B89);
+  box-shadow: 0 0 0 3px rgba(80, 139, 137, 0.12);
+}
+
+.pg-input--mono {
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 1px;
+}
+
+.pg-input--error {
+  border-color: #ef4444;
+}
+
+.pg-input--error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.pg-error {
+  font-size: 0.78rem;
+  color: #ef4444;
+}
+
+.pg-btn-submit {
+  width: 100%;
+  padding: 13px;
+  background: var(--nutrismart-primary, #508B89);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 4px;
+}
+
+.pg-btn-submit:hover {
+  background: var(--nutrismart-primary-dark, #3d6e6c);
+}
+
+.pg-security-note {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--nutrismart-text-light, #8aa8a8);
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .pg-card {
+    padding: 28px 20px;
+  }
+
+  .pg-row {
+    grid-template-columns: 1fr;
+  }
+}

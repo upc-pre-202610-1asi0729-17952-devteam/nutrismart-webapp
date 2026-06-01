@@ -9,6 +9,8 @@ import { IamStore } from '../../iam/application/iam.store';
 import { SubscriptionPlan } from '../../iam/domain/model/subscription-plan.enum';
 import { SubscriptionApi } from '../infrastructure/subscription-api';
 import { Subscription } from '../domain/model/subscription.entity';
+import { BillingHistoryApi } from '../infrastructure/billing-history-api';
+import { BillingRecord } from '../domain/model/billing-record.entity';
 
 /**
  * Central state store for the Subscriptions bounded context.
@@ -22,26 +24,31 @@ import { Subscription } from '../domain/model/subscription.entity';
  */
 @Injectable({ providedIn: 'root' })
 export class SubscriptionsStore {
-  private readonly api      = inject(SubscriptionApi);
-  private readonly iamStore = inject(IamStore);
-  private readonly eventBus = inject(DomainEventBus);
+  private readonly api               = inject(SubscriptionApi);
+  private readonly billingHistoryApi = inject(BillingHistoryApi);
+  private readonly iamStore          = inject(IamStore);
+  private readonly eventBus          = inject(DomainEventBus);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
-  private _subscription = signal<Subscription | null>(null);
-  private _loading      = signal<boolean>(false);
-  private _error        = signal<string | null>(null);
+  private _subscription   = signal<Subscription | null>(null);
+  private _billingHistory = signal<BillingRecord[]>([]);
+  private _loading        = signal<boolean>(false);
+  private _error          = signal<string | null>(null);
 
   // ─── Public Read-only Signals ─────────────────────────────────────────────
 
   /** Current subscription entity, or null when none is active. */
-  readonly subscription = this._subscription.asReadonly();
+  readonly subscription   = this._subscription.asReadonly();
+
+  /** Billing history records sorted newest-first. */
+  readonly billingHistory = this._billingHistory.asReadonly();
 
   /** Whether an async operation is in flight. */
-  readonly loading      = this._loading.asReadonly();
+  readonly loading        = this._loading.asReadonly();
 
   /** Last error i18n key, or null. */
-  readonly error        = this._error.asReadonly();
+  readonly error          = this._error.asReadonly();
 
   // ─── Computed Signals ─────────────────────────────────────────────────────
 
@@ -56,7 +63,7 @@ export class SubscriptionsStore {
   // ─── Actions ──────────────────────────────────────────────────────────────
 
   /**
-   * Loads the subscription for the current user.
+   * Loads the subscription and billing history for the current user.
    *
    * @param userId - Numeric user ID.
    * @returns Promise that resolves when loading is complete.
@@ -65,12 +72,31 @@ export class SubscriptionsStore {
     this._loading.set(true);
     this._error.set(null);
     try {
-      const subscription = await firstValueFrom(this.api.getSubscription(String(userId)));
+      const [subscription, history] = await Promise.all([
+        firstValueFrom(this.api.getSubscription(String(userId))),
+        firstValueFrom(this.billingHistoryApi.getHistory(String(userId))),
+      ]);
       this._subscription.set(subscription);
+      this._billingHistory.set(history);
     } catch {
       this._error.set('subscriptions.error_load_failed');
     } finally {
       this._loading.set(false);
+    }
+  }
+
+  /**
+   * Loads only the billing history for the given user.
+   * Useful when the billing panel is opened without re-loading the subscription.
+   *
+   * @param userId - Numeric user ID.
+   */
+  async loadBillingHistory(userId: number): Promise<void> {
+    try {
+      const history = await firstValueFrom(this.billingHistoryApi.getHistory(String(userId)));
+      this._billingHistory.set(history);
+    } catch {
+      this._billingHistory.set([]);
     }
   }
 

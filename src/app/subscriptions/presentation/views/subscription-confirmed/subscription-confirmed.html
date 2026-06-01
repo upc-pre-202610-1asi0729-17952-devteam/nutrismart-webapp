@@ -1,0 +1,30 @@
+<div class="sc-shell">
+  <div class="sc-card">
+    <!-- Success icon -->
+    <div class="sc-icon-wrap" aria-hidden="true">
+      <div class="sc-icon">✓</div>
+    </div>
+
+    <!-- Heading -->
+    <h1 class="sc-title">{{ 'subscription.confirmed_title' | translate }}</h1>
+    <p class="sc-subtitle">
+      {{ 'subscription.confirmed_subtitle' | translate : { plan: ('subscription.plan_' + plan()!.toLowerCase()) | translate } }}
+    </p>
+
+    <!-- Plan chip -->
+    @if (plan()) {
+      <div class="sc-plan-chip">
+        <span class="sc-plan-name">{{ ('subscription.plan_' + plan()!.toLowerCase()) | translate }}</span>
+        <span class="sc-plan-price">${{ price() | number:'1.2-2' }} {{ 'subscription.per_month' | translate }}</span>
+      </div>
+    }
+
+    <!-- CTA -->
+    <button type="button" class="sc-btn-dashboard" (click)="goToDashboard()">
+      {{ 'subscription.confirmed_cta' | translate }}
+    </button>
+
+    <!-- Legal -->
+    <p class="sc-legal">{{ 'subscription.legal' | translate }}</p>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+<div class="co-shell">
+  <div class="co-card">
+    <!-- Header -->
+    <div class="co-header">
+      <h1 class="co-title">{{ 'checkout.title' | translate }}</h1>
+      <p class="co-subtitle">{{ 'checkout.subtitle' | translate }}</p>
+    </div>
+
+    <!-- Order details -->
+    <div class="co-details">
+      <div class="co-row">
+        <span class="co-label">{{ 'checkout.plan_label' | translate }}</span>
+        <span class="co-value co-value--plan">
+          {{ ('subscription.plan_' + plan()!.toLowerCase()) | translate }}
+        </span>
+      </div>
+      <div class="co-row">
+        <span class="co-label">{{ 'checkout.billing_label' | translate }}</span>
+        <span class="co-value">{{ 'subscription.per_month' | translate }}</span>
+      </div>
+
+      <div class="co-divider" role="separator"></div>
+
+      <div class="co-row co-row--total">
+        <span class="co-label co-label--total">{{ 'checkout.total_label' | translate }}</span>
+        <span class="co-value co-value--total">${{ price() | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <!-- Payment method -->
+    @if (paymentMethod()) {
+      <div class="co-method">
+        <span class="co-method-label">{{ 'checkout.card_label' | translate }}</span>
+        <div class="co-method-card">
+          <span class="co-method-brand">{{ paymentMethod()!.brand }}</span>
+          <span class="co-method-number">{{ paymentMethod()!.maskedNumber }}</span>
+          <span class="co-method-expiry">{{ paymentMethod()!.expiryLabel }}</span>
+        </div>
+        <span class="co-method-holder">{{ paymentMethod()!.holderName }}</span>
+      </div>
+    }
+
+    <!-- Error state -->
+    @if (error()) {
+      <div class="co-error" role="alert">
+        {{ error()! | translate }}
+      </div>
+    }
+
+    <!-- Legal -->
+    <p class="co-legal">{{ 'checkout.legal' | translate }}</p>
+
+    <!-- Actions -->
+    <div class="co-actions">
+      <button
+        type="button"
+        class="co-btn-back"
+        [disabled]="processing()"
+        (click)="goBack()"
+      >
+        {{ 'checkout.btn_back' | translate }}
+      </button>
+      <button
+        type="button"
+        class="co-btn-confirm"
+        [disabled]="processing()"
+        (click)="confirm()"
+        aria-live="polite"
+      >
+        @if (processing()) {
+          {{ 'checkout.processing' | translate }}
+        } @else {
+          {{ 'checkout.btn_confirm' | translate }}
+        }
+      </button>
+    </div>
+  </div>
+</div>

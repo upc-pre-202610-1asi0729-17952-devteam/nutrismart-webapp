@@ -8,6 +8,8 @@ import { firstValueFrom } from 'rxjs';
 import { routes } from './app.routes';
 import { AnalyticsApi } from './analytics/infrastructure/analytics-api';
 import { AnalyticsApiHttpService } from './analytics/infrastructure/analytics-api-http.service';
+import { PaymentGatewayPort } from './subscriptions/domain/ports/payment-gateway.port';
+import { SimulatedPaymentGateway } from './subscriptions/infrastructure/simulated-payment-gateway';
 
 function initLanguage(translate: TranslateService) {
   return async () => {
@@ -38,6 +40,7 @@ export const appConfig: ApplicationConfig = {
     provideTranslateService(),
     provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),
     { provide: AnalyticsApi, useClass: AnalyticsApiHttpService },
+    { provide: PaymentGatewayPort, useClass: SimulatedPaymentGateway },
     {
       provide: APP_INITIALIZER,
       useFactory: initLanguage,

@@ -14,15 +14,15 @@
   }
 
   <div class="subscription-header">
-    <h1 class="page-title">{{ 'subscriptions.title' | translate }}</h1>
+    <h1 class="page-title">{{ 'subscription.title' | translate }}</h1>
     <p class="page-subtitle">{{ 'subscription.subtitle' | translate }}</p>
   </div>
 
-  <!-- Current plan indicator (manage mode) -->
+  <!-- Current plan indicator -->
   @if (store.hasActivePlan()) {
     <div class="current-plan-banner" role="status">
       <strong>{{ 'subscriptions.current_plan' | translate }}:</strong>
-      {{ ('subscriptions.plan_' + (currentPlan() ?? '' | lowercase)) | translate }}
+      {{ ('subscription.plan_' + (currentPlan() ?? '' | lowercase)) | translate }}
     </div>
   }
 
@@ -46,7 +46,7 @@
           <span class="price-period">{{ 'subscription.per_month' | translate }}</span>
         </div>
 
-        <ul class="plan-features" aria-label="{{ plan.nameKey | translate }} features">
+        <ul class="plan-features" [attr.aria-label]="(plan.nameKey | translate) + ' features'">
           @for (feature of plan.featureKeys; track feature) {
             <li>{{ feature | translate }}</li>
           }
@@ -59,9 +59,9 @@
           [class.btn-plan-current]="plan.plan === currentPlan()"
           [disabled]="plan.plan === currentPlan() || store.loading()"
           (click)="selectPlan(plan.plan)"
-          [attr.aria-label]="(plan.nameKey | translate) + ' — ' + (plan.ctaKey | translate)"
+          [attr.aria-label]="(plan.nameKey | translate)"
         >
-          {{ (plan.plan === currentPlan() ? 'subscriptions.current_plan' : plan.ctaKey) | translate }}
+          {{ (plan.plan === currentPlan() ? 'subscription.cta_current_plan' : 'subscriptions.cta_select') | translate }}
         </button>
       </div>
     }

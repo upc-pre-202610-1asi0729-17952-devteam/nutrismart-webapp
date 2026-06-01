@@ -9,6 +9,7 @@ export interface SubscriptionProps {
   status: SubscriptionStatus;
   startDate: string;
   endDate: string;
+  pricePerMonth?: number;
 }
 
 const PLAN_FEATURES: Record<SubscriptionPlan, string[]> = {
@@ -54,14 +55,16 @@ export class Subscription {
   status: SubscriptionStatus;
   startDate: string;
   endDate: string;
+  pricePerMonth: number;
 
   constructor(props: SubscriptionProps) {
-    this.id        = props.id;
-    this.userId    = props.userId;
-    this.plan      = props.plan;
-    this.status    = props.status;
-    this.startDate = props.startDate;
-    this.endDate   = props.endDate;
+    this.id            = props.id;
+    this.userId        = props.userId;
+    this.plan          = props.plan;
+    this.status        = props.status;
+    this.startDate     = props.startDate;
+    this.endDate       = props.endDate;
+    this.pricePerMonth = props.pricePerMonth ?? 0;
   }
 
   /**

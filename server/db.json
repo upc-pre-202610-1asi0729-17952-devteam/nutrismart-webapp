@@ -247,7 +247,7 @@
       "weight": 50,
       "height": 170,
       "activityLevel": "SEDENTARY",
-      "plan": "PRO",
+      "plan": "BASIC",
       "restrictions": [
         "LACTOSE_FREE"
       ],
@@ -608,6 +608,33 @@
       "createdAt": "2026-05-13",
       "home_city": "Lima",
       "goal_started_at": "2026-05-13"
+    },
+    {
+      "id": "xfmofeddb",
+      "firstName": "Angel ",
+      "lastName": "V",
+      "email": "aaa@gmail.com",
+      "goal": "WEIGHT_LOSS",
+      "weight": 60,
+      "height": 172,
+      "activityLevel": "SEDENTARY",
+      "plan": "PREMIUM",
+      "restrictions": [
+        "LACTOSE_FREE"
+      ],
+      "medicalConditions": [
+        "TYPE_2_DIABETES"
+      ],
+      "dailyCalorieTarget": 1517,
+      "proteinTarget": 96,
+      "carbsTarget": 189,
+      "fatTarget": 42,
+      "fiberTarget": 25,
+      "birthday": "2005-02-19",
+      "biologicalSex": "male",
+      "createdAt": "2026-06-01",
+      "home_city": "Lima",
+      "goal_started_at": "2026-06-01"
     }
   ],
   "nutrition-log": [
@@ -6203,6 +6230,23 @@
       "loggedAt": "2026-05-13T02:43:49.139Z",
       "userId": "ze68pmju4",
       "id": "NP-UuzfMto0"
+    },
+    {
+      "foodItemId": "4",
+      "foodItemName": "Lemon garlic rice",
+      "foodItemNameEs": "",
+      "mealType": "BREAKFAST",
+      "quantity": 100,
+      "unit": "g",
+      "calories": 340,
+      "protein": 6,
+      "carbs": 64,
+      "fat": 4,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-06-01T08:05:45.517Z",
+      "userId": "xfmofeddb",
+      "id": "oPB0nxggzb4"
     }
   ],
   "foods": [
@@ -7457,6 +7501,15 @@
       "logged_at": "2026-05-13T01:18:13.518Z",
       "target_weight_kg": 70,
       "projected_achievement_date": "2026-05-13T02:23:24.202Z"
+    },
+    {
+      "id": "3DUHfk_oUkU",
+      "user_id": "xfmofeddb",
+      "weight_kg": 60,
+      "height_cm": 172,
+      "logged_at": "2026-06-01T07:55:09.799Z",
+      "target_weight_kg": 60,
+      "projected_achievement_date": "2026-06-01T16:33:11.202Z"
     }
   ],
   "recommendations": [
@@ -8046,6 +8099,26 @@
       "calories_per_100g": 149,
       "user_id": "3tx6ew4jr",
       "added_at": "2026-05-13T01:20:25.084Z"
+    },
+    {
+      "id": "VYjZ-zASnHw",
+      "name": "White rice",
+      "name_key": "white_rice",
+      "category": "Grain",
+      "quantity_grams": 100,
+      "calories_per_100g": 130,
+      "user_id": "xfmofeddb",
+      "added_at": "2026-06-01T08:05:31.670Z"
+    },
+    {
+      "id": "kIN9tUSPdjw",
+      "name": "Garlic",
+      "name_key": "garlic",
+      "category": "Seasoning",
+      "quantity_grams": 100,
+      "calories_per_100g": 149,
+      "user_id": "xfmofeddb",
+      "added_at": "2026-06-01T08:05:42.044Z"
     }
   ],
   "ingredient-catalog": [
@@ -8519,9 +8592,9 @@
       "userId": "Mv9paKyK60k",
       "plan": "PREMIUM",
       "status": "ACTIVE",
-      "nextRenewal": "2026-05-14",
+      "nextRenewal": "2026-06-01",
       "pricePerMonth": 19.99,
-      "startDate": "2026-02-14"
+      "startDate": "2026-05-01"
     },
     {
       "id": "rsiv5w",
@@ -8608,6 +8681,22 @@
       "startDate": "2026-05-13",
       "nextRenewal": "2026-06-12",
       "id": "QeYqu814Xio"
+    },
+    {
+      "userId": "j4dxn39zx",
+      "plan": "BASIC",
+      "status": "ACTIVE",
+      "startDate": "2026-06-01",
+      "nextRenewal": "2026-07-01",
+      "id": "pgOcnJEfWLY"
+    },
+    {
+      "userId": "xfmofeddb",
+      "plan": "PREMIUM",
+      "status": "ACTIVE",
+      "startDate": "2026-06-01",
+      "nextRenewal": "2026-07-01",
+      "id": "DxTyGqkVznI"
     }
   ],
   "billing-history": [
@@ -8641,28 +8730,28 @@
     {
       "id": "4",
       "userId": "Mv9paKyK60k",
-      "date": "2026-04-14",
+      "date": "2026-05-31",
       "plan": "PREMIUM",
-      "amount": 49.9,
-      "currency": "S/",
+      "amount": 19.99,
+      "currency": "USD",
       "status": "PAID"
     },
     {
       "id": "5",
       "userId": "Mv9paKyK60k",
-      "date": "2026-03-14",
+      "date": "2026-05-01",
       "plan": "PREMIUM",
-      "amount": 49.9,
-      "currency": "S/",
+      "amount": 19.99,
+      "currency": "USD",
       "status": "PAID"
     },
     {
       "id": "6",
       "userId": "Mv9paKyK60k",
-      "date": "2026-02-14",
+      "date": "2026-04-01",
       "plan": "PREMIUM",
       "amount": 0,
-      "currency": "S/",
+      "currency": "USD",
       "status": "TRIAL"
     },
     {
@@ -10298,6 +10387,15 @@
       "goalMetDates": [
         "2026-05-13"
       ]
+    },
+    {
+      "userId": "xfmofeddb",
+      "adherenceStatus": "ON_TRACK",
+      "streak": 0,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "",
+      "goalMetDates": [],
+      "id": "KATZ0OZ8zyQ"
     }
   ],
   "eating-behavior-patterns": [
@@ -12658,6 +12756,76 @@
       "newFat": 47,
       "changedAt": "2026-05-13T01:18:13.546Z",
       "id": "kdNLZX5Yow4"
+    },
+    {
+      "userId": "xfmofeddb",
+      "triggeredBy": "ONBOARDING",
+      "previousCalories": 2000,
+      "newCalories": 1638,
+      "previousProtein": 100,
+      "newProtein": 107,
+      "previousCarbs": 250,
+      "newCarbs": 199,
+      "previousFat": 65,
+      "newFat": 46,
+      "changedAt": "2026-06-01T07:54:54.505Z",
+      "id": "OwaOcUtnl7c"
+    },
+    {
+      "userId": "xfmofeddb",
+      "triggeredBy": "PROFILE_CHANGE",
+      "previousCalories": 2000,
+      "newCalories": 1902,
+      "previousProtein": 100,
+      "newProtein": 112,
+      "previousCarbs": 250,
+      "newCarbs": 244,
+      "previousFat": 65,
+      "newFat": 53,
+      "changedAt": "2026-06-01T07:54:55.602Z",
+      "id": "9e9GNCpP-tU"
+    },
+    {
+      "userId": "xfmofeddb",
+      "triggeredBy": "ONBOARDING",
+      "previousCalories": 2000,
+      "newCalories": 1517,
+      "previousProtein": 100,
+      "newProtein": 96,
+      "previousCarbs": 250,
+      "newCarbs": 189,
+      "previousFat": 65,
+      "newFat": 42,
+      "changedAt": "2026-06-01T07:55:07.718Z",
+      "id": "G7fMcflvXO8"
+    },
+    {
+      "userId": "xfmofeddb",
+      "triggeredBy": "PROFILE_CHANGE",
+      "previousCalories": 2000,
+      "newCalories": 1517,
+      "previousProtein": 100,
+      "newProtein": 96,
+      "previousCarbs": 250,
+      "newCarbs": 189,
+      "previousFat": 65,
+      "newFat": 42,
+      "changedAt": "2026-06-01T07:55:08.301Z",
+      "id": "UZdsMG27OoM"
+    },
+    {
+      "userId": "xfmofeddb",
+      "triggeredBy": "BODY_METRICS_UPDATE",
+      "previousCalories": 1517,
+      "newCalories": 1517,
+      "previousProtein": 96,
+      "newProtein": 96,
+      "previousCarbs": 189,
+      "newCarbs": 189,
+      "previousFat": 42,
+      "newFat": 42,
+      "changedAt": "2026-06-01T07:55:09.824Z",
+      "id": "5OjwXu314jY"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
