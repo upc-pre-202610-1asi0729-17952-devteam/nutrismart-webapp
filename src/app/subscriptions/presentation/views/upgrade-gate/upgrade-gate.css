@@ -1,0 +1,181 @@
+.ug-shell {
+  min-height: 100vh;
+  background: var(--nutrismart-bg, #f5f7f7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 16px;
+}
+
+.ug-card {
+  background: var(--nutrismart-white, #fff);
+  border: 1px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius, 14px);
+  padding: 44px 36px 36px;
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+/* ─── Icon ───────────────────────────────────────────────────────────────── */
+
+.ug-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ug-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--nutrismart-primary, #508B89);
+}
+
+/* ─── Heading ────────────────────────────────────────────────────────────── */
+
+.ug-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.ug-subtitle {
+  font-size: 0.875rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ─── Features ───────────────────────────────────────────────────────────── */
+
+.ug-features-wrap {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ug-features-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--nutrismart-text-mid, #4a6060);
+  margin: 0;
+}
+
+.ug-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ug-feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.875rem;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+}
+
+.ug-check {
+  width: 16px;
+  height: 16px;
+  color: var(--nutrismart-primary, #508B89);
+  flex-shrink: 0;
+}
+
+/* ─── Price ──────────────────────────────────────────────────────────────── */
+
+.ug-price {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 12px 20px;
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  border: 1px solid var(--nutrismart-primary, #508B89);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+}
+
+.ug-price-amount {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--nutrismart-primary, #508B89);
+}
+
+.ug-price-period {
+  font-size: 0.85rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+}
+
+/* ─── Actions ────────────────────────────────────────────────────────────── */
+
+.ug-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ug-btn-upgrade {
+  width: 100%;
+  padding: 13px;
+  background: var(--nutrismart-primary, #508B89);
+  color: #fff;
+  border: none;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.ug-btn-upgrade:hover {
+  background: var(--nutrismart-primary-dark, #3d6e6c);
+}
+
+.ug-btn-back {
+  width: 100%;
+  padding: 11px;
+  background: transparent;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  color: var(--nutrismart-text-mid, #4a6060);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ug-btn-back:hover {
+  background: var(--nutrismart-bg, #f5f7f7);
+}
+
+/* ─── Legal ──────────────────────────────────────────────────────────────── */
+
+.ug-legal {
+  font-size: 0.75rem;
+  color: var(--nutrismart-text-light, #8aa8a8);
+  margin: 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+  .ug-card {
+    padding: 32px 20px 28px;
+  }
+}

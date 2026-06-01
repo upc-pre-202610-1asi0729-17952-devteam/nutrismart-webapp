@@ -853,6 +853,14 @@
     "recipe_impact_warning": "Añadir esto llegaría al {{ percent }}% de tu meta diaria",
     "recipe_impact_danger": "Añadir esto superaría tu meta diaria ({{ percent }}%)"
   },
+  "upgrade_gate": {
+    "title": "Esta función requiere el plan {{ plan }}",
+    "subtitle_pro": "Desbloquea Smart Scan, recomendaciones por clima, modo viaje, despensa y más.",
+    "subtitle_premium": "Obtén la experiencia completa de NutriSmart — todas las funciones, sin límites.",
+    "features_label": "Lo que desbloqueas:",
+    "cta": "Mejorar a {{ plan }}",
+    "back": "Volver al Dashboard"
+  },
   "my_plan": {
     "page_title": "Facturación",
     "page_subtitle": "Administra tu plan y consulta tu historial de pagos",

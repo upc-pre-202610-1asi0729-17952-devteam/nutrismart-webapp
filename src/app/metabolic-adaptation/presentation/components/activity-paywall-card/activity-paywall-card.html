@@ -25,7 +25,7 @@
       </li>
     </ul>
 
-    <a routerLink="/my-plan" class="pw-btn">
+    <a routerLink="/upgrade" [queryParams]="{ plan: 'PREMIUM' }" class="pw-btn">
       {{ 'physical_activity.paywall.upgrade_btn' | translate }}
       <span class="material-icons pw-btn-icon">arrow_forward</span>
     </a>

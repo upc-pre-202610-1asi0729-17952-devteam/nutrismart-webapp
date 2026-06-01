@@ -11,7 +11,8 @@ import { IamStore } from './iam.store';
  * - `'PRO'`     → allows PRO and PREMIUM users through.
  * - `'PREMIUM'` → allows PREMIUM users only.
  *
- * Redirects BASIC (or lower) users to `/subscription`.
+ * Redirects users who lack the required tier to `/upgrade?plan=<requiredPlan>`
+ * so they see an explicit upgrade screen instead of the generic billing panel.
  */
 export const planGuard: CanActivateFn = (route) => {
   const iamStore = inject(IamStore);
@@ -26,5 +27,7 @@ export const planGuard: CanActivateFn = (route) => {
     required === 'PRO'     ? user.isPro()     :
     true;
 
-  return allowed ? true : router.createUrlTree(['/my-plan']);
+  return allowed
+    ? true
+    : router.createUrlTree(['/upgrade'], { queryParams: { plan: required } });
 };

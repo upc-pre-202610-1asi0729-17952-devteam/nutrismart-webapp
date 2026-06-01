@@ -15,7 +15,7 @@
       <span class="paywall-icon material-icons">crop_free</span>
       <h2 class="paywall-title">{{ 'smart_scan.paywall_title' | translate }}</h2>
       <p class="paywall-description">{{ 'smart_scan.paywall_desc' | translate }}</p>
-      <a routerLink="/my-plan" mat-flat-button class="btn-teal paywall-cta">
+      <a routerLink="/upgrade" [queryParams]="{ plan: 'PRO' }" mat-flat-button class="btn-teal paywall-cta">
         {{ 'smart_scan.paywall_cta' | translate }}
       </a>
     </div>

@@ -15,6 +15,9 @@ const subscriptionConfirmed = () =>
 const billingPanel = () =>
   import('./views/billing-panel/billing-panel').then(m => m.BillingPanel);
 
+const upgradeGate = () =>
+  import('./views/upgrade-gate/upgrade-gate').then(m => m.UpgradeGate);
+
 /**
  * Post-onboarding subscription flow:
  *   /subscription          → plan selection
@@ -51,5 +54,17 @@ export const myPlanRoutes: Routes = [
     path: '',
     loadComponent: billingPanel,
     title: 'NutriSmart - My Plan',
+  },
+];
+
+/**
+ * Upgrade gate — shown by {@link planGuard} when a user lacks the required tier.
+ * Reads the required plan from the `plan` query parameter.
+ */
+export const upgradeRoutes: Routes = [
+  {
+    path: '',
+    loadComponent: upgradeGate,
+    title: 'NutriSmart - Upgrade Your Plan',
   },
 ];

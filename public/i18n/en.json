@@ -853,6 +853,14 @@
     "recipe_impact_warning": "Adding this reaches {{ percent }}% of your daily goal",
     "recipe_impact_danger": "Adding this exceeds your daily goal ({{ percent }}%)"
   },
+  "upgrade_gate": {
+    "title": "This feature requires the {{ plan }} plan",
+    "subtitle_pro": "Unlock Smart Scan, weather recommendations, travel mode, pantry and more.",
+    "subtitle_premium": "Get the full NutriSmart experience — every feature, unlimited.",
+    "features_label": "What you unlock:",
+    "cta": "Upgrade to {{ plan }}",
+    "back": "Back to Dashboard"
+  },
   "my_plan": {
     "page_title": "Billing",
     "page_subtitle": "Manage your plan and view your payment history",

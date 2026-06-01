@@ -58,6 +58,10 @@ const subscriptionsRoutes = () =>
 const myPlanRoutes = () =>
   import('./subscriptions/presentation/subscriptions.routes').then((m) => m.myPlanRoutes);
 
+/** Lazy-loads the upgrade gate (shown when planGuard blocks access). */
+const upgradeRoutes = () =>
+  import('./subscriptions/presentation/subscriptions.routes').then((m) => m.upgradeRoutes);
+
 const baseTitle = 'NutriSmart';
 
 /**
@@ -83,6 +87,7 @@ export const routes: Routes = [
   { path: 'analytics', loadChildren: analyticsRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
   { path: 'subscription', loadChildren: subscriptionsRoutes, canActivate: [authGuard] },
   { path: 'my-plan', loadChildren: myPlanRoutes, canActivate: [authGuard, subscriptionGuard] },
+  { path: 'upgrade', loadChildren: upgradeRoutes, canActivate: [authGuard, subscriptionGuard] },
   { path: '', redirectTo: '/auth/login', pathMatch: 'full' },
   {
     path: '**',
