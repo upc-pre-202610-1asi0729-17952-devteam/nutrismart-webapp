@@ -11,7 +11,7 @@ export interface PantryItemResource extends BaseResource {
   category: string;
   quantity_grams: number;
   calories_per_100g: number;
-  user_id: number;
+  userId: number;
   added_at: string;
 }
 

@@ -1,7 +1,7 @@
 import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-response';
 
 export interface WearableConnectionResource extends BaseResource {
-  user_id: number | string;
+  userId: number | string;
   provider: string;
   status: string;
   last_synced_at: string;
@@ -9,7 +9,7 @@ export interface WearableConnectionResource extends BaseResource {
 }
 
 export interface ActivityLogResource extends BaseResource {
-  user_id: number | string;
+  userId: number | string;
   activity_type: string;
   duration_minutes: number;
   calories_burned: number;

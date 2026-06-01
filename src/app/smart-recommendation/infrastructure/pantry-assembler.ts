@@ -28,7 +28,7 @@ export class PantryItemAssembler
       category:        r.category as IngredientCategory,
       quantityGrams:   r.quantity_grams,
       caloriesPer100g: r.calories_per_100g,
-      userId:          r.user_id,
+      userId:          r.userId,
       addedAt:         r.added_at,
     });
   }
@@ -41,7 +41,7 @@ export class PantryItemAssembler
       category:          e.category,
       quantity_grams:    e.quantityGrams,
       calories_per_100g: e.caloriesPer100g,
-      user_id:           e.userId,
+      userId:            e.userId,
       added_at:          e.addedAt,
     };
   }

@@ -25,7 +25,7 @@ export class WearableConnectionEndpoint extends BaseApiEndpoint<
   getByUserId(userId: string | number): Observable<WearableConnection | null> {
     return this.http.get<WearableConnectionResource[]>(this.endpointUrl).pipe(
       map(resources => {
-        const match = resources.find(r => String(r.user_id) === String(userId));
+        const match = resources.find(r => String(r.userId) === String(userId));
         return match ? this.assembler.toEntityFromResource(match) : null;
       }),
     );
@@ -47,7 +47,7 @@ export class ActivityLogEndpoint extends BaseApiEndpoint<
     return this.http.get<ActivityLogResource[]>(this.endpointUrl).pipe(
       map(resources =>
         resources
-          .filter(r => String(r.user_id) === String(userId))
+          .filter(r => String(r.userId) === String(userId))
           .map(r => this.assembler.toEntityFromResource(r)),
       ),
     );

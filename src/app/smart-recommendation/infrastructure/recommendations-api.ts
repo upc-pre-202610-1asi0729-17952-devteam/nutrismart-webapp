@@ -30,7 +30,7 @@ export interface RecommendationCard {
   id: number | string;
   name: string;
   description: string;
-  kcal: number;
+  calories: number;
   protein: string;
   badge: string;
 }
@@ -58,7 +58,7 @@ export class RecommendationsApi extends BaseApi {
 
   getLatestLocationSnapshot(userId: string): Observable<LocationSnapshot | null> {
     const params = new HttpParams()
-      .set('user_id', userId)
+      .set('userId', userId)
       .set('_sort', 'recorded_at')
       .set('_order', 'desc')
       .set('_limit', '1');
@@ -135,7 +135,7 @@ export class RecommendationsApi extends BaseApi {
   }
 
   getRecommendationSession(userId: string): Observable<RecommendationSession | null> {
-    const params = new HttpParams().set('user_id', userId).set('is_active', 'true');
+    const params = new HttpParams().set('userId', userId).set('is_active', 'true');
     return this.http
       .get<RecommendationSessionResource[]>(`${BASE}${environment.recommendationSessionsEndpointPath}`, { params })
       .pipe(
@@ -146,7 +146,7 @@ export class RecommendationsApi extends BaseApi {
   }
 
   getStrategyAdjustment(status: AdherenceStatus, userId: string): Observable<RecommendationSession> {
-    const params = new HttpParams().set('user_id', userId).set('is_active', 'true');
+    const params = new HttpParams().set('userId', userId).set('is_active', 'true');
     return this.http
       .get<RecommendationSessionResource[]>(`${BASE}${environment.recommendationSessionsEndpointPath}`, { params })
       .pipe(
@@ -169,7 +169,7 @@ export class RecommendationsApi extends BaseApi {
   }
 
   getTravelContext(userId: string): Observable<TravelContext | null> {
-    const params = new HttpParams().set('user_id', userId);
+    const params = new HttpParams().set('userId', userId);
     return this.http
       .get<TravelContextResource[]>(`${BASE}${environment.travelContextsEndpointPath}`, { params })
       .pipe(
@@ -180,7 +180,7 @@ export class RecommendationsApi extends BaseApi {
   }
 
   activateTravelMode(city: string, country: string, userId: string): Observable<TravelContext> {
-    const params = new HttpParams().set('user_id', userId);
+    const params = new HttpParams().set('userId', userId);
     return this.http
       .get<TravelContextResource[]>(`${BASE}${environment.travelContextsEndpointPath}`, { params })
       .pipe(
@@ -206,7 +206,7 @@ export class RecommendationsApi extends BaseApi {
   }
 
   deactivateTravelMode(userId: string): Observable<TravelContext> {
-    const params = new HttpParams().set('user_id', userId);
+    const params = new HttpParams().set('userId', userId);
     return this.http
       .get<TravelContextResource[]>(`${BASE}${environment.travelContextsEndpointPath}`, { params })
       .pipe(
@@ -241,8 +241,8 @@ export class RecommendationsApi extends BaseApi {
       id:          r.id,
       name:        es ? food.name_es : food.name,
       description: es ? r.description_es : r.description,
-      kcal:        food.kcal,
-      protein:     `P ${food.protein_g}g`,
+      calories:    food.calories_per_100g,
+      protein:     `P ${food.protein_per_100g}g`,
       badge:       r.badge,
     };
   }

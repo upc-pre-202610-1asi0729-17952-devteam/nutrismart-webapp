@@ -18,24 +18,24 @@ export class BodyMetricAssembler
   toEntityFromResource(r: BodyMetricResource): BodyMetric {
     return new BodyMetric({
       id:                       r.id,
-      userId:                   r.user_id as number,
-      weightKg:                 r.weight_kg,
-      heightCm:                 r.height_cm,
-      loggedAt:                 r.logged_at,
-      targetWeightKg:           r.target_weight_kg,
-      projectedAchievementDate: r.projected_achievement_date,
+      userId:                   r.userId as number,
+      weightKg:                 r.weightKg,
+      heightCm:                 r.heightCm,
+      loggedAt:                 r.loggedAt,
+      targetWeightKg:           r.targetWeightKg,
+      projectedAchievementDate: r.projectedAchievementDate,
     });
   }
 
   toResourceFromEntity(e: BodyMetric): BodyMetricResource {
     return {
-      id:                        e.id,
-      user_id:                   e.userId,
-      weight_kg:                 e.weightKg,
-      height_cm:                 e.heightCm,
-      logged_at:                 e.loggedAt,
-      target_weight_kg:          e.targetWeightKg,
-      projected_achievement_date: e.projectedAchievementDate,
+      id:                       e.id,
+      userId:                   e.userId,
+      weightKg:                 e.weightKg,
+      heightCm:                 e.heightCm,
+      loggedAt:                 e.loggedAt,
+      targetWeightKg:           e.targetWeightKg,
+      projectedAchievementDate: e.projectedAchievementDate,
     };
   }
 
@@ -56,7 +56,7 @@ export class BodyCompositionAssembler
   toEntityFromResource(r: BodyCompositionResource): BodyComposition {
     return new BodyComposition({
       id:                       r.id,
-      userId:                   r.user_id as number,
+      userId:                   r.userId as number,
       waistCm:                  r.waist_cm,
       neckCm:                   r.neck_cm,
       heightCm:                 r.height_cm,
@@ -70,7 +70,7 @@ export class BodyCompositionAssembler
   toResourceFromEntity(e: BodyComposition): BodyCompositionResource {
     return {
       id:                         e.id,
-      user_id:                    e.userId,
+      userId:                     e.userId,
       waist_cm:                   e.waistCm,
       neck_cm:                    e.neckCm,
       height_cm:                  e.heightCm,

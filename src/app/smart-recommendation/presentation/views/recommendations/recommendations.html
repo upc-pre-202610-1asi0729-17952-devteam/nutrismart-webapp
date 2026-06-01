@@ -132,7 +132,7 @@
             <div class="alert-card-meal">
               <span class="meal-name">{{ store.interventionCard()!.name }}</span>
               <span class="meal-desc">{{ store.interventionCard()!.description }}</span>
-              <span class="meal-kcal">{{ store.interventionCard()!.kcal }} kcal</span>
+              <span class="meal-kcal">{{ store.interventionCard()!.calories }} kcal</span>
               <span class="meal-protein tag">{{ store.interventionCard()!.protein }}</span>
             </div>
             <p class="event-label">{{ session()?.interventionEventLabel() }}</p>
@@ -155,7 +155,7 @@
             <div class="alert-card-meal">
               <span class="meal-name">{{ store.preventiveCard()!.name }}</span>
               <span class="meal-desc">{{ store.preventiveCard()!.description }}</span>
-              <span class="meal-kcal">{{ store.preventiveCard()!.kcal }} kcal</span>
+              <span class="meal-kcal">{{ store.preventiveCard()!.calories }} kcal</span>
               <span class="meal-protein tag">{{ store.preventiveCard()!.protein }}</span>
             </div>
             <p class="event-label">{{ session()?.preventiveEventLabel() }}</p>
@@ -181,7 +181,7 @@
               <h3 class="rec-card-name">{{ card.name }}</h3>
               <p class="rec-card-desc">{{ card.description }}</p>
               <div class="rec-card-tags">
-                <span class="tag tag--kcal">{{ card.kcal }} kcal</span>
+                <span class="tag tag--kcal">{{ card.calories }} kcal</span>
                 <span class="tag tag--protein">{{ card.protein }}</span>
                 <span class="tag">{{ card.badge }}</span>
               </div>

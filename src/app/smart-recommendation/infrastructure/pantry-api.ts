@@ -24,7 +24,7 @@ export class PantryApi extends BaseApi {
   private readonly _catalogUrl        = `${environment.apiBaseUrl}${environment.ingredientCatalogEndpointPath}`;
 
   getPantryItems(userId: number): Observable<PantryItem[]> {
-    return this._http.get<PantryItemResource[]>(`${this._pantryUrl}?user_id=${userId}`).pipe(
+    return this._http.get<PantryItemResource[]>(`${this._pantryUrl}?userId=${userId}`).pipe(
       map(rs => rs.map(r => this._pantryAssembler.toEntityFromResource(r))),
       catchError(this._handleError('getPantryItems')),
     );
