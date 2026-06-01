@@ -8,8 +8,9 @@ import { IamStore } from '../../../../iam/application/iam.store';
 /**
  * Order review screen (step 3 of the subscription flow).
  *
- * Displays plan name, price, and masked card details so the user can
- * verify before confirming. Delegates the actual charge to {@link PaymentStore}.
+ * Displays plan name, price and masked card details for final confirmation.
+ * The "Edit card" action clears the stored {@link PaymentMethod} and returns
+ * to the payment form without losing the selected plan.
  */
 @Component({
   selector: 'app-checkout-summary',
@@ -36,8 +37,17 @@ export class CheckoutSummary implements OnInit {
     }
   }
 
-  /** Navigates back to the payment form to adjust card details. */
+  /** Goes back to plan selection. */
   goBack(): void {
+    this.router.navigate(['/subscription']);
+  }
+
+  /**
+   * Removes the stored card and navigates back to the payment form.
+   * The selected plan is preserved so checkout resumes seamlessly after re-entry.
+   */
+  editCard(): void {
+    this.store.clearPaymentMethod();
     this.router.navigate(['/subscription/payment']);
   }
 

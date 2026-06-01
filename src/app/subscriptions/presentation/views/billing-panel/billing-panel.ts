@@ -47,7 +47,7 @@ export class BillingPanel implements OnInit {
    * so the user can pick a new plan and go through the payment steps.
    */
   changePlan(): void {
-    this.payStore.reset();
+    this.payStore.clearFlow();
     this.router.navigate(['/subscription']);
   }
 

@@ -20,11 +20,15 @@ const PLAN_PRICES: Record<SubscriptionPlan, number> = {
  * The actual subscription activation is delegated to {@link SubscriptionsStore}
  * after a successful payment.
  *
+ * The stored {@link PaymentMethod} survives plan changes within the same session
+ * so the user is not asked to re-enter their card when switching plans.
+ * Call {@link clearPaymentMethod} to explicitly remove it (e.g. "Edit card" action).
+ *
  * Provided in root so state survives navigation between payment steps.
  */
 @Injectable({ providedIn: 'root' })
 export class PaymentStore {
-  private readonly gateway           = inject(PaymentGatewayPort);
+  private readonly gateway            = inject(PaymentGatewayPort);
   private readonly subscriptionsStore = inject(SubscriptionsStore);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
@@ -40,7 +44,7 @@ export class PaymentStore {
   /** The plan the user chose on the plan selection screen. */
   readonly selectedPlan  = this._selectedPlan.asReadonly();
 
-  /** The card data entered on the payment form. */
+  /** The card saved during this session, or null. Persists across plan changes. */
   readonly paymentMethod = this._paymentMethod.asReadonly();
 
   /** True while the gateway request is in flight. */
@@ -68,13 +72,15 @@ export class PaymentStore {
   // ─── Actions ──────────────────────────────────────────────────────────────
 
   /**
-   * Sets the plan selected by the user on the plan selection screen.
+   * Sets the plan chosen on the plan selection screen.
+   *
+   * The existing {@link paymentMethod} is intentionally preserved so the user
+   * does not need to re-enter their card when switching between plans.
    *
    * @param plan - The {@link SubscriptionPlan} tier chosen.
    */
   setPlan(plan: SubscriptionPlan): void {
     this._selectedPlan.set(plan);
-    this._paymentMethod.set(null);
     this._confirmed.set(false);
     this._error.set(null);
   }
@@ -86,6 +92,26 @@ export class PaymentStore {
    */
   setPaymentMethod(method: PaymentMethod): void {
     this._paymentMethod.set(method);
+    this._error.set(null);
+  }
+
+  /**
+   * Removes the stored card, forcing the user back to the payment form.
+   * Used by the "Edit card" action in the checkout screen.
+   */
+  clearPaymentMethod(): void {
+    this._paymentMethod.set(null);
+    this._error.set(null);
+  }
+
+  /**
+   * Clears plan, confirmation state and error while preserving the stored card.
+   * Use this when starting a new plan selection from the billing panel so the
+   * user goes straight to checkout if a card is already on file.
+   */
+  clearFlow(): void {
+    this._selectedPlan.set(null);
+    this._confirmed.set(false);
     this._error.set(null);
   }
 
@@ -136,7 +162,10 @@ export class PaymentStore {
     }
   }
 
-  /** Clears all payment flow state. Call after the flow completes or is abandoned. */
+  /**
+   * Clears all payment flow state including the stored card.
+   * Call on logout or when the user fully abandons the subscription flow.
+   */
   reset(): void {
     this._selectedPlan.set(null);
     this._paymentMethod.set(null);

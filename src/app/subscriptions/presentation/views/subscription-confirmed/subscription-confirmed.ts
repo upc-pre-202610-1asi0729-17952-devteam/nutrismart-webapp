@@ -39,7 +39,7 @@ export class SubscriptionConfirmed implements OnInit {
 
   /** Navigates to the main dashboard and resets payment flow state. */
   goToDashboard(): void {
-    this.store.reset();
+    this.store.clearFlow();
     this.router.navigate(['/dashboard']);
   }
 }
