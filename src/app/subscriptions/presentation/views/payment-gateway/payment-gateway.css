@@ -1,4 +1,4 @@
-/* ─── Layout ─────────────────────────────────────────────────────────────── */
+/* ─── Shell ──────────────────────────────────────────────────────────────── */
 
 .pg-shell {
   min-height: 100vh;
@@ -9,12 +9,19 @@
   padding: 48px 16px 64px;
 }
 
+/* ─── Wrapper — mobile: single column ───────────────────────────────────── */
+
 .pg-wrapper {
   width: 100%;
-  max-width: 420px;
+  max-width: 460px;
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 20px;
+}
+
+/* Card preview comes first on mobile (order: -1 since it's second in DOM) */
+.pg-scene {
+  order: -1;
 }
 
 /* ─── Card preview (3-D flip) ────────────────────────────────────────────── */
@@ -23,9 +30,7 @@
   perspective: 900px;
   width: 100%;
   aspect-ratio: 1.586;
-  margin-bottom: -32px;
-  position: relative;
-  z-index: 1;
+  flex-shrink: 0;
 }
 
 .pg-card-inner {
@@ -60,10 +65,9 @@
   transform: rotateY(180deg);
   padding: 0;
   justify-content: flex-start;
-  gap: 0;
 }
 
-/* Front face elements */
+/* Front face */
 
 .pg-face-top {
   display: flex;
@@ -86,7 +90,7 @@
 }
 
 .pg-number {
-  font-size: clamp(1rem, 4vw, 1.25rem);
+  font-size: clamp(0.95rem, 3.5vw, 1.2rem);
   letter-spacing: 3px;
   color: #fff;
   text-align: center;
@@ -109,7 +113,7 @@
 }
 
 .pg-meta-label {
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: rgba(255, 255, 255, 0.55);
@@ -117,7 +121,7 @@
 }
 
 .pg-meta-value {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: #fff;
   letter-spacing: 0.5px;
   max-width: 160px;
@@ -126,7 +130,7 @@
   white-space: nowrap;
 }
 
-/* Back face elements */
+/* Back face */
 
 .pg-stripe {
   height: 44px;
@@ -146,8 +150,8 @@
   height: 36px;
   background: repeating-linear-gradient(
     90deg,
-    rgba(255,255,255,0.07) 0px,
-    rgba(255,255,255,0.07) 2px,
+    rgba(255, 255, 255, 0.07) 0px,
+    rgba(255, 255, 255, 0.07) 2px,
     transparent 2px,
     transparent 6px
   );
@@ -155,7 +159,7 @@
 }
 
 .pg-cvv-box {
-  background: rgba(255,255,255,0.95);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 4px;
   padding: 6px 14px;
   display: flex;
@@ -191,12 +195,10 @@
   background: var(--nutrismart-white, #fff);
   border: 1px solid var(--nutrismart-border, #e0eaea);
   border-radius: var(--nutrismart-radius, 14px);
-  padding: 48px 28px 28px;
+  padding: 28px;
   display: flex;
   flex-direction: column;
   gap: 18px;
-  position: relative;
-  z-index: 0;
 }
 
 /* Header */
@@ -205,7 +207,6 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  margin-bottom: 2px;
 }
 
 .pg-lock-icon {
@@ -353,15 +354,46 @@
   flex-shrink: 0;
 }
 
-/* ─── Responsive ─────────────────────────────────────────────────────────── */
+/* ─── Desktop: two-column layout ─────────────────────────────────────────── */
 
-@media (max-width: 480px) {
+@media (min-width: 800px) {
   .pg-shell {
-    padding: 32px 12px 48px;
+    align-items: center;
+    padding: 48px 32px 64px;
+  }
+
+  .pg-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    grid-template-areas: "form preview";
+    align-items: center;
+    gap: 40px;
+    max-width: 820px;
   }
 
   .pg-form-card {
-    padding: 44px 18px 22px;
+    grid-area: form;
+    padding: 32px;
+  }
+
+  .pg-scene {
+    grid-area: preview;
+    order: 0;         /* reset mobile order */
+    position: sticky;
+    top: 24px;
+    align-self: start;
+  }
+}
+
+/* ─── Mobile narrow ──────────────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .pg-shell {
+    padding: 24px 12px 48px;
+  }
+
+  .pg-form-card {
+    padding: 22px 18px;
   }
 
   .pg-row {

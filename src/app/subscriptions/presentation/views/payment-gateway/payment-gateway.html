@@ -1,51 +1,7 @@
 <div class="pg-shell">
   <div class="pg-wrapper">
 
-    <!-- ── Card preview ───────────────────────────────────────────────────── -->
-    <div class="pg-scene" aria-hidden="true">
-      <div class="pg-card-inner" [class.pg-card-inner--flipped]="cvvFocused()">
-
-        <!-- Front face -->
-        <div class="pg-face pg-face--front">
-          <div class="pg-face-top">
-            <svg class="pg-chip" viewBox="0 0 46 36" fill="none">
-              <rect width="46" height="36" rx="4" fill="#c9a84c"/>
-              <rect x="14" y="0" width="18" height="36" fill="#b8973d" opacity="0.55"/>
-              <rect x="0" y="11" width="46" height="14" fill="#b8973d" opacity="0.55"/>
-              <rect x="16" y="13" width="14" height="10" rx="1" fill="#d4b962"/>
-            </svg>
-            <span class="pg-brand">{{ displayBrand() }}</span>
-          </div>
-          <div class="pg-number">{{ displayNumber() }}</div>
-          <div class="pg-face-bottom">
-            <div class="pg-meta">
-              <span class="pg-meta-label">Card holder</span>
-              <span class="pg-meta-value">{{ displayName() }}</span>
-            </div>
-            <div class="pg-meta">
-              <span class="pg-meta-label">Expires</span>
-              <span class="pg-meta-value">{{ displayExpiry() }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Back face (CVV) -->
-        <div class="pg-face pg-face--back">
-          <div class="pg-stripe"></div>
-          <div class="pg-cvv-row">
-            <div class="pg-cvv-tape"></div>
-            <div class="pg-cvv-box">
-              <span class="pg-cvv-label">CVV</span>
-              <span class="pg-cvv-value">{{ displayCvv() }}</span>
-            </div>
-          </div>
-          <span class="pg-brand pg-brand--back">{{ displayBrand() }}</span>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ── Form card ──────────────────────────────────────────────────────── -->
+    <!-- ── Form card (left on desktop, bottom on mobile) ─────────────────── -->
     <div class="pg-form-card">
 
       <!-- Header -->
@@ -170,5 +126,50 @@
       </div>
 
     </div>
+
+    <!-- ── Card preview (right on desktop, top on mobile) ────────────────── -->
+    <div class="pg-scene" aria-hidden="true">
+      <div class="pg-card-inner" [class.pg-card-inner--flipped]="cvvFocused()">
+
+        <!-- Front face -->
+        <div class="pg-face pg-face--front">
+          <div class="pg-face-top">
+            <svg class="pg-chip" viewBox="0 0 46 36" fill="none">
+              <rect width="46" height="36" rx="4" fill="#c9a84c"/>
+              <rect x="14" y="0" width="18" height="36" fill="#b8973d" opacity="0.55"/>
+              <rect x="0" y="11" width="46" height="14" fill="#b8973d" opacity="0.55"/>
+              <rect x="16" y="13" width="14" height="10" rx="1" fill="#d4b962"/>
+            </svg>
+            <span class="pg-brand">{{ displayBrand() }}</span>
+          </div>
+          <div class="pg-number">{{ displayNumber() }}</div>
+          <div class="pg-face-bottom">
+            <div class="pg-meta">
+              <span class="pg-meta-label">Card holder</span>
+              <span class="pg-meta-value">{{ displayName() }}</span>
+            </div>
+            <div class="pg-meta">
+              <span class="pg-meta-label">Expires</span>
+              <span class="pg-meta-value">{{ displayExpiry() }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Back face (CVV) -->
+        <div class="pg-face pg-face--back">
+          <div class="pg-stripe"></div>
+          <div class="pg-cvv-row">
+            <div class="pg-cvv-tape"></div>
+            <div class="pg-cvv-box">
+              <span class="pg-cvv-label">CVV</span>
+              <span class="pg-cvv-value">{{ displayCvv() }}</span>
+            </div>
+          </div>
+          <span class="pg-brand pg-brand--back">{{ displayBrand() }}</span>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 </div>
