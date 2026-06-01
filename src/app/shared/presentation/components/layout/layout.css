@@ -71,7 +71,6 @@
   padding: 9px 10px;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 13.5px;
   color: var(--nutrismart-text-mid);
   text-decoration: none;
   transition: all 0.15s;
@@ -89,10 +88,38 @@
   font-weight: 600;
 }
 
+.nav-item.active .nav-desc {
+  color: var(--nutrismart-primary);
+  opacity: 0.75;
+}
+
 .nav-icon {
   font-size: 15px;
   width: 20px;
   text-align: center;
+  flex-shrink: 0;
+}
+
+.nav-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.nav-label {
+  font-size: 13.5px;
+  line-height: 1.2;
+}
+
+.nav-desc {
+  font-size: 11px;
+  color: var(--nutrismart-text-light);
+  line-height: 1.2;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sidebar-bottom {

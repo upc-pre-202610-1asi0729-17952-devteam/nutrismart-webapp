@@ -35,14 +35,35 @@
     </div>
 
     <div class="sidebar-section">
-      @for (item of mainNav(); track item.link) {
+      <div class="section-label">{{ 'nav.main' | translate }}</div>
+      @for (item of principalNav(); track item.link) {
         <a class="nav-item"
            [routerLink]="item.link"
            routerLinkActive="active"
            [attr.aria-label]="item.label | translate"
            (click)="closeSidebar()">
           <span class="nav-icon">{{ item.icon }}</span>
-          {{ item.label | translate }}
+          <span class="nav-text">
+            <span class="nav-label">{{ item.label | translate }}</span>
+            <span class="nav-desc">{{ item.description | translate }}</span>
+          </span>
+        </a>
+      }
+    </div>
+
+    <div class="sidebar-section">
+      <div class="section-label">{{ 'nav.tools' | translate }}</div>
+      @for (item of toolsNav(); track item.link) {
+        <a class="nav-item"
+           [routerLink]="item.link"
+           routerLinkActive="active"
+           [attr.aria-label]="item.label | translate"
+           (click)="closeSidebar()">
+          <span class="nav-icon">{{ item.icon }}</span>
+          <span class="nav-text">
+            <span class="nav-label">{{ item.label | translate }}</span>
+            <span class="nav-desc">{{ item.description | translate }}</span>
+          </span>
         </a>
       }
     </div>
