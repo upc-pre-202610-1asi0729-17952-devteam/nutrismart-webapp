@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { DecimalPipe } from '@angular/common';
 import { PaymentStore } from '../../../application/payment.store';
 import { PaymentMethod } from '../../../domain/model/payment-method.value-object';
 
@@ -35,7 +36,7 @@ function expiryValidator(control: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-payment-gateway',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, DecimalPipe],
   templateUrl: './payment-gateway.html',
   styleUrl: './payment-gateway.css',
 })

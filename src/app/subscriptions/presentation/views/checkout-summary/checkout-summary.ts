@@ -1,8 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { DecimalPipe } from '@angular/common';
 import { PaymentStore } from '../../../application/payment.store';
-import { IamStore } from '../../../../../iam/application/iam.store';
+import { IamStore } from '../../../../iam/application/iam.store';
 
 /**
  * Order review screen (step 3 of the subscription flow).
@@ -13,7 +14,7 @@ import { IamStore } from '../../../../../iam/application/iam.store';
 @Component({
   selector: 'app-checkout-summary',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, DecimalPipe],
   templateUrl: './checkout-summary.html',
   styleUrl: './checkout-summary.css',
 })

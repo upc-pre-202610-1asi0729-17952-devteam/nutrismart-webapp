@@ -1,12 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { LowerCasePipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { SubscriptionsStore } from '../../../application/subscriptions.store';
 import { PaymentStore } from '../../../application/payment.store';
-import { IamStore } from '../../../../../iam/application/iam.store';
+import { IamStore } from '../../../../iam/application/iam.store';
 import { BillingRecord } from '../../../domain/model/billing-record.entity';
-import { SubscriptionPlan } from '../../../../../iam/domain/model/subscription-plan.enum';
 
 /**
  * Billing dashboard panel displayed in the profile subscription section.
@@ -18,7 +17,7 @@ import { SubscriptionPlan } from '../../../../../iam/domain/model/subscription-p
 @Component({
   selector: 'app-billing-panel',
   standalone: true,
-  imports: [TranslatePipe, LowerCasePipe],
+  imports: [TranslatePipe, DecimalPipe],
   templateUrl: './billing-panel.html',
   styleUrl: './billing-panel.css',
 })
@@ -32,9 +31,6 @@ export class BillingPanel implements OnInit {
   protected readonly subscription  = this.store.subscription;
   protected readonly billingHistory = this.store.billingHistory;
   protected readonly loading        = this.store.loading;
-
-  /** Exposes {@link SubscriptionPlan} enum to the template. */
-  protected readonly SubscriptionPlan = SubscriptionPlan;
 
   async ngOnInit(): Promise<void> {
     const userId = this.iamStore.currentUser()?.id;
