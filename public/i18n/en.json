@@ -1,12 +1,12 @@
 {
   "nav": {
-    "principal": "PRINCIPAL",
-    "tools": "TOOLS",
     "dashboard": "Dashboard",
-    "daily_log": "Daily log",
+    "nutrition_log": "Nutrition Log",
+    "daily_log": "Daily Log",
     "smart_scan": "Smart Scan",
     "recommendations": "Recommendations",
-    "body_progress": "Body progress",
+    "feed": "Feed",
+    "body_progress": "Body Progress",
     "pantry": "Pantry",
     "wearable": "Physical Activity",
     "analytics": "Analytics",

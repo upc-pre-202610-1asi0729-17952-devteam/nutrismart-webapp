@@ -1,11 +1,11 @@
 {
   "nav": {
-    "principal": "PRINCIPAL",
-    "tools": "HERRAMIENTAS",
     "dashboard": "Dashboard",
+    "nutrition_log": "Registro Nutricional",
     "daily_log": "Registro diario",
     "smart_scan": "Smart Scan",
     "recommendations": "Recomendaciones",
+    "feed": "Feed",
     "body_progress": "Progreso corporal",
     "pantry": "Despensa",
     "wearable": "Actividad física",

@@ -1,0 +1,22 @@
+<div class="section-shell">
+
+  <nav class="section-tab-bar" role="tablist" [attr.aria-label]="'nav.nutrition_log' | translate">
+    <a class="section-tab"
+       routerLink="daily"
+       routerLinkActive="section-tab--active"
+       role="tab"
+       [attr.aria-label]="'nav.daily_log' | translate">
+      {{ 'nav.daily_log' | translate }}
+    </a>
+    <a class="section-tab"
+       routerLink="smart-scan"
+       routerLinkActive="section-tab--active"
+       role="tab"
+       [attr.aria-label]="'nav.smart_scan' | translate">
+      {{ 'nav.smart_scan' | translate }}
+    </a>
+  </nav>
+
+  <router-outlet />
+
+</div>

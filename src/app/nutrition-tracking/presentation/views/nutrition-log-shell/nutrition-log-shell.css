@@ -1,0 +1,40 @@
+.section-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.section-tab-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 2px;
+  padding: 0 24px;
+  background: var(--nutrismart-white);
+  border-bottom: 1px solid var(--nutrismart-border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: 44px;
+}
+
+.section-tab {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--nutrismart-text-mid);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.section-tab:hover {
+  background: var(--nutrismart-primary-lighter);
+  color: var(--nutrismart-primary);
+}
+
+.section-tab--active {
+  background: var(--nutrismart-primary-light);
+  color: var(--nutrismart-primary);
+  font-weight: 600;
+}

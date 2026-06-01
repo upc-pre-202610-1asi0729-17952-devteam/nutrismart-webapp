@@ -21,9 +21,10 @@ interface NavItem {
  * Main application shell component.
  *
  * Renders the fixed sidebar navigation and the `<router-outlet>` where
- * bounded-context views are projected. The sidebar is split into two
- * sections — principal features and tools — each driven by a signal-based
- * array so items can be updated reactively if needed.
+ * bounded-context views are projected. The sidebar has a single section with
+ * six main items driven by a signal-based array so items can be updated
+ * reactively if needed. Subscription management is accessible from the
+ * profile footer area.
  *
  * On mobile/tablet (≤ 1023px) the sidebar is hidden by default and toggled
  * via a hamburger button. Navigation events automatically close it.
@@ -65,20 +66,13 @@ export class Layout {
     this.isSidebarOpen.set(false);
   }
 
-  /** Primary navigation items shown in the PRINCIPAL section. */
-  principalNav = signal<NavItem[]>([
+  /** All navigation items shown in a single sidebar section. */
+  mainNav = signal<NavItem[]>([
     { link: '/dashboard',        label: 'nav.dashboard',        icon: '⊞' },
-    { link: '/nutrition',        label: 'nav.daily_log',        icon: '✓' },
-    { link: '/smart-scan',       label: 'nav.smart_scan',       icon: '◫' },
+    { link: '/nutrition-log',    label: 'nav.nutrition_log',    icon: '✓' },
     { link: '/recommendations',  label: 'nav.recommendations',  icon: '◎' },
     { link: '/body-progress',    label: 'nav.body_progress',    icon: '〜' },
-  ]);
-
-  /** Secondary navigation items shown in the TOOLS section. */
-  toolsNav = signal<NavItem[]>([
-    { link: '/pantry',       label: 'nav.pantry',       icon: '♡' },
-    { link: '/wearable',     label: 'nav.wearable',     icon: '▣' },
-    { link: '/analytics',    label: 'nav.analytics',    icon: '↑' },
-    { link: '/my-plan',      label: 'nav.subscription', icon: '◉' },
+    { link: '/wearable',         label: 'nav.wearable',         icon: '▣' },
+    { link: '/analytics',        label: 'nav.analytics',        icon: '↑' },
   ]);
 }

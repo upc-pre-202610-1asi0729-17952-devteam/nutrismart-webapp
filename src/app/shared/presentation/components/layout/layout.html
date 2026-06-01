@@ -35,22 +35,7 @@
     </div>
 
     <div class="sidebar-section">
-      <div class="section-label">{{ 'nav.principal' | translate }}</div>
-      @for (item of principalNav(); track item.link) {
-        <a class="nav-item"
-           [routerLink]="item.link"
-           routerLinkActive="active"
-           [attr.aria-label]="item.label | translate"
-           (click)="closeSidebar()">
-          <span class="nav-icon">{{ item.icon }}</span>
-          {{ item.label | translate }}
-        </a>
-      }
-    </div>
-
-    <div class="sidebar-section">
-      <div class="section-label">{{ 'nav.tools' | translate }}</div>
-      @for (item of toolsNav(); track item.link) {
+      @for (item of mainNav(); track item.link) {
         <a class="nav-item"
            [routerLink]="item.link"
            routerLinkActive="active"
@@ -69,6 +54,7 @@
           <div class="user-name">{{ iamStore.currentUser()?.fullName }}</div>
           <div class="user-links">
             <a [routerLink]="'/profile'" (click)="closeSidebar()">{{ 'nav.profile' | translate }}</a>
+            · <a [routerLink]="'/my-plan'" (click)="closeSidebar()">{{ 'nav.subscription' | translate }}</a>
             · <a href="#" (click)="iamStore.logout()">{{ 'nav.logout' | translate }}</a>
           </div>
         </div>

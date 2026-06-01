@@ -26,18 +26,14 @@ const profileRoutes = () =>
 const dashboardRoutes = () =>
   import('./behavioral-consistency/presentation/behavioral-consistency.routes').then((m) => m.behavioralConsistencyRoutes);
 
-/** Lazy-loads the nutrition tracking child routes. */
-const nutritionRoutes = () =>
-  import('./nutrition-tracking/presentation/nutrition.routes').then((m) => m.nutritionRoutes);
+/** Lazy-loads the Nutrition Log shell routes (Daily Log + Smart Scan tabs). */
+const nutritionLogRoutes = () =>
+  import('./nutrition-tracking/presentation/nutrition-log.routes').then((m) => m.nutritionLogRoutes);
 
-/** Lazy-loads the smart scan child routes (restaurant-intelligence context). */
-const smartScanRoutes = () =>
-  import('./restaurant-intelligence/presentation/restaurant-menu.routes').then((m) => m.restaurantMenuRoutes);
-
-/** Lazy-loads the recommendations child routes (smart-recommendation context). */
-const recommendationsRoutes = () =>
-  import('./smart-recommendation/presentation/recommendations.routes').then(
-    (m) => m.recommendationsRoutes,
+/** Lazy-loads the Recommendations hub routes (Feed + Pantry tabs). */
+const recommendationsHubRoutes = () =>
+  import('./smart-recommendation/presentation/recommendations-hub.routes').then(
+    (m) => m.recommendationsHubRoutes,
   );
 
 /** Lazy-loads the body progress child routes (metabolic-adaptation context). */
@@ -45,10 +41,6 @@ const bodyProgressRoutes = () =>
   import('./metabolic-adaptation/presentation/body-progress.routes').then(
     (m) => m.bodyProgressRoutes,
   );
-
-/** Lazy-loads the pantry child routes (smart-recommendation context). */
-const pantryRoutes = () =>
-  import('./smart-recommendation/presentation/pantry.routes').then((m) => m.pantryRoutes);
 
 /** Lazy-loads the wearable child routes (metabolic-adaptation context). */
 const wearableRoutes = () =>
@@ -79,12 +71,14 @@ export const routes: Routes = [
   { path: 'auth', loadChildren: iamRoutes },
   { path: 'onboarding', loadChildren: onboardingRoutes, canActivate: [onboardingGuard] },
   { path: 'profile', loadChildren: profileRoutes, canActivate: [authGuard, subscriptionGuard] },
-  { path: 'dashboard', loadChildren: dashboardRoutes, canActivate: [authGuard, subscriptionGuard] },
-  { path: 'nutrition', loadChildren: nutritionRoutes, canActivate: [authGuard, subscriptionGuard] },
-  { path: 'smart-scan', loadChildren: smartScanRoutes, canActivate: [authGuard, subscriptionGuard] },
-  { path: 'recommendations', loadChildren: recommendationsRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
-  { path: 'body-progress', loadChildren: bodyProgressRoutes, canActivate: [authGuard, subscriptionGuard] },
-  { path: 'pantry', loadChildren: pantryRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
+  { path: 'dashboard',      loadChildren: dashboardRoutes,          canActivate: [authGuard, subscriptionGuard] },
+  { path: 'nutrition-log',  loadChildren: nutritionLogRoutes,        canActivate: [authGuard, subscriptionGuard] },
+  { path: 'recommendations', loadChildren: recommendationsHubRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
+  { path: 'body-progress',  loadChildren: bodyProgressRoutes,        canActivate: [authGuard, subscriptionGuard] },
+  // Redirect legacy routes to the new grouped sections
+  { path: 'nutrition',   redirectTo: '/nutrition-log/daily',          pathMatch: 'prefix' },
+  { path: 'smart-scan',  redirectTo: '/nutrition-log/smart-scan',     pathMatch: 'prefix' },
+  { path: 'pantry',      redirectTo: '/recommendations/pantry',       pathMatch: 'prefix' },
   { path: 'wearable', loadChildren: wearableRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
   { path: 'analytics', loadChildren: analyticsRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
   { path: 'subscription', loadChildren: subscriptionsRoutes, canActivate: [authGuard] },
