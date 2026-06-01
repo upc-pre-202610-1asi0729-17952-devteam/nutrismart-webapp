@@ -1,5 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { filter, firstValueFrom } from 'rxjs';
+import { DomainEventBus } from '../../shared/application/domain-event-bus';
+import { SessionTerminated } from '../../shared/domain/session-terminated.event';
 import { SubscriptionPlan } from '../../iam/domain/model/subscription-plan.enum';
 import { PaymentGatewayPort } from '../domain/ports/payment-gateway.port';
 import { PaymentIntent } from '../domain/model/payment-intent.entity';
@@ -9,6 +11,8 @@ import { Subscription } from '../domain/model/subscription.entity';
 
 /** Alias for the canonical plan prices defined on the domain entity. */
 const PLAN_PRICES = Subscription.MONTHLY_PRICES;
+
+const STORAGE_KEY = 'nutrismart_payment_method';
 
 /**
  * State store for the multi-step payment flow.
@@ -27,6 +31,7 @@ const PLAN_PRICES = Subscription.MONTHLY_PRICES;
 export class PaymentStore {
   private readonly gateway            = inject(PaymentGatewayPort);
   private readonly subscriptionsStore = inject(SubscriptionsStore);
+  private readonly eventBus           = inject(DomainEventBus);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
@@ -35,6 +40,40 @@ export class PaymentStore {
   private _processing    = signal<boolean>(false);
   private _confirmed     = signal<boolean>(false);
   private _error         = signal<string | null>(null);
+
+  constructor() {
+    this.restorePaymentMethod();
+    // Root services live for the full app lifetime — no takeUntilDestroyed needed.
+    this.eventBus.events$
+      .pipe(filter(e => e instanceof SessionTerminated))
+      .subscribe(() => this.reset());
+  }
+
+  // ─── Storage helpers ──────────────────────────────────────────────────────
+
+  private saveToStorage(method: PaymentMethod): void {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      holderName:  method.holderName,
+      last4:       method.last4,
+      brand:       method.brand,
+      expiryMonth: method.expiryMonth,
+      expiryYear:  method.expiryYear,
+    }));
+  }
+
+  private restorePaymentMethod(): void {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      this._paymentMethod.set(new PaymentMethod(JSON.parse(raw)));
+    } catch {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }
+
+  private clearFromStorage(): void {
+    localStorage.removeItem(STORAGE_KEY);
+  }
 
   // ─── Public Read-only Signals ─────────────────────────────────────────────
 
@@ -90,6 +129,7 @@ export class PaymentStore {
   setPaymentMethod(method: PaymentMethod): void {
     this._paymentMethod.set(method);
     this._error.set(null);
+    this.saveToStorage(method);
   }
 
   /**
@@ -99,6 +139,7 @@ export class PaymentStore {
   clearPaymentMethod(): void {
     this._paymentMethod.set(null);
     this._error.set(null);
+    this.clearFromStorage();
   }
 
   /**
@@ -169,5 +210,6 @@ export class PaymentStore {
     this._processing.set(false);
     this._confirmed.set(false);
     this._error.set(null);
+    this.clearFromStorage();
   }
 }
