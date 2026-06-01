@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { forkJoin, Observable, throwError } from 'rxjs';
-import { catchError, map, retry } from 'rxjs/operators';
+import { catchError, map, retry, switchMap } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment.development';
 import { BaseApi } from '../../shared/infrastructure/base-api';
@@ -150,17 +150,29 @@ export class RecommendationsApi extends BaseApi {
     return this.http
       .get<RecommendationSessionResource[]>(`${BASE}${environment.recommendationSessionsEndpointPath}`, { params })
       .pipe(
-        map(list => list[0]),
-        map(resource => {
+        map(list => {
           const consecutiveMisses = status === AdherenceStatus.DROPPED ? 5
             : status === AdherenceStatus.AT_RISK ? 2 : 0;
-          return { ...resource, adherence_status: status, consecutive_misses: consecutiveMisses };
-        }),
-        map(patched => {
-          this.http.patch(
-            `${BASE}${environment.recommendationSessionsEndpointPath}/${patched.id}`,
-            { adherence_status: patched.adherence_status, consecutive_misses: patched.consecutive_misses },
-          ).pipe(retry(2), catchError(err => throwError(() => err))).subscribe();
+          const resource = list[0];
+          if (!resource) {
+            return this.sessionAssembler.toEntityFromResource({
+              id:                     0,
+              userId,
+              adherence_status:       status,
+              consecutive_misses:     consecutiveMisses,
+              simplified_kcal_target: 0,
+              created_at:             new Date().toISOString(),
+              is_active:              true,
+            } as RecommendationSessionResource);
+          }
+          const patched = { ...resource, adherence_status: status, consecutive_misses: consecutiveMisses };
+          this.http
+            .patch(
+              `${BASE}${environment.recommendationSessionsEndpointPath}/${patched.id}`,
+              { adherence_status: patched.adherence_status, consecutive_misses: patched.consecutive_misses },
+            )
+            .pipe(retry(2), catchError(err => throwError(() => err)))
+            .subscribe();
           return this.sessionAssembler.toEntityFromResource(patched);
         }),
         retry(2),
@@ -184,21 +196,28 @@ export class RecommendationsApi extends BaseApi {
     return this.http
       .get<TravelContextResource[]>(`${BASE}${environment.travelContextsEndpointPath}`, { params })
       .pipe(
-        map(list => list[0]),
-        map(resource => ({
-          ...resource,
-          city,
-          country,
-          is_active:    true,
-          is_manual:    false,
-          activated_at: new Date().toISOString(),
-        } as TravelContextResource)),
-        map(patched => {
-          this.http.patch(
-            `${BASE}${environment.travelContextsEndpointPath}/${patched.id}`,
-            { city: patched.city, country: patched.country, is_active: true, is_manual: false, activated_at: patched.activated_at },
-          ).pipe(retry(2), catchError(err => throwError(() => err))).subscribe();
-          return this.travelAssembler.toEntityFromResource(patched);
+        switchMap(list => {
+          const body = {
+            city,
+            country,
+            is_active:    true,
+            is_manual:    false,
+            activated_at: new Date().toISOString(),
+          };
+          if (list[0]) {
+            return this.http
+              .patch<TravelContextResource>(
+                `${BASE}${environment.travelContextsEndpointPath}/${list[0].id}`,
+                body,
+              )
+              .pipe(map(updated => this.travelAssembler.toEntityFromResource(updated)));
+          }
+          return this.http
+            .post<TravelContextResource>(
+              `${BASE}${environment.travelContextsEndpointPath}`,
+              { userId, ...body },
+            )
+            .pipe(map(created => this.travelAssembler.toEntityFromResource(created)));
         }),
         retry(2),
         catchError(err => throwError(() => err)),
@@ -210,16 +229,22 @@ export class RecommendationsApi extends BaseApi {
     return this.http
       .get<TravelContextResource[]>(`${BASE}${environment.travelContextsEndpointPath}`, { params })
       .pipe(
-        map(list => list[0]),
-        map(resource => ({
-          ...resource,
-          city: '', country: '', is_active: false, is_manual: false, activated_at: '',
-        } as TravelContextResource)),
-        map(patched => {
-          this.http.patch(
-            `${BASE}${environment.travelContextsEndpointPath}/${patched.id}`,
-            { city: '', country: '', is_active: false, is_manual: false, activated_at: '' },
-          ).pipe(retry(2), catchError(err => throwError(() => err))).subscribe();
+        map(list => {
+          const resource = list[0];
+          if (!resource) {
+            return new TravelContext({ id: 0, city: '', country: '', isActive: false, isManual: false, activatedAt: '' });
+          }
+          const patched: TravelContextResource = {
+            ...resource,
+            city: '', country: '', is_active: false, is_manual: false, activated_at: '',
+          };
+          this.http
+            .patch(
+              `${BASE}${environment.travelContextsEndpointPath}/${patched.id}`,
+              { city: '', country: '', is_active: false, is_manual: false, activated_at: '' },
+            )
+            .pipe(retry(2), catchError(err => throwError(() => err)))
+            .subscribe();
           return this.travelAssembler.toEntityFromResource(patched);
         }),
         retry(2),
@@ -239,7 +264,7 @@ export class RecommendationsApi extends BaseApi {
     const es = this.translate.currentLang === 'es';
     return {
       id:          r.id,
-      name:        es ? food.name_es : food.name,
+      name:        es ? (food.name_es ?? food.name) : food.name,
       description: es ? r.description_es : r.description,
       calories:    food.calories_per_100g,
       protein:     `P ${food.protein_per_100g}g`,

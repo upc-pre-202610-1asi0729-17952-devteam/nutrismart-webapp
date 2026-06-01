@@ -1,5 +1,4 @@
 {
-  "$schema": "./node_modules/json-server/schema.json",
   "users": [
     {
       "id": "alice001xxa",
@@ -50,6 +49,33 @@
       "createdAt": "2026-04-01",
       "home_city": "Lima",
       "goal_started_at": "2026-04-01"
+    },
+    {
+      "id": "imtrh8k4o",
+      "firstName": "a",
+      "lastName": "b",
+      "email": "a_a_a@gmail.com",
+      "goal": "WEIGHT_LOSS",
+      "weight": 70,
+      "height": 177,
+      "activityLevel": "SEDENTARY",
+      "plan": "PRO",
+      "restrictions": [
+        "LACTOSE_FREE"
+      ],
+      "medicalConditions": [
+        "TYPE_2_DIABETES"
+      ],
+      "dailyCalorieTarget": 1674,
+      "proteinTarget": 112,
+      "carbsTarget": 201,
+      "fatTarget": 47,
+      "fiberTarget": 25,
+      "birthday": "2005-02-19",
+      "biologicalSex": "male",
+      "createdAt": "2026-06-01",
+      "home_city": "Lima",
+      "goal_started_at": "2026-06-01"
     }
   ],
   "nutrition-log": [
@@ -86,6 +112,74 @@
       "sugar": 1.1,
       "loggedAt": "2026-04-23T08:00:00.000Z",
       "userId": "dan0001xxd"
+    },
+    {
+      "foodItemId": "1",
+      "foodItemName": "Cooked oatmeal",
+      "foodItemNameEs": "Avena cocida",
+      "mealType": "LUNCH",
+      "quantity": 80,
+      "unit": "g",
+      "calories": 120,
+      "protein": 5,
+      "carbs": 21.6,
+      "fat": 2,
+      "fiber": 1.4,
+      "sugar": 0.4,
+      "loggedAt": "2026-06-01T20:29:18.357Z",
+      "userId": "imtrh8k4o",
+      "id": "Hh_mM2ODQC4"
+    },
+    {
+      "foodItemId": 0,
+      "foodItemName": "Grilled chicken breast",
+      "foodItemNameEs": "Pechuga de pollo a la plancha",
+      "mealType": "LUNCH",
+      "quantity": 150,
+      "unit": "g",
+      "calories": 248,
+      "protein": 47,
+      "carbs": 0,
+      "fat": 5,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-06-01T20:29:21.394Z",
+      "userId": "imtrh8k4o",
+      "id": "qm0w9v0_fhM"
+    },
+    {
+      "foodItemId": 0,
+      "foodItemName": "White rice",
+      "foodItemNameEs": "Arroz blanco",
+      "mealType": "LUNCH",
+      "quantity": 180,
+      "unit": "g",
+      "calories": 234,
+      "protein": 4,
+      "carbs": 52,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-06-01T20:29:21.394Z",
+      "userId": "imtrh8k4o",
+      "id": "Xhs__807ADA"
+    },
+    {
+      "foodItemId": 0,
+      "foodItemName": "Mixed salad",
+      "foodItemNameEs": "Ensalada mixta",
+      "mealType": "LUNCH",
+      "quantity": 80,
+      "unit": "g",
+      "calories": 45,
+      "protein": 2,
+      "carbs": 8,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-06-01T20:29:21.394Z",
+      "userId": "imtrh8k4o",
+      "id": "5aPy2ThFKf8"
     }
   ],
   "foods": [
@@ -138,6 +232,15 @@
       "loggedAt": "2026-04-30T07:00:00.000Z",
       "targetWeightKg": 76,
       "projectedAchievementDate": "2026-10-01"
+    },
+    {
+      "id": "2-m0HR27SV4",
+      "userId": "imtrh8k4o",
+      "weightKg": 70,
+      "heightCm": 177,
+      "loggedAt": "2026-06-01T19:55:05.210Z",
+      "targetWeightKg": 70,
+      "projectedAchievementDate": "2026-06-01T20:53:45.374Z"
     }
   ],
   "recommendations": [],
@@ -216,6 +319,14 @@
       "nextRenewal": "2026-06-01",
       "pricePerMonth": 49.9,
       "startDate": "2026-04-01"
+    },
+    {
+      "id": "s5q5ONWo2A8",
+      "userId": "imtrh8k4o",
+      "plan": "PRO",
+      "status": "ACTIVE",
+      "startDate": "2026-06-01",
+      "nextRenewal": "2026-07-01"
     }
   ],
   "billing-history": [
@@ -236,6 +347,42 @@
       "amount": 49.9,
       "currency": "S/",
       "status": "PAID"
+    },
+    {
+      "userId": "imtrh8k4o",
+      "date": "2026-06-01",
+      "plan": "BASIC",
+      "amount": 7.99,
+      "currency": "USD",
+      "status": "PAID",
+      "id": "KI3kVD6La4o"
+    },
+    {
+      "userId": "imtrh8k4o",
+      "date": "2026-06-01",
+      "plan": "PRO",
+      "amount": 14.99,
+      "currency": "USD",
+      "status": "PAID",
+      "id": "PsGsIwxVeI8"
+    },
+    {
+      "userId": "imtrh8k4o",
+      "date": "2026-06-01",
+      "plan": "BASIC",
+      "amount": 7.99,
+      "currency": "USD",
+      "status": "PAID",
+      "id": "DME5eLJVoSg"
+    },
+    {
+      "userId": "imtrh8k4o",
+      "date": "2026-06-01",
+      "plan": "PRO",
+      "amount": 14.99,
+      "currency": "USD",
+      "status": "PAID",
+      "id": "9rsl9Kk0y0Q"
     }
   ],
   "behavioral-progress": [
@@ -256,10 +403,90 @@
       "consecutiveMisses": 0,
       "lastGoalMetDate": "2026-05-12",
       "goalMetDates": []
+    },
+    {
+      "id": "DJn3xQ3jPYk",
+      "userId": "imtrh8k4o",
+      "adherenceStatus": "AT_RISK",
+      "streak": 0,
+      "consecutiveMisses": 5,
+      "lastGoalMetDate": "",
+      "goalMetDates": []
     }
   ],
-  "eating-behavior-patterns": [],
-  "recovery-plans": [],
+  "eating-behavior-patterns": [
+    {
+      "id": "8VEGHdDJiG4",
+      "userId": "imtrh8k4o",
+      "weeklyCompletionRate": 0,
+      "currentStreak": 0,
+      "consecutiveMisses": 5,
+      "patternType": "IRREGULAR",
+      "analyzedAt": "2026-06-01"
+    }
+  ],
+  "recovery-plans": [
+    {
+      "userId": "imtrh8k4o",
+      "trigger": "BEHAVIORAL_DROP",
+      "status": "ACTIVE",
+      "actions": [
+        {
+          "type": "LOG_ANY_MEAL",
+          "descriptionKey": "behavioral.recovery.action.log_any_meal",
+          "priority": 1
+        },
+        {
+          "type": "SIMPLIFY_TRACKING",
+          "descriptionKey": "behavioral.recovery.action.simplify_tracking",
+          "priority": 2
+        }
+      ],
+      "activatedAt": "2026-06-01T20:52:45.781Z",
+      "resolvedAt": null,
+      "id": "qo8XnwVbauY"
+    },
+    {
+      "userId": "imtrh8k4o",
+      "trigger": "BEHAVIORAL_DROP",
+      "status": "ACTIVE",
+      "actions": [
+        {
+          "type": "LOG_ANY_MEAL",
+          "descriptionKey": "behavioral.recovery.action.log_any_meal",
+          "priority": 1
+        },
+        {
+          "type": "SIMPLIFY_TRACKING",
+          "descriptionKey": "behavioral.recovery.action.simplify_tracking",
+          "priority": 2
+        }
+      ],
+      "activatedAt": "2026-06-01T20:53:17.718Z",
+      "resolvedAt": null,
+      "id": "SQYuYA50z0k"
+    },
+    {
+      "userId": "imtrh8k4o",
+      "trigger": "BEHAVIORAL_DROP",
+      "status": "ACTIVE",
+      "actions": [
+        {
+          "type": "LOG_ANY_MEAL",
+          "descriptionKey": "behavioral.recovery.action.log_any_meal",
+          "priority": 1
+        },
+        {
+          "type": "SIMPLIFY_TRACKING",
+          "descriptionKey": "behavioral.recovery.action.simplify_tracking",
+          "priority": 2
+        }
+      ],
+      "activatedAt": "2026-06-01T20:53:45.529Z",
+      "resolvedAt": null,
+      "id": "XYeR8wChMvg"
+    }
+  ],
   "daily-balance": [
     {
       "id": "10ls04b",
@@ -367,6 +594,15 @@
       "created_at": "2026-05-11T08:00:00.000Z",
       "is_active": true,
       "userId": "dan0001xxd"
+    },
+    {
+      "id": "rs-imtrh8k4o",
+      "adherence_status": "AT_RISK",
+      "consecutive_misses": 2,
+      "simplified_kcal_target": 1306,
+      "created_at": "2026-06-01T00:00:00.000Z",
+      "is_active": true,
+      "userId": "imtrh8k4o"
     }
   ],
   "travel-contexts": [
@@ -387,6 +623,15 @@
       "is_manual": false,
       "activated_at": "",
       "userId": "dan0001xxd"
+    },
+    {
+      "id": "tc-imtrh8k4o",
+      "city": "",
+      "country": "",
+      "is_active": false,
+      "is_manual": false,
+      "activated_at": "",
+      "userId": "imtrh8k4o"
     }
   ],
   "wearable-connections": [
@@ -443,6 +688,49 @@
       "previousCalories": 1900,
       "newCalories": 1750,
       "changedAt": "2026-05-12T08:00:00.000Z"
+    },
+    {
+      "userId": "imtrh8k4o",
+      "triggeredBy": "ONBOARDING",
+      "previousCalories": 2000,
+      "newCalories": 1674,
+      "previousProtein": 100,
+      "newProtein": 112,
+      "previousCarbs": 250,
+      "newCarbs": 201,
+      "previousFat": 65,
+      "newFat": 47,
+      "changedAt": "2026-06-01T19:55:01.180Z",
+      "id": "6hlDWBOY54M"
+    },
+    {
+      "userId": "imtrh8k4o",
+      "triggeredBy": "PROFILE_CHANGE",
+      "previousCalories": 1674,
+      "newCalories": 1674,
+      "previousProtein": 112,
+      "newProtein": 112,
+      "previousCarbs": 201,
+      "newCarbs": 201,
+      "previousFat": 47,
+      "newFat": 47,
+      "changedAt": "2026-06-01T19:55:01.683Z",
+      "id": "KP-R6Jum_ME"
+    },
+    {
+      "userId": "imtrh8k4o",
+      "triggeredBy": "BODY_METRICS_UPDATE",
+      "previousCalories": 1674,
+      "newCalories": 1674,
+      "previousProtein": 112,
+      "newProtein": 112,
+      "previousCarbs": 201,
+      "newCarbs": 201,
+      "previousFat": 47,
+      "newFat": 47,
+      "changedAt": "2026-06-01T19:55:05.232Z",
+      "id": "l6tWz16tCRo"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }
