@@ -14,6 +14,11 @@ import { RecipeSuggestion } from '../domain/model/recipe-suggestion.entity';
 import { PantryItemAssembler, RecipeSuggestionAssembler } from './pantry-assembler';
 import { PantryItemResource, RecipeSuggestionResource } from './pantry-resource';
 
+const INGREDIENT_CATEGORIES = new Set([
+  'Grain', 'Animal protein', 'Vegetable',
+  'Fruit', 'Dairy', 'Legume', 'Seasoning', 'Other',
+]);
+
 @Injectable({ providedIn: 'root' })
 export class PantryApi extends BaseApi {
   private readonly _http              = inject(HttpClient);
@@ -58,7 +63,7 @@ export class PantryApi extends BaseApi {
   getFoodCatalog(): Observable<FoodItem[]> {
     return this._http.get<FoodItemResource[]>(this._foodsUrl).pipe(
       map(rs => rs
-        .filter(r => r.is_ingredient)
+        .filter(r => INGREDIENT_CATEGORIES.has(r.category ?? ''))
         .map(r => this._foodAssembler.toEntityFromResource(r)),
       ),
       catchError(this._handleError('getFoodCatalog')),

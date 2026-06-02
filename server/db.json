@@ -60,12 +60,8 @@
       "height": 177,
       "activityLevel": "SEDENTARY",
       "plan": "PREMIUM",
-      "restrictions": [
-        "LACTOSE_FREE"
-      ],
-      "medicalConditions": [
-        "TYPE_2_DIABETES"
-      ],
+      "restrictions": [],
+      "medicalConditions": [],
       "dailyCalorieTarget": 1674,
       "proteinTarget": 112,
       "carbsTarget": 201,
@@ -198,8 +194,7 @@
       "sugar_per_100g": 0.5,
       "restrictions": [],
       "name_key": "cooked_oatmeal",
-      "category": "Grain",
-      "is_ingredient": false
+      "category": "Prepared dish"
     },
     {
       "id": "12",
@@ -216,8 +211,7 @@
       "sugar_per_100g": 2,
       "restrictions": [],
       "name_key": "chicken_cucumber_salad",
-      "category": "Animal protein",
-      "is_ingredient": false
+      "category": "Prepared dish"
     },
     {
       "id": "3",
@@ -234,8 +228,7 @@
       "sugar_per_100g": 0,
       "restrictions": [],
       "name_key": "white_rice",
-      "category": "Grain",
-      "is_ingredient": true
+      "category": "Grain"
     },
     {
       "id": "4",
@@ -252,8 +245,7 @@
       "sugar_per_100g": 0,
       "restrictions": [],
       "name_key": "chicken_breast",
-      "category": "Animal protein",
-      "is_ingredient": true
+      "category": "Animal protein"
     }
   ],
   "body-metrics": [
@@ -282,7 +274,7 @@
       "heightCm": 177,
       "loggedAt": "2026-06-01T19:55:05.210Z",
       "targetWeightKg": 70,
-      "projectedAchievementDate": "2026-06-02T01:09:38.434Z"
+      "projectedAchievementDate": "2026-06-02T01:32:22.878Z"
     }
   ],
   "recommendations": [],
@@ -457,7 +449,7 @@
       "userId": "imtrh8k4o",
       "adherenceStatus": "DROPPED",
       "streak": 0,
-      "consecutiveMisses": 8,
+      "consecutiveMisses": 9,
       "lastGoalMetDate": "",
       "goalMetDates": []
     }
@@ -468,7 +460,7 @@
       "userId": "imtrh8k4o",
       "weeklyCompletionRate": 0,
       "currentStreak": 0,
-      "consecutiveMisses": 8,
+      "consecutiveMisses": 9,
       "patternType": "IRREGULAR",
       "analyzedAt": "2026-06-02"
     }
@@ -578,6 +570,31 @@
       "activatedAt": "2026-06-01T22:12:31.664Z",
       "resolvedAt": null,
       "id": "6c-Nf3A4z4M"
+    },
+    {
+      "userId": "imtrh8k4o",
+      "trigger": "NUTRITIONAL_ABANDONMENT",
+      "status": "ACTIVE",
+      "actions": [
+        {
+          "type": "LOG_ANY_MEAL",
+          "descriptionKey": "behavioral.recovery.action.log_any_meal",
+          "priority": 1
+        },
+        {
+          "type": "FOCUS_SINGLE_MEAL",
+          "descriptionKey": "behavioral.recovery.action.focus_single_meal",
+          "priority": 2
+        },
+        {
+          "type": "SIMPLIFY_TRACKING",
+          "descriptionKey": "behavioral.recovery.action.simplify_tracking",
+          "priority": 3
+        }
+      ],
+      "activatedAt": "2026-06-02T01:28:27.648Z",
+      "resolvedAt": null,
+      "id": "0YhG160vilo"
     }
   ],
   "daily-balance": [
