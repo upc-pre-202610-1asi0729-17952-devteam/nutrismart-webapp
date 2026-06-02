@@ -57,7 +57,10 @@ export class PantryApi extends BaseApi {
 
   getFoodCatalog(): Observable<FoodItem[]> {
     return this._http.get<FoodItemResource[]>(this._foodsUrl).pipe(
-      map(rs => rs.map(r => this._foodAssembler.toEntityFromResource(r))),
+      map(rs => rs
+        .filter(r => r.is_ingredient)
+        .map(r => this._foodAssembler.toEntityFromResource(r)),
+      ),
       catchError(this._handleError('getFoodCatalog')),
     );
   }

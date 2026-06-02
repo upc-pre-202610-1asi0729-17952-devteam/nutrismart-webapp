@@ -38,6 +38,8 @@ export interface FoodItemProps {
   nameKey?: string;
   /** Food category (e.g. "Grain", "Animal protein"). */
   category?: string;
+  /** Whether this item can appear as a raw ingredient in the pantry. */
+  isIngredient?: boolean;
 }
 
 /**
@@ -62,8 +64,9 @@ export class FoodItem implements BaseEntity {
   private _fiberPer100g: number;
   private _sugarPer100g: number;
   private _restrictions: DietaryRestriction[];
-  private _nameKey:      string | undefined;
-  private _category:     string | undefined;
+  private _nameKey:       string | undefined;
+  private _category:      string | undefined;
+  private _isIngredient:  boolean;
 
   constructor(props: FoodItemProps) {
     this._id             = props.id;
@@ -81,6 +84,7 @@ export class FoodItem implements BaseEntity {
     this._restrictions    = [...props.restrictions];
     this._nameKey         = props.nameKey;
     this._category        = props.category;
+    this._isIngredient    = props.isIngredient ?? false;
   }
 
   // ─── Getters & Setters ────────────────────────────────────────────────────
@@ -140,6 +144,10 @@ export class FoodItem implements BaseEntity {
   /** Food category (e.g. "Grain", "Animal protein"). */
   get category(): string | undefined { return this._category; }
   set category(v: string | undefined) { this._category = v; }
+
+  /** Whether this item is a raw ingredient eligible for pantry selection. */
+  get isIngredient(): boolean { return this._isIngredient; }
+  set isIngredient(v: boolean) { this._isIngredient = v; }
 
   /** Dietary restrictions this food conflicts with. Returns a copy. */
   get restrictions(): DietaryRestriction[] { return [...this._restrictions]; }

@@ -36,6 +36,7 @@ export class FoodItemAssembler
       restrictions:    r.restrictions.map(s => s as DietaryRestriction),
       nameKey:         r.name_key,
       category:        r.category,
+      isIngredient:    r.is_ingredient ?? false,
     });
   }
 
@@ -55,6 +56,7 @@ export class FoodItemAssembler
       restrictions:      e.restrictions,
       name_key:          e.nameKey,
       category:          e.category,
+      is_ingredient:     e.isIngredient,
     };
   }
 

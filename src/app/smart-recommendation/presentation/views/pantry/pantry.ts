@@ -58,8 +58,8 @@ export class Pantry implements OnInit {
     const query = this.searchText().toLowerCase().trim();
     if (!query) return [];
     return this.pantryStore.catalog().filter(item => {
-      const translated = this.translate.instant('pantry_items.' + item.nameKey).toLowerCase();
-      return translated.includes(query);
+      const name = item.getLocalizedName(this.translate.currentLang).toLowerCase();
+      return name.includes(query);
     });
   });
 
@@ -125,7 +125,7 @@ export class Pantry implements OnInit {
   onOptionMousedown(event: MouseEvent, item: FoodItem): void {
     event.preventDefault();
     this.selectedItem.set(item);
-    this.searchText.set(this.translate.instant('pantry_items.' + item.nameKey));
+    this.searchText.set(item.getLocalizedName(this.translate.currentLang));
     this.showDropdown.set(false);
   }
 
@@ -134,7 +134,7 @@ export class Pantry implements OnInit {
   async onAddIngredient(): Promise<void> {
     const item = this.selectedItem();
     if (!item) return;
-    const displayName = this.translate.instant('pantry_items.' + item.nameKey);
+    const displayName = item.getLocalizedName(this.translate.currentLang);
     await this.pantryStore.addPantryItem(displayName, item.category as IngredientCategory, 100, item.caloriesPer100g, item.nameKey);
     this.searchText.set('');
     this.selectedItem.set(null);

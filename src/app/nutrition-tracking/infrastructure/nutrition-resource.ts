@@ -23,6 +23,8 @@ export interface FoodItemResource extends BaseResource {
   name_key?: string;
   /** Food category (e.g. "Grain"). */
   category?: string;
+  /** Whether this item is a raw ingredient eligible for pantry selection. */
+  is_ingredient?: boolean;
 }
 
 /** Envelope for the `/foods` collection endpoint. */
