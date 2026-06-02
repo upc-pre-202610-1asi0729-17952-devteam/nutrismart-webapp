@@ -596,7 +596,10 @@
       "weather": "Weather-based adjustment",
       "calorie_adjusted": "Calorie target adjusted to {{ kcal }} kcal",
       "factor": "{{ factor }}× applied to base target"
-    }
+    },
+    "log_dialog_title": "Log recommendation",
+    "log_dialog_subtitle": "Select a meal to add \"{{name}}\" to.",
+    "log_dialog_meal_label": "Meal"
   },
   "body_progress": {
     "page_title": "Body Progress",

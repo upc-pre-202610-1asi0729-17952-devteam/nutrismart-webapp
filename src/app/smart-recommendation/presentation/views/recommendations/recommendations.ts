@@ -1,29 +1,36 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RecommendationsStore } from '../../../application/recommendations.store';
+import { RecommendationCard } from '../../../infrastructure/recommendations-api';
 import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
 import { WeatherContext } from '../../../domain/model/weather-context.entity';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
 import { MealRecord } from '../../../../nutrition-tracking/domain/model/meal-record.entity';
-import { MealType } from '../../../../nutrition-tracking/domain/model/meal-type.enum';
 import { LocationPicker } from '../../components/location-picker/location-picker';
+import {
+  AddRecommendationDialogComponent,
+  AddRecommendationPayload,
+} from '../../components/add-recommendation-dialog/add-recommendation-dialog';
 
 @Component({
-  selector: 'app-recommendations',
-  imports: [RouterLink, NgClass, TranslatePipe, LocationPicker],
+  selector:    'app-recommendations',
+  imports:     [RouterLink, NgClass, TranslatePipe, LocationPicker, AddRecommendationDialogComponent],
   templateUrl: './recommendations.html',
-  styleUrl: './recommendations.css',
+  styleUrl:    './recommendations.css',
 })
 export class RecommendationsView implements OnInit {
-  protected store      = inject(RecommendationsStore);
-  protected iamStore   = inject(IamStore);
-  private nutStore     = inject(NutritionStore);
-  private translate    = inject(TranslateService);
+  protected store    = inject(RecommendationsStore);
+  protected iamStore = inject(IamStore);
+  protected nutStore = inject(NutritionStore);
+  private translate  = inject(TranslateService);
 
   protected isPro = computed(() => this.iamStore.currentUser()?.isPro() ?? false);
+
+  /** Card awaiting confirmation in the log dialog. Null when dialog is closed. */
+  protected pendingCard = signal<RecommendationCard | null>(null);
 
   protected displayTemperature = computed(() =>
     this.store.demoTemperature() ?? this.store.weatherContext()?.temperatureCelsius ?? null
@@ -131,26 +138,32 @@ export class RecommendationsView implements OnInit {
     this.store.setDemoTemperature(temp);
   }
 
-  // ─── Travel mode user actions ─────────────────────────────────────────────
+  // ─── Travel mode ──────────────────────────────────────────────────────────
 
   onDisableAutoTravel(): void {
     void this.store.deactivateTravelMode();
   }
 
+  // ─── Add-to-log dialog ────────────────────────────────────────────────────
+
   onAddToLog(cardId: number | string): void {
     const card = this.store.activeCards().find(c => c.id === cardId);
-    const user = this.iamStore.currentUser();
-    if (!card || !user) return;
+    if (card) this.pendingCard.set(card);
+  }
 
-    const proteinGrams = parseFloat(card.protein.replace(/[^0-9.]/g, ''));
+  onConfirmLog(payload: AddRecommendationPayload): void {
+    const user = this.iamStore.currentUser();
+    if (!user) return;
+
+    const proteinGrams = parseFloat(payload.card.protein.replace(/[^0-9.]/g, ''));
     const record = new MealRecord({
       id:           0,
-      foodItemId:   Number(card.foodId),
-      foodItemName: card.name,
-      mealType:     this.resolveMealType(new Date().getHours()),
+      foodItemId:   Number(payload.card.foodId),
+      foodItemName: payload.card.name,
+      mealType:     payload.mealType,
       quantity:     100,
       unit:         'g',
-      calories:     card.calories,
+      calories:     payload.card.calories,
       protein:      isNaN(proteinGrams) ? 0 : proteinGrams,
       carbs:        0,
       fat:          0,
@@ -161,14 +174,14 @@ export class RecommendationsView implements OnInit {
     });
 
     void this.nutStore.recordMeal(record);
+    this.pendingCard.set(null);
   }
 
-  private resolveMealType(hour: number): MealType {
-    if (hour < 10) return MealType.BREAKFAST;
-    if (hour < 15) return MealType.LUNCH;
-    if (hour < 20) return MealType.SNACK;
-    return MealType.DINNER;
+  onCancelLog(): void {
+    this.pendingCard.set(null);
   }
+
+  // ─── Adherence actions ────────────────────────────────────────────────────
 
   onAcceptSimplifiedPlan(): void {
     this.store.setAdherenceStatus(AdherenceStatus.ON_TRACK);

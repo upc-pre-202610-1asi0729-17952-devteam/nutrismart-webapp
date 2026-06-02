@@ -596,7 +596,10 @@
       "weather": "Ajuste por clima",
       "calorie_adjusted": "Objetivo calórico ajustado a {{ kcal }} kcal",
       "factor": "Factor {{ factor }}× aplicado al objetivo base"
-    }
+    },
+    "log_dialog_title": "Registrar recomendación",
+    "log_dialog_subtitle": "Selecciona a qué comida agregar \"{{name}}\".",
+    "log_dialog_meal_label": "Comida"
   },
   "body_progress": {
     "page_title": "Progreso Corporal",

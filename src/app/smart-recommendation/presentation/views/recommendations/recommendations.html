@@ -240,3 +240,14 @@
   }
 
 </div>
+
+<!-- ── Add-to-log dialog ──────────────────────────────────────────────── -->
+@if (pendingCard()) {
+  <app-add-recommendation-dialog
+    [card]="pendingCard()!"
+    [currentConsumed]="dailyConsumed()"
+    [dailyGoal]="dailyTarget()"
+    (confirm)="onConfirmLog($event)"
+    (cancel)="onCancelLog()"
+  />
+}
