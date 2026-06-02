@@ -373,9 +373,10 @@ export class RecommendationsStore {
         const event = e as CompatibleDishesRanked;
         this._bestDishCard.set({
           id:          `best-dish-${event.occurredAt}`,
+          foodId:      0,
           name:        event.bestDishName,
           description: `${event.bestDishCalories} kcal · P${event.bestDishProtein}g · C${event.bestDishCarbs}g · G${event.bestDishFat}g`,
-          kcal:        event.bestDishCalories,
+          calories:    event.bestDishCalories,
           protein:     `${event.bestDishProtein}g`,
           badge:       'restaurant',
         });
