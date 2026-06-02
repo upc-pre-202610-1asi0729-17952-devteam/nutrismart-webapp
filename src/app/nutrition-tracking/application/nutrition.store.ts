@@ -408,6 +408,7 @@ export class NutritionStore {
       );
       this._mealRecords.update(prev => [...prev, created]);
       if (user) {
+        this.notificationService.notify('success', 'notifications.meal_logged');
         this.eventBus.publish(new MealRecorded(user.id, record.mealType, record.calories, 'manual'));
         this.checkAndPublishDailyGoalEvents(user.id);
       }

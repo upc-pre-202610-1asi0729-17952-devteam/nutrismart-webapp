@@ -1152,6 +1152,7 @@
     "abandonment_risk": "We've missed you. Your nutritional plan is ready whenever you are.",
     "consistency_recovered": "Welcome back! Every day counts. Today is a great day.",
     "streak_milestone": "{{days}} consecutive days! You're building a real habit.",
-    "strategy_adjustment": "Your body has adapted. We suggest reviewing your nutritional strategy."
+    "strategy_adjustment": "Your body has adapted. We suggest reviewing your nutritional strategy.",
+    "meal_logged": "Added to today's log."
   }
 }

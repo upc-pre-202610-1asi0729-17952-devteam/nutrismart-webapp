@@ -7,6 +7,8 @@ import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
 import { WeatherContext } from '../../../domain/model/weather-context.entity';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
+import { MealRecord } from '../../../../nutrition-tracking/domain/model/meal-record.entity';
+import { MealType } from '../../../../nutrition-tracking/domain/model/meal-type.enum';
 import { LocationPicker } from '../../components/location-picker/location-picker';
 
 @Component({
@@ -135,8 +137,38 @@ export class RecommendationsView implements OnInit {
     void this.store.deactivateTravelMode();
   }
 
-  // TODO: wire to NutritionStore once cross-BC integration is ready
-  onAddToLog(_cardId: number | string): void {}
+  onAddToLog(cardId: number | string): void {
+    const card = this.store.activeCards().find(c => c.id === cardId);
+    const user = this.iamStore.currentUser();
+    if (!card || !user) return;
+
+    const proteinGrams = parseFloat(card.protein.replace(/[^0-9.]/g, ''));
+    const record = new MealRecord({
+      id:           0,
+      foodItemId:   Number(card.foodId),
+      foodItemName: card.name,
+      mealType:     this.resolveMealType(new Date().getHours()),
+      quantity:     100,
+      unit:         'g',
+      calories:     card.calories,
+      protein:      isNaN(proteinGrams) ? 0 : proteinGrams,
+      carbs:        0,
+      fat:          0,
+      fiber:        0,
+      sugar:        0,
+      loggedAt:     new Date().toISOString(),
+      userId:       user.id,
+    });
+
+    void this.nutStore.recordMeal(record);
+  }
+
+  private resolveMealType(hour: number): MealType {
+    if (hour < 10) return MealType.BREAKFAST;
+    if (hour < 15) return MealType.LUNCH;
+    if (hour < 20) return MealType.SNACK;
+    return MealType.DINNER;
+  }
 
   onAcceptSimplifiedPlan(): void {
     this.store.setAdherenceStatus(AdherenceStatus.ON_TRACK);

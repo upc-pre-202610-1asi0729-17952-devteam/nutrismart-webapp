@@ -28,6 +28,8 @@ import {
 
 export interface RecommendationCard {
   id: number | string;
+  /** Identifier of the underlying food item — used to log the card to the nutrition diary. */
+  foodId: number | string;
   name: string;
   description: string;
   calories: number;
@@ -264,6 +266,7 @@ export class RecommendationsApi extends BaseApi {
     const es = this.translate.currentLang === 'es';
     return {
       id:          r.id,
+      foodId:      food.id,
       name:        es ? (food.name_es ?? food.name) : food.name,
       description: es ? r.description_es : r.description,
       calories:    food.calories_per_100g,
