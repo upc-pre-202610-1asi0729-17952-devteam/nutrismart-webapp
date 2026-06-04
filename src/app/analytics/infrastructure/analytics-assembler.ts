@@ -104,7 +104,9 @@ export class AnalyticsAssembler {
 
     const weightChangeStatus = this.domain.resolveWeightChangeStatus(weightChangeDirection, userGoal);
 
-    const lastMetric = raw.weightEntries.at(-1);
+    const lastMetric = [...raw.weightEntries]
+      .reverse()
+      .find(e => (e.targetWeightKg ?? 0) > 0);
     const goalWeight = lastMetric?.targetWeightKg;
 
     let adherenceHistory: AdherenceHistoryEntry[] | undefined;

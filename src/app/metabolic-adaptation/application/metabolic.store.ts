@@ -417,7 +417,7 @@ export class MetabolicStore {
         this._stagnationHistory.update(h => h.map(m => m.id === todayEntry.id ? metric : m));
       } else {
         metric = await firstValueFrom(
-          this.api.logWeight(user.id, weightKg, this._currentMetric()?.heightCm ?? user.height),
+          this.api.logWeight(user.id, weightKg, this._currentMetric()?.heightCm ?? user.height, previousTarget || undefined),
         );
         this._metricsHistory.update(h => [...h, metric]);
         this._stagnationHistory.update(h => [...h, metric]);
