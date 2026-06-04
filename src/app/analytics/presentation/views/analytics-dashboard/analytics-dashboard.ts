@@ -132,7 +132,15 @@ export class AnalyticsDashboardComponent implements OnInit {
 
   onExportRequest(req: ExportPdfRequest): void {
     this.analyticsStore.exportReport(req.fromDate, req.toDate).subscribe({
-      next: () => this.analyticsStore.closeExportPdfModal(),
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `analytics-${req.fromDate}_${req.toDate}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+        this.analyticsStore.closeExportPdfModal();
+      },
       error: () => {},
     });
   }
