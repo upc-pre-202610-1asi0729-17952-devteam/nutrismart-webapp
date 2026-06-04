@@ -435,7 +435,7 @@ export class DailyLog implements OnInit {
 
     const props: MealRecordProps = {
       id: 0,
-      foodItemId: payload.food.id,
+      foodId: String(payload.food.id),
       foodItemName: payload.food.name,
       foodItemNameEs: payload.food.nameEs,
       mealType: payload.mealType,
@@ -474,7 +474,7 @@ export class DailyLog implements OnInit {
     const scaled = original.macros.scale(payload.quantity / original.quantity);
     const updated = new MealRecord({
       id: original.id,
-      foodItemId: original.foodItemId,
+      foodId: original.foodId,
       foodItemName: original.foodItemName,
       foodItemNameEs: original.foodItemNameEs,
       mealType: original.mealType,

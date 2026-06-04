@@ -37,7 +37,7 @@ export interface FoodItemsResponse extends BaseResponse {
  */
 export interface MealRecordResource extends BaseResource {
   id: number;
-  foodItemId: number;
+  foodId: string | null;
   foodItemName: string;
   foodItemNameEs?: string;
   mealType: string;

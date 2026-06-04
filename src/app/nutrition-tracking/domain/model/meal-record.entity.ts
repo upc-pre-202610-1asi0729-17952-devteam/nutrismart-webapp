@@ -11,8 +11,8 @@ import { NutritionalRiskLevel } from './nutritional-risk-level.enum';
 export interface MealRecordProps {
   /** Unique numeric identifier assigned by the backend. */
   id: number;
-  /** Identifier of the {@link FoodItem} that was logged. */
-  foodItemId: number;
+  /** Reference to {@link FoodItem} in the catalogue; null for free-text entries not linked to a food. */
+  foodId: string | null;
   /** Display name of the food item (denormalised for quick rendering). */
   foodItemName: string;
   /** Spanish display name of the food item. */
@@ -51,7 +51,7 @@ export interface MealRecordProps {
  */
 export class MealRecord implements BaseEntity {
   private _id: number;
-  private _foodItemId: number;
+  private _foodId: string | null;
   private _foodItemName: string;
   private _foodItemNameEs: string;
   private _mealType: MealType;
@@ -68,7 +68,7 @@ export class MealRecord implements BaseEntity {
 
   constructor(props: MealRecordProps) {
     this._id              = props.id;
-    this._foodItemId      = props.foodItemId;
+    this._foodId          = props.foodId;
     this._foodItemName    = props.foodItemName;
     this._foodItemNameEs  = props.foodItemNameEs ?? '';
     this._mealType        = props.mealType;
@@ -89,8 +89,8 @@ export class MealRecord implements BaseEntity {
   get id(): number { return this._id; }
   set id(v: number) { this._id = v; }
 
-  get foodItemId(): number { return this._foodItemId; }
-  set foodItemId(v: number) { this._foodItemId = v; }
+  get foodId(): string | null { return this._foodId; }
+  set foodId(v: string | null) { this._foodId = v; }
 
   get foodItemName(): string { return this._foodItemName; }
   set foodItemName(v: string) { this._foodItemName = v; }

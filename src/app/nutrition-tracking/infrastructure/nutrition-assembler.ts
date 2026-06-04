@@ -75,7 +75,7 @@ export class MealRecordAssembler
   toEntityFromResource(r: MealRecordResource): MealRecord {
     return new MealRecord({
       id:              r.id,
-      foodItemId:      r.foodItemId,
+      foodId:          r.foodId,
       foodItemName:    r.foodItemName,
       foodItemNameEs:  r.foodItemNameEs,
       mealType:        r.mealType as MealType,
@@ -95,7 +95,7 @@ export class MealRecordAssembler
   toResourceFromEntity(e: MealRecord): MealRecordResource {
     return {
       id:              e.id,
-      foodItemId:      e.foodItemId,
+      foodId:          e.foodId,
       foodItemName:    e.foodItemName,
       foodItemNameEs:  e.foodItemNameEs,
       mealType:        e.mealType,

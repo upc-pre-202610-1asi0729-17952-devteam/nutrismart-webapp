@@ -74,7 +74,7 @@ export class TravelContextAssembler
   toResourceFromEntity(e: TravelContext): TravelContextResource {
     return {
       id:           e.id,
-      userId:       String(e.id),
+      userId:       String(e.userId),
       city:         e.city,
       country:      e.country,
       is_active:    e.isActive,

@@ -147,7 +147,7 @@ export class RestaurantMenuStore {
     );
     const props: MealRecordProps = {
       id:           0,
-      foodItemId:   0,
+      foodId:       null,
       foodItemName,
       foodItemNameEs,
       mealType,

@@ -158,7 +158,7 @@ export class RecommendationsView implements OnInit {
     const proteinGrams = parseFloat(payload.card.protein.replace(/[^0-9.]/g, ''));
     const record = new MealRecord({
       id:           0,
-      foodItemId:   Number(payload.card.foodId),
+      foodId:       payload.card.foodId != null ? String(payload.card.foodId) : null,
       foodItemName: payload.card.name,
       mealType:     payload.mealType,
       quantity:     100,

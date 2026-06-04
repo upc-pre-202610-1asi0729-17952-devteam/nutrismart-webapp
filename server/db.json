@@ -56,7 +56,7 @@
       "lastName": "b",
       "email": "a_a_a@gmail.com",
       "goal": "WEIGHT_LOSS",
-      "weight": 70,
+      "weight": 76,
       "height": 177,
       "activityLevel": "SEDENTARY",
       "plan": "PREMIUM",
@@ -77,7 +77,7 @@
   "nutrition-log": [
     {
       "id": "sms2gs",
-      "foodItemId": "1",
+      "foodId": "1",
       "foodItemName": "Cooked oatmeal",
       "foodItemNameEs": "Avena cocida",
       "mealType": "BREAKFAST",
@@ -94,7 +94,7 @@
     },
     {
       "id": "vvy9cu",
-      "foodItemId": "1",
+      "foodId": "1",
       "foodItemName": "Cooked oatmeal",
       "foodItemNameEs": "Avena cocida",
       "mealType": "BREAKFAST",
@@ -110,7 +110,7 @@
       "userId": "dan0001xxd"
     },
     {
-      "foodItemId": "1",
+      "foodId": "1",
       "foodItemName": "Cooked oatmeal",
       "foodItemNameEs": "Avena cocida",
       "mealType": "LUNCH",
@@ -127,7 +127,7 @@
       "id": "Hh_mM2ODQC4"
     },
     {
-      "foodItemId": 0,
+      "foodId": null,
       "foodItemName": "Grilled chicken breast",
       "foodItemNameEs": "Pechuga de pollo a la plancha",
       "mealType": "LUNCH",
@@ -144,7 +144,7 @@
       "id": "qm0w9v0_fhM"
     },
     {
-      "foodItemId": 0,
+      "foodId": null,
       "foodItemName": "White rice",
       "foodItemNameEs": "Arroz blanco",
       "mealType": "LUNCH",
@@ -161,7 +161,7 @@
       "id": "Xhs__807ADA"
     },
     {
-      "foodItemId": 0,
+      "foodId": null,
       "foodItemName": "Mixed salad",
       "foodItemNameEs": "Ensalada mixta",
       "mealType": "LUNCH",
@@ -176,6 +176,40 @@
       "loggedAt": "2026-06-01T20:29:21.394Z",
       "userId": "imtrh8k4o",
       "id": "5aPy2ThFKf8"
+    },
+    {
+      "foodId": "4",
+      "foodItemName": "Chicken breast, raw",
+      "foodItemNameEs": "Pechuga de pollo cruda",
+      "mealType": "BREAKFAST",
+      "quantity": 120,
+      "unit": "g",
+      "calories": 198,
+      "protein": 37.2,
+      "carbs": 0,
+      "fat": 4.3,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-06-04T15:20:35.480Z",
+      "userId": "imtrh8k4o",
+      "id": "5ScEpkgXQd0"
+    },
+    {
+      "foodId": "4",
+      "foodItemName": "Chicken breast, raw",
+      "foodItemNameEs": "Pechuga de pollo cruda",
+      "mealType": "SNACK",
+      "quantity": 120,
+      "unit": "g",
+      "calories": 198,
+      "protein": 37.2,
+      "carbs": 0,
+      "fat": 4.3,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-06-04T15:30:20.694Z",
+      "userId": "imtrh8k4o",
+      "id": "maKmalK1t0c"
     }
   ],
   "foods": [
@@ -246,6 +280,23 @@
       "restrictions": [],
       "name_key": "chicken_breast",
       "category": "Animal protein"
+    },
+    {
+      "id": "13",
+      "name": "Fish ceviche",
+      "name_es": "Ceviche de pescado",
+      "source": "USDA FoodData / CENAN Peru",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "calories_per_100g": 70,
+      "protein_per_100g": 11,
+      "carbs_per_100g": 3.5,
+      "fat_per_100g": 1,
+      "fiber_per_100g": 0.4,
+      "sugar_per_100g": 1.8,
+      "restrictions": [],
+      "name_key": "fish_ceviche",
+      "category": "Prepared dish"
     }
   ],
   "body-metrics": [
@@ -274,18 +325,24 @@
       "heightCm": 177,
       "loggedAt": "2026-06-01T19:55:05.210Z",
       "targetWeightKg": 70,
-      "projectedAchievementDate": "2026-06-02T01:32:22.878Z"
+      "projectedAchievementDate": "2026-06-04T15:21:45.960Z"
+    },
+    {
+      "id": "PdYbac25jqg",
+      "userId": "imtrh8k4o",
+      "weightKg": 76,
+      "heightCm": 177,
+      "loggedAt": "2026-06-04T15:21:53.138Z",
+      "targetWeightKg": 78,
+      "projectedAchievementDate": "2026-07-30T16:02:53.744Z"
     }
   ],
   "recommendations": [],
   "pantry": [
     {
       "id": "sze7d0vwsXE",
-      "name": "Chicken breast",
-      "name_key": "chicken_breast",
-      "category": "Animal protein",
+      "foodId": "4",
       "quantity_grams": 100,
-      "calories_per_100g": 165,
       "userId": "imtrh8k4o",
       "added_at": "2026-06-01T22:03:11.765Z"
     }
@@ -449,7 +506,7 @@
       "userId": "imtrh8k4o",
       "adherenceStatus": "DROPPED",
       "streak": 0,
-      "consecutiveMisses": 9,
+      "consecutiveMisses": 10,
       "lastGoalMetDate": "",
       "goalMetDates": []
     }
@@ -460,9 +517,9 @@
       "userId": "imtrh8k4o",
       "weeklyCompletionRate": 0,
       "currentStreak": 0,
-      "consecutiveMisses": 9,
+      "consecutiveMisses": 10,
       "patternType": "IRREGULAR",
-      "analyzedAt": "2026-06-02"
+      "analyzedAt": "2026-06-04"
     }
   ],
   "recovery-plans": [
@@ -680,7 +737,7 @@
       "weather_type": "HOT",
       "travel_city": null,
       "card_type": "weather",
-      "food_id": "12",
+      "foodId": "12",
       "description": "Refreshing · High in protein · Hydrating",
       "description_es": "Refrescante · Alto en proteína · Hidratante"
     },
@@ -690,7 +747,7 @@
       "weather_type": "HOT",
       "travel_city": null,
       "card_type": "weather",
-      "food_id": "13",
+      "foodId": "13",
       "description": "Peruvian dish · Fresh and high in protein",
       "description_es": "Plato peruano · Fresco y alto en proteína"
     }
@@ -722,7 +779,7 @@
       "country": "",
       "is_active": false,
       "is_manual": false,
-      "activated_at": "",
+      "activated_at": null,
       "userId": "alice001xxa"
     },
     {
@@ -731,7 +788,7 @@
       "country": "",
       "is_active": false,
       "is_manual": false,
-      "activated_at": "",
+      "activated_at": null,
       "userId": "dan0001xxd"
     },
     {
@@ -740,7 +797,7 @@
       "country": "",
       "is_active": false,
       "is_manual": false,
-      "activated_at": "",
+      "activated_at": null,
       "userId": "imtrh8k4o"
     }
   ],
@@ -840,6 +897,20 @@
       "newFat": 47,
       "changedAt": "2026-06-01T19:55:05.232Z",
       "id": "l6tWz16tCRo"
+    },
+    {
+      "userId": "imtrh8k4o",
+      "triggeredBy": "BODY_METRICS_UPDATE",
+      "previousCalories": 1674,
+      "newCalories": 1746,
+      "previousProtein": 112,
+      "newProtein": 122,
+      "previousCarbs": 201,
+      "newCarbs": 204,
+      "previousFat": 47,
+      "newFat": 49,
+      "changedAt": "2026-06-04T15:21:53.173Z",
+      "id": "meNExi0Kyew"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
