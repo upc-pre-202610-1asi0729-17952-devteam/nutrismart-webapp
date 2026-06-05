@@ -6,11 +6,8 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
  * @author Del Aguila Del Aguila, Olenka Priscilla
  */
 export interface PantryItemResource extends BaseResource {
-  name: string;
-  name_key?: string;
-  category: string;
+  food_id: string;
   quantity_grams: number;
-  calories_per_100g: number;
   userId: number;
   added_at: string;
 }

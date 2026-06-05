@@ -1,6 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
 import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
+import { FoodItem } from '../../nutrition-tracking/domain/model/food-item.entity';
 import { PantryItem, IngredientCategory } from '../domain/model/pantry-item.entity';
 import { RecipeSuggestion } from '../domain/model/recipe-suggestion.entity';
 import {
@@ -18,14 +19,15 @@ import {
 export class PantryItemAssembler
   implements BaseAssembler<PantryItem, PantryItemResource, PantryItemsResponse>
 {
-  toEntityFromResource(r: PantryItemResource): PantryItem {
+  toEntityFromResource(r: PantryItemResource, food?: FoodItem): PantryItem {
     return new PantryItem({
       id:              r.id,
-      name:            r.name,
-      nameKey:         r.name_key,
-      category:        r.category as IngredientCategory,
+      foodId:          r.food_id,
+      name:            food?.name ?? r.food_id,
+      nameKey:         food?.nameKey,
+      category:        (food?.category ?? 'Other') as IngredientCategory,
       quantityGrams:   r.quantity_grams,
-      caloriesPer100g: r.calories_per_100g,
+      caloriesPer100g: food?.caloriesPer100g ?? 0,
       userId:          r.userId,
       addedAt:         r.added_at,
     });
@@ -33,14 +35,11 @@ export class PantryItemAssembler
 
   toResourceFromEntity(e: PantryItem): PantryItemResource {
     return {
-      id:                e.id,
-      name:              e.name,
-      name_key:          e.nameKey,
-      category:          e.category,
-      quantity_grams:    e.quantityGrams,
-      calories_per_100g: e.caloriesPer100g,
-      userId:            e.userId,
-      added_at:          e.addedAt,
+      id:             e.id,
+      food_id:        e.foodId ?? '',
+      quantity_grams: e.quantityGrams,
+      userId:         e.userId,
+      added_at:       e.addedAt,
     };
   }
 

@@ -152,12 +152,14 @@ export class PantryStore {
     quantityGrams: number,
     caloriesPer100g: number,
     nameKey?: string,
+    foodId?: string,
   ): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
 
     const item = new PantryItem({
       id:              0,
+      foodId,
       name,
       nameKey,
       category,
@@ -237,7 +239,7 @@ export class PantryStore {
 
     const pantryKeys        = new Set(
       this._pantryItems()
-        .map(i => i.nameKey)
+        .map(i => i.foodId)
         .filter((k): k is string => !!k),
     );
     const userRestrictions  = user.restrictions as string[] ?? [];

@@ -135,7 +135,7 @@ export class Pantry implements OnInit {
     const item = this.selectedItem();
     if (!item) return;
     const displayName = item.getLocalizedName(this.translate.currentLang);
-    await this.pantryStore.addPantryItem(displayName, item.category as IngredientCategory, 100, item.caloriesPer100g, item.nameKey);
+    await this.pantryStore.addPantryItem(displayName, item.category as IngredientCategory, 100, item.caloriesPer100g, item.nameKey, String(item.id));
     this.searchText.set('');
     this.selectedItem.set(null);
     this.showDropdown.set(false);
@@ -174,10 +174,11 @@ export class Pantry implements OnInit {
   }
 
   resolvedIngredients(recipe: RecipeSuggestion): string {
+    const catalog = this.pantryStore.catalog();
     return recipe.ingredients
       .map(i => {
-        const translated = this.translate.instant(`pantry_items.${i.foodId}`);
-        return translated !== `pantry_items.${i.foodId}` ? translated : i.foodId;
+        const food = catalog.find(f => String(f.id) === i.foodId);
+        return food ? food.getLocalizedName(this.translate.currentLang) : i.foodId;
       })
       .join(', ');
   }

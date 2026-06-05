@@ -648,7 +648,7 @@
       "userId": "imtrh8k4o",
       "adherenceStatus": "DROPPED",
       "streak": 0,
-      "consecutiveMisses": 11,
+      "consecutiveMisses": 18,
       "lastGoalMetDate": "",
       "goalMetDates": []
     }
@@ -659,7 +659,7 @@
       "userId": "imtrh8k4o",
       "weeklyCompletionRate": 0,
       "currentStreak": 0,
-      "consecutiveMisses": 11,
+      "consecutiveMisses": 18,
       "patternType": "IRREGULAR",
       "analyzedAt": "2026-06-05"
     }
