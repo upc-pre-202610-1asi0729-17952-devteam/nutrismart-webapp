@@ -1,0 +1,58 @@
+<div class="ug-shell">
+  @if (requiredPlan()) {
+    <div class="ug-card">
+
+      <!-- Lock icon -->
+      <div class="ug-icon-wrap" aria-hidden="true">
+        <svg class="ug-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+
+      <!-- Heading -->
+      <h1 class="ug-title">
+        {{ 'upgrade_gate.title' | translate : { plan: planName() } }}
+      </h1>
+      <p class="ug-subtitle">{{ subtitleKey() | translate }}</p>
+
+      <!-- Exclusive features -->
+      @if (exclusiveFeatures().length > 0) {
+        <div class="ug-features-wrap">
+          <p class="ug-features-label">{{ 'upgrade_gate.features_label' | translate }}</p>
+          <ul class="ug-features" role="list">
+            @for (feature of exclusiveFeatures(); track feature) {
+              <li class="ug-feature">
+                <svg class="ug-check" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <circle cx="8" cy="8" r="7" fill="currentColor" opacity="0.12"/>
+                  <path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                {{ featureI18nKey(feature) | translate }}
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      <!-- Price -->
+      <div class="ug-price" aria-label="{{ 'upgrade_gate.cta' | translate : { plan: planName() } }}">
+        <span class="ug-price-amount">${{ planPrice() }}</span>
+        <span class="ug-price-period">{{ 'subscription.per_month' | translate }}</span>
+      </div>
+
+      <!-- Actions -->
+      <div class="ug-actions">
+        <button type="button" class="ug-btn-upgrade" (click)="upgrade()">
+          {{ 'upgrade_gate.cta' | translate : { plan: planName() } }}
+        </button>
+        <button type="button" class="ug-btn-back" (click)="goBack()">
+          {{ 'upgrade_gate.back' | translate }}
+        </button>
+      </div>
+
+      <!-- Legal -->
+      <p class="ug-legal">{{ 'subscription.legal' | translate }}</p>
+
+    </div>
+  }
+</div>

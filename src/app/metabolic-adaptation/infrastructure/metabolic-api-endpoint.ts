@@ -31,7 +31,7 @@ export class BodyMetricEndpoint extends BaseApiEndpoint<
     return this.http.get<BodyMetricResource[]>(this.endpointUrl).pipe(
       map(resources =>
         resources
-          .filter(r => String(r.user_id) === String(userId))
+          .filter(r => String(r.userId) === String(userId))
           .map(r => this.assembler.toEntityFromResource(r))
       ),
     );
@@ -57,7 +57,7 @@ export class BodyCompositionEndpoint extends BaseApiEndpoint<
   getLatestByUserId(userId: number | string): Observable<BodyComposition | null> {
     return this.http.get<BodyCompositionResource[]>(this.endpointUrl).pipe(
       map(resources => {
-        const matches = resources.filter(r => String(r.user_id) === String(userId));
+        const matches = resources.filter(r => String(r.userId) === String(userId));
         if (!matches.length) return null;
         const latest = [...matches].sort(
           (a, b) => new Date(b.measured_at).getTime() - new Date(a.measured_at).getTime(),

@@ -34,6 +34,18 @@ export interface FoodItemProps {
   sugarPer100g: number;
   /** Dietary restrictions this food conflicts with. */
   restrictions: DietaryRestriction[];
+  /** Canonical machine-readable key for pantry and recipe matching (e.g. "white_rice"). */
+  nameKey?: string;
+  /** Food category (e.g. "Grain", "Animal protein", "Prepared dish"). */
+  category?: string;
+  /** Whether this entry is a raw ingredient or a prepared dish. */
+  itemType?: 'INGREDIENT' | 'DISH';
+  /** Climate conditions this food is recommended for. */
+  weatherTypes?: string[];
+  /** City of origin for local/regional dishes; null otherwise. */
+  originCity?: string | null;
+  /** Country of origin; null for generic foods. */
+  originCountry?: string | null;
 }
 
 /**
@@ -58,6 +70,12 @@ export class FoodItem implements BaseEntity {
   private _fiberPer100g: number;
   private _sugarPer100g: number;
   private _restrictions: DietaryRestriction[];
+  private _nameKey:       string | undefined;
+  private _category:      string | undefined;
+  private _itemType:      'INGREDIENT' | 'DISH' | undefined;
+  private _weatherTypes:  string[];
+  private _originCity:    string | null | undefined;
+  private _originCountry: string | null | undefined;
 
   constructor(props: FoodItemProps) {
     this._id             = props.id;
@@ -73,6 +91,12 @@ export class FoodItem implements BaseEntity {
     this._fiberPer100g    = props.fiberPer100g;
     this._sugarPer100g    = props.sugarPer100g;
     this._restrictions    = [...props.restrictions];
+    this._nameKey         = props.nameKey;
+    this._category        = props.category;
+    this._itemType        = props.itemType;
+    this._weatherTypes    = [...(props.weatherTypes ?? [])];
+    this._originCity      = props.originCity ?? null;
+    this._originCountry   = props.originCountry ?? null;
   }
 
   // ─── Getters & Setters ────────────────────────────────────────────────────
@@ -124,6 +148,26 @@ export class FoodItem implements BaseEntity {
   /** Sugar grams per 100 g. */
   get sugarPer100g(): number { return this._sugarPer100g; }
   set sugarPer100g(v: number) { this._sugarPer100g = v; }
+
+  /** Canonical machine-readable key for pantry and recipe matching. */
+  get nameKey(): string | undefined { return this._nameKey; }
+  set nameKey(v: string | undefined) { this._nameKey = v; }
+
+  /** Food category (e.g. "Grain", "Animal protein"). */
+  get category(): string | undefined { return this._category; }
+  set category(v: string | undefined) { this._category = v; }
+
+  get itemType(): 'INGREDIENT' | 'DISH' | undefined { return this._itemType; }
+  set itemType(v: 'INGREDIENT' | 'DISH' | undefined) { this._itemType = v; }
+
+  get weatherTypes(): string[] { return [...this._weatherTypes]; }
+  set weatherTypes(v: string[]) { this._weatherTypes = [...v]; }
+
+  get originCity(): string | null | undefined { return this._originCity; }
+  set originCity(v: string | null | undefined) { this._originCity = v; }
+
+  get originCountry(): string | null | undefined { return this._originCountry; }
+  set originCountry(v: string | null | undefined) { this._originCountry = v; }
 
   /** Dietary restrictions this food conflicts with. Returns a copy. */
   get restrictions(): DietaryRestriction[] { return [...this._restrictions]; }

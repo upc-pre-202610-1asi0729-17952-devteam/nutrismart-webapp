@@ -1,0 +1,22 @@
+<div class="section-shell">
+
+  <nav class="section-tab-bar" role="tablist" [attr.aria-label]="'nav.recommendations' | translate">
+    <a class="section-tab"
+       routerLink="feed"
+       routerLinkActive="section-tab--active"
+       role="tab"
+       [attr.aria-label]="'nav.feed' | translate">
+      {{ 'nav.feed' | translate }}
+    </a>
+    <a class="section-tab"
+       routerLink="pantry"
+       routerLinkActive="section-tab--active"
+       role="tab"
+       [attr.aria-label]="'nav.pantry' | translate">
+      {{ 'nav.pantry' | translate }}
+    </a>
+  </nav>
+
+  <router-outlet />
+
+</div>

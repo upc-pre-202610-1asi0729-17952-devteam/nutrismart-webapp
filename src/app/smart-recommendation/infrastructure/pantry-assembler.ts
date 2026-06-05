@@ -1,15 +1,14 @@
 import { TranslateService } from '@ngx-translate/core';
 import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { UserGoal } from '../../iam/domain/model/user-goal.enum';
+import { FoodItem } from '../../nutrition-tracking/domain/model/food-item.entity';
 import { PantryItem, IngredientCategory } from '../domain/model/pantry-item.entity';
 import { RecipeSuggestion } from '../domain/model/recipe-suggestion.entity';
-import { IngredientCatalogItem } from '../domain/model/ingredient-catalog-item.entity';
 import {
   PantryItemResource,
   PantryItemsResponse,
   RecipeSuggestionResource,
   RecipeSuggestionsResponse,
-  IngredientCatalogResource,
 } from './pantry-resource';
 
 /**
@@ -20,29 +19,28 @@ import {
 export class PantryItemAssembler
   implements BaseAssembler<PantryItem, PantryItemResource, PantryItemsResponse>
 {
-  toEntityFromResource(r: PantryItemResource): PantryItem {
+  toEntityFromResource(r: PantryItemResource, food?: FoodItem): PantryItem {
     return new PantryItem({
       id:              r.id,
-      name:            r.name,
-      nameKey:         r.name_key,
-      category:        r.category as IngredientCategory,
+      foodId:          r.food_id,
+      name:            food?.name ?? r.food_id,
+      nameEs:          food?.nameEs ?? '',
+      nameKey:         food?.nameKey,
+      category:        (food?.category ?? 'Other') as IngredientCategory,
       quantityGrams:   r.quantity_grams,
-      caloriesPer100g: r.calories_per_100g,
-      userId:          r.user_id,
+      caloriesPer100g: food?.caloriesPer100g ?? 0,
+      userId:          r.userId,
       addedAt:         r.added_at,
     });
   }
 
   toResourceFromEntity(e: PantryItem): PantryItemResource {
     return {
-      id:                e.id,
-      name:              e.name,
-      name_key:          e.nameKey,
-      category:          e.category,
-      quantity_grams:    e.quantityGrams,
-      calories_per_100g: e.caloriesPer100g,
-      user_id:           e.userId,
-      added_at:          e.addedAt,
+      id:             e.id,
+      food_id:        e.foodId ?? '',
+      quantity_grams: e.quantityGrams,
+      userId:         e.userId,
+      added_at:       e.addedAt,
     };
   }
 
@@ -72,7 +70,7 @@ export class RecipeSuggestionAssembler
       protein:              r.protein,
       carbs:                r.carbs,
       fat:                  r.fat,
-      ingredients:          [...r.ingredients],
+      ingredients:          r.ingredients.map(i => ({ foodId: i.foodId, quantity_grams: i.quantity_grams })),
       goalType:             r.goal_type as UserGoal,
       prepTimeMinutes:      r.prep_time_minutes,
       coversMacroPct:       r.covers_macro_pct,
@@ -102,8 +100,3 @@ export class RecipeSuggestionAssembler
   }
 }
 
-export class IngredientCatalogAssembler {
-  toEntityFromResource(r: IngredientCatalogResource): IngredientCatalogItem {
-    return new IngredientCatalogItem(r.id, r.name_key, r.category as IngredientCategory, r.calories_per_100g);
-  }
-}

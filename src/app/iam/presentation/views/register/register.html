@@ -13,7 +13,7 @@
     <p class="auth-subtitle">{{ 'auth.register_subtitle' | translate }}</p>
 
     @if (registerError()) {
-      <div class="auth-error">{{ registerError() }}</div>
+      <div class="auth-error" role="alert">{{ registerError() | translate }}</div>
     }
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>

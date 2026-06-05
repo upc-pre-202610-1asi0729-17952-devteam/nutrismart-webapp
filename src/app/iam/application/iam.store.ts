@@ -288,9 +288,13 @@ export class IamStore {
     const user = this._currentUser();
     if (!user) return;
     this.iamApi.updateUser(user).subscribe({
-      next: (updated) => {
-        this._currentUser.set(updated);
-        this.saveSession(updated);
+      next: () => {
+        // The signal was already updated synchronously before persist() was called.
+        // Re-applying the API response would risk reverting a more recent change
+        // (e.g. upgradePlan called mid-flight). Sync localStorage from the current
+        // in-memory state, which is always the authoritative source of truth.
+        const current = this._currentUser();
+        if (current) this.saveSession(current);
       },
       error: (err) => this._error.set(err.message),
     });
@@ -523,18 +527,47 @@ export class IamStore {
   }
 
   /**
-   * Upgrades the subscription plan, persists, and publishes {@link BenefitsEnabled}
-   * so other bounded contexts can unlock plan-gated features.
+   * Changes the subscription plan, emits a new User signal so all dependents
+   * (plan guard, template bindings) update immediately, saves to localStorage
+   * synchronously, then fires the async API persist.
+   *
+   * @remarks
+   * A new {@link User} object is created instead of mutating the existing one
+   * because Angular signals use reference equality — mutating and re-setting
+   * the same object would not trigger change detection.
    *
    * @param plan - The new {@link SubscriptionPlan}.
    */
   upgradePlan(plan: SubscriptionPlan): void {
     const user = this._currentUser();
     if (!user) return;
-    user.plan = plan;
-    this._currentUser.set(user);
-    this.persist();
+    const updated = new User({
+      id:                 user.id,
+      firstName:          user.firstName,
+      lastName:           user.lastName,
+      email:              user.email,
+      goal:               user.goal,
+      weight:             user.weight,
+      height:             user.height,
+      activityLevel:      user.activityLevel,
+      plan,
+      restrictions:       user.restrictions,
+      medicalConditions:  user.medicalConditions,
+      dailyCalorieTarget: user.dailyCalorieTarget,
+      proteinTarget:      user.proteinTarget,
+      carbsTarget:        user.carbsTarget,
+      fatTarget:          user.fatTarget,
+      fiberTarget:        user.fiberTarget,
+      birthday:           user.birthday,
+      biologicalSex:      user.biologicalSex,
+      createdAt:          user.createdAt,
+      homeCity:           user.homeCity,
+      goalStartedAt:      user.goalStartedAt,
+    });
+    this._currentUser.set(updated);   // New reference → signal emits immediately
+    this.saveSession(updated);        // Update localStorage before the API round-trip
+    this.persist();                   // Async PUT to keep the backend in sync
     const features = Subscription.featuresFor(plan);
-    this.eventBus.publish(new BenefitsEnabled(user.id, plan, features));
+    this.eventBus.publish(new BenefitsEnabled(updated.id, plan, features));
   }
 }

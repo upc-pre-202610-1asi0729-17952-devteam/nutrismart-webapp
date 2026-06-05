@@ -19,6 +19,14 @@ export interface FoodItemResource extends BaseResource {
   fiber_per_100g: number;
   sugar_per_100g: number;
   restrictions: string[];
+  /** Machine-readable key matching pantry/recipe ingredient identifiers. */
+  name_key?: string;
+  /** Food category (e.g. "Grain", "Prepared dish"). */
+  category?: string;
+  item_type?: 'INGREDIENT' | 'DISH';
+  weather_types?: string[];
+  origin_city?: string | null;
+  origin_country?: string | null;
 }
 
 /** Envelope for the `/foods` collection endpoint. */
@@ -33,7 +41,7 @@ export interface FoodItemsResponse extends BaseResponse {
  */
 export interface MealRecordResource extends BaseResource {
   id: number;
-  foodItemId: number;
+  foodId: string | null;
   foodItemName: string;
   foodItemNameEs?: string;
   mealType: string;

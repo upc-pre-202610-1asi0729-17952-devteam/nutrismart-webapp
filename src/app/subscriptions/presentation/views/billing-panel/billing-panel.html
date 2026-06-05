@@ -1,0 +1,94 @@
+<div class="bp-shell">
+
+  <!-- Loading state -->
+  @if (loading()) {
+    <div class="bp-loading" role="status" aria-live="polite">
+      <span>{{ 'common.loading' | translate }}</span>
+    </div>
+  }
+
+  @if (!loading()) {
+
+    <!-- Current plan card -->
+    <section class="bp-section" aria-labelledby="bp-plan-heading">
+      <h3 id="bp-plan-heading" class="bp-section-title">{{ 'my_plan.page_title' | translate }}</h3>
+
+      @if (subscription() && subscription()!.isActive()) {
+        <div class="bp-plan-card">
+          <div class="bp-plan-info">
+            <div class="bp-plan-name">
+              {{ ('subscription.plan_' + subscription()!.plan.toLowerCase()) | translate }}
+            </div>
+            <span class="bp-badge bp-badge--active">{{ 'subscriptions.status_active' | translate }}</span>
+          </div>
+          <div class="bp-plan-meta">
+            <span class="bp-meta-item">{{ 'my_plan.active_renewal' | translate : { date: subscription()!.endDate } }}</span>
+            @if (subscription()!.pricePerMonth > 0) {
+              <span class="bp-meta-price">${{ subscription()!.pricePerMonth | number:'1.2-2' }} {{ 'subscription.per_month' | translate }}</span>
+            }
+          </div>
+          <button type="button" class="bp-btn-change" (click)="changePlan()">
+            {{ 'my_plan.change_plan' | translate }}
+          </button>
+        </div>
+      } @else {
+        <div class="bp-no-plan">
+          <p>{{ 'my_plan.choose_plan' | translate }}</p>
+          <button type="button" class="bp-btn-change" (click)="changePlan()">
+            {{ 'my_plan.choose_plan' | translate }}
+          </button>
+        </div>
+      }
+    </section>
+
+    <!-- Payment history -->
+    <section class="bp-section" aria-labelledby="bp-history-heading">
+      <h3 id="bp-history-heading" class="bp-section-title">{{ 'my_plan.payment_history' | translate }}</h3>
+
+      @if (billingHistory().length === 0) {
+        <p class="bp-empty">{{ 'common.empty' | translate }}</p>
+      } @else {
+        <div class="bp-table-wrap" role="region" aria-labelledby="bp-history-heading" tabindex="0">
+          <table class="bp-table">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'my_plan.date_col' | translate }}</th>
+                <th scope="col">{{ 'my_plan.plan_col' | translate }}</th>
+                <th scope="col">{{ 'my_plan.amount_col' | translate }}</th>
+                <th scope="col">{{ 'my_plan.status_col' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (record of billingHistory(); track record.id) {
+                <tr>
+                  <td>{{ record.date }}</td>
+                  <td class="bp-td-plan">
+                    {{ ('subscription.plan_' + record.plan.toLowerCase()) | translate }}
+                  </td>
+                  <td>
+                    @if (record.isTrial()) {
+                      <span class="bp-amount-free">{{ 'my_plan.trial' | translate }}</span>
+                    } @else {
+                      ${{ record.amount | number:'1.2-2' }}
+                    }
+                  </td>
+                  <td>
+                    <span
+                      class="bp-status-chip"
+                      [class.bp-status-chip--paid]="record.isPaid()"
+                      [class.bp-status-chip--trial]="record.isTrial()"
+                      [class.bp-status-chip--failed]="isFailed(record)"
+                    >
+                      {{ statusKey(record) | translate }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+
+  }
+</div>

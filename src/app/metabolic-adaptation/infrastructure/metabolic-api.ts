@@ -13,10 +13,11 @@ export class MetabolicApi extends BaseApi {
   private metricEp      = new BodyMetricEndpoint(this.http);
   private compositionEp = new BodyCompositionEndpoint(this.http);
 
-  logWeight(userId: number | string, weightKg: number, heightCm: number): Observable<BodyMetric> {
+  logWeight(userId: number | string, weightKg: number, heightCm: number, targetWeightKg?: number): Observable<BodyMetric> {
     return this.metricEp.create(new BodyMetric({
       id: 0, userId: userId as number, weightKg, heightCm,
       loggedAt: new Date().toISOString(),
+      targetWeightKg,
     })).pipe(
       retry(2),
       catchError(err => throwError(() => err)),

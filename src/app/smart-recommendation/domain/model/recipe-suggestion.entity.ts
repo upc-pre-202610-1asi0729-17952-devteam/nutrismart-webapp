@@ -1,6 +1,11 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 import { UserGoal } from '../../../iam/domain/model/user-goal.enum';
 
+export interface RecipeIngredient {
+  foodId: string;
+  quantity_grams: number;
+}
+
 /**
  * Constructor DTO for creating a {@link RecipeSuggestion} instance.
  *
@@ -14,7 +19,7 @@ export interface RecipeSuggestionProps {
   protein: number;
   carbs: number;
   fat: number;
-  ingredients: string[];
+  ingredients: RecipeIngredient[];
   goalType: UserGoal;
   prepTimeMinutes: number;
   coversMacroPct: number;
@@ -37,7 +42,7 @@ export class RecipeSuggestion implements BaseEntity {
   private _protein: number;
   private _carbs: number;
   private _fat: number;
-  private _ingredients: string[];
+  private _ingredients: RecipeIngredient[];
   private _goalType: UserGoal;
   private _prepTimeMinutes: number;
   private _coversMacroPct: number;
@@ -81,8 +86,8 @@ export class RecipeSuggestion implements BaseEntity {
   get fat(): number { return this._fat; }
   set fat(v: number) { this._fat = v; }
 
-  get ingredients(): string[] { return [...this._ingredients]; }
-  set ingredients(v: string[]) { this._ingredients = [...v]; }
+  get ingredients(): RecipeIngredient[] { return [...this._ingredients]; }
+  set ingredients(v: RecipeIngredient[]) { this._ingredients = [...v]; }
 
   get goalType(): UserGoal { return this._goalType; }
   set goalType(v: UserGoal) { this._goalType = v; }
@@ -128,7 +133,7 @@ export class RecipeSuggestion implements BaseEntity {
    * Comma-separated list of ingredient names for display.
    */
   get ingredientList(): string {
-    return this._ingredients.join(', ');
+    return this._ingredients.map(i => i.foodId).join(', ');
   }
 
   /**
@@ -144,7 +149,7 @@ export class RecipeSuggestion implements BaseEntity {
   }
 
   isCompatibleWith(pantryKeys: Set<string>): boolean {
-    const hits = this._ingredients.filter(ing => pantryKeys.has(ing)).length;
+    const hits = this._ingredients.filter(ing => pantryKeys.has(ing.foodId)).length;
     return hits > 0 && hits / this._ingredients.length >= 0.5;
   }
 

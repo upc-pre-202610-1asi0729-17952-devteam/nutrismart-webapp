@@ -1,15 +1,23 @@
 {
   "nav": {
-    "principal": "PRINCIPAL",
+    "main": "PRINCIPAL",
     "tools": "HERRAMIENTAS",
     "dashboard": "Dashboard",
+    "dashboard_desc": "Resumen de hoy",
+    "nutrition_log": "Registro Nutricional",
+    "nutrition_log_desc": "Registrar comidas · Smart Scan",
     "daily_log": "Registro diario",
     "smart_scan": "Smart Scan",
     "recommendations": "Recomendaciones",
+    "recommendations_desc": "Personalizadas para ti",
+    "feed": "Feed",
     "body_progress": "Progreso corporal",
+    "body_progress_desc": "Peso · IMC · TDEE",
     "pantry": "Despensa",
     "wearable": "Actividad física",
+    "wearable_desc": "Pasos · Calorías quemadas",
     "analytics": "Analítica",
+    "analytics_desc": "Progreso e informes",
     "subscription": "Suscripción",
     "profile": "Perfil",
     "logout": "Cerrar sesión",
@@ -197,7 +205,10 @@
     "feature_pdf": "Informes en PDF",
     "manage_title": "Tu Plan",
     "manage_subtitle": "Actualiza tu suscripción cuando quieras.",
-    "cta_current_plan": "Plan actual"
+    "cta_current_plan": "Plan actual",
+    "confirmed_title": "¡Todo listo!",
+    "confirmed_subtitle": "Tu plan {{ plan }} ya está activo.",
+    "confirmed_cta": "Ir al Dashboard"
   },
   "profile": {
     "title": "Perfil y configuración",
@@ -205,6 +216,7 @@
     "nav_physical": "Datos físicos y objetivos",
     "nav_dietary": "Restricciones alimentarias",
     "nav_language": "Idioma",
+    "nav_subscription": "Suscripción",
     "nav_security": "Seguridad y privacidad",
     "personal_title": "Información personal",
     "physical_title": "Datos físicos y objetivos",
@@ -584,7 +596,10 @@
       "weather": "Ajuste por clima",
       "calorie_adjusted": "Objetivo calórico ajustado a {{ kcal }} kcal",
       "factor": "Factor {{ factor }}× aplicado al objetivo base"
-    }
+    },
+    "log_dialog_title": "Registrar recomendación",
+    "log_dialog_subtitle": "Selecciona a qué comida agregar \"{{name}}\".",
+    "log_dialog_meal_label": "Comida"
   },
   "body_progress": {
     "page_title": "Progreso Corporal",
@@ -814,7 +829,13 @@
   "food_items": {
     "grilled_chicken_breast": "Pechuga de pollo a la plancha",
     "white_rice": "Arroz blanco",
-    "mixed_salad": "Ensalada mixta"
+    "mixed_salad": "Ensalada mixta",
+    "quinoa": "Quinua cocida",
+    "chicken_breast": "Pechuga de pollo",
+    "broccoli": "Brócoli cocido",
+    "cooked_oatmeal": "Avena cocida",
+    "banana": "Plátano",
+    "hard_boiled_egg": "Huevo duro"
   },
   "pantry": {
     "page_title": "Despensa",
@@ -841,13 +862,22 @@
     "recipe_impact_warning": "Añadir esto llegaría al {{ percent }}% de tu meta diaria",
     "recipe_impact_danger": "Añadir esto superaría tu meta diaria ({{ percent }}%)"
   },
+  "upgrade_gate": {
+    "title": "Esta función requiere el plan {{ plan }}",
+    "subtitle_pro": "Desbloquea Smart Scan, recomendaciones por clima, modo viaje, despensa y más.",
+    "subtitle_premium": "Obtén la experiencia completa de NutriSmart — todas las funciones, sin límites.",
+    "features_label": "Lo que desbloqueas:",
+    "cta": "Mejorar a {{ plan }}",
+    "back": "Volver al Dashboard"
+  },
   "my_plan": {
-    "page_title": "Suscripción y facturación",
+    "page_title": "Facturación",
     "page_subtitle": "Administra tu plan y consulta tu historial de pagos",
     "active_plan": "Plan {{ plan }}",
-    "active_renewal": "Activo · Próxima renovación: {{ date }}",
+    "active_renewal": "Activo · Renueva el {{ date }}",
     "cancel_plan": "Cancelar plan",
-    "choose_plan": "Elige tu plan",
+    "choose_plan": "Elige un plan",
+    "change_plan": "Cambiar plan",
     "payment_history": "Historial de pagos",
     "date_col": "FECHA",
     "plan_col": "PLAN",
@@ -856,6 +886,7 @@
     "receipt_col": "RECIBO",
     "paid": "Pagado",
     "trial": "Prueba",
+    "failed": "Fallido",
     "pdf": "PDF",
     "current_plan_btn": "Plan actual",
     "upgrade_to": "Mejorar a {{ plan }}",
@@ -865,11 +896,46 @@
     "prorated_charge": "Cargo prorrateado por el ciclo restante:",
     "full_charge": "Cargo completo desde el próximo ciclo:",
     "features_unlock": "Funciones que desbloqueas:",
-    "confirm_upgrade": "Confirmar mejora · SubscriptionActivated →",
+    "confirm_upgrade": "Confirmar mejora",
     "downgrade_title": "Degradar a {{ plan }}",
     "downgrade_warning": "Perderás acceso a las siguientes funciones al final de tu ciclo de facturación ({{ date }}):",
     "effective_date": "Efectivo: {{ date }}",
     "confirm_downgrade": "Confirmar degradación",
+    "processing": "Procesando..."
+  },
+  "payment": {
+    "title": "Datos de pago",
+    "subtitle": "Tu información está cifrada y es segura.",
+    "card_holder": "Nombre del titular",
+    "card_number": "Número de tarjeta",
+    "expiry": "Fecha de vencimiento",
+    "cvv": "CVV",
+    "placeholder_holder": "Nombre completo en la tarjeta",
+    "placeholder_number": "1234 5678 9012 3456",
+    "placeholder_expiry": "MM/AA",
+    "placeholder_cvv": "123",
+    "expiry_short": "Venc.",
+    "card_preview_label": "Resumen de tarjeta",
+    "btn_continue": "Continuar a revisión",
+    "error_required": "Este campo es obligatorio.",
+    "error_invalid_card": "Ingresa un número de tarjeta válido de 16 dígitos.",
+    "error_invalid_expiry": "Ingresa una fecha de vencimiento válida (MM/AA).",
+    "error_invalid_cvv": "Ingresa un CVV válido de 3 dígitos.",
+    "error_card_declined": "Tu tarjeta fue rechazada. Por favor usa otra tarjeta.",
+    "error_processing_failed": "El procesamiento del pago falló. Por favor intenta de nuevo.",
+    "security_note": "Cifrado SSL de 256 bits · Cumplimiento PCI"
+  },
+  "checkout": {
+    "title": "Revisa tu pedido",
+    "subtitle": "Verifica los detalles antes de confirmar.",
+    "plan_label": "Plan",
+    "billing_label": "Ciclo de facturación",
+    "card_label": "Método de pago",
+    "total_label": "Total hoy",
+    "legal": "Al confirmar, aceptas nuestros Términos de servicio. Tu suscripción se renueva mensualmente y puedes cancelarla cuando quieras.",
+    "btn_confirm": "Confirmar y suscribirme",
+    "btn_back": "Volver",
+    "edit_card": "Editar tarjeta",
     "processing": "Procesando..."
   },
   "units": {
@@ -1065,6 +1131,9 @@
     "cta_select": "Seleccionar plan",
     "cta_cancel": "Cancelar suscripción",
     "current_plan": "Tu plan actual",
+    "status_active": "Activo",
+    "status_cancelled": "Cancelado",
+    "status_expired": "Expirado",
     "features_nutrition_log": "Registro nutricional",
     "features_basic_dashboard": "Panel básico",
     "features_bmi_bmr_tdee": "Calculadora IMC, TMB y TDEE",
@@ -1092,6 +1161,7 @@
     "abandonment_risk": "Te extrañamos. Tu plan nutricional te espera cuando estés listo.",
     "consistency_recovered": "¡Bienvenido de vuelta! Cada día cuenta. Hoy es un buen día.",
     "streak_milestone": "¡{{days}} días consecutivos! Estás construyendo un hábito real.",
-    "strategy_adjustment": "Tu cuerpo se adaptó. Te sugerimos revisar tu estrategia nutricional."
+    "strategy_adjustment": "Tu cuerpo se adaptó. Te sugerimos revisar tu estrategia nutricional.",
+    "meal_logged": "Añadido al registro de hoy."
   }
 }

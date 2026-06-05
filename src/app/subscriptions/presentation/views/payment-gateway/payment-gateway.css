@@ -1,0 +1,402 @@
+/* ─── Shell ──────────────────────────────────────────────────────────────── */
+
+.pg-shell {
+  min-height: 100vh;
+  background: var(--nutrismart-bg, #f5f7f7);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px 64px;
+}
+
+/* ─── Wrapper — mobile: single column, panel on top ─────────────────────── */
+
+.pg-wrapper {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Card panel goes above the form on mobile */
+.pg-card-panel {
+  order: -1;
+}
+
+/* ─── Card summary panel ─────────────────────────────────────────────────── */
+
+.pg-card-panel {
+  background: var(--nutrismart-white, #fff);
+  border: 1px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius, 14px);
+  padding: 14px 18px;
+
+  /* Mobile: horizontal strip */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+/* Brand */
+
+.pg-cp-brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.pg-cp-brand-svg {
+  display: block;
+}
+
+.pg-cp-brand-svg--visa {
+  width: 44px;
+  height: auto;
+}
+
+.pg-cp-brand-svg--generic {
+  width: 32px;
+  height: auto;
+  color: var(--nutrismart-text-mid, #4a6060);
+}
+
+/* MC and AMEX default size */
+.pg-cp-brand-svg:not(.pg-cp-brand-svg--visa):not(.pg-cp-brand-svg--generic) {
+  width: 38px;
+  height: auto;
+}
+
+/* Number */
+
+.pg-cp-number {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  margin: 0;
+  flex: 1;
+  min-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Holder name — hidden on mobile, shown on desktop */
+
+.pg-cp-name {
+  display: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-mid, #4a6060);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Expiry + CVV row */
+
+.pg-cp-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.pg-cp-meta-field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.pg-cp-meta-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--nutrismart-text-light, #8aa8a8);
+}
+
+.pg-cp-meta-val {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+}
+
+.pg-cp-meta-val--mono {
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 2px;
+}
+
+/* CVV box — highlights when focused */
+
+.pg-cp-cvv {
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: 8px;
+  padding: 5px 12px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.pg-cp-cvv--focus {
+  border-color: var(--nutrismart-primary, #508B89);
+  background: var(--nutrismart-primary-light, #e8f2f2);
+}
+
+/* Security note — hidden on mobile */
+
+.pg-cp-security {
+  display: none;
+}
+
+/* ─── Form card ──────────────────────────────────────────────────────────── */
+
+.pg-form-card {
+  background: var(--nutrismart-white, #fff);
+  border: 1px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius, 14px);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.pg-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.pg-lock-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--nutrismart-primary, #508B89);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.pg-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  margin: 0 0 2px;
+}
+
+.pg-subtitle {
+  font-size: 0.8rem;
+  color: var(--nutrismart-text-light, #8aa8a8);
+  margin: 0;
+}
+
+/* Plan chip */
+
+.pg-plan-chip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--nutrismart-primary-light, #e8f2f2);
+  border: 1px solid var(--nutrismart-primary, #508B89);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 9px 14px;
+}
+
+.pg-plan-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  text-transform: capitalize;
+}
+
+.pg-plan-price {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--nutrismart-primary, #508B89);
+}
+
+.pg-plan-period {
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+
+/* Fields */
+
+.pg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pg-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.pg-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--nutrismart-text-mid, #4a6060);
+  letter-spacing: 0.3px;
+}
+
+.pg-input {
+  width: 100%;
+  padding: 10px 13px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  font-size: 0.95rem;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  background: var(--nutrismart-white, #fff);
+  transition: border-color 0.18s, box-shadow 0.18s;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.pg-input:focus {
+  border-color: var(--nutrismart-primary, #508B89);
+  box-shadow: 0 0 0 3px rgba(80, 139, 137, 0.12);
+}
+
+.pg-input--mono {
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 1.5px;
+}
+
+.pg-input--error {
+  border-color: #ef4444;
+}
+
+.pg-input--error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.pg-error {
+  font-size: 0.75rem;
+  color: #ef4444;
+}
+
+.pg-btn-submit {
+  width: 100%;
+  padding: 12px;
+  background: var(--nutrismart-primary, #508B89);
+  color: #fff;
+  border: none;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s;
+  margin-top: 2px;
+}
+
+.pg-btn-submit:hover {
+  background: var(--nutrismart-primary-dark, #3d6e6c);
+}
+
+.pg-security {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--nutrismart-text-light, #8aa8a8);
+  font-size: 0.75rem;
+}
+
+.pg-security svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+/* ─── Desktop: two-column grid ───────────────────────────────────────────── */
+
+@media (min-width: 800px) {
+  .pg-shell {
+    align-items: center;
+    padding: 48px 32px 64px;
+  }
+
+  .pg-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    grid-template-areas: "form preview";
+    align-items: center;
+    gap: 28px;
+    max-width: 780px;
+  }
+
+  .pg-form-card {
+    grid-area: form;
+    padding: 32px;
+  }
+
+  /* Panel: vertical layout in right column */
+  .pg-card-panel {
+    grid-area: preview;
+    order: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 24px 20px;
+    align-self: stretch; /* fill full row height */
+  }
+
+  .pg-cp-number {
+    font-size: 0.82rem;
+    letter-spacing: 1.5px;
+    min-width: unset;
+    white-space: normal;
+    word-break: break-all;
+  }
+
+  .pg-cp-name {
+    display: block;
+  }
+
+  .pg-cp-meta-row {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* Security note appears at the bottom of the panel */
+  .pg-cp-security {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    color: var(--nutrismart-text-light, #8aa8a8);
+    margin-top: auto; /* push to bottom */
+  }
+
+  .pg-cp-security svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+}
+
+/* ─── Mobile narrow ──────────────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .pg-shell {
+    padding: 24px 12px 48px;
+  }
+
+  .pg-form-card {
+    padding: 22px 18px;
+  }
+
+  .pg-row {
+    grid-template-columns: 1fr;
+  }
+
+  .pg-cp-number {
+    font-size: 0.78rem;
+    letter-spacing: 1px;
+  }
+}

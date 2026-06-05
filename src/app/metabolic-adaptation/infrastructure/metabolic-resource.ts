@@ -6,12 +6,12 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
  * @author Espinoza Cruz, Angela Milagros
  */
 export interface BodyMetricResource extends BaseResource {
-  user_id: number | string;
-  weight_kg: number;
-  height_cm: number;
-  logged_at: string;
-  target_weight_kg?: number;
-  projected_achievement_date?: string;
+  userId: number | string;
+  weightKg: number;
+  heightCm: number;
+  loggedAt: string;
+  targetWeightKg?: number;
+  projectedAchievementDate?: string;
 }
 
 /**
@@ -20,7 +20,7 @@ export interface BodyMetricResource extends BaseResource {
  * @author Espinoza Cruz, Angela Milagros
  */
 export interface BodyCompositionResource extends BaseResource {
-  user_id: number | string;
+  userId: number | string;
   waist_cm: number;
   neck_cm?: number;
   height_cm: number;
@@ -36,7 +36,7 @@ export interface BodyCompositionResource extends BaseResource {
  * @author Espinoza Cruz, Angela Milagros
  */
 export interface NutritionPlanResource extends BaseResource {
-  user_id: number;
+  userId: number;
   daily_calorie_target: number;
   protein_target_g: number;
   carbs_target_g: number;

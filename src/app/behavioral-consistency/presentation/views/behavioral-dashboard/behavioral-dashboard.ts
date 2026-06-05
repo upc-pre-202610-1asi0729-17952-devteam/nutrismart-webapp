@@ -246,7 +246,7 @@ export class BehavioralDashboard implements OnInit {
   }
 
   protected onLogMeal(): void {
-    void this.router.navigate(['/nutrition']);
+    void this.router.navigate(['/nutrition-log/daily']);
   }
 
   protected onRetry(): void {

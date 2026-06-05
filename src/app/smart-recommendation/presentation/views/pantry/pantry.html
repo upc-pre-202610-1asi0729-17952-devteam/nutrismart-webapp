@@ -35,7 +35,7 @@
                   <li class="autocomplete-option"
                       role="option"
                       (mousedown)="onOptionMousedown($event, item)">
-                    {{ 'pantry_items.' + item.nameKey | translate }}
+                    {{ item.getLocalizedName(currentLang()) }}
                   </li>
                 }
               </ul>
@@ -61,7 +61,7 @@
             <li class="ingredient-item">
               <div class="ingredient-item__info">
                 <span class="ingredient-item__name">
-                  {{ item.nameKey ? ('pantry_items.' + item.nameKey | translate) : item.name }}
+                  {{ item.getLocalizedName(currentLang()) }}
                 </span>
                 <span class="ingredient-item__category">· {{ categoryI18nKey(item.category) | translate }}</span>
               </div>
@@ -147,7 +147,7 @@
             <li class="recipe-card">
               <div class="recipe-card__header">
                 <span class="recipe-card__name">
-                  {{ recipe.nameKey ? ('recipes.' + recipe.nameKey | translate) : recipe.name }}
+                  {{ recipe.name }}
                 </span>
                 <span class="recipe-card__kcal">{{ recipe.calories }} kcal</span>
               </div>
