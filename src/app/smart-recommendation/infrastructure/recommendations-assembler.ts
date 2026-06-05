@@ -63,6 +63,7 @@ export class TravelContextAssembler
   toEntityFromResource(r: TravelContextResource): TravelContext {
     return new TravelContext({
       id:          typeof r.id === 'string' ? 0 : r.id as number,
+      userId:      r.userId,
       city:        r.city,
       country:     r.country,
       isActive:    r.is_active,
@@ -100,6 +101,7 @@ export class RecommendationSessionAssembler
       simplifiedKcalTarget: r.simplified_kcal_target,
       createdAt:            r.created_at,
       isActive:             r.is_active,
+      weatherSnapshotId:    r.weather_snapshot_id ?? null,
     });
   }
 
@@ -112,6 +114,7 @@ export class RecommendationSessionAssembler
       simplified_kcal_target: e.simplifiedKcalTarget,
       created_at:             e.createdAt,
       is_active:              e.isActive,
+      weather_snapshot_id:    e.weatherSnapshotId,
     };
   }
 

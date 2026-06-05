@@ -34,6 +34,7 @@ export interface RecommendationSessionResource extends BaseResource {
   simplified_kcal_target: number;
   created_at: string;
   is_active: boolean;
+  weather_snapshot_id?: string | null;
 }
 
 export interface FoodCardResource {
