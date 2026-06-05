@@ -5,7 +5,7 @@
       <div class="avatar-circle">{{ iamStore.currentUser()?.initials }}</div>
       <div class="avatar-info">
         <div class="avatar-name">{{ iamStore.currentUser()?.fullName }}</div>
-        <div class="avatar-plan">{{ iamStore.currentUser()?.plan }}</div>
+        <div class="avatar-plan">{{ planNameKey() | translate }}</div>
       </div>
     </div>
 
@@ -94,7 +94,7 @@
             </div>
 
             <div class="plan-info-card">
-              <span class="plan-badge">{{ iamStore.currentUser()?.plan }}</span>
+              <span class="plan-badge">{{ planNameKey() | translate }}</span>
               <span class="plan-renewal">{{ 'profile.nav_personal' | translate }}</span>
             </div>
 
@@ -265,7 +265,14 @@
         </section>
       }
 
-      <!-- PANEL 5: Security and privacy -->
+      <!-- PANEL 5: Subscription -->
+      @case ('subscription') {
+        <section class="panel-section">
+          <app-billing-panel />
+        </section>
+      }
+
+      <!-- PANEL 6: Security and privacy -->
       @case ('security') {
         <section class="panel-section">
           <h2 class="panel-title">{{ 'profile.security_title' | translate }}</h2>

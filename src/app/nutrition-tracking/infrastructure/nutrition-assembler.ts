@@ -34,6 +34,12 @@ export class FoodItemAssembler
       fiberPer100g:    r.fiber_per_100g,
       sugarPer100g:    r.sugar_per_100g,
       restrictions:    r.restrictions.map(s => s as DietaryRestriction),
+      nameKey:         r.name_key,
+      category:        r.category,
+      itemType:        r.item_type,
+      weatherTypes:    r.weather_types ?? [],
+      originCity:      r.origin_city ?? null,
+      originCountry:   r.origin_country ?? null,
     });
   }
 
@@ -51,6 +57,12 @@ export class FoodItemAssembler
       fiber_per_100g:    e.fiberPer100g,
       sugar_per_100g:    e.sugarPer100g,
       restrictions:      e.restrictions,
+      name_key:          e.nameKey,
+      category:          e.category,
+      item_type:         e.itemType,
+      weather_types:     e.weatherTypes,
+      origin_city:       e.originCity,
+      origin_country:    e.originCountry,
     };
   }
 
@@ -71,7 +83,7 @@ export class MealRecordAssembler
   toEntityFromResource(r: MealRecordResource): MealRecord {
     return new MealRecord({
       id:              r.id,
-      foodItemId:      r.foodItemId,
+      foodId:          r.foodId,
       foodItemName:    r.foodItemName,
       foodItemNameEs:  r.foodItemNameEs,
       mealType:        r.mealType as MealType,
@@ -91,7 +103,7 @@ export class MealRecordAssembler
   toResourceFromEntity(e: MealRecord): MealRecordResource {
     return {
       id:              e.id,
-      foodItemId:      e.foodItemId,
+      foodId:          e.foodId,
       foodItemName:    e.foodItemName,
       foodItemNameEs:  e.foodItemNameEs,
       mealType:        e.mealType,

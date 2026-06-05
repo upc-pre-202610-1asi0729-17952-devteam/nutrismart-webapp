@@ -305,10 +305,8 @@ export class RecommendationsStore {
     }
   }
 
-  /** Resolves a city name to its weather-snapshot ID for querying recommendation-cards. */
   private resolveCityId(cityName: string): string {
-    const match = this._availableLocations().find(l => l.city === cityName);
-    return match?.snapshotId ?? cityName;
+    return cityName;
   }
 
   private subscribeToBillingEvents(): void {
@@ -373,9 +371,10 @@ export class RecommendationsStore {
         const event = e as CompatibleDishesRanked;
         this._bestDishCard.set({
           id:          `best-dish-${event.occurredAt}`,
+          foodId:      0,
           name:        event.bestDishName,
           description: `${event.bestDishCalories} kcal · P${event.bestDishProtein}g · C${event.bestDishCarbs}g · G${event.bestDishFat}g`,
-          kcal:        event.bestDishCalories,
+          calories:    event.bestDishCalories,
           protein:     `${event.bestDishProtein}g`,
           badge:       'restaurant',
         });

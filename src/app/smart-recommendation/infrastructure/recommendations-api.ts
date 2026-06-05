@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { forkJoin, Observable, throwError } from 'rxjs';
-import { catchError, map, retry } from 'rxjs/operators';
+import { catchError, map, retry, switchMap } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment.development';
 import { BaseApi } from '../../shared/infrastructure/base-api';
@@ -28,9 +28,11 @@ import {
 
 export interface RecommendationCard {
   id: number | string;
+  /** Identifier of the underlying food item — used to log the card to the nutrition diary. */
+  foodId: number | string;
   name: string;
   description: string;
-  kcal: number;
+  calories: number;
   protein: string;
   badge: string;
 }
@@ -58,7 +60,7 @@ export class RecommendationsApi extends BaseApi {
 
   getLatestLocationSnapshot(userId: string): Observable<LocationSnapshot | null> {
     const params = new HttpParams()
-      .set('user_id', userId)
+      .set('userId', userId)
       .set('_sort', 'recorded_at')
       .set('_order', 'desc')
       .set('_limit', '1');
@@ -135,7 +137,7 @@ export class RecommendationsApi extends BaseApi {
   }
 
   getRecommendationSession(userId: string): Observable<RecommendationSession | null> {
-    const params = new HttpParams().set('user_id', userId).set('is_active', 'true');
+    const params = new HttpParams().set('userId', userId).set('is_active', 'true');
     return this.http
       .get<RecommendationSessionResource[]>(`${BASE}${environment.recommendationSessionsEndpointPath}`, { params })
       .pipe(
@@ -146,21 +148,33 @@ export class RecommendationsApi extends BaseApi {
   }
 
   getStrategyAdjustment(status: AdherenceStatus, userId: string): Observable<RecommendationSession> {
-    const params = new HttpParams().set('user_id', userId).set('is_active', 'true');
+    const params = new HttpParams().set('userId', userId).set('is_active', 'true');
     return this.http
       .get<RecommendationSessionResource[]>(`${BASE}${environment.recommendationSessionsEndpointPath}`, { params })
       .pipe(
-        map(list => list[0]),
-        map(resource => {
+        map(list => {
           const consecutiveMisses = status === AdherenceStatus.DROPPED ? 5
             : status === AdherenceStatus.AT_RISK ? 2 : 0;
-          return { ...resource, adherence_status: status, consecutive_misses: consecutiveMisses };
-        }),
-        map(patched => {
-          this.http.patch(
-            `${BASE}${environment.recommendationSessionsEndpointPath}/${patched.id}`,
-            { adherence_status: patched.adherence_status, consecutive_misses: patched.consecutive_misses },
-          ).pipe(retry(2), catchError(err => throwError(() => err))).subscribe();
+          const resource = list[0];
+          if (!resource) {
+            return this.sessionAssembler.toEntityFromResource({
+              id:                     0,
+              userId,
+              adherence_status:       status,
+              consecutive_misses:     consecutiveMisses,
+              simplified_kcal_target: 0,
+              created_at:             new Date().toISOString(),
+              is_active:              true,
+            } as RecommendationSessionResource);
+          }
+          const patched = { ...resource, adherence_status: status, consecutive_misses: consecutiveMisses };
+          this.http
+            .patch(
+              `${BASE}${environment.recommendationSessionsEndpointPath}/${patched.id}`,
+              { adherence_status: patched.adherence_status, consecutive_misses: patched.consecutive_misses },
+            )
+            .pipe(retry(2), catchError(err => throwError(() => err)))
+            .subscribe();
           return this.sessionAssembler.toEntityFromResource(patched);
         }),
         retry(2),
@@ -169,7 +183,7 @@ export class RecommendationsApi extends BaseApi {
   }
 
   getTravelContext(userId: string): Observable<TravelContext | null> {
-    const params = new HttpParams().set('user_id', userId);
+    const params = new HttpParams().set('userId', userId);
     return this.http
       .get<TravelContextResource[]>(`${BASE}${environment.travelContextsEndpointPath}`, { params })
       .pipe(
@@ -180,25 +194,32 @@ export class RecommendationsApi extends BaseApi {
   }
 
   activateTravelMode(city: string, country: string, userId: string): Observable<TravelContext> {
-    const params = new HttpParams().set('user_id', userId);
+    const params = new HttpParams().set('userId', userId);
     return this.http
       .get<TravelContextResource[]>(`${BASE}${environment.travelContextsEndpointPath}`, { params })
       .pipe(
-        map(list => list[0]),
-        map(resource => ({
-          ...resource,
-          city,
-          country,
-          is_active:    true,
-          is_manual:    false,
-          activated_at: new Date().toISOString(),
-        } as TravelContextResource)),
-        map(patched => {
-          this.http.patch(
-            `${BASE}${environment.travelContextsEndpointPath}/${patched.id}`,
-            { city: patched.city, country: patched.country, is_active: true, is_manual: false, activated_at: patched.activated_at },
-          ).pipe(retry(2), catchError(err => throwError(() => err))).subscribe();
-          return this.travelAssembler.toEntityFromResource(patched);
+        switchMap(list => {
+          const body = {
+            city,
+            country,
+            is_active:    true,
+            is_manual:    false,
+            activated_at: new Date().toISOString(),
+          };
+          if (list[0]) {
+            return this.http
+              .patch<TravelContextResource>(
+                `${BASE}${environment.travelContextsEndpointPath}/${list[0].id}`,
+                body,
+              )
+              .pipe(map(updated => this.travelAssembler.toEntityFromResource(updated)));
+          }
+          return this.http
+            .post<TravelContextResource>(
+              `${BASE}${environment.travelContextsEndpointPath}`,
+              { userId, ...body },
+            )
+            .pipe(map(created => this.travelAssembler.toEntityFromResource(created)));
         }),
         retry(2),
         catchError(err => throwError(() => err)),
@@ -206,20 +227,26 @@ export class RecommendationsApi extends BaseApi {
   }
 
   deactivateTravelMode(userId: string): Observable<TravelContext> {
-    const params = new HttpParams().set('user_id', userId);
+    const params = new HttpParams().set('userId', userId);
     return this.http
       .get<TravelContextResource[]>(`${BASE}${environment.travelContextsEndpointPath}`, { params })
       .pipe(
-        map(list => list[0]),
-        map(resource => ({
-          ...resource,
-          city: '', country: '', is_active: false, is_manual: false, activated_at: '',
-        } as TravelContextResource)),
-        map(patched => {
-          this.http.patch(
-            `${BASE}${environment.travelContextsEndpointPath}/${patched.id}`,
-            { city: '', country: '', is_active: false, is_manual: false, activated_at: '' },
-          ).pipe(retry(2), catchError(err => throwError(() => err))).subscribe();
+        map(list => {
+          const resource = list[0];
+          if (!resource) {
+            return new TravelContext({ id: 0, city: '', country: '', isActive: false, isManual: false, activatedAt: '' });
+          }
+          const patched: TravelContextResource = {
+            ...resource,
+            city: '', country: '', is_active: false, is_manual: false, activated_at: '',
+          };
+          this.http
+            .patch(
+              `${BASE}${environment.travelContextsEndpointPath}/${patched.id}`,
+              { city: '', country: '', is_active: false, is_manual: false, activated_at: '' },
+            )
+            .pipe(retry(2), catchError(err => throwError(() => err)))
+            .subscribe();
           return this.travelAssembler.toEntityFromResource(patched);
         }),
         retry(2),
@@ -239,10 +266,11 @@ export class RecommendationsApi extends BaseApi {
     const es = this.translate.currentLang === 'es';
     return {
       id:          r.id,
-      name:        es ? food.name_es : food.name,
+      foodId:      food.id,
+      name:        es ? (food.name_es ?? food.name) : food.name,
       description: es ? r.description_es : r.description,
-      kcal:        food.kcal,
-      protein:     `P ${food.protein_g}g`,
+      calories:    food.calories_per_100g,
+      protein:     `P ${food.protein_per_100g}g`,
       badge:       r.badge,
     };
   }

@@ -13,6 +13,8 @@ interface NavItem {
   link: string;
   /** ngx-translate key used to render the label (e.g. `'nav.dashboard'`). */
   label: string;
+  /** ngx-translate key for the short description shown below the label. */
+  description: string;
   /** Unicode symbol displayed as the nav icon. */
   icon: string;
 }
@@ -21,9 +23,9 @@ interface NavItem {
  * Main application shell component.
  *
  * Renders the fixed sidebar navigation and the `<router-outlet>` where
- * bounded-context views are projected. The sidebar is split into two
- * sections — principal features and tools — each driven by a signal-based
- * array so items can be updated reactively if needed.
+ * bounded-context views are projected. The sidebar is divided into two
+ * sections — MAIN and TOOLS — each item showing a label and a short
+ * description. Subscription management is accessible from the profile footer.
  *
  * On mobile/tablet (≤ 1023px) the sidebar is hidden by default and toggled
  * via a hamburger button. Navigation events automatically close it.
@@ -65,20 +67,17 @@ export class Layout {
     this.isSidebarOpen.set(false);
   }
 
-  /** Primary navigation items shown in the PRINCIPAL section. */
+  /** Primary navigation items shown in the MAIN section. */
   principalNav = signal<NavItem[]>([
-    { link: '/dashboard',        label: 'nav.dashboard',        icon: '⊞' },
-    { link: '/nutrition',        label: 'nav.daily_log',        icon: '✓' },
-    { link: '/smart-scan',       label: 'nav.smart_scan',       icon: '◫' },
-    { link: '/recommendations',  label: 'nav.recommendations',  icon: '◎' },
-    { link: '/body-progress',    label: 'nav.body_progress',    icon: '〜' },
+    { link: '/dashboard',       label: 'nav.dashboard',       description: 'nav.dashboard_desc',       icon: '⊞' },
+    { link: '/nutrition-log',   label: 'nav.nutrition_log',   description: 'nav.nutrition_log_desc',   icon: '✓' },
+    { link: '/recommendations', label: 'nav.recommendations', description: 'nav.recommendations_desc', icon: '◎' },
   ]);
 
   /** Secondary navigation items shown in the TOOLS section. */
   toolsNav = signal<NavItem[]>([
-    { link: '/pantry',       label: 'nav.pantry',       icon: '♡' },
-    { link: '/wearable',     label: 'nav.wearable',     icon: '▣' },
-    { link: '/analytics',    label: 'nav.analytics',    icon: '↑' },
-    { link: '/my-plan',      label: 'nav.subscription', icon: '◉' },
+    { link: '/body-progress', label: 'nav.body_progress', description: 'nav.body_progress_desc', icon: '〜' },
+    { link: '/wearable',      label: 'nav.wearable',      description: 'nav.wearable_desc',      icon: '▣' },
+    { link: '/analytics',     label: 'nav.analytics',     description: 'nav.analytics_desc',     icon: '↑' },
   ]);
 }

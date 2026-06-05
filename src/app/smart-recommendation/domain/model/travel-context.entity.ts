@@ -3,6 +3,7 @@ import { ContextualTargetAdjustment } from './contextual-target-adjustment.value
 
 export interface TravelContextProps {
   id: number;
+  userId?: string;
   city: string;
   country: string;
   isActive: boolean;
@@ -12,6 +13,7 @@ export interface TravelContextProps {
 
 export class TravelContext implements BaseEntity {
   #id: number;
+  #userId: string;
   #city: string;
   #country: string;
   #isActive: boolean;
@@ -20,6 +22,7 @@ export class TravelContext implements BaseEntity {
 
   constructor(props: TravelContextProps) {
     this.#id          = props.id;
+    this.#userId      = props.userId ?? '';
     this.#city        = props.city;
     this.#country     = props.country;
     this.#isActive    = props.isActive;
@@ -29,6 +32,9 @@ export class TravelContext implements BaseEntity {
 
   get id(): number { return this.#id; }
   set id(v: number) { this.#id = v; }
+
+  get userId(): string { return this.#userId; }
+  set userId(v: string) { this.#userId = v; }
 
   get city(): string { return this.#city; }
   set city(v: string) { this.#city = v; }

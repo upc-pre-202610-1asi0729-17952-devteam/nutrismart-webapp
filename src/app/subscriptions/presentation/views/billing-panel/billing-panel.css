@@ -1,0 +1,196 @@
+.bp-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.bp-loading {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+  color: var(--nutrismart-text-mid, #4a6060);
+  font-size: 0.9rem;
+}
+
+.bp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.bp-section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--nutrismart-text-mid, #4a6060);
+  margin: 0;
+}
+
+/* ─── Current plan card ─────────────────────────────────────────────────── */
+
+.bp-plan-card {
+  background: var(--nutrismart-white, #ffffff);
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius, 14px);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bp-plan-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bp-plan-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+}
+
+.bp-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.bp-badge--active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.bp-plan-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bp-meta-item {
+  font-size: 0.875rem;
+  color: var(--nutrismart-text-mid, #4a6060);
+}
+
+.bp-meta-price {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--nutrismart-primary, #508B89);
+}
+
+.bp-btn-change {
+  align-self: flex-start;
+  padding: 8px 18px;
+  border: 1.5px solid var(--nutrismart-primary, #508B89);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  background: transparent;
+  color: var(--nutrismart-primary, #508B89);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.bp-btn-change:hover {
+  background: var(--nutrismart-primary-light, #e8f2f2);
+}
+
+.bp-no-plan {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  color: var(--nutrismart-text-mid, #4a6060);
+  font-size: 0.9rem;
+}
+
+/* ─── Payment history table ─────────────────────────────────────────────── */
+
+.bp-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius, 14px);
+}
+
+.bp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.bp-table thead {
+  background: var(--nutrismart-bg, #f5f7f7);
+}
+
+.bp-table th {
+  padding: 11px 16px;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--nutrismart-text-mid, #4a6060);
+  border-bottom: 1px solid var(--nutrismart-border, #e0eaea);
+  white-space: nowrap;
+}
+
+.bp-table td {
+  padding: 13px 16px;
+  color: var(--nutrismart-text-dark, #1a2e2e);
+  border-bottom: 1px solid var(--nutrismart-border, #e0eaea);
+  white-space: nowrap;
+}
+
+.bp-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.bp-table tbody tr:hover {
+  background: var(--nutrismart-primary-lighter, #f0f8f8);
+}
+
+.bp-td-plan {
+  font-weight: 600;
+  text-transform: capitalize;
+  color: var(--nutrismart-primary, #508B89);
+}
+
+.bp-amount-free {
+  color: var(--nutrismart-text-light, #8aa8a8);
+  font-style: italic;
+}
+
+.bp-status-chip {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.bp-status-chip--paid {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.bp-status-chip--trial {
+  background: #fef9c3;
+  color: #713f12;
+}
+
+.bp-status-chip--failed {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.bp-empty {
+  color: var(--nutrismart-text-light, #8aa8a8);
+  font-size: 0.875rem;
+  padding: 8px 0;
+  margin: 0;
+}

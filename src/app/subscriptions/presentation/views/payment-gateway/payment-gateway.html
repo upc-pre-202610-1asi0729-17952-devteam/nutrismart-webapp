@@ -1,0 +1,188 @@
+<div class="pg-shell">
+  <div class="pg-wrapper">
+
+    <!-- ── Form card (left on desktop, bottom on mobile) ─────────────────── -->
+    <div class="pg-form-card">
+
+      <div class="pg-header">
+        <svg class="pg-lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <div>
+          <h1 class="pg-title">{{ 'payment.title' | translate }}</h1>
+          <p class="pg-subtitle">{{ 'payment.subtitle' | translate }}</p>
+        </div>
+      </div>
+
+      @if (selectedPlan()) {
+        <div class="pg-plan-chip" role="status">
+          <span class="pg-plan-name">{{ ('subscription.plan_' + selectedPlan()!.toLowerCase()) | translate }}</span>
+          <span class="pg-plan-price">${{ selectedPrice() | number:'1.2-2' }}<span class="pg-plan-period"> {{ 'subscription.per_month' | translate }}</span></span>
+        </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate autocomplete="off">
+
+        <div class="pg-field">
+          <label class="pg-label" for="holderName">{{ 'payment.card_holder' | translate }}</label>
+          <input
+            id="holderName"
+            class="pg-input"
+            [class.pg-input--error]="invalid('holderName')"
+            type="text"
+            autocomplete="cc-name"
+            [placeholder]="'payment.placeholder_holder' | translate"
+            formControlName="holderName"
+            [attr.aria-invalid]="invalid('holderName')"
+            aria-describedby="holderName-err"
+          />
+          @if (invalid('holderName')) {
+            <span id="holderName-err" class="pg-error" role="alert">{{ 'payment.error_required' | translate }}</span>
+          }
+        </div>
+
+        <div class="pg-field">
+          <label class="pg-label" for="cardNumber">{{ 'payment.card_number' | translate }}</label>
+          <input
+            id="cardNumber"
+            class="pg-input pg-input--mono"
+            [class.pg-input--error]="invalid('cardNumber')"
+            type="text"
+            inputmode="numeric"
+            autocomplete="cc-number"
+            maxlength="19"
+            [placeholder]="'payment.placeholder_number' | translate"
+            formControlName="cardNumber"
+            (input)="onCardInput($event)"
+            [attr.aria-invalid]="invalid('cardNumber')"
+            aria-describedby="cardNumber-err"
+          />
+          @if (invalid('cardNumber')) {
+            <span id="cardNumber-err" class="pg-error" role="alert">{{ 'payment.error_invalid_card' | translate }}</span>
+          }
+        </div>
+
+        <div class="pg-row">
+          <div class="pg-field">
+            <label class="pg-label" for="expiry">{{ 'payment.expiry' | translate }}</label>
+            <input
+              id="expiry"
+              class="pg-input pg-input--mono"
+              [class.pg-input--error]="invalid('expiry')"
+              type="text"
+              inputmode="numeric"
+              autocomplete="cc-exp"
+              maxlength="5"
+              [placeholder]="'payment.placeholder_expiry' | translate"
+              formControlName="expiry"
+              (input)="onExpiryInput($event)"
+              [attr.aria-invalid]="invalid('expiry')"
+              aria-describedby="expiry-err"
+            />
+            @if (invalid('expiry')) {
+              <span id="expiry-err" class="pg-error" role="alert">{{ 'payment.error_invalid_expiry' | translate }}</span>
+            }
+          </div>
+
+          <div class="pg-field">
+            <label class="pg-label" for="cvv">{{ 'payment.cvv' | translate }}</label>
+            <input
+              id="cvv"
+              class="pg-input pg-input--mono"
+              [class.pg-input--error]="invalid('cvv')"
+              type="password"
+              inputmode="numeric"
+              autocomplete="cc-csc"
+              maxlength="3"
+              [placeholder]="'payment.placeholder_cvv' | translate"
+              formControlName="cvv"
+              (focus)="cvvFocused.set(true)"
+              (blur)="cvvFocused.set(false)"
+              [attr.aria-invalid]="invalid('cvv')"
+              aria-describedby="cvv-err"
+            />
+            @if (invalid('cvv')) {
+              <span id="cvv-err" class="pg-error" role="alert">{{ 'payment.error_invalid_cvv' | translate }}</span>
+            }
+          </div>
+        </div>
+
+        <button type="submit" class="pg-btn-submit">
+          {{ 'payment.btn_continue' | translate }}
+        </button>
+
+      </form>
+
+      <div class="pg-security">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <span>{{ 'payment.security_note' | translate }}</span>
+      </div>
+
+    </div>
+
+    <!-- ── Card summary panel (right on desktop, top on mobile) ──────────── -->
+    <aside class="pg-card-panel" aria-label="{{ 'payment.card_preview_label' | translate }}" aria-live="polite">
+
+      <!-- Brand -->
+      <div class="pg-cp-brand">
+        @switch (displayBrand()) {
+          @case ('VISA') {
+            <svg class="pg-cp-brand-svg pg-cp-brand-svg--visa" viewBox="0 0 58 20" aria-label="Visa">
+              <text x="1" y="15" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="18" fill="#1A1F71" font-style="italic">VISA</text>
+            </svg>
+          }
+          @case ('MC') {
+            <svg class="pg-cp-brand-svg" viewBox="0 0 46 30" aria-label="Mastercard">
+              <circle cx="16" cy="15" r="12" fill="#EB001B"/>
+              <circle cx="30" cy="15" r="12" fill="#F79E1B" opacity="0.88"/>
+            </svg>
+          }
+          @case ('AMEX') {
+            <svg class="pg-cp-brand-svg" viewBox="0 0 60 24" aria-label="American Express">
+              <rect width="60" height="24" rx="4" fill="#016FD0"/>
+              <text x="7" y="16" font-family="Arial,sans-serif" font-weight="700" font-size="11" fill="#fff" letter-spacing="1.5">AMEX</text>
+            </svg>
+          }
+          @default {
+            <svg class="pg-cp-brand-svg pg-cp-brand-svg--generic" viewBox="0 0 32 22" fill="none" stroke="currentColor" stroke-width="1.5" aria-label="Card">
+              <rect x="1" y="1" width="30" height="20" rx="3"/>
+              <line x1="1" y1="7" x2="31" y2="7"/>
+              <rect x="4" y="11" width="7" height="3" rx="1"/>
+            </svg>
+          }
+        }
+      </div>
+
+      <!-- Number -->
+      <p class="pg-cp-number">{{ displayNumber() }}</p>
+
+      <!-- Holder name (desktop only) -->
+      <p class="pg-cp-name">{{ displayName() }}</p>
+
+      <!-- Expiry + CVV -->
+      <div class="pg-cp-meta-row">
+        <div class="pg-cp-meta-field">
+          <span class="pg-cp-meta-label">{{ 'payment.expiry_short' | translate }}</span>
+          <span class="pg-cp-meta-val">{{ displayExpiry() }}</span>
+        </div>
+        <div class="pg-cp-meta-field pg-cp-cvv" [class.pg-cp-cvv--focus]="cvvFocused()">
+          <span class="pg-cp-meta-label">CVV</span>
+          <span class="pg-cp-meta-val pg-cp-meta-val--mono">•••</span>
+        </div>
+      </div>
+
+      <!-- Security note (desktop only) -->
+      <div class="pg-cp-security">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <span>{{ 'payment.security_note' | translate }}</span>
+      </div>
+
+    </aside>
+
+  </div>
+</div>

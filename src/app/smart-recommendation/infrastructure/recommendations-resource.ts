@@ -3,7 +3,7 @@ import { AdherenceStatus } from '../domain/model/adherence-status.enum';
 import { WeatherType } from '../domain/model/weather-type.enum';
 
 export interface LocationSnapshotResource extends BaseResource {
-  user_id: string;
+  userId: string;
   city: string;
   country: string;
   recorded_at: string;
@@ -19,7 +19,7 @@ export interface WeatherContextResource extends BaseResource {
 }
 
 export interface TravelContextResource extends BaseResource {
-  user_id: string;
+  userId: string;
   city: string;
   country: string;
   is_active: boolean;
@@ -28,20 +28,21 @@ export interface TravelContextResource extends BaseResource {
 }
 
 export interface RecommendationSessionResource extends BaseResource {
-  user_id: string;
+  userId: string;
   adherence_status: string;
   consecutive_misses: number;
   simplified_kcal_target: number;
   created_at: string;
   is_active: boolean;
+  weather_snapshot_id?: string | null;
 }
 
 export interface FoodCardResource {
   id: number | string;
   name: string;
-  name_es: string;
-  kcal: number;
-  protein_g: number;
+  name_es?: string;
+  calories_per_100g: number;
+  protein_per_100g: number;
 }
 
 export interface RecommendationCardResource extends BaseResource {

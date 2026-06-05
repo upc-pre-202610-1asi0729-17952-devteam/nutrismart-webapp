@@ -10,6 +10,7 @@ export interface RecommendationSessionProps {
   simplifiedKcalTarget: number;
   createdAt: string;
   isActive: boolean;
+  weatherSnapshotId?: string | null;
 }
 
 export class RecommendationSession implements BaseEntity {
@@ -20,6 +21,7 @@ export class RecommendationSession implements BaseEntity {
   #simplifiedKcalTarget: number;
   #createdAt: string;
   #isActive: boolean;
+  #weatherSnapshotId: string | null;
   #contextualAdjustment: ContextualTargetAdjustment | null = null;
 
   constructor(props: RecommendationSessionProps) {
@@ -30,6 +32,7 @@ export class RecommendationSession implements BaseEntity {
     this.#simplifiedKcalTarget = props.simplifiedKcalTarget;
     this.#createdAt            = props.createdAt;
     this.#isActive             = props.isActive;
+    this.#weatherSnapshotId    = props.weatherSnapshotId ?? null;
   }
 
   get id(): number { return this.#id; }
@@ -52,6 +55,9 @@ export class RecommendationSession implements BaseEntity {
 
   get isActive(): boolean { return this.#isActive; }
   set isActive(v: boolean) { this.#isActive = v; }
+
+  get weatherSnapshotId(): string | null { return this.#weatherSnapshotId; }
+  set weatherSnapshotId(v: string | null) { this.#weatherSnapshotId = v; }
 
   /** The active contextual adjustment, or null if none has been applied. */
   get contextualAdjustment(): ContextualTargetAdjustment | null { return this.#contextualAdjustment; }

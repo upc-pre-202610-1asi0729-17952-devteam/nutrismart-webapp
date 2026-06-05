@@ -13,7 +13,7 @@ export class WearableConnectionAssembler
   toEntityFromResource(r: WearableConnectionResource): WearableConnection {
     return new WearableConnection({
       id:           r.id,
-      userId:       r.user_id,
+      userId:       r.userId,
       provider:     r.provider,
       status:       r.status as WearableStatus,
       lastSyncedAt: r.last_synced_at,
@@ -24,7 +24,7 @@ export class WearableConnectionAssembler
   toResourceFromEntity(e: WearableConnection): WearableConnectionResource {
     return {
       id:             e.id,
-      user_id:        e.userId,
+      userId:         e.userId,
       provider:       e.provider,
       status:         e.status,
       last_synced_at: e.lastSyncedAt,
@@ -43,7 +43,7 @@ export class ActivityLogAssembler
   toEntityFromResource(r: ActivityLogResource): ActivityLog {
     return new ActivityLog({
       id:              r.id,
-      userId:          Number(r.user_id),
+      userId:          Number(r.userId),
       activityType:    r.activity_type,
       durationMinutes: r.duration_minutes,
       caloriesBurned:  r.calories_burned,
@@ -54,7 +54,7 @@ export class ActivityLogAssembler
   toResourceFromEntity(e: ActivityLog): ActivityLogResource {
     return {
       id:               e.id,
-      user_id:          e.userId,
+      userId:           e.userId,
       activity_type:    e.activityType,
       duration_minutes: e.durationMinutes,
       calories_burned:  e.caloriesBurned,

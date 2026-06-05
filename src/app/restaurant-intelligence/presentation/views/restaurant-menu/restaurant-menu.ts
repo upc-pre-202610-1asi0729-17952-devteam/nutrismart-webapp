@@ -96,7 +96,7 @@ export class RestaurantMenu implements OnInit {
     this.router.events
       .pipe(
         filter(e => e instanceof NavigationEnd),
-        filter(e => (e as NavigationEnd).urlAfterRedirects.startsWith('/smart-scan')),
+        filter(e => (e as NavigationEnd).urlAfterRedirects.startsWith('/nutrition-log/smart-scan')),
         takeUntilDestroyed(),
       )
       .subscribe(() => {

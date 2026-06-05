@@ -1,0 +1,40 @@
+<div class="sc-shell">
+  <div class="sc-card">
+
+    <!-- Animated check -->
+    <div class="sc-check-wrap" aria-hidden="true">
+      <svg class="sc-check-svg" viewBox="0 0 52 52">
+        <circle class="sc-check-circle" cx="26" cy="26" r="24" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path class="sc-check-path" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M14 27 l8 8 l16-16"/>
+      </svg>
+    </div>
+
+    <!-- Heading -->
+    <h1 class="sc-title">{{ 'subscription.confirmed_title' | translate }}</h1>
+    @if (plan()) {
+      <p class="sc-subtitle">
+        {{ 'subscription.confirmed_subtitle' | translate : { plan: ('subscription.plan_' + plan()!.toLowerCase()) | translate } }}
+      </p>
+    }
+
+    <!-- Plan summary -->
+    @if (plan()) {
+      <div class="sc-plan-row">
+        <div class="sc-plan-info">
+          <span class="sc-plan-name">{{ ('subscription.plan_' + plan()!.toLowerCase()) | translate }}</span>
+          <span class="sc-plan-badge">{{ 'subscriptions.status_active' | translate }}</span>
+        </div>
+        <span class="sc-plan-price">${{ price() | number:'1.2-2' }}<span class="sc-plan-period"> {{ 'subscription.per_month' | translate }}</span></span>
+      </div>
+    }
+
+    <!-- CTA -->
+    <button type="button" class="sc-btn-dashboard" (click)="goToDashboard()">
+      {{ 'subscription.confirmed_cta' | translate }}
+    </button>
+
+    <!-- Legal -->
+    <p class="sc-legal">{{ 'subscription.legal' | translate }}</p>
+
+  </div>
+</div>

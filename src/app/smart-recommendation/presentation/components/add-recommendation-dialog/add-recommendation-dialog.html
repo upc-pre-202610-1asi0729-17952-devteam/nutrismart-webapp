@@ -1,0 +1,72 @@
+<div class="dialog-backdrop" (click)="onBackdropClick($event)">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="rec-dialog-title">
+
+    <h2 id="rec-dialog-title" class="dialog-title">
+      {{ 'recommendations.log_dialog_title' | translate }}
+    </h2>
+    <p class="dialog-subtitle">
+      {{ 'recommendations.log_dialog_subtitle' | translate: { name: card().name } }}
+    </p>
+
+    <!-- Card summary -->
+    <div class="card-info">
+      <span class="card-name">{{ card().name }}</span>
+      <span class="card-desc">{{ card().description }}</span>
+    </div>
+
+    <!-- Macro chips: calories + protein -->
+    <div class="macro-grid" aria-live="polite">
+      <div class="macro-chip">
+        <span class="chip-value">{{ card().calories }}</span>
+        <span class="chip-label">{{ 'nutrition.calories' | translate }}</span>
+      </div>
+      <div class="macro-chip">
+        <span class="chip-value">{{ proteinGrams() }}g</span>
+        <span class="chip-label">{{ 'nutrition.protein' | translate }}</span>
+      </div>
+    </div>
+
+    <!-- Meal type selector -->
+    <div class="meal-type-section">
+      <label class="field-label">{{ 'recommendations.log_dialog_meal_label' | translate }}</label>
+      <div class="meal-type-buttons" role="group" [attr.aria-label]="'recommendations.log_dialog_meal_label' | translate">
+        @for (mt of allMealTypes; track mt) {
+          <button
+            class="meal-btn"
+            [class.meal-btn--active]="selectedMealType() === mt"
+            [attr.aria-pressed]="selectedMealType() === mt"
+            (click)="selectedMealType.set(mt)">
+            {{ getMealTypeLabel(mt) }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Calorie impact indicator -->
+    <div class="impact-bar"
+         [class.impact-bar--warning]="impactLevel() === RiskLevel.MODERATE"
+         [class.impact-bar--danger]="impactLevel() === RiskLevel.HIGH">
+      <div class="impact-track">
+        <div class="impact-fill" [style.width.%]="impactPercent()"></div>
+      </div>
+      <span class="impact-label">
+        @if (impactLevel() === RiskLevel.HIGH) {
+          {{ 'nutrition.impact_exceeded' | translate: { percent: impactPercent() } }}
+        } @else {
+          {{ 'nutrition.impact_approaching' | translate: { percent: impactPercent() } }}
+        }
+      </span>
+    </div>
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <button class="btn btn--outline" (click)="cancel.emit()">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button class="btn btn--primary" (click)="onConfirm()">
+        {{ 'nutrition.confirm_and_save' | translate }}
+      </button>
+    </div>
+
+  </div>
+</div>

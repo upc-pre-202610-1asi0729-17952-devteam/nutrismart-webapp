@@ -1,4 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,11 +10,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { FoodItem } from '../../../../nutrition-tracking/domain/model/food-item.entity';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { UserGoal } from '../../../../iam/domain/model/user-goal.enum';
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
 import { PantryStore } from '../../../application/pantry.store';
-import { IngredientCatalogItem } from '../../../domain/model/ingredient-catalog-item.entity';
+import { IngredientCategory } from '../../../domain/model/pantry-item.entity';
 import { RecipeSuggestion } from '../../../domain/model/recipe-suggestion.entity';
 
 /**
@@ -47,18 +50,25 @@ export class Pantry implements OnInit {
 
   protected readonly UserGoal = UserGoal;
 
+  // ─── Language signal ──────────────────────────────────────────────────────
+
+  protected readonly currentLang = toSignal(
+    this.translate.onLangChange.pipe(map(e => e.lang)),
+    { initialValue: this.translate.currentLang },
+  );
+
   // ─── Autocomplete signals ─────────────────────────────────────────────────
 
   protected searchText    = signal<string>('');
   protected showDropdown  = signal<boolean>(false);
-  protected selectedItem  = signal<IngredientCatalogItem | null>(null);
+  protected selectedItem  = signal<FoodItem | null>(null);
 
   protected filteredCatalog = computed(() => {
     const query = this.searchText().toLowerCase().trim();
     if (!query) return [];
     return this.pantryStore.catalog().filter(item => {
-      const translated = this.translate.instant('pantry_items.' + item.nameKey).toLowerCase();
-      return translated.includes(query);
+      const name = item.getLocalizedName(this.translate.currentLang).toLowerCase();
+      return name.includes(query);
     });
   });
 
@@ -121,10 +131,10 @@ export class Pantry implements OnInit {
     this.showDropdown.set(false);
   }
 
-  onOptionMousedown(event: MouseEvent, item: IngredientCatalogItem): void {
+  onOptionMousedown(event: MouseEvent, item: FoodItem): void {
     event.preventDefault();
     this.selectedItem.set(item);
-    this.searchText.set(this.translate.instant('pantry_items.' + item.nameKey));
+    this.searchText.set(item.getLocalizedName(this.translate.currentLang));
     this.showDropdown.set(false);
   }
 
@@ -133,8 +143,8 @@ export class Pantry implements OnInit {
   async onAddIngredient(): Promise<void> {
     const item = this.selectedItem();
     if (!item) return;
-    const displayName = this.translate.instant('pantry_items.' + item.nameKey);
-    await this.pantryStore.addPantryItem(displayName, item.category, 100, item.caloriesPer100g, item.nameKey);
+    const displayName = item.getLocalizedName(this.translate.currentLang);
+    await this.pantryStore.addPantryItem(displayName, item.category as IngredientCategory, 100, item.caloriesPer100g, item.nameKey, String(item.id));
     this.searchText.set('');
     this.selectedItem.set(null);
     this.showDropdown.set(false);
@@ -173,10 +183,11 @@ export class Pantry implements OnInit {
   }
 
   resolvedIngredients(recipe: RecipeSuggestion): string {
+    const catalog = this.pantryStore.catalog();
     return recipe.ingredients
-      .map(key => {
-        const translated = this.translate.instant(`pantry_items.${key}`);
-        return translated !== `pantry_items.${key}` ? translated : key;
+      .map(i => {
+        const food = catalog.find(f => String(f.id) === i.foodId);
+        return food ? food.getLocalizedName(this.translate.currentLang) : i.foodId;
       })
       .join(', ');
   }

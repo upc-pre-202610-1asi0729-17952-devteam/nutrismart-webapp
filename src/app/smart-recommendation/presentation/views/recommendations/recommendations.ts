@@ -1,27 +1,36 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { RecommendationsStore } from '../../../application/recommendations.store';
+import { RecommendationCard } from '../../../infrastructure/recommendations-api';
 import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
 import { WeatherContext } from '../../../domain/model/weather-context.entity';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { NutritionStore } from '../../../../nutrition-tracking/application/nutrition.store';
+import { MealRecord } from '../../../../nutrition-tracking/domain/model/meal-record.entity';
 import { LocationPicker } from '../../components/location-picker/location-picker';
+import {
+  AddRecommendationDialogComponent,
+  AddRecommendationPayload,
+} from '../../components/add-recommendation-dialog/add-recommendation-dialog';
 
 @Component({
-  selector: 'app-recommendations',
-  imports: [RouterLink, NgClass, TranslatePipe, LocationPicker],
+  selector:    'app-recommendations',
+  imports:     [RouterLink, NgClass, TranslatePipe, LocationPicker, AddRecommendationDialogComponent],
   templateUrl: './recommendations.html',
-  styleUrl: './recommendations.css',
+  styleUrl:    './recommendations.css',
 })
 export class RecommendationsView implements OnInit {
-  protected store      = inject(RecommendationsStore);
-  protected iamStore   = inject(IamStore);
-  private nutStore     = inject(NutritionStore);
-  private translate    = inject(TranslateService);
+  protected store    = inject(RecommendationsStore);
+  protected iamStore = inject(IamStore);
+  protected nutStore = inject(NutritionStore);
+  private translate  = inject(TranslateService);
 
   protected isPro = computed(() => this.iamStore.currentUser()?.isPro() ?? false);
+
+  /** Card awaiting confirmation in the log dialog. Null when dialog is closed. */
+  protected pendingCard = signal<RecommendationCard | null>(null);
 
   protected displayTemperature = computed(() =>
     this.store.demoTemperature() ?? this.store.weatherContext()?.temperatureCelsius ?? null
@@ -129,14 +138,50 @@ export class RecommendationsView implements OnInit {
     this.store.setDemoTemperature(temp);
   }
 
-  // ─── Travel mode user actions ─────────────────────────────────────────────
+  // ─── Travel mode ──────────────────────────────────────────────────────────
 
   onDisableAutoTravel(): void {
     void this.store.deactivateTravelMode();
   }
 
-  // TODO: wire to NutritionStore once cross-BC integration is ready
-  onAddToLog(_cardId: number | string): void {}
+  // ─── Add-to-log dialog ────────────────────────────────────────────────────
+
+  onAddToLog(cardId: number | string): void {
+    const card = this.store.activeCards().find(c => c.id === cardId);
+    if (card) this.pendingCard.set(card);
+  }
+
+  onConfirmLog(payload: AddRecommendationPayload): void {
+    const user = this.iamStore.currentUser();
+    if (!user) return;
+
+    const proteinGrams = parseFloat(payload.card.protein.replace(/[^0-9.]/g, ''));
+    const record = new MealRecord({
+      id:           0,
+      foodId:       payload.card.foodId != null ? String(payload.card.foodId) : null,
+      foodItemName: payload.card.name,
+      mealType:     payload.mealType,
+      quantity:     100,
+      unit:         'g',
+      calories:     payload.card.calories,
+      protein:      isNaN(proteinGrams) ? 0 : proteinGrams,
+      carbs:        0,
+      fat:          0,
+      fiber:        0,
+      sugar:        0,
+      loggedAt:     new Date().toISOString(),
+      userId:       user.id,
+    });
+
+    void this.nutStore.recordMeal(record);
+    this.pendingCard.set(null);
+  }
+
+  onCancelLog(): void {
+    this.pendingCard.set(null);
+  }
+
+  // ─── Adherence actions ────────────────────────────────────────────────────
 
   onAcceptSimplifiedPlan(): void {
     this.store.setAdherenceStatus(AdherenceStatus.ON_TRACK);

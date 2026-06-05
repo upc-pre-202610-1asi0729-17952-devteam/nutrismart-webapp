@@ -16,7 +16,7 @@ export class LocationSnapshotAssembler {
   toEntityFromResource(r: LocationSnapshotResource): LocationSnapshot {
     return new LocationSnapshot({
       id:         typeof r.id === 'string' ? 0 : r.id as number,
-      userId:     typeof r.user_id === 'string' ? parseInt(r.user_id, 10) : r.user_id as unknown as number,
+      userId:     typeof r.userId === 'string' ? parseInt(r.userId, 10) : r.userId as unknown as number,
       city:       r.city,
       country:    r.country,
       recordedAt: r.recorded_at,
@@ -63,6 +63,7 @@ export class TravelContextAssembler
   toEntityFromResource(r: TravelContextResource): TravelContext {
     return new TravelContext({
       id:          typeof r.id === 'string' ? 0 : r.id as number,
+      userId:      r.userId,
       city:        r.city,
       country:     r.country,
       isActive:    r.is_active,
@@ -74,7 +75,7 @@ export class TravelContextAssembler
   toResourceFromEntity(e: TravelContext): TravelContextResource {
     return {
       id:           e.id,
-      user_id:      String(e.id),
+      userId:       String(e.userId),
       city:         e.city,
       country:      e.country,
       is_active:    e.isActive,
@@ -94,24 +95,26 @@ export class RecommendationSessionAssembler
   toEntityFromResource(r: RecommendationSessionResource): RecommendationSession {
     return new RecommendationSession({
       id:                   typeof r.id === 'string' ? 0 : r.id as number,
-      userId:               typeof r.user_id === 'string' ? parseInt(r.user_id, 10) : r.user_id as unknown as number,
+      userId:               typeof r.userId === 'string' ? parseInt(r.userId, 10) : r.userId as unknown as number,
       adherenceStatus:      r.adherence_status as AdherenceStatus,
       consecutiveMisses:    r.consecutive_misses,
       simplifiedKcalTarget: r.simplified_kcal_target,
       createdAt:            r.created_at,
       isActive:             r.is_active,
+      weatherSnapshotId:    r.weather_snapshot_id ?? null,
     });
   }
 
   toResourceFromEntity(e: RecommendationSession): RecommendationSessionResource {
     return {
       id:                     e.id,
-      user_id:                String(e.userId),
+      userId:                 String(e.userId),
       adherence_status:       e.adherenceStatus,
       consecutive_misses:     e.consecutiveMisses,
       simplified_kcal_target: e.simplifiedKcalTarget,
       created_at:             e.createdAt,
       is_active:              e.isActive,
+      weather_snapshot_id:    e.weatherSnapshotId,
     };
   }
 
