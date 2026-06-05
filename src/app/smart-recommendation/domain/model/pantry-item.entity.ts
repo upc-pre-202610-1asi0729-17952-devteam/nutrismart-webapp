@@ -24,6 +24,7 @@ export interface PantryItemProps {
   id: number;
   foodId?: string;
   name: string;
+  nameEs?: string;
   nameKey?: string;
   category: IngredientCategory;
   quantityGrams: number;
@@ -44,6 +45,7 @@ export class PantryItem implements BaseEntity {
   private _id: number;
   private _foodId: string | undefined;
   private _name: string;
+  private _nameEs: string;
   private _nameKey: string | undefined;
   private _category: IngredientCategory;
   private _quantityGrams: number;
@@ -55,6 +57,7 @@ export class PantryItem implements BaseEntity {
     this._id              = props.id;
     this._foodId          = props.foodId;
     this._name            = props.name;
+    this._nameEs          = props.nameEs ?? '';
     this._nameKey         = props.nameKey;
     this._category        = props.category;
     this._quantityGrams   = props.quantityGrams;
@@ -73,6 +76,9 @@ export class PantryItem implements BaseEntity {
 
   get name(): string { return this._name; }
   set name(v: string) { this._name = v; }
+
+  get nameEs(): string { return this._nameEs; }
+  set nameEs(v: string) { this._nameEs = v; }
 
   get nameKey(): string | undefined { return this._nameKey; }
   set nameKey(v: string | undefined) { this._nameKey = v; }
@@ -93,6 +99,11 @@ export class PantryItem implements BaseEntity {
   set addedAt(v: string) { this._addedAt = v; }
 
   // ─── Domain Behaviour ─────────────────────────────────────────────────────
+
+  /** Returns the ingredient name in the given language, falling back to English. */
+  getLocalizedName(lang: string): string {
+    return (lang === 'es' && this._nameEs) ? this._nameEs : this._name;
+  }
 
   /**
    * Calories contributed by the stored quantity of this ingredient.

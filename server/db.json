@@ -210,6 +210,142 @@
       "loggedAt": "2026-06-04T15:30:20.694Z",
       "userId": "imtrh8k4o",
       "id": "maKmalK1t0c"
+    },
+    {
+      "foodId": "12",
+      "foodItemName": "Ensalada de pollo y pepino",
+      "foodItemNameEs": "",
+      "mealType": "LUNCH",
+      "quantity": 100,
+      "unit": "g",
+      "calories": 107,
+      "protein": 10.7,
+      "carbs": 0,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-06-05T13:43:57.377Z",
+      "userId": "imtrh8k4o",
+      "id": "fphEVsNUTSc"
+    },
+    {
+      "foodId": "13",
+      "foodItemName": "Ceviche de pescado",
+      "foodItemNameEs": "",
+      "mealType": "DINNER",
+      "quantity": 100,
+      "unit": "g",
+      "calories": 70,
+      "protein": 11,
+      "carbs": 0,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-06-05T13:44:05.591Z",
+      "userId": "imtrh8k4o",
+      "id": "RugeAjaz8DE"
+    },
+    {
+      "foodId": "12",
+      "foodItemName": "Chicken and Cucumber Salad",
+      "foodItemNameEs": "Ensalada de pollo y pepino",
+      "mealType": "BREAKFAST",
+      "quantity": 1,
+      "unit": "serving",
+      "calories": 1.1,
+      "protein": 0.1,
+      "carbs": 0.1,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-06-05T14:26:36.994Z",
+      "userId": "imtrh8k4o",
+      "id": "8XESwZ4U3ew"
+    },
+    {
+      "foodId": "3",
+      "foodItemName": "White rice, cooked",
+      "foodItemNameEs": "Arroz blanco cocido",
+      "mealType": "LUNCH",
+      "quantity": 150,
+      "unit": "g",
+      "calories": 195,
+      "protein": 4.1,
+      "carbs": 42.3,
+      "fat": 0.5,
+      "fiber": 0.6,
+      "sugar": 0,
+      "loggedAt": "2026-06-05T14:26:43.865Z",
+      "userId": "imtrh8k4o",
+      "id": "0_Lgp5-OQcA"
+    },
+    {
+      "foodId": "18",
+      "foodItemName": "Andean hen broth",
+      "foodItemNameEs": "Caldo de gallina andino",
+      "mealType": "SNACK",
+      "quantity": 1,
+      "unit": "serving",
+      "calories": 0.5,
+      "protein": 0.1,
+      "carbs": 0,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-06-05T14:26:48.974Z",
+      "userId": "imtrh8k4o",
+      "id": "QttHeC0VDhQ"
+    },
+    {
+      "foodId": "12",
+      "foodItemName": "Chicken and Cucumber Salad",
+      "foodItemNameEs": "Ensalada de pollo y pepino",
+      "mealType": "DINNER",
+      "quantity": 1,
+      "unit": "serving",
+      "calories": 1.1,
+      "protein": 0.1,
+      "carbs": 0.1,
+      "fat": 0,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-06-05T14:26:53.955Z",
+      "userId": "imtrh8k4o",
+      "id": "ttW7zMOCAsk"
+    },
+    {
+      "foodId": "12",
+      "foodItemName": "Chicken and Cucumber Salad",
+      "foodItemNameEs": "Ensalada de pollo y pepino",
+      "mealType": "BREAKFAST",
+      "quantity": 9,
+      "unit": "serving",
+      "calories": 9.6,
+      "protein": 1,
+      "carbs": 0.5,
+      "fat": 0.4,
+      "fiber": 0.1,
+      "sugar": 0.2,
+      "loggedAt": "2026-06-05T14:27:22.635Z",
+      "userId": "imtrh8k4o",
+      "id": "o8bWoSiq3bc"
+    },
+    {
+      "foodId": "4",
+      "foodItemName": "Chicken breast, raw",
+      "foodItemNameEs": "Pechuga de pollo cruda",
+      "mealType": "BREAKFAST",
+      "quantity": 765,
+      "unit": "g",
+      "calories": 1262.3,
+      "protein": 237.2,
+      "carbs": 0,
+      "fat": 27.5,
+      "fiber": 0,
+      "sugar": 0,
+      "loggedAt": "2026-06-05T14:27:52.947Z",
+      "userId": "imtrh8k4o",
+      "id": "06HweMDwQuk"
     }
   ],
   "foods": [
@@ -405,6 +541,205 @@
       "weather_types": [],
       "origin_city": null,
       "origin_country": null
+    },
+    {
+      "id": "9",
+      "name": "Egg, hard-boiled",
+      "name_es": "Huevo duro",
+      "source": "USDA FoodData",
+      "serving_size": 50,
+      "serving_unit": "g",
+      "calories_per_100g": 155,
+      "protein_per_100g": 13,
+      "carbs_per_100g": 1.1,
+      "fat_per_100g": 11,
+      "fiber_per_100g": 0,
+      "sugar_per_100g": 0.6,
+      "restrictions": [],
+      "name_key": "hard_boiled_egg",
+      "category": "Animal protein",
+      "item_type": "INGREDIENT",
+      "weather_types": [],
+      "origin_city": null,
+      "origin_country": null
+    },
+    {
+      "id": "10",
+      "name": "Banana, raw",
+      "name_es": "Plátano",
+      "source": "USDA FoodData",
+      "serving_size": 120,
+      "serving_unit": "g",
+      "calories_per_100g": 89,
+      "protein_per_100g": 1.1,
+      "carbs_per_100g": 23,
+      "fat_per_100g": 0.3,
+      "fiber_per_100g": 2.6,
+      "sugar_per_100g": 12,
+      "restrictions": [],
+      "name_key": "banana",
+      "category": "Fruit",
+      "item_type": "INGREDIENT",
+      "weather_types": [],
+      "origin_city": null,
+      "origin_country": null
+    },
+    {
+      "id": "11",
+      "name": "Broccoli, cooked",
+      "name_es": "Brócoli cocido",
+      "source": "USDA FoodData",
+      "serving_size": 100,
+      "serving_unit": "g",
+      "calories_per_100g": 35,
+      "protein_per_100g": 2.4,
+      "carbs_per_100g": 7.2,
+      "fat_per_100g": 0.4,
+      "fiber_per_100g": 3.3,
+      "sugar_per_100g": 1.4,
+      "restrictions": [],
+      "name_key": "broccoli",
+      "category": "Vegetable",
+      "item_type": "INGREDIENT",
+      "weather_types": [],
+      "origin_city": null,
+      "origin_country": null
+    },
+    {
+      "id": "14",
+      "name": "Quinoa and vegetable soup",
+      "name_es": "Sopa de quinoa con verduras",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "calories_per_100g": 58,
+      "protein_per_100g": 2.8,
+      "carbs_per_100g": 9.5,
+      "fat_per_100g": 1.2,
+      "fiber_per_100g": 1.8,
+      "sugar_per_100g": 1.5,
+      "restrictions": [],
+      "name_key": "quinoa_veggie_soup",
+      "category": "Prepared dish",
+      "item_type": "DISH",
+      "weather_types": [
+        "COLD"
+      ],
+      "origin_city": null,
+      "origin_country": null
+    },
+    {
+      "id": "15",
+      "name": "Argentine empanada",
+      "name_es": "Empanada argentina",
+      "source": "USDA FoodData",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "calories_per_100g": 252,
+      "protein_per_100g": 8,
+      "carbs_per_100g": 30,
+      "fat_per_100g": 11,
+      "fiber_per_100g": 1,
+      "sugar_per_100g": 2,
+      "restrictions": [],
+      "name_key": "argentine_empanada",
+      "category": "Prepared dish",
+      "item_type": "DISH",
+      "weather_types": [],
+      "origin_city": "Buenos Aires",
+      "origin_country": "Argentina"
+    },
+    {
+      "id": "16",
+      "name": "Tropical fruit bowl",
+      "name_es": "Ensalada de frutas tropicales",
+      "source": "NutriSmart",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "calories_per_100g": 65,
+      "protein_per_100g": 0.9,
+      "carbs_per_100g": 16,
+      "fat_per_100g": 0.3,
+      "fiber_per_100g": 2.2,
+      "sugar_per_100g": 12,
+      "restrictions": [],
+      "name_key": "tropical_fruit_bowl",
+      "category": "Prepared dish",
+      "item_type": "DISH",
+      "weather_types": [
+        "HOT"
+      ],
+      "origin_city": null,
+      "origin_country": null
+    },
+    {
+      "id": "17",
+      "name": "Tuna and cucumber bowl",
+      "name_es": "Bowl de atún y pepino",
+      "source": "USDA FoodData",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "calories_per_100g": 95,
+      "protein_per_100g": 14,
+      "carbs_per_100g": 3,
+      "fat_per_100g": 2.5,
+      "fiber_per_100g": 0.5,
+      "sugar_per_100g": 1,
+      "restrictions": [],
+      "name_key": "tuna_cucumber_bowl",
+      "category": "Prepared dish",
+      "item_type": "DISH",
+      "weather_types": [
+        "HOT"
+      ],
+      "origin_city": null,
+      "origin_country": null
+    },
+    {
+      "id": "18",
+      "name": "Andean hen broth",
+      "name_es": "Caldo de gallina andino",
+      "source": "USDA FoodData",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "calories_per_100g": 45,
+      "protein_per_100g": 5.5,
+      "carbs_per_100g": 3,
+      "fat_per_100g": 1.2,
+      "fiber_per_100g": 0.3,
+      "sugar_per_100g": 0.5,
+      "restrictions": [],
+      "name_key": "andean_hen_broth",
+      "category": "Prepared dish",
+      "item_type": "DISH",
+      "weather_types": [
+        "COLD"
+      ],
+      "origin_city": "Cusco",
+      "origin_country": "Peru"
+    },
+    {
+      "id": "19",
+      "name": "Rocoto relleno",
+      "name_es": "Rocoto relleno",
+      "source": "USDA FoodData",
+      "serving_size": 1,
+      "serving_unit": "serving",
+      "calories_per_100g": 148,
+      "protein_per_100g": 9,
+      "carbs_per_100g": 12,
+      "fat_per_100g": 7,
+      "fiber_per_100g": 2,
+      "sugar_per_100g": 3,
+      "restrictions": [],
+      "name_key": "rocoto_relleno",
+      "category": "Prepared dish",
+      "item_type": "DISH",
+      "weather_types": [
+        "COLD"
+      ],
+      "origin_city": "Cusco",
+      "origin_country": "Peru"
     }
   ],
   "body-metrics": [
@@ -442,11 +777,33 @@
       "heightCm": 177,
       "loggedAt": "2026-06-04T15:21:53.138Z",
       "targetWeightKg": 76,
-      "projectedAchievementDate": "2026-06-05T02:52:05.679Z"
+      "projectedAchievementDate": "2026-06-05T14:28:25.518Z"
     }
   ],
   "recommendations": [],
-  "pantry": [],
+  "pantry": [
+    {
+      "id": "1",
+      "food_id": "4",
+      "quantity_grams": 200,
+      "userId": "imtrh8k4o",
+      "added_at": "2026-06-04T12:00:00.000Z"
+    },
+    {
+      "id": "2",
+      "food_id": "5",
+      "quantity_grams": 150,
+      "userId": "imtrh8k4o",
+      "added_at": "2026-06-04T12:00:00.000Z"
+    },
+    {
+      "id": "3",
+      "food_id": "11",
+      "quantity_grams": 100,
+      "userId": "imtrh8k4o",
+      "added_at": "2026-06-04T12:00:00.000Z"
+    }
+  ],
   "recipes": [
     {
       "id": "1",
@@ -510,6 +867,82 @@
       "prep_time_minutes": 25,
       "covers_macro_pct": 32,
       "name_es": "Bowl de arroz con pollo",
+      "restrictions_conflict": []
+    },
+    {
+      "id": "3",
+      "name": "Chicken and broccoli bowl",
+      "name_key": "chicken_broccoli_bowl",
+      "calories": 382,
+      "protein": 65,
+      "carbs": 11,
+      "fat": 8,
+      "ingredients": [
+        {
+          "foodId": "4",
+          "quantity_grams": 200
+        },
+        {
+          "foodId": "11",
+          "quantity_grams": 150
+        }
+      ],
+      "goal_type": "WEIGHT_LOSS",
+      "prep_time_minutes": 20,
+      "covers_macro_pct": 60,
+      "name_es": "Bowl de pollo con brócoli",
+      "restrictions_conflict": []
+    },
+    {
+      "id": "4",
+      "name": "Egg and broccoli stir-fry",
+      "name_key": "egg_broccoli_stirfry",
+      "calories": 256,
+      "protein": 20,
+      "carbs": 16,
+      "fat": 14,
+      "ingredients": [
+        {
+          "foodId": "9",
+          "quantity_grams": 120
+        },
+        {
+          "foodId": "11",
+          "quantity_grams": 200
+        }
+      ],
+      "goal_type": "WEIGHT_LOSS",
+      "prep_time_minutes": 15,
+      "covers_macro_pct": 18,
+      "name_es": "Saltado de huevo y brócoli",
+      "restrictions_conflict": []
+    },
+    {
+      "id": "5",
+      "name": "Quinoa chicken and broccoli bowl",
+      "name_key": "quinoa_chicken_broccoli",
+      "calories": 396,
+      "protein": 53,
+      "carbs": 27,
+      "fat": 8,
+      "ingredients": [
+        {
+          "foodId": "4",
+          "quantity_grams": 150
+        },
+        {
+          "foodId": "5",
+          "quantity_grams": 100
+        },
+        {
+          "foodId": "11",
+          "quantity_grams": 80
+        }
+      ],
+      "goal_type": "MAINTENANCE",
+      "prep_time_minutes": 30,
+      "covers_macro_pct": 37,
+      "name_es": "Bowl de quinoa, pollo y brócoli",
       "restrictions_conflict": []
     }
   ],
@@ -646,21 +1079,23 @@
     {
       "id": "DJn3xQ3jPYk",
       "userId": "imtrh8k4o",
-      "adherenceStatus": "DROPPED",
-      "streak": 0,
-      "consecutiveMisses": 18,
-      "lastGoalMetDate": "",
-      "goalMetDates": []
+      "adherenceStatus": "ON_TRACK",
+      "streak": 1,
+      "consecutiveMisses": 0,
+      "lastGoalMetDate": "2026-06-05",
+      "goalMetDates": [
+        "2026-06-05"
+      ]
     }
   ],
   "eating-behavior-patterns": [
     {
       "id": "8VEGHdDJiG4",
       "userId": "imtrh8k4o",
-      "weeklyCompletionRate": 0,
-      "currentStreak": 0,
-      "consecutiveMisses": 18,
-      "patternType": "IRREGULAR",
+      "weeklyCompletionRate": 14,
+      "currentStreak": 1,
+      "consecutiveMisses": 0,
+      "patternType": "RECOVERING",
       "analyzedAt": "2026-06-05"
     }
   ],
@@ -879,7 +1314,7 @@
       "weather_type": "HOT",
       "travel_city": null,
       "card_type": "weather",
-      "foodId": "12",
+      "food_id": "12",
       "description": "Refreshing · High in protein · Hydrating",
       "description_es": "Refrescante · Alto en proteína · Hidratante"
     },
@@ -889,9 +1324,69 @@
       "weather_type": "HOT",
       "travel_city": null,
       "card_type": "weather",
-      "foodId": "13",
+      "food_id": "13",
       "description": "Peruvian dish · Fresh and high in protein",
       "description_es": "Plato peruano · Fresco y alto en proteína"
+    },
+    {
+      "id": "rc-3",
+      "badge": "Warming",
+      "weather_type": "COLD",
+      "travel_city": null,
+      "card_type": "weather",
+      "food_id": "14",
+      "description": "Comforting · High in fiber · Protein-rich",
+      "description_es": "Reconfortante · Alto en fibra · Rico en proteína"
+    },
+    {
+      "id": "rc-4",
+      "badge": "Local",
+      "weather_type": null,
+      "travel_city": "Buenos Aires",
+      "card_type": "travel",
+      "food_id": "15",
+      "description": "Argentine classic · Savory · Rich and filling",
+      "description_es": "Clásico argentino · Sabroso · Rico y saciante"
+    },
+    {
+      "id": "rc-5",
+      "badge": "Fresh",
+      "weather_type": "HOT",
+      "travel_city": null,
+      "card_type": "weather",
+      "food_id": "16",
+      "description": "Refreshing · Natural sugars · Light and hydrating",
+      "description_es": "Refrescante · Azúcares naturales · Ligero e hidratante"
+    },
+    {
+      "id": "rc-6",
+      "badge": "High Protein",
+      "weather_type": "HOT",
+      "travel_city": null,
+      "card_type": "weather",
+      "food_id": "17",
+      "description": "Low calorie · High protein · Refreshing",
+      "description_es": "Bajo en calorías · Alto en proteína · Refrescante"
+    },
+    {
+      "id": "rc-7",
+      "badge": "Local",
+      "weather_type": null,
+      "travel_city": "Cusco",
+      "card_type": "travel",
+      "food_id": "18",
+      "description": "Andean classic · Warming · Rich in collagen",
+      "description_es": "Clásico andino · Reconfortante · Rico en colágeno"
+    },
+    {
+      "id": "rc-8",
+      "badge": "Local",
+      "weather_type": null,
+      "travel_city": "Cusco",
+      "card_type": "travel",
+      "food_id": "19",
+      "description": "Cusco staple · Spicy · High in protein",
+      "description_es": "Plato típico de Cusco · Picante · Alto en proteína"
     }
   ],
   "recommendation-sessions": [
@@ -907,8 +1402,8 @@
     },
     {
       "id": "rs-imtrh8k4o",
-      "adherence_status": "DROPPED",
-      "consecutive_misses": 5,
+      "adherence_status": "ON_TRACK",
+      "consecutive_misses": 0,
       "simplified_kcal_target": 1306,
       "created_at": "2026-06-01T00:00:00.000Z",
       "is_active": true,

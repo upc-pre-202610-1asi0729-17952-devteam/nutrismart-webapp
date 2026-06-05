@@ -1,4 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -47,6 +49,13 @@ export class Pantry implements OnInit {
   private   router          = inject(Router);
 
   protected readonly UserGoal = UserGoal;
+
+  // ─── Language signal ──────────────────────────────────────────────────────
+
+  protected readonly currentLang = toSignal(
+    this.translate.onLangChange.pipe(map(e => e.lang)),
+    { initialValue: this.translate.currentLang },
+  );
 
   // ─── Autocomplete signals ─────────────────────────────────────────────────
 

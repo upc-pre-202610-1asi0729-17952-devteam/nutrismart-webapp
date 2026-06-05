@@ -24,6 +24,7 @@ export class PantryItemAssembler
       id:              r.id,
       foodId:          r.food_id,
       name:            food?.name ?? r.food_id,
+      nameEs:          food?.nameEs ?? '',
       nameKey:         food?.nameKey,
       category:        (food?.category ?? 'Other') as IngredientCategory,
       quantityGrams:   r.quantity_grams,

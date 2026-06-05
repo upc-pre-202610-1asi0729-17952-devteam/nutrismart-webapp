@@ -805,7 +805,13 @@
   "food_items": {
     "grilled_chicken_breast": "Grilled chicken breast",
     "white_rice": "White rice",
-    "mixed_salad": "Mixed salad"
+    "mixed_salad": "Mixed salad",
+    "quinoa": "Quinoa, cooked",
+    "chicken_breast": "Chicken breast",
+    "broccoli": "Broccoli, cooked",
+    "cooked_oatmeal": "Cooked oatmeal",
+    "banana": "Banana",
+    "hard_boiled_egg": "Hard-boiled egg"
   },
   "ingredient_categories": {
     "grain": "Grain",

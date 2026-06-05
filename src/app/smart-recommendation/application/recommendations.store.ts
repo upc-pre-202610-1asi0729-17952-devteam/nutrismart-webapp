@@ -305,10 +305,8 @@ export class RecommendationsStore {
     }
   }
 
-  /** Resolves a city name to its weather-snapshot ID for querying recommendation-cards. */
   private resolveCityId(cityName: string): string {
-    const match = this._availableLocations().find(l => l.city === cityName);
-    return match?.snapshotId ?? cityName;
+    return cityName;
   }
 
   private subscribeToBillingEvents(): void {

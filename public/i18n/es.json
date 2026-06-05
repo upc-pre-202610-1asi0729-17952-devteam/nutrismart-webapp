@@ -829,7 +829,13 @@
   "food_items": {
     "grilled_chicken_breast": "Pechuga de pollo a la plancha",
     "white_rice": "Arroz blanco",
-    "mixed_salad": "Ensalada mixta"
+    "mixed_salad": "Ensalada mixta",
+    "quinoa": "Quinua cocida",
+    "chicken_breast": "Pechuga de pollo",
+    "broccoli": "Brócoli cocido",
+    "cooked_oatmeal": "Avena cocida",
+    "banana": "Plátano",
+    "hard_boiled_egg": "Huevo duro"
   },
   "pantry": {
     "page_title": "Despensa",
