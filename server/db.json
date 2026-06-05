@@ -228,7 +228,11 @@
       "sugar_per_100g": 0.5,
       "restrictions": [],
       "name_key": "cooked_oatmeal",
-      "category": "Prepared dish"
+      "category": "Prepared dish",
+      "item_type": "DISH",
+      "weather_types": [],
+      "origin_city": null,
+      "origin_country": null
     },
     {
       "id": "12",
@@ -245,7 +249,11 @@
       "sugar_per_100g": 2,
       "restrictions": [],
       "name_key": "chicken_cucumber_salad",
-      "category": "Prepared dish"
+      "category": "Prepared dish",
+      "item_type": "DISH",
+      "weather_types": ["HOT"],
+      "origin_city": null,
+      "origin_country": null
     },
     {
       "id": "3",
@@ -262,7 +270,11 @@
       "sugar_per_100g": 0,
       "restrictions": [],
       "name_key": "white_rice",
-      "category": "Grain"
+      "category": "Grain",
+      "item_type": "DISH",
+      "weather_types": [],
+      "origin_city": null,
+      "origin_country": null
     },
     {
       "id": "4",
@@ -279,7 +291,11 @@
       "sugar_per_100g": 0,
       "restrictions": [],
       "name_key": "chicken_breast",
-      "category": "Animal protein"
+      "category": "Animal protein",
+      "item_type": "INGREDIENT",
+      "weather_types": [],
+      "origin_city": null,
+      "origin_country": null
     },
     {
       "id": "13",
@@ -296,7 +312,95 @@
       "sugar_per_100g": 1.8,
       "restrictions": [],
       "name_key": "fish_ceviche",
-      "category": "Prepared dish"
+      "category": "Prepared dish",
+      "item_type": "DISH",
+      "weather_types": ["HOT"],
+      "origin_city": "Lima",
+      "origin_country": "Peru"
+    },
+    {
+      "id": "5",
+      "name": "Quinoa, cooked",
+      "name_es": "Quinua cocida",
+      "source": "USDA FoodData",
+      "serving_size": 100,
+      "serving_unit": "g",
+      "calories_per_100g": 120,
+      "protein_per_100g": 4.4,
+      "carbs_per_100g": 21.3,
+      "fat_per_100g": 1.9,
+      "fiber_per_100g": 2.8,
+      "sugar_per_100g": 0.9,
+      "restrictions": [],
+      "name_key": "quinoa",
+      "category": "Grain",
+      "item_type": "INGREDIENT",
+      "weather_types": [],
+      "origin_city": null,
+      "origin_country": null
+    },
+    {
+      "id": "6",
+      "name": "Garlic, raw",
+      "name_es": "Ajo crudo",
+      "source": "USDA FoodData",
+      "serving_size": 5,
+      "serving_unit": "g",
+      "calories_per_100g": 149,
+      "protein_per_100g": 6.4,
+      "carbs_per_100g": 33.1,
+      "fat_per_100g": 0.5,
+      "fiber_per_100g": 2.1,
+      "sugar_per_100g": 1.0,
+      "restrictions": [],
+      "name_key": "garlic",
+      "category": "Spice",
+      "item_type": "INGREDIENT",
+      "weather_types": [],
+      "origin_city": null,
+      "origin_country": null
+    },
+    {
+      "id": "7",
+      "name": "Lemon, raw",
+      "name_es": "Limón",
+      "source": "USDA FoodData",
+      "serving_size": 60,
+      "serving_unit": "g",
+      "calories_per_100g": 29,
+      "protein_per_100g": 1.1,
+      "carbs_per_100g": 9.3,
+      "fat_per_100g": 0.3,
+      "fiber_per_100g": 2.8,
+      "sugar_per_100g": 2.5,
+      "restrictions": [],
+      "name_key": "lemon",
+      "category": "Fruit",
+      "item_type": "INGREDIENT",
+      "weather_types": [],
+      "origin_city": null,
+      "origin_country": null
+    },
+    {
+      "id": "8",
+      "name": "Onion, raw",
+      "name_es": "Cebolla cruda",
+      "source": "USDA FoodData",
+      "serving_size": 80,
+      "serving_unit": "g",
+      "calories_per_100g": 40,
+      "protein_per_100g": 1.1,
+      "carbs_per_100g": 9.3,
+      "fat_per_100g": 0.1,
+      "fiber_per_100g": 1.7,
+      "sugar_per_100g": 4.2,
+      "restrictions": [],
+      "name_key": "onion",
+      "category": "Vegetable",
+      "item_type": "INGREDIENT",
+      "weather_types": [],
+      "origin_city": null,
+      "origin_country": null
     }
   ],
   "body-metrics": [
@@ -338,15 +442,7 @@
     }
   ],
   "recommendations": [],
-  "pantry": [
-    {
-      "id": "sze7d0vwsXE",
-      "foodId": "4",
-      "quantity_grams": 100,
-      "userId": "imtrh8k4o",
-      "added_at": "2026-06-01T22:03:11.765Z"
-    }
-  ],
+  "pantry": [],
   "recipes": [
     {
       "id": "1",
@@ -357,10 +453,10 @@
       "carbs": 38,
       "fat": 12,
       "ingredients": [
-        "chicken_breast",
-        "quinoa",
-        "garlic",
-        "lemon"
+        { "foodId": "4", "quantity_grams": 150 },
+        { "foodId": "5", "quantity_grams": 150 },
+        { "foodId": "6", "quantity_grams": 5 },
+        { "foodId": "7", "quantity_grams": 15 }
       ],
       "goal_type": "MUSCLE_GAIN",
       "prep_time_minutes": 30,
@@ -377,10 +473,10 @@
       "carbs": 52,
       "fat": 8,
       "ingredients": [
-        "white_rice",
-        "chicken_breast",
-        "onion",
-        "garlic"
+        { "foodId": "3", "quantity_grams": 200 },
+        { "foodId": "4", "quantity_grams": 130 },
+        { "foodId": "8", "quantity_grams": 50 },
+        { "foodId": "6", "quantity_grams": 5 }
       ],
       "goal_type": "MUSCLE_GAIN",
       "prep_time_minutes": 25,
@@ -797,7 +893,7 @@
       "country": "",
       "is_active": false,
       "is_manual": false,
-      "activated_at": null,
+      "activated_at": "",
       "userId": "imtrh8k4o"
     }
   ],

@@ -28,7 +28,7 @@ export interface RecipeSuggestionResource extends BaseResource {
   protein: number;
   carbs: number;
   fat: number;
-  ingredients: string[];
+  ingredients: { foodId: string; quantity_grams: number }[];
   goal_type: string;
   prep_time_minutes: number;
   covers_macro_pct: number;

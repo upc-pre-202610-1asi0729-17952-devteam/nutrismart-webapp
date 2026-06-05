@@ -36,6 +36,10 @@ export class FoodItemAssembler
       restrictions:    r.restrictions.map(s => s as DietaryRestriction),
       nameKey:         r.name_key,
       category:        r.category,
+      itemType:        r.item_type,
+      weatherTypes:    r.weather_types ?? [],
+      originCity:      r.origin_city ?? null,
+      originCountry:   r.origin_country ?? null,
     });
   }
 
@@ -55,6 +59,10 @@ export class FoodItemAssembler
       restrictions:      e.restrictions,
       name_key:          e.nameKey,
       category:          e.category,
+      item_type:         e.itemType,
+      weather_types:     e.weatherTypes,
+      origin_city:       e.originCity,
+      origin_country:    e.originCountry,
     };
   }
 

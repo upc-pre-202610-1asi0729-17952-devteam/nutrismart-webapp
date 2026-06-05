@@ -175,9 +175,9 @@ export class Pantry implements OnInit {
 
   resolvedIngredients(recipe: RecipeSuggestion): string {
     return recipe.ingredients
-      .map(key => {
-        const translated = this.translate.instant(`pantry_items.${key}`);
-        return translated !== `pantry_items.${key}` ? translated : key;
+      .map(i => {
+        const translated = this.translate.instant(`pantry_items.${i.foodId}`);
+        return translated !== `pantry_items.${i.foodId}` ? translated : i.foodId;
       })
       .join(', ');
   }

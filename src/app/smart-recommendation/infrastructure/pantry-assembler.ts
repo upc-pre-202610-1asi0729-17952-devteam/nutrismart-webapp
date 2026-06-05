@@ -70,7 +70,7 @@ export class RecipeSuggestionAssembler
       protein:              r.protein,
       carbs:                r.carbs,
       fat:                  r.fat,
-      ingredients:          [...r.ingredients],
+      ingredients:          r.ingredients.map(i => ({ foodId: i.foodId, quantity_grams: i.quantity_grams })),
       goalType:             r.goal_type as UserGoal,
       prepTimeMinutes:      r.prep_time_minutes,
       coversMacroPct:       r.covers_macro_pct,

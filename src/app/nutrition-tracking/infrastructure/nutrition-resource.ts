@@ -23,6 +23,10 @@ export interface FoodItemResource extends BaseResource {
   name_key?: string;
   /** Food category (e.g. "Grain", "Prepared dish"). */
   category?: string;
+  item_type?: 'INGREDIENT' | 'DISH';
+  weather_types?: string[];
+  origin_city?: string | null;
+  origin_country?: string | null;
 }
 
 /** Envelope for the `/foods` collection endpoint. */
