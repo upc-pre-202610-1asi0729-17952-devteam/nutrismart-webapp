@@ -114,7 +114,7 @@ export class BodyComposition implements BaseEntity {
    * Result rounded to one decimal place.
    */
   bodyFatPercent(): number {
-    if (this.#overrideBodyFatPercent !== undefined) return this.#overrideBodyFatPercent;
+    if (this.#overrideBodyFatPercent != null) return this.#overrideBodyFatPercent;
     const abdomen = this.#waistCm;
     const neck    = this.#neckCm;
     const height  = this.#heightCm;
