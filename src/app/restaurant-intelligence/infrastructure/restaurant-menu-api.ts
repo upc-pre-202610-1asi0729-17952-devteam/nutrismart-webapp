@@ -2,13 +2,16 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { DietaryRestriction } from '../../iam/domain/model/dietary-restriction.enum';
+import { environment } from '../../../environments/environment.development';
 
 /** A single dish from the menu scan, including which restrictions it conflicts with. */
 export interface RawMenuDish {
   rank: number;
   name: string;
+  nameEs: string | null;
   nameKey: string | null;
   calories: number;
   protein: number;
@@ -16,6 +19,7 @@ export interface RawMenuDish {
   fat: number;
   compatibilityScore: number;
   justification: string;
+  justificationEs: string | null;
   justificationKey: string | null;
   conflictingRestrictions: DietaryRestriction[];
 }
@@ -28,13 +32,30 @@ export interface RawMenuScan {
   allDishes: RawMenuDish[];
 }
 
+interface ScanMenuResponse {
+  rankedDishes: Array<{
+    rank: number;
+    dishName: string;
+    dishNameEs: string | null;
+    nameKey: string | null;
+    price: string | null;
+    matchedFoodItemId: number | null;
+    compatibilityScore: number;
+    reason: string;
+    reasonEn: string | null;
+    estimatedCalories: number;
+    estimatedProtein: number;
+    estimatedCarbs: number;
+    estimatedFat: number;
+    conflictingRestrictions: string[];
+  }>;
+}
+
 /**
  * Application-facing API façade for restaurant-menu scanning (ScanMenuPhoto command).
  *
- * Lives in Restaurant Intelligence because menu analysis drives the RestaurantMenu
- * aggregate: dish ranking, restriction filtering, and compatibility scoring.
- *
- * All methods return mock data while a real backend is not available.
+ * Calls POST /api/v1/nutrition-log/smart-scan/menu with the imageBase64 payload
+ * and maps the response to the {@link RawMenuScan} format consumed by the store.
  *
  * @author Del Aguila Del Aguila, Olenka Priscilla
  */
@@ -43,85 +64,62 @@ export class RestaurantMenuApi extends BaseApi {
   private _http      = inject(HttpClient);
   private _translate = inject(TranslateService);
 
+  private readonly _menuUrl = environment.apiBaseUrl + '/nutrition-log/smart-scan/menu';
+
   constructor() { super(); }
 
-  private _t(namespace: string, key: string | null, fallback: string): string {
-    if (!key) return fallback;
-    const resolved = this._translate.instant(`${namespace}.${key}`);
-    return resolved !== `${namespace}.${key}` ? resolved : fallback;
-  }
-
   /**
-   * Submits a restaurant-menu image for dish analysis (ScanMenuPhoto command).
+   * Submits a restaurant-menu image for dish analysis via Gemini + DeepSeek.
    *
-   * Returns all detected dishes with their restriction conflict metadata so the
-   * store can apply the user's current restrictions reactively.
-   *
-   * @param imageBase64 - Base-64-encoded image data.
-   * @returns Observable emitting a {@link RawMenuScan} with all dishes unfiltered.
+   * @param imageBase64 - Base-64-encoded image data (data URL accepted).
+   * @returns Observable emitting a {@link RawMenuScan} with all dishes ranked.
    */
   scanMenuPhoto(imageBase64: string): Observable<RawMenuScan> {
-    return of(this._buildRawMenuScan());
+    return this._http.post<ScanMenuResponse>(this._menuUrl, { imageBase64 }).pipe(
+      map(response => this._toRawMenuScan(response)),
+      catchError(() => of(this._emptyRawMenuScan())),
+    );
   }
 
   /**
-   * Ranks all compatible dishes in a menu analysis (RankCompatibleDishes command).
-   *
-   * @param menuAnalysisId   - ID of the MenuAnalysis aggregate.
-   * @param userRestrictions - Active dietary restrictions for filtering.
-   * @returns Observable emitting the updated raw menu scan.
+   * @deprecated Ranking is now performed server-side in the same scan call.
    */
-  rankMenuDishes(menuAnalysisId: number, userRestrictions: DietaryRestriction[]): Observable<RawMenuScan> {
-    return of(this._buildRawMenuScan());
+  rankMenuDishes(_menuAnalysisId: number, _userRestrictions: DietaryRestriction[]): Observable<RawMenuScan> {
+    return of(this._emptyRawMenuScan());
   }
 
-  // ─── Mock builder ─────────────────────────────────────────────────────────
+  // ─── Mapping ──────────────────────────────────────────────────────────────
 
-  private _buildRawMenuScan(): RawMenuScan {
+  private _toRawMenuScan(response: ScanMenuResponse): RawMenuScan {
+    if (!response.rankedDishes || response.rankedDishes.length === 0) {
+      return this._emptyRawMenuScan();
+    }
+
+    const allDishes: RawMenuDish[] = response.rankedDishes.map(d => ({
+      rank:               d.rank,
+      name:               d.dishName,
+      nameEs:             d.dishNameEs ?? null,
+      nameKey:            d.nameKey ?? null,
+      calories:           d.estimatedCalories,
+      protein:            d.estimatedProtein,
+      carbs:              d.estimatedCarbs,
+      fat:                d.estimatedFat,
+      compatibilityScore: d.compatibilityScore,
+      justification:      d.reasonEn ?? d.reason,
+      justificationEs:    d.reason ?? null,
+      justificationKey:   null,
+      conflictingRestrictions: (d.conflictingRestrictions ?? []).map(r => r as DietaryRestriction),
+    }));
+
     return {
       id:             1,
-      restaurantName: 'Local Restaurant',
       scannedAt:      new Date().toISOString(),
-      allDishes: [
-        {
-          rank: 1, nameKey: 'hake_ceviche',
-          name:          this._t('menu_dishes', 'hake_ceviche', 'Hake ceviche'),
-          calories: 280, protein: 38, carbs: 12, fat: 8, compatibilityScore: 100,
-          justification:    this._t('menu_dishes', 'hake_ceviche_justification', 'Covers 38g of your remaining protein target · Within your caloric budget · No restricted ingredients'),
-          justificationKey: 'hake_ceviche_justification',
-          conflictingRestrictions: [DietaryRestriction.SEAFOOD_FREE, DietaryRestriction.VEGAN],
-        },
-        {
-          rank: 2, nameKey: 'chicken_cucumber_salad',
-          name:          this._t('menu_dishes', 'chicken_cucumber_salad', 'Chicken and cucumber salad'),
-          calories: 320, protein: 32, carbs: 14, fat: 10, compatibilityScore: 87,
-          justification:    this._t('menu_dishes', 'chicken_cucumber_salad_justification', 'High protein content, within budget'),
-          justificationKey: 'chicken_cucumber_salad_justification',
-          conflictingRestrictions: [DietaryRestriction.VEGAN, DietaryRestriction.VEGETARIAN],
-        },
-        {
-          rank: 3, nameKey: 'gazpacho_wholemeal_toast',
-          name:          this._t('menu_dishes', 'gazpacho_wholemeal_toast', 'Gazpacho with wholemeal toast'),
-          calories: 210, protein: 6, carbs: 38, fat: 5, compatibilityScore: 74,
-          justification:    this._t('menu_dishes', 'gazpacho_wholemeal_toast_justification', 'Light option within caloric budget'),
-          justificationKey: 'gazpacho_wholemeal_toast_justification',
-          conflictingRestrictions: [DietaryRestriction.GLUTEN_FREE],
-        },
-        {
-          rank: 4, nameKey: 'cheese_pizza',
-          name:          this._t('menu_dishes', 'cheese_pizza', 'Cheese pizza'),
-          calories: 520, protein: 20, carbs: 58, fat: 24, compatibilityScore: 55,
-          justification: 'Moderate option', justificationKey: null,
-          conflictingRestrictions: [DietaryRestriction.LACTOSE_FREE, DietaryRestriction.VEGAN],
-        },
-        {
-          rank: 5, nameKey: 'seafood_paella',
-          name:          this._t('menu_dishes', 'seafood_paella', 'Seafood paella'),
-          calories: 480, protein: 28, carbs: 62, fat: 12, compatibilityScore: 48,
-          justification: 'High carb option', justificationKey: null,
-          conflictingRestrictions: [DietaryRestriction.SEAFOOD_FREE, DietaryRestriction.VEGAN],
-        },
-      ],
+      restaurantName: 'Restaurant',
+      allDishes,
     };
+  }
+
+  private _emptyRawMenuScan(): RawMenuScan {
+    return { id: 0, scannedAt: new Date().toISOString(), restaurantName: '', allDishes: [] };
   }
 }

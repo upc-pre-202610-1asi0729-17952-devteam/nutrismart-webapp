@@ -15,6 +15,7 @@ export class MenuAnalysisAssembler
     const ranked: RankedDish[] = r.ranked_dishes.map(d => new RankedDish({
       rank:               d.rank,
       name:               d.name,
+      nameEs:             null,
       nameKey:            d.name_key ?? null,
       calories:           d.calories,
       protein:            d.protein,
@@ -22,10 +23,12 @@ export class MenuAnalysisAssembler
       fat:                d.fat,
       compatibilityScore: d.compatibility_score,
       justification:      d.justification,
+      justificationEs:    null,
       justificationKey:   d.justification_key ?? null,
     }));
     const restricted: RestrictedDish[] = r.restricted_dishes.map(d => new RestrictedDish({
       name:        d.name,
+      nameEs:      null,
       nameKey:     d.name_key ?? null,
       restriction: d.restriction as DietaryRestriction,
     }));
