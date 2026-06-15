@@ -1,7 +1,10 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map, startWith } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { roundToOneDecimal } from '../../../../shared/domain/round.util';
 import { RecommendationsStore } from '../../../application/recommendations.store';
 import { RecommendationCard } from '../../../infrastructure/recommendations-api';
 import { AdherenceStatus } from '../../../domain/model/adherence-status.enum';
@@ -21,33 +24,40 @@ import {
   templateUrl: './recommendations.html',
   styleUrl:    './recommendations.css',
 })
-export class RecommendationsView implements OnInit {
+export class RecommendationsView implements OnInit, OnDestroy {
   protected store    = inject(RecommendationsStore);
   protected iamStore = inject(IamStore);
   protected nutStore = inject(NutritionStore);
   private translate  = inject(TranslateService);
+
+  private refreshInterval: ReturnType<typeof setInterval> | null = null;
+  private readonly WEATHER_REFRESH_MS = 15 * 60 * 1000;
+
+  protected readonly currentLang = toSignal(
+    this.translate.onLangChange.pipe(
+      map(e => e.lang),
+      startWith(this.translate.currentLang ?? 'en'),
+    ),
+    { initialValue: this.translate.currentLang ?? 'en' },
+  );
 
   protected isPro = computed(() => this.iamStore.currentUser()?.isPro() ?? false);
 
   /** Card awaiting confirmation in the log dialog. Null when dialog is closed. */
   protected pendingCard = signal<RecommendationCard | null>(null);
 
-  protected displayTemperature = computed(() =>
-    this.store.demoTemperature() ?? this.store.weatherContext()?.temperatureCelsius ?? null
-  );
-
   // ─── Daily balance ────────────────────────────────────────────────────────
 
   protected dailyTarget    = computed(() => this.iamStore.currentUser()?.dailyCalorieTarget ?? 1800);
   protected dailyConsumed  = computed(() => this.nutStore.dailyTotals().calories);
   protected dailyRemaining = computed(() =>
-    Math.max(0, this.dailyTarget() - this.dailyConsumed())
+    roundToOneDecimal(Math.max(0, this.dailyTarget() - this.dailyConsumed()))
   );
 
   // ─── Derived display helpers ──────────────────────────────────────────────
 
   protected isDisplayHot = computed(() =>
-    (this.displayTemperature() ?? this.store.weatherContext()?.temperatureCelsius ?? 0) >= 21
+    (this.store.weatherContext()?.temperatureCelsius ?? 0) >= 21
   );
 
   protected weatherIcon = computed(() => {
@@ -90,14 +100,14 @@ export class RecommendationsView implements OnInit {
   });
 
   protected pickerLabel = computed(() => {
-    const temp = this.displayTemperature();
     if (this.store.isTravelMode()) {
       const t = this.store.travelContext();
+      const temp = this.store.weatherContext()?.temperatureCelsius;
       return `${t?.city ?? ''} · ${temp ?? '?'}°C`;
     }
     const w = this.store.weatherContext();
     if (!w) return '';
-    return `${w.city} · ${temp ?? w.temperatureCelsius}°C`;
+    return `${w.city} · ${w.temperatureCelsius}°C`;
   });
 
   protected weatherConditionLabel = computed(() => {
@@ -121,6 +131,20 @@ export class RecommendationsView implements OnInit {
     await this.store.initialise();
     await this.nutStore.loadDailyBalance();
     await this.nutStore.loadMealHistory();
+    this.refreshInterval = setInterval(
+      () => void this.store.refreshWeatherIfChanged(),
+      this.WEATHER_REFRESH_MS,
+    );
+  }
+
+  ngOnDestroy(): void {
+    if (this.refreshInterval !== null) clearInterval(this.refreshInterval);
+  }
+
+  // ─── Location detection ───────────────────────────────────────────────────
+
+  onRetryLocation(): void {
+    void this.store.detectAndSyncLocation();
   }
 
   // ─── Location picker ──────────────────────────────────────────────────────
@@ -134,8 +158,8 @@ export class RecommendationsView implements OnInit {
     }
   }
 
-  onTemperatureChanged(temp: number): void {
-    this.store.setDemoTemperature(temp);
+  onOwmCitySelected(loc: { city: string; country: string }): void {
+    void this.store.activateTravelMode(loc.city, loc.country, true);
   }
 
   // ─── Travel mode ──────────────────────────────────────────────────────────
@@ -146,6 +170,11 @@ export class RecommendationsView implements OnInit {
 
   // ─── Add-to-log dialog ────────────────────────────────────────────────────
 
+  /** Returns the card name in the current UI language. */
+  protected getCardName(card: RecommendationCard): string {
+    return (this.currentLang() === 'es' && card.nameEs) ? card.nameEs : card.name;
+  }
+
   onAddToLog(cardId: number | string): void {
     const card = this.store.activeCards().find(c => c.id === cardId);
     if (card) this.pendingCard.set(card);
@@ -155,12 +184,15 @@ export class RecommendationsView implements OnInit {
     const user = this.iamStore.currentUser();
     if (!user) return;
 
+    const wasPreventive = payload.card.id === this.store.preventiveCard()?.id;
+
     const proteinGrams = parseFloat(payload.card.protein.replace(/[^0-9.]/g, ''));
     const record = new MealRecord({
-      id:           0,
-      foodId:       payload.card.foodId != null ? String(payload.card.foodId) : null,
-      foodItemName: payload.card.name,
-      mealType:     payload.mealType,
+      id:             0,
+      foodId:         payload.card.foodId != null ? String(payload.card.foodId) : null,
+      foodItemName:   payload.card.name,
+      foodItemNameEs: payload.card.nameEs,
+      mealType:       payload.mealType,
       quantity:     100,
       unit:         'g',
       calories:     payload.card.calories,
@@ -174,6 +206,7 @@ export class RecommendationsView implements OnInit {
     });
 
     void this.nutStore.recordMeal(record);
+    if (wasPreventive) void this.store.setAdherenceStatus(AdherenceStatus.ON_TRACK);
     this.pendingCard.set(null);
   }
 
@@ -188,6 +221,7 @@ export class RecommendationsView implements OnInit {
   }
 
   onLogPreventiveNow(): void {
-    this.store.setAdherenceStatus(AdherenceStatus.ON_TRACK);
+    const card = this.store.preventiveCard();
+    if (card) this.pendingCard.set(card);
   }
 }

@@ -35,33 +35,35 @@
           >
             <span class="location-icon">{{ loc.isHot() ? '☀' : '❄' }}</span>
             <span class="location-name">{{ loc.city }}</span>
-            <span class="location-temp">{{ loc.temperatureCelsius }}°C</span>
+            <span class="location-temp">{{ loc.temperatureCelsius }}°C · {{ loc.condition }}</span>
           </li>
         }
-        @if (filteredLocations().length === 0) {
+        @if (filteredLocations().length === 0 && filteredOwmSuggestions().length === 0 && !suggestionsLoading()) {
           <li class="location-empty">{{ 'recommendations.location_search_placeholder' | translate }}</li>
         }
       </ul>
 
-      <div class="temp-slider-section">
-        <label class="slider-label" for="temp-slider">{{ 'recommendations.location_picker_temp' | translate }}</label>
-        <div class="slider-row">
-          <span class="slider-min">0°C</span>
-          <input
-            id="temp-slider"
-            type="range"
-            class="temp-slider"
-            min="0" max="50" step="1"
-            [value]="sliderValue"
-            (input)="onSliderInput($event)"
-            [attr.aria-valuenow]="sliderValue"
-            [attr.aria-label]="'recommendations.location_picker_temp' | translate"
-            tabindex="0"
-          />
-          <span class="slider-max">50°C</span>
-        </div>
-        <div class="slider-value">{{ sliderValue }}°C</div>
-      </div>
+      @if (suggestionsLoading()) {
+        <p class="location-owm-loading">{{ 'recommendations.location_search_placeholder' | translate }}…</p>
+      }
+
+      @if (filteredOwmSuggestions().length > 0) {
+        <div class="location-owm-divider">OWM</div>
+        <ul class="location-list">
+          @for (sug of filteredOwmSuggestions(); track sug.city + sug.country) {
+            <li
+              class="location-item location-item--owm"
+              role="option"
+              [attr.aria-selected]="false"
+              (mousedown)="onSelectOwmCity(sug)"
+            >
+              <span class="location-icon">◎</span>
+              <span class="location-name">{{ sug.city }}</span>
+              <span class="location-temp">{{ sug.country }}</span>
+            </li>
+          }
+        </ul>
+      }
 
     </div>
   }

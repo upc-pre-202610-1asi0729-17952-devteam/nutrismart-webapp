@@ -13,6 +13,17 @@
     <section class="panel panel--left" [attr.aria-label]="'pantry.my_ingredients' | translate">
       <h2 class="panel__title">{{ 'pantry.my_ingredients' | translate }}</h2>
 
+      @if (pantryStore.error()) {
+        <div class="pantry-error" role="alert">
+          <span>{{ pantryStore.error()! | translate }}</span>
+          <button class="pantry-error__dismiss"
+                  (click)="onDismissError()"
+                  [attr.aria-label]="'common.close' | translate">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      }
+
       <!-- Search / Add input (autocomplete) -->
       <div class="add-ingredient-row">
         <div class="autocomplete-wrapper">
@@ -68,7 +79,6 @@
               <div class="ingredient-item__actions">
                 <button class="btn-remove"
                         [attr.aria-label]="item.name"
-                        [disabled]="pantryStore.loading()"
                         (click)="onRemoveItem(item.id)">
                   <mat-icon class="btn-remove__icon">close</mat-icon>
                 </button>
@@ -147,7 +157,7 @@
             <li class="recipe-card">
               <div class="recipe-card__header">
                 <span class="recipe-card__name">
-                  {{ recipe.name }}
+                  {{ recipe.getLocalizedName(currentLang()) }}
                 </span>
                 <span class="recipe-card__kcal">{{ recipe.calories }} kcal</span>
               </div>

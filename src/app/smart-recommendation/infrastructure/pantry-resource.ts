@@ -6,10 +6,9 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
  * @author Del Aguila Del Aguila, Olenka Priscilla
  */
 export interface PantryItemResource extends BaseResource {
-  food_id: string;
-  quantity_grams: number;
+  foodId: string;
+  quantityG: number;
   userId: number;
-  added_at: string;
 }
 
 /**
@@ -19,17 +18,14 @@ export interface PantryItemResource extends BaseResource {
  */
 export interface RecipeSuggestionResource extends BaseResource {
   name: string;
-  name_es?: string;
-  name_key?: string;
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-  ingredients: { foodId: string; quantity_grams: number }[];
-  goal_type: string;
-  prep_time_minutes: number;
-  covers_macro_pct: number;
-  restrictions_conflict: string[];
+  nameEs?: string;
+  goalType: string;
+  prepTimeMinutes: number;
+  estimatedCalories: number;
+  estimatedProtein: number;
+  estimatedCarbs: number;
+  estimatedFat: number;
+  ingredients: string[];
 }
 
 /** Response envelope for pantry-item list endpoints. */

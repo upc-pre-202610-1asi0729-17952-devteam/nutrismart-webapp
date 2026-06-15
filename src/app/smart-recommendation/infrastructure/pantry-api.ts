@@ -14,10 +14,6 @@ import { RecipeSuggestion } from '../domain/model/recipe-suggestion.entity';
 import { PantryItemAssembler, RecipeSuggestionAssembler } from './pantry-assembler';
 import { PantryItemResource, RecipeSuggestionResource } from './pantry-resource';
 
-const INGREDIENT_CATEGORIES = new Set([
-  'Grain', 'Animal protein', 'Vegetable',
-  'Fruit', 'Dairy', 'Legume', 'Seasoning', 'Other',
-]);
 
 @Injectable({ providedIn: 'root' })
 export class PantryApi extends BaseApi {
@@ -36,7 +32,7 @@ export class PantryApi extends BaseApi {
       foodMap: this._foodsMap(),
     }).pipe(
       map(({ items, foodMap }) =>
-        items.map(r => this._pantryAssembler.toEntityFromResource(r, foodMap.get(r.food_id))),
+        items.map(r => this._pantryAssembler.toEntityFromResource(r, foodMap.get(String(r.foodId)))),
       ),
       catchError(this._handleError('getPantryItems')),
     );
@@ -49,7 +45,7 @@ export class PantryApi extends BaseApi {
       foodMap: this._foodsMap(),
     }).pipe(
       map(({ created, foodMap }) =>
-        this._pantryAssembler.toEntityFromResource(created, foodMap.get(created.food_id)),
+        this._pantryAssembler.toEntityFromResource(created, foodMap.get(String(created.foodId))),
       ),
       catchError(this._handleError('addPantryItem')),
     );
@@ -69,18 +65,15 @@ export class PantryApi extends BaseApi {
   }
 
   getRecipeSuggestions(goalType: UserGoal): Observable<RecipeSuggestion[]> {
-    return this._http.get<RecipeSuggestionResource[]>(`${this._recipesUrl}?goal_type=${goalType}`).pipe(
+    return this._http.get<RecipeSuggestionResource[]>(`${this._recipesUrl}?goalType=${goalType}`).pipe(
       map(rs => rs.map(r => this._recipeAssembler.toEntityFromResource(r))),
       catchError(this._handleError('getRecipeSuggestions')),
     );
   }
 
   getFoodCatalog(): Observable<FoodItem[]> {
-    return this._http.get<FoodItemResource[]>(this._foodsUrl).pipe(
-      map(rs => rs
-        .filter(r => INGREDIENT_CATEGORIES.has(r.category ?? ''))
-        .map(r => this._foodAssembler.toEntityFromResource(r)),
-      ),
+    return this._http.get<FoodItemResource[]>(`${this._foodsUrl}?itemType=INGREDIENT`).pipe(
+      map(rs => rs.map(r => this._foodAssembler.toEntityFromResource(r))),
       catchError(this._handleError('getFoodCatalog')),
     );
   }

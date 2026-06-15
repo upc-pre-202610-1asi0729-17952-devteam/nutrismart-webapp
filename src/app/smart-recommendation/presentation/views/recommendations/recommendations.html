@@ -26,10 +26,9 @@
         [locations]="store.availableLocations()"
         [selectedCity]="store.weatherContext()?.city ?? ''"
         [currentLabel]="pickerLabel()"
-        [demoTemperature]="store.demoTemperature()"
         [isTravelMode]="store.isTravelMode()"
         (citySelected)="onCitySelected($event)"
-        (temperatureChanged)="onTemperatureChanged($event)"
+        (owmCitySelected)="onOwmCitySelected($event)"
       />
     </div>
   </header>
@@ -53,14 +52,16 @@
       </div>
     }
 
-    <!-- ── Location denied banner ──────────────────────────────── -->
+    <!-- ── Location permission banner ────────────────────────────── -->
     @if (store.locationDenied() && !store.isTravelMode()) {
       <div class="location-banner">
         <span class="location-banner-icon">📍</span>
         <span class="location-banner-text">{{ 'recommendations.location_denied_msg' | translate }}</span>
-        <a routerLink="/recommendations/feed/location-search" class="btn btn--primary btn--sm">
-          {{ 'recommendations.enable_location' | translate }}
-        </a>
+        <div class="location-banner-actions">
+          <button class="btn btn--primary btn--sm" (click)="onRetryLocation()">
+            {{ 'recommendations.allow_location' | translate }}
+          </button>
+        </div>
       </div>
     }
 
@@ -72,13 +73,13 @@
         </div>
         <div class="banner-body">
           @if (store.isTravelMode()) {
-            <strong>{{ 'recommendations.banner_travel_active' | translate:{ location: store.travelContext()?.locationLabel(), temp: displayTemperature() } }}</strong>
+            <strong>{{ 'recommendations.banner_travel_active' | translate:{ location: store.travelContext()?.locationLabel(), temp: store.weatherContext()?.temperatureCelsius ?? '?' } }}</strong>
             <p>{{ 'recommendations.banner_travel_desc' | translate:{ city: travelCity() } }}</p>
           } @else {
             <strong>
               {{ isDisplayHot() ? ('recommendations.its_hot' | translate) : ('recommendations.its_cold' | translate) }} in
               {{ store.weatherContext()?.city }} —
-              {{ displayTemperature() }}°C ·
+              {{ store.weatherContext()?.temperatureCelsius }}°C ·
               {{ weatherConditionLabel() }}
             </strong>
             <p>
@@ -130,7 +131,7 @@
               {{ 'recommendations.intervention_desc' | translate:{ days: session()?.consecutiveMisses ?? 5, kcal: session()?.simplifiedKcalTarget ?? 1400 } }}
             </p>
             <div class="alert-card-meal">
-              <span class="meal-name">{{ store.interventionCard()!.name }}</span>
+              <span class="meal-name">{{ getCardName(store.interventionCard()!) }}</span>
               <span class="meal-desc">{{ store.interventionCard()!.description }}</span>
               <span class="meal-kcal">{{ store.interventionCard()!.calories }} kcal</span>
               <span class="meal-protein tag">{{ store.interventionCard()!.protein }}</span>
@@ -153,7 +154,7 @@
               {{ 'recommendations.preventive_desc' | translate:{ days: session()?.consecutiveMisses ?? 2 } }}
             </p>
             <div class="alert-card-meal">
-              <span class="meal-name">{{ store.preventiveCard()!.name }}</span>
+              <span class="meal-name">{{ getCardName(store.preventiveCard()!) }}</span>
               <span class="meal-desc">{{ store.preventiveCard()!.description }}</span>
               <span class="meal-kcal">{{ store.preventiveCard()!.calories }} kcal</span>
               <span class="meal-protein tag">{{ store.preventiveCard()!.protein }}</span>
@@ -178,7 +179,7 @@
               <span>{{ store.isTravelMode() ? '🍲' : '↗' }}</span>
             </div>
             <div class="rec-card-body">
-              <h3 class="rec-card-name">{{ card.name }}</h3>
+              <h3 class="rec-card-name">{{ getCardName(card) }}</h3>
               <p class="rec-card-desc">{{ card.description }}</p>
               <div class="rec-card-tags">
                 <span class="tag tag--kcal">{{ card.calories }} kcal</span>

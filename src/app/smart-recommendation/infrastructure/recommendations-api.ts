@@ -30,7 +30,10 @@ export interface RecommendationCard {
   id: number | string;
   /** Identifier of the underlying food item — used to log the card to the nutrition diary. */
   foodId: number | string;
+  /** English canonical name — used as foodItemName when logging to the meal diary. */
   name: string;
+  /** Spanish name — used as foodItemNameEs when logging to the meal diary. */
+  nameEs: string;
   description: string;
   calories: number;
   protein: string;
@@ -61,13 +64,33 @@ export class RecommendationsApi extends BaseApi {
   getLatestLocationSnapshot(userId: string): Observable<LocationSnapshot | null> {
     const params = new HttpParams()
       .set('userId', userId)
-      .set('_sort', 'recorded_at')
+      .set('_sort', 'recordedAt')
       .set('_order', 'desc')
       .set('_limit', '1');
     return this.http
       .get<LocationSnapshotResource[]>(`${BASE}${environment.locationSnapshotsEndpointPath}`, { params })
       .pipe(
         map(list => list.length > 0 ? this.locationAssembler.toEntityFromResource(list[0]) : null),
+        retry(2),
+        catchError(err => throwError(() => err)),
+      );
+  }
+
+  saveLocationSnapshot(userId: string, city: string, country: string): Observable<LocationSnapshot> {
+    const body = { userId, city, country, recordedAt: new Date().toISOString() };
+    return this.http
+      .post<LocationSnapshotResource>(`${BASE}${environment.locationSnapshotsEndpointPath}`, body)
+      .pipe(
+        map(r => this.locationAssembler.toEntityFromResource(r)),
+        retry(2),
+        catchError(err => throwError(() => err)),
+      );
+  }
+
+  syncWeatherSnapshot(city: string, country: string): Observable<void> {
+    return this.http
+      .post<void>(`${BASE}${environment.weatherSnapshotsEndpointPath}/sync`, { city, country })
+      .pipe(
         retry(2),
         catchError(err => throwError(() => err)),
       );
@@ -86,8 +109,8 @@ export class RecommendationsApi extends BaseApi {
 
   getWeatherRecommendations(weatherType: WeatherType): Observable<RecommendationCard[]> {
     const params = new HttpParams()
-      .set('weather_type', weatherType)
-      .set('card_type', 'weather');
+      .set('weatherType', weatherType)
+      .set('cardType', 'weather');
     return forkJoin([
       this.http.get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params }),
       this.getFoods(),
@@ -98,10 +121,11 @@ export class RecommendationsApi extends BaseApi {
     );
   }
 
-  getTravelRecommendations(cityId: string): Observable<RecommendationCard[]> {
-    const params = new HttpParams()
-      .set('travel_city', cityId)
-      .set('card_type', 'travel');
+  getTravelRecommendations(cityId: string, country: string): Observable<RecommendationCard[]> {
+    let params = new HttpParams()
+      .set('travelCity', cityId)
+      .set('cardType', 'travel');
+    if (country) params = params.set('travelCountry', country);
     return forkJoin([
       this.http.get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params }),
       this.getFoods(),
@@ -113,7 +137,7 @@ export class RecommendationsApi extends BaseApi {
   }
 
   getPreventiveRecommendation(): Observable<RecommendationCard> {
-    const params = new HttpParams().set('card_type', 'preventive');
+    const params = new HttpParams().set('cardType', 'preventive');
     return forkJoin([
       this.http.get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params }),
       this.getFoods(),
@@ -125,7 +149,7 @@ export class RecommendationsApi extends BaseApi {
   }
 
   getInterventionRecommendation(): Observable<RecommendationCard> {
-    const params = new HttpParams().set('card_type', 'intervention');
+    const params = new HttpParams().set('cardType', 'intervention');
     return forkJoin([
       this.http.get<RecommendationCardResource[]>(`${BASE}${environment.recommendationCardsEndpointPath}`, { params }),
       this.getFoods(),
@@ -137,7 +161,7 @@ export class RecommendationsApi extends BaseApi {
   }
 
   getRecommendationSession(userId: string): Observable<RecommendationSession | null> {
-    const params = new HttpParams().set('userId', userId).set('is_active', 'true');
+    const params = new HttpParams().set('userId', userId).set('isActive', 'true');
     return this.http
       .get<RecommendationSessionResource[]>(`${BASE}${environment.recommendationSessionsEndpointPath}`, { params })
       .pipe(
@@ -148,7 +172,7 @@ export class RecommendationsApi extends BaseApi {
   }
 
   getStrategyAdjustment(status: AdherenceStatus, userId: string): Observable<RecommendationSession> {
-    const params = new HttpParams().set('userId', userId).set('is_active', 'true');
+    const params = new HttpParams().set('userId', userId).set('isActive', 'true');
     return this.http
       .get<RecommendationSessionResource[]>(`${BASE}${environment.recommendationSessionsEndpointPath}`, { params })
       .pipe(
@@ -158,24 +182,24 @@ export class RecommendationsApi extends BaseApi {
           const resource = list[0];
           if (!resource) {
             return this.sessionAssembler.toEntityFromResource({
-              id:                     0,
+              id:                   0,
               userId,
-              adherence_status:       status,
-              consecutive_misses:     consecutiveMisses,
-              simplified_kcal_target: 0,
-              created_at:             new Date().toISOString(),
-              is_active:              true,
+              adherenceStatus:      status,
+              consecutiveMisses,
+              simplifiedKcalTarget: 0,
+              createdAt:            new Date().toISOString(),
+              isActive:             true,
             } as RecommendationSessionResource);
           }
-          const patched = { ...resource, adherence_status: status, consecutive_misses: consecutiveMisses };
+          const updated = { ...resource, adherenceStatus: status, consecutiveMisses };
           this.http
-            .patch(
-              `${BASE}${environment.recommendationSessionsEndpointPath}/${patched.id}`,
-              { adherence_status: patched.adherence_status, consecutive_misses: patched.consecutive_misses },
+            .put(
+              `${BASE}${environment.recommendationSessionsEndpointPath}/${updated.id}`,
+              { adherenceStatus: updated.adherenceStatus, consecutiveMisses: updated.consecutiveMisses },
             )
             .pipe(retry(2), catchError(err => throwError(() => err)))
             .subscribe();
-          return this.sessionAssembler.toEntityFromResource(patched);
+          return this.sessionAssembler.toEntityFromResource(updated);
         }),
         retry(2),
         catchError(err => throwError(() => err)),
@@ -199,25 +223,21 @@ export class RecommendationsApi extends BaseApi {
       .get<TravelContextResource[]>(`${BASE}${environment.travelContextsEndpointPath}`, { params })
       .pipe(
         switchMap(list => {
-          const body = {
-            city,
-            country,
-            is_active:    true,
-            is_manual:    false,
-            activated_at: new Date().toISOString(),
-          };
+          const activatedAt = new Date().toISOString();
           if (list[0]) {
+            const body = { city, country, isActive: true, isManual: false, activatedAt };
             return this.http
-              .patch<TravelContextResource>(
+              .put<TravelContextResource>(
                 `${BASE}${environment.travelContextsEndpointPath}/${list[0].id}`,
                 body,
               )
               .pipe(map(updated => this.travelAssembler.toEntityFromResource(updated)));
           }
+          const body = { userId, city, country, isActive: true, isManual: false, activatedAt };
           return this.http
             .post<TravelContextResource>(
               `${BASE}${environment.travelContextsEndpointPath}`,
-              { userId, ...body },
+              body,
             )
             .pipe(map(created => this.travelAssembler.toEntityFromResource(created)));
         }),
@@ -236,18 +256,18 @@ export class RecommendationsApi extends BaseApi {
           if (!resource) {
             return new TravelContext({ id: 0, city: '', country: '', isActive: false, isManual: false, activatedAt: '' });
           }
-          const patched: TravelContextResource = {
+          const deactivated: TravelContextResource = {
             ...resource,
-            city: '', country: '', is_active: false, is_manual: false, activated_at: '',
+            city: '', country: '', isActive: false, isManual: false, activatedAt: '',
           };
           this.http
-            .patch(
-              `${BASE}${environment.travelContextsEndpointPath}/${patched.id}`,
-              { city: '', country: '', is_active: false, is_manual: false, activated_at: '' },
+            .put(
+              `${BASE}${environment.travelContextsEndpointPath}/${deactivated.id}`,
+              { city: '', country: '', isActive: false, isManual: false, activatedAt: '' },
             )
             .pipe(retry(2), catchError(err => throwError(() => err)))
             .subscribe();
-          return this.travelAssembler.toEntityFromResource(patched);
+          return this.travelAssembler.toEntityFromResource(deactivated);
         }),
         retry(2),
         catchError(err => throwError(() => err)),
@@ -261,16 +281,17 @@ export class RecommendationsApi extends BaseApi {
   }
 
   private toCard(r: RecommendationCardResource, foods: FoodCardResource[]): RecommendationCard | null {
-    const food = foods.find(f => String(f.id) === String(r.food_id));
+    const food = foods.find(f => String(f.id) === String(r.foodId));
     if (!food) return null;
     const es = this.translate.currentLang === 'es';
     return {
       id:          r.id,
       foodId:      food.id,
-      name:        es ? (food.name_es ?? food.name) : food.name,
-      description: es ? r.description_es : r.description,
-      calories:    food.calories_per_100g,
-      protein:     `P ${food.protein_per_100g}g`,
+      name:        food.name,
+      nameEs:      food.nameEs ?? food.name,
+      description: es ? r.descriptionEs : r.description,
+      calories:    food.caloriesPer100g,
+      protein:     `P ${food.proteinPer100g}g`,
       badge:       r.badge,
     };
   }

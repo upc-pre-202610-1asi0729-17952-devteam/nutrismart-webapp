@@ -6,53 +6,53 @@ export interface LocationSnapshotResource extends BaseResource {
   userId: string;
   city: string;
   country: string;
-  recorded_at: string;
+  recordedAt: string;
 }
 
 export interface WeatherContextResource extends BaseResource {
   city: string;
   country: string;
-  temperature_celsius: number;
+  temperatureCelsius: number;
   condition: string;
-  weather_type: string;
-  updated_at: string;
+  weatherType: string;
+  updatedAt: string;
 }
 
 export interface TravelContextResource extends BaseResource {
   userId: string;
   city: string;
   country: string;
-  is_active: boolean;
-  is_manual: boolean;
-  activated_at: string;
+  isActive: boolean;
+  isManual: boolean;
+  activatedAt: string;
 }
 
 export interface RecommendationSessionResource extends BaseResource {
   userId: string;
-  adherence_status: string;
-  consecutive_misses: number;
-  simplified_kcal_target: number;
-  created_at: string;
-  is_active: boolean;
-  weather_snapshot_id?: string | null;
+  adherenceStatus: string;
+  consecutiveMisses: number;
+  simplifiedKcalTarget: number;
+  createdAt: string;
+  isActive: boolean;
+  weatherSnapshotId?: string | null;
 }
 
 export interface FoodCardResource {
   id: number | string;
   name: string;
-  name_es?: string;
-  calories_per_100g: number;
-  protein_per_100g: number;
+  nameEs?: string;
+  caloriesPer100g: number;
+  proteinPer100g: number;
 }
 
 export interface RecommendationCardResource extends BaseResource {
-  food_id: number | string;
+  foodId: number | string;
   badge: string;
   description: string;
-  description_es: string;
-  weather_type: string | null;
-  travel_city: string | null;
-  card_type: string;
+  descriptionEs: string;
+  weatherType: string | null;
+  travelCity: string | null;
+  cardType: string;
 }
 
 export interface WeatherContextResponse extends BaseResponse {

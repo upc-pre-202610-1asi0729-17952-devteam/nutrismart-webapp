@@ -154,6 +154,10 @@ export class Pantry implements OnInit {
     await this.pantryStore.deletePantryItem(itemId);
   }
 
+  onDismissError(): void {
+    this.pantryStore.clearError();
+  }
+
   onAddToLog(recipe: RecipeSuggestion): void {
     this.router.navigate(['/nutrition/log'], {
       state: {
@@ -186,8 +190,8 @@ export class Pantry implements OnInit {
     const catalog = this.pantryStore.catalog();
     return recipe.ingredients
       .map(i => {
-        const food = catalog.find(f => String(f.id) === i.foodId);
-        return food ? food.getLocalizedName(this.translate.currentLang) : i.foodId;
+        const food = catalog.find(f => f.nameKey === i.nameKey);
+        return food ? food.getLocalizedName(this.translate.currentLang) : i.nameKey;
       })
       .join(', ');
   }
