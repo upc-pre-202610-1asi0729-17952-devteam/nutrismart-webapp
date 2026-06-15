@@ -1,11 +1,16 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { LowerCasePipe } from '@angular/common';
+import { Location, LowerCasePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { LanguageSwitcher } from '../../../../shared/presentation/components/language-switcher/language-switcher';
 import { SubscriptionsStore } from '../../../application/subscriptions.store';
 import { PaymentStore } from '../../../application/payment.store';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { SubscriptionPlan } from '../../../../iam/domain/model/subscription-plan.enum';
+
+interface SubscriptionPlansNavState {
+  fromProfile?: boolean;
+}
 
 interface PlanCard {
   plan: SubscriptionPlan;
@@ -26,7 +31,7 @@ interface PlanCard {
 @Component({
   selector: 'app-subscription-plans',
   standalone: true,
-  imports: [TranslatePipe, LowerCasePipe],
+  imports: [TranslatePipe, LowerCasePipe, LanguageSwitcher],
   templateUrl: './subscription-plans.html',
   styleUrl: './subscription-plans.css',
 })
@@ -35,9 +40,20 @@ export class SubscriptionPlans implements OnInit {
   private   readonly payStore  = inject(PaymentStore);
   private   readonly iamStore  = inject(IamStore);
   private   readonly router    = inject(Router);
+  private   readonly location  = inject(Location);
 
-  /** Currently active plan on the user account, or null. */
-  readonly currentPlan = computed(() => this.iamStore.currentUser()?.plan ?? null);
+  private readonly _fromProfile = signal<boolean>(
+    (history.state as SubscriptionPlansNavState)?.fromProfile === true,
+  );
+
+  readonly fromProfile = this._fromProfile.asReadonly();
+
+  /** Currently active plan, preferring the subscription store as the source of truth. */
+  readonly currentPlan = computed(() => {
+    const sub = this.store.subscription();
+    if (sub?.isActive()) return sub.plan;
+    return this.iamStore.currentUser()?.plan ?? null;
+  });
 
   /** True when the cancellation confirmation modal is visible. */
   readonly showCancelConfirm = signal<boolean>(false);
@@ -87,6 +103,14 @@ export class SubscriptionPlans implements OnInit {
   async ngOnInit(): Promise<void> {
     const user = this.iamStore.currentUser();
     if (user) await this.store.initialise(user.id);
+  }
+
+  goBack(): void {
+    this.location.back();
+  }
+
+  maybeLater(): void {
+    this.iamStore.logout();
   }
 
   /**

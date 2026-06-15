@@ -1,3 +1,10 @@
+.sub-lang {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 10;
+}
+
 /* ─── Shell ──────────────────────────────────────────────────────────────── */
 
 .pg-shell {
@@ -166,6 +173,32 @@
   gap: 18px;
 }
 
+.pg-btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px 6px 8px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  background: transparent;
+  color: var(--nutrismart-text-mid, #4a6060);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+  align-self: flex-start;
+}
+
+.pg-btn-back svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.pg-btn-back:hover {
+  background: var(--nutrismart-bg, #f5f7f7);
+}
+
 .pg-header {
   display: flex;
   align-items: flex-start;
@@ -291,7 +324,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: background 0.18s;
-  margin-top: 2px;
+  margin-top: 24px;
 }
 
 .pg-btn-submit:hover {

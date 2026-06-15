@@ -61,7 +61,7 @@
             <tbody>
               @for (record of billingHistory(); track record.id) {
                 <tr>
-                  <td>{{ record.date }}</td>
+                  <td>{{ record.date | date:'dd MMM yyyy' }}</td>
                   <td class="bp-td-plan">
                     {{ ('subscription.plan_' + record.plan.toLowerCase()) | translate }}
                   </td>

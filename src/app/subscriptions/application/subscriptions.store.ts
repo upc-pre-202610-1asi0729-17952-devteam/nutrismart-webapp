@@ -69,6 +69,7 @@ export class SubscriptionsStore {
    * @returns Promise that resolves when loading is complete.
    */
   async initialise(userId: number): Promise<void> {
+    if (!userId) return;
     this._loading.set(true);
     this._error.set(null);
     try {
@@ -140,7 +141,6 @@ export class SubscriptionsStore {
         const record = await firstValueFrom(
           this.billingHistoryApi.createRecord({
             userId:   String(user.id),
-            date:     now,
             plan,
             amount:   Subscription.MONTHLY_PRICES[plan],
             currency: 'USD',
@@ -178,6 +178,7 @@ export class SubscriptionsStore {
       subscription.cancel();
       const saved = await firstValueFrom(this.api.updateSubscription(subscription).pipe(retry(2)));
       this._subscription.set(saved);
+      this.iamStore.schedulePlanExpiry(saved.endDate);
       this.eventBus.publish(new SubscriptionCancelled(user.id, subscription.plan));
       this.eventBus.publish(new BenefitsDisabled(user.id, subscription.plan));
     } catch {

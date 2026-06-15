@@ -1,6 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { LanguageSwitcher } from '../../../../shared/presentation/components/language-switcher/language-switcher';
 import { DecimalPipe } from '@angular/common';
 import { PaymentStore } from '../../../application/payment.store';
 import { IamStore } from '../../../../iam/application/iam.store';
@@ -15,12 +17,13 @@ import { IamStore } from '../../../../iam/application/iam.store';
 @Component({
   selector: 'app-checkout-summary',
   standalone: true,
-  imports: [TranslatePipe, DecimalPipe],
+  imports: [TranslatePipe, DecimalPipe, LanguageSwitcher],
   templateUrl: './checkout-summary.html',
   styleUrl: './checkout-summary.css',
 })
 export class CheckoutSummary implements OnInit {
   private readonly router   = inject(Router);
+  private readonly location = inject(Location);
   private readonly iamStore = inject(IamStore);
 
   protected readonly store = inject(PaymentStore);
@@ -37,9 +40,8 @@ export class CheckoutSummary implements OnInit {
     }
   }
 
-  /** Goes back to plan selection. */
   goBack(): void {
-    this.router.navigate(['/subscription']);
+    this.location.back();
   }
 
   /**

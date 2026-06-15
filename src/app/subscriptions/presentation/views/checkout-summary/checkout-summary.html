@@ -1,3 +1,7 @@
+<div class="sub-lang">
+  <app-language-switcher />
+</div>
+
 <div class="co-shell">
   <div class="co-card">
 
@@ -12,7 +16,7 @@
       <div class="co-row">
         <span class="co-key">{{ 'checkout.plan_label' | translate }}</span>
         <span class="co-val co-val--plan">
-          {{ ('subscription.plan_' + plan()!.toLowerCase()) | translate }}
+          {{ ('subscription.plan_' + (plan()?.toLowerCase() ?? '')) | translate }}
         </span>
       </div>
       <div class="co-row">
