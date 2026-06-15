@@ -44,21 +44,21 @@ export class ActivityLogAssembler
     return new ActivityLog({
       id:              r.id,
       userId:          Number(r.userId),
-      activityType:    r.activity_type,
-      durationMinutes: r.duration_minutes,
-      caloriesBurned:  r.calories_burned,
+      activityType:    r.activityType,
+      durationMinutes: r.durationMinutes,
+      caloriesBurned:  r.caloriesBurned,
       timestamp:       r.timestamp,
     });
   }
 
   toResourceFromEntity(e: ActivityLog): ActivityLogResource {
     return {
-      id:               e.id,
-      userId:           e.userId,
-      activity_type:    e.activityType,
-      duration_minutes: e.durationMinutes,
-      calories_burned:  e.caloriesBurned,
-      timestamp:        e.timestamp,
+      id:             e.id,
+      userId:         e.userId,
+      activityType:   e.activityType,
+      durationMinutes: e.durationMinutes,
+      caloriesBurned: e.caloriesBurned,
+      timestamp:      e.timestamp,
     };
   }
 
