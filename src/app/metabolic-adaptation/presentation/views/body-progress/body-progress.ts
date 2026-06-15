@@ -1,9 +1,11 @@
 import { Component, computed, HostListener, inject, OnInit, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { map, startWith } from 'rxjs/operators';
 
 const WEIGHT_MAX_KG = 500;
 const MIN_GOAL_KG   = 30;
@@ -32,6 +34,14 @@ export class BodyProgressView implements OnInit {
   protected store    = inject(MetabolicStore);
   protected iamStore = inject(IamStore);
   private translate  = inject(TranslateService);
+
+  private readonly currentLang = toSignal(
+    this.translate.onLangChange.pipe(
+      map(e => e.lang),
+      startWith(this.translate.currentLang ?? 'en'),
+    ),
+    { initialValue: this.translate.currentLang ?? 'en' },
+  );
 
   // ─── Log weight modal ─────────────────────────────────────────────────────
 
@@ -91,7 +101,7 @@ export class BodyProgressView implements OnInit {
 
   // ─── Tooltip state ────────────────────────────────────────────────────────
 
-  protected activeTooltip = signal<'bmi' | 'bmr' | 'tdee' | 'body_fat' | 'lean_mass' | 'lean_bulk' | null>(null);
+  protected activeTooltip = signal<'bmi' | 'bmr' | 'tdee' | 'body_fat' | 'lean_mass' | 'lean_bulk' | 'weight' | 'fat_mass' | 'fat_percent_comp' | null>(null);
 
   // ─── Computed ─────────────────────────────────────────────────────────────
 
@@ -133,15 +143,16 @@ export class BodyProgressView implements OnInit {
   });
 
   protected formattedProjectedDate = computed(() => {
+    const lang = this.currentLang() ?? 'en';
     const date = this.store.currentMetric()?.projectedAchievementDate;
     if (!date) return this.translate.instant('body_progress.not_set');
-    const lang = this.translate.currentLang ?? 'en';
     return new Date(date).toLocaleDateString(lang === 'es' ? 'es-ES' : 'en-US', {
       month: 'long', day: 'numeric', year: 'numeric',
     });
   });
 
   protected bmiBadgeLabel = computed(() => {
+    const _lang = this.currentLang();
     if (this.bmiOutdated()) return this.translate.instant('body_progress.bmi_outdated');
     const cat = this.store.currentMetric()?.bmiCategory();
     if (!cat) return '';
@@ -150,7 +161,7 @@ export class BodyProgressView implements OnInit {
       case BmiCategory.UNDERWEIGHT: return this.translate.instant('body_progress.bmi_category_underweight');
       case BmiCategory.OVERWEIGHT:  return this.translate.instant('body_progress.bmi_category_overweight');
       case BmiCategory.OBESE:       return this.translate.instant('body_progress.bmi_category_obese');
-      default:                      return cat;
+      default:                      return '';
     }
   });
 
@@ -168,6 +179,7 @@ export class BodyProgressView implements OnInit {
   protected bmiOutdated = computed(() => this.store.isStale());
 
   protected bmiCategoryLabel = computed(() => {
+    const _lang = this.currentLang();
     if (this.bmiOutdated()) return this.translate.instant('body_progress.bmi_may_inaccurate');
     const cat = this.store.currentMetric()?.bmiCategory();
     if (!cat) return '';
@@ -176,30 +188,31 @@ export class BodyProgressView implements OnInit {
       case BmiCategory.NORMAL:      return this.translate.instant('body_progress.bmi_category_normal');
       case BmiCategory.OVERWEIGHT:  return this.translate.instant('body_progress.bmi_category_overweight');
       case BmiCategory.OBESE:       return this.translate.instant('body_progress.bmi_category_obese');
-      default:                      return cat;
+      default:                      return '';
     }
   });
 
   protected formattedUpdatedLabel = computed(() => {
+    const lang   = this.currentLang() ?? 'en';
     const metric = this.store.currentMetric();
     if (!metric) return '';
     const days = metric.daysSinceLogged();
     if (days === 0) return this.translate.instant('body_progress.updated_today');
     if (days === 1) return this.translate.instant('body_progress.updated_yesterday');
-    const lang   = this.translate.currentLang ?? 'en';
     const locale = lang === 'es' ? 'es-ES' : 'en-US';
     const date   = new Date(metric.loggedAt).toLocaleDateString(locale, { month: 'short', day: 'numeric' });
     return this.translate.instant('body_progress.updated_outdated', { date });
   });
 
   protected weightPlaceholder = computed(() => {
+    const _lang = this.currentLang();
     const val = this.store.currentMetric()?.weightKg;
     return this.translate.instant('body_progress.placeholder_eg', { value: val?.toFixed(1) ?? '70.0' });
   });
 
   /** Chart X-axis date labels formatted in the current UI language. */
   protected formattedChartDates = computed(() => {
-    const lang   = this.translate.currentLang ?? 'en';
+    const lang   = this.currentLang() ?? 'en';
     const locale = lang === 'es' ? 'es-ES' : 'en-US';
     return this.store.chartPoints().dates.map(iso =>
       new Date(iso).toLocaleDateString(locale, { month: 'short', day: 'numeric' }),
@@ -385,7 +398,7 @@ export class BodyProgressView implements OnInit {
 
   // ─── Tooltips ─────────────────────────────────────────────────────────────
 
-  toggleTooltip(card: 'bmi' | 'bmr' | 'tdee' | 'body_fat' | 'lean_mass' | 'lean_bulk'): void {
+  toggleTooltip(card: 'bmi' | 'bmr' | 'tdee' | 'body_fat' | 'lean_mass' | 'lean_bulk' | 'weight' | 'fat_mass' | 'fat_percent_comp'): void {
     this.activeTooltip.update(current => (current === card ? null : card));
   }
 

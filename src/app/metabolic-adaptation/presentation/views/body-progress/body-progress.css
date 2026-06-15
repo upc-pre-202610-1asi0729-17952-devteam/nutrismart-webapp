@@ -13,7 +13,7 @@
 }
 
 .page-title {
-  font-size: 26px;
+  font-size: var(--ns-text-2xl);
   font-weight: 700;
   color: var(--nutrismart-text-dark);
   letter-spacing: -0.3px;
@@ -21,7 +21,7 @@
 }
 
 .page-subtitle {
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: var(--nutrismart-text-light);
   margin: 0;
 }
@@ -38,11 +38,11 @@
   border-radius: 10px;
   padding: 12px 18px;
   margin-bottom: 18px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: #991b1b;
 }
 
-.error-banner-icon { font-size: 18px; flex-shrink: 0; }
+.error-banner-icon { font-size: var(--ns-text-lg); flex-shrink: 0; }
 
 /* ── Staleness banner ── */
 .stale-banner {
@@ -54,11 +54,11 @@
   border-radius: 10px;
   padding: 12px 18px;
   margin-bottom: 18px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: #92400e;
 }
 
-.stale-banner-icon { font-size: 18px; flex-shrink: 0; }
+.stale-banner-icon { font-size: var(--ns-text-lg); flex-shrink: 0; }
 .stale-banner-text { flex: 1; }
 
 /* ── Stagnation banner ── */
@@ -71,7 +71,7 @@
   border-radius: 10px;
   padding: 12px 18px;
   margin-bottom: 18px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: #1e40af;
 }
 
@@ -96,7 +96,7 @@
 }
 
 .metric-card-label {
-  font-size: 10px;
+  font-size: var(--ns-text-xs);
   font-weight: 700;
   color: var(--nutrismart-text-light);
   text-transform: uppercase;
@@ -114,7 +114,7 @@
 .tooltip-btn {
   background: none;
   border: none;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: var(--nutrismart-text-light);
   cursor: pointer;
   padding: 0;
@@ -125,7 +125,7 @@
 .tooltip-btn:hover { opacity: 1; color: var(--nutrismart-primary); }
 
 .metric-tooltip {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--nutrismart-text-mid);
   background: var(--nutrismart-bg);
   border: 1px solid var(--nutrismart-border);
@@ -141,7 +141,7 @@
 }
 
 .metric-card-value {
-  font-size: 26px;
+  font-size: var(--ns-text-2xl);
   font-weight: 700;
   color: var(--nutrismart-text-dark);
   line-height: 1.1;
@@ -151,13 +151,19 @@
 }
 
 .metric-card-unit {
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 500;
   color: var(--nutrismart-text-mid);
 }
 
+.metric-card-value--empty {
+  font-size: var(--ns-text-2xl);
+  font-weight: 700;
+  color: var(--nutrismart-text-light);
+}
+
 .metric-card-sub {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--nutrismart-text-light);
   margin-top: 4px;
 }
@@ -169,7 +175,7 @@
   display: inline-block;
   padding: 2px 8px;
   border-radius: 10px;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
 }
 
@@ -194,7 +200,7 @@
   margin-bottom: 14px;
 }
 
-.chart-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--nutrismart-text-dark); }
+.chart-title { font-size: var(--ns-text-md); font-weight: 700; margin: 0; color: var(--nutrismart-text-dark); }
 
 .day-toggle-mat {
   border-radius: 20px !important;
@@ -203,7 +209,7 @@
 
 .day-toggle-mat .mat-button-toggle {
   font-family: 'Poppins', sans-serif;
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
 }
 
 .day-toggle-mat .mat-button-toggle-checked {
@@ -234,7 +240,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: var(--ns-text-xs);
   color: var(--nutrismart-text-light);
 }
 
@@ -245,7 +251,7 @@
   right: 0;
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: var(--ns-text-xs);
   color: var(--nutrismart-text-light);
 }
 
@@ -253,7 +259,7 @@
   padding: 30px;
   text-align: center;
   color: var(--nutrismart-text-light);
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
 }
 
 .chart-loading {
@@ -264,7 +270,7 @@
 }
 
 .chart-loading-icon {
-  font-size: 28px;
+  font-size: 1.75rem;
   color: var(--nutrismart-primary);
   animation: spin 1s linear infinite;
 }
@@ -275,7 +281,7 @@
 }
 
 .chart-stale-note {
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   color: var(--nutrismart-text-light);
   background: var(--nutrismart-bg);
   border-radius: 8px;
@@ -300,9 +306,9 @@
 
 .chart-goal-right { align-items: flex-end; }
 
-.chart-goal-label { font-size: 11px; color: var(--nutrismart-text-light); }
-.chart-goal-value { font-size: 15px; font-weight: 700; color: var(--nutrismart-primary); }
-.chart-goal-date  { font-size: 15px; font-weight: 700; color: var(--nutrismart-text-dark); }
+.chart-goal-label { font-size: 0.6875rem; color: var(--nutrismart-text-light); }
+.chart-goal-value { font-size: 0.9375rem; font-weight: 700; color: var(--nutrismart-primary); }
+.chart-goal-date  { font-size: 0.9375rem; font-weight: 700; color: var(--nutrismart-text-dark); }
 
 /* ── Log History table ── */
 .history-card {
@@ -320,12 +326,12 @@
   margin-bottom: 14px;
 }
 
-.history-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--nutrismart-text-dark); }
+.history-title { font-size: var(--ns-text-md); font-weight: 700; margin: 0; color: var(--nutrismart-text-dark); }
 
 .history-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
 }
 
 .history-table tr { border-bottom: 1px solid var(--nutrismart-border); }
@@ -350,13 +356,13 @@
   padding: 4px 8px;
   border: 1px solid var(--nutrismart-border);
   border-radius: 6px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: var(--nutrismart-text-dark);
 }
 .history-edit-input:focus { outline: none; border-color: var(--nutrismart-primary); }
-.history-edit-error { font-size: 11px; color: #ef4444; }
+.history-edit-error { font-size: 0.6875rem; color: #ef4444; }
 
-.icon-btn--sm .material-icons { font-size: 15px; }
+.icon-btn--sm .material-icons { font-size: 0.9375rem; }
 
 /* ── Body composition card ── */
 .fat-alert-banner {
@@ -368,11 +374,11 @@
   border-radius: 10px;
   padding: 12px 18px;
   margin-bottom: 14px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: #991b1b;
 }
 
-.fat-alert-icon { font-size: 18px; flex-shrink: 0; }
+.fat-alert-icon { font-size: var(--ns-text-lg); flex-shrink: 0; }
 
 .composition-card {
   background: var(--nutrismart-white);
@@ -389,11 +395,11 @@
   margin-bottom: 16px;
 }
 
-.composition-title { font-size: 16px; font-weight: 700; margin: 0; color: var(--nutrismart-text-dark); }
+.composition-title { font-size: var(--ns-text-md); font-weight: 700; margin: 0; color: var(--nutrismart-text-dark); }
 
 .composition-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 12px;
 }
 
@@ -406,9 +412,9 @@
   gap: 3px;
 }
 
-.composition-item-label { font-size: 11px; color: var(--nutrismart-text-light); }
-.composition-item-value { font-size: 18px; font-weight: 700; color: var(--nutrismart-text-dark); }
-.composition-item-sub   { font-size: 11px; color: var(--nutrismart-text-light); }
+.composition-item-label { font-size: 0.6875rem; color: var(--nutrismart-text-light); }
+.composition-item-value { font-size: var(--ns-text-lg); font-weight: 700; color: var(--nutrismart-text-dark); }
+.composition-item-sub   { font-size: 0.6875rem; color: var(--nutrismart-text-light); }
 .composition-item-sub--good { color: var(--nutrismart-primary); }
 
 .panel {
@@ -424,9 +430,9 @@
 /* Error state — red border on the whole panel (WA_BP_Error) */
 .panel--error { border-color: #ef4444 !important; }
 
-.panel-title { font-size: 15px; font-weight: 700; margin: 0; color: var(--nutrismart-text-dark); }
-.panel-label { font-size: 12px; color: var(--nutrismart-text-mid); margin: 0; }
-.panel-hint  { font-size: 11px; color: var(--nutrismart-text-light); margin: 0; }
+.panel-title { font-size: 0.9375rem; font-weight: 700; margin: 0; color: var(--nutrismart-text-dark); }
+.panel-label { font-size: var(--ns-text-sm); color: var(--nutrismart-text-mid); margin: 0; }
+.panel-hint  { font-size: 0.6875rem; color: var(--nutrismart-text-light); margin: 0; }
 
 .panel-input {
   width: 100%;
@@ -434,7 +440,7 @@
   padding: 9px 12px;
   border-radius: 8px;
   border: 1px solid var(--nutrismart-border);
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-family: 'Poppins', sans-serif;
   color: var(--nutrismart-text-dark);
   background: var(--nutrismart-bg);
@@ -453,7 +459,7 @@
 
 /* Inline validation error text (WA_BP_Error) */
 .input-error {
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   color: #ef4444;
   margin: 0;
   font-weight: 500;
@@ -465,7 +471,7 @@
   color: white;
   border-radius: 8px;
   padding: 10px 14px;
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   font-weight: 600;
   line-height: 1.4;
 }
@@ -477,7 +483,7 @@
   justify-content: center;
   padding: 9px 18px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 600;
   cursor: pointer;
   border: none;
@@ -502,13 +508,13 @@
 .btn--outline:hover { border-color: var(--nutrismart-primary); color: var(--nutrismart-primary); }
 
 .btn--full { width: 100%; }
-.btn--sm   { padding: 6px 14px; font-size: 12px; }
+.btn--sm   { padding: 6px 14px; font-size: var(--ns-text-sm); }
 
 .link-btn {
   background: none;
   border: none;
   color: var(--nutrismart-primary);
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   font-weight: 600;
   cursor: pointer;
   padding: 0;
@@ -543,7 +549,7 @@
   transition: color 0.15s;
   flex-shrink: 0;
 }
-.icon-btn .material-icons { font-size: 17px; }
+.icon-btn .material-icons { font-size: 1.0625rem; }
 .icon-btn:hover { color: var(--nutrismart-text-dark); }
 .icon-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .icon-btn--confirm { color: var(--nutrismart-primary); }
@@ -569,7 +575,7 @@
   padding: 4px 8px;
   border: 1.5px solid var(--nutrismart-primary);
   border-radius: 6px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-family: 'Poppins', sans-serif;
   color: var(--nutrismart-text-dark);
   background: white;
@@ -577,7 +583,7 @@
 }
 
 .goal-inline-error {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: #ef4444;
   margin: 3px 0 0;
 }
@@ -614,7 +620,7 @@
 }
 
 .modal-title {
-  font-size: 16px;
+  font-size: var(--ns-text-md);
   font-weight: 700;
   margin: 0;
   color: var(--nutrismart-text-dark);
@@ -636,7 +642,7 @@
 
 /* ── Composition subtitle ── */
 .composition-subtitle {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--nutrismart-text-light);
   margin: 2px 0 0;
 }
@@ -663,7 +669,7 @@
   border: none;
   border-right: 1px solid var(--nutrismart-border);
   color: var(--nutrismart-text-mid);
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
@@ -695,7 +701,7 @@
   border-radius: 8px;
   background: white;
   color: var(--nutrismart-text-dark);
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 600;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
@@ -735,18 +741,18 @@
 }
 
 .visual-label {
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 600;
   color: var(--nutrismart-text-dark);
 }
 
 .visual-range {
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   color: var(--nutrismart-text-mid);
 }
 
 .mode-disclaimer {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--nutrismart-text-light);
   margin: 2px 0 0;
   line-height: 1.4;
@@ -767,7 +773,7 @@
 
 @media (max-width: 600px) {
   .bp-page {
-    padding: 16px;
+    padding: 68px 16px 16px;
   }
 
   .page-header {
@@ -826,9 +832,9 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
-.dialog-title { font-size: 18px; font-weight: 700; margin: 0; color: var(--nutrismart-text-dark); }
-.dialog-error { font-size: 12px; color: #ef4444; margin: 0; }
-.dialog-preview { font-size: 12px; color: var(--nutrismart-text-light); margin: 0; }
+.dialog-title { font-size: var(--ns-text-lg); font-weight: 700; margin: 0; color: var(--nutrismart-text-dark); }
+.dialog-error { font-size: var(--ns-text-sm); color: #ef4444; margin: 0; }
+.dialog-preview { font-size: var(--ns-text-sm); color: var(--nutrismart-text-light); margin: 0; }
 
 .dialog-actions {
   display: flex;

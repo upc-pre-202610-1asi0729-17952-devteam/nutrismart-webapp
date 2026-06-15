@@ -47,12 +47,12 @@
 }
 
 .manual-icon {
-  font-size: 26px;
+  font-size: var(--ns-text-2xl);
   color: #16a34a;
 }
 
 .manual-badge {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 700;
   color: #16a34a;
   background: #f0fdf4;
@@ -63,7 +63,7 @@
 
 /* ── Title & desc ── */
 .manual-title {
-  font-size: 17px;
+  font-size: 1.0625rem;
   font-weight: 700;
   color: var(--nutrismart-text-dark);
   margin: 0;
@@ -71,7 +71,7 @@
 }
 
 .manual-desc {
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: var(--nutrismart-text-mid);
   line-height: 1.6;
   margin: 0;
@@ -96,7 +96,7 @@
 }
 
 .manual-cat-icon {
-  font-size: 18px;
+  font-size: var(--ns-text-lg);
   color: var(--nutrismart-primary);
   flex-shrink: 0;
   margin-top: 1px;
@@ -115,7 +115,7 @@
 }
 
 .manual-cat-hint {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--nutrismart-text-light);
   line-height: 1.4;
 }
@@ -132,7 +132,7 @@
   color: var(--nutrismart-text-dark);
   border: 1.5px solid var(--nutrismart-border);
   border-radius: 10px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 600;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
@@ -145,4 +145,4 @@
   background: var(--nutrismart-primary-lighter);
 }
 
-.manual-btn-icon { font-size: 17px; }
+.manual-btn-icon { font-size: 1.0625rem; }

@@ -36,7 +36,7 @@
 }
 
 .sfb-icon {
-  font-size: 22px;
+  font-size: var(--ns-text-xl);
   color: #d97706;
 }
 
@@ -49,19 +49,19 @@
 }
 
 .sfb-title {
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 700;
   color: #92400e;
 }
 
 .sfb-desc {
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   color: #b45309;
   line-height: 1.4;
 }
 
 .sfb-time {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: #d97706;
   margin-top: 2px;
 }
@@ -84,7 +84,7 @@
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   font-weight: 700;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
@@ -94,13 +94,13 @@
 
 .sfb-retry-btn:hover { background: #d97706; }
 .sfb-retry-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.sfb-retry-icon { font-size: 15px; }
+.sfb-retry-icon { font-size: 0.9375rem; }
 
 .sfb-disconnect-btn {
   background: none;
   border: none;
   color: #9ca3af;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 500;
   cursor: pointer;
   padding: 0;
