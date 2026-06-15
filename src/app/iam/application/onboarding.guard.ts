@@ -7,6 +7,8 @@ export const onboardingGuard: CanActivateFn = () => {
   const router = inject(Router);
   if (!iamStore.isAuthenticated()) return router.createUrlTree(['/auth/login']);
   const user = iamStore.currentUser();
-  if (user?.birthday && user?.biologicalSex) return router.createUrlTree(['/dashboard']);
+  if (user?.birthday && user?.biologicalSex) {
+    return router.createUrlTree([user.plan ? '/dashboard' : '/subscription']);
+  }
   return true;
 };

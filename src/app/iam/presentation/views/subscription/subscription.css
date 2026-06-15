@@ -20,7 +20,7 @@
 }
 
 .page-title {
-  font-size: 26px;
+  font-size: var(--ns-text-2xl);
   font-weight: 700;
   color: var(--nutrismart-text-dark, #1a2e2e);
   letter-spacing: -0.3px;
@@ -29,7 +29,7 @@
 
 .page-subtitle {
   color: var(--nutrismart-text-light, #8aa8a8);
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   margin: 0;
 }
 
