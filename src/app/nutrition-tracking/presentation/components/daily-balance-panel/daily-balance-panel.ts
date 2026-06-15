@@ -1,6 +1,7 @@
 import { Component, computed, input } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
+import { roundToOneDecimal } from '../../../../shared/domain/round.util';
 
 /**
  * Daily balance card shown in the right column of the Daily Log.
@@ -19,18 +20,22 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class DailyBalancePanelComponent {
 
   /** Calories consumed for the currently selected date — provided by the parent. */
-  readonly consumed  = input<number>(0);
+  readonly consumed      = input<number>(0);
   /** User's daily calorie goal for the selected date — provided by the parent. */
-  readonly dailyGoal = input<number>(1800);
+  readonly dailyGoal     = input<number>(1800);
   /** Active calories burned for the selected date — provided by the parent. */
-  readonly active    = input<number>(0);
+  readonly active        = input<number>(0);
+  /** True when any non-calorie macro has exceeded its daily target. */
+  readonly macroExceeded = input<boolean>(false);
 
-  protected readonly exceeded        = computed(() => this.consumed() > this.dailyGoal());
+  protected readonly exceeded  = computed(() => this.consumed() > this.dailyGoal());
+  /** True when either calories or any macro is over limit — triggers warning visuals. */
+  protected readonly isAtRisk  = computed(() => this.exceeded() || this.macroExceeded());
   protected readonly percentConsumed = computed(() => {
     const net = this.dailyGoal() + this.active();
     return net > 0 ? Math.min(Math.round((this.consumed() / net) * 100), 100) : 0;
   });
   protected readonly netCalories = computed(() =>
-    Math.abs(this.dailyGoal() + this.active() - this.consumed())
+    roundToOneDecimal(Math.abs(this.dailyGoal() + this.active() - this.consumed()))
   );
 }
