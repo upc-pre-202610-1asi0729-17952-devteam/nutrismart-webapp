@@ -1,5 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { debounceTime, filter, firstValueFrom, map, retry, Subject, switchMap } from 'rxjs';
+import { roundToOneDecimal } from '../../shared/domain/round.util';
+import { localIsoDate } from '../../shared/domain/local-date.util';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { IamStore } from '../../iam/application/iam.store';
 import { DomainEventBus } from '../../shared/application/domain-event-bus';
@@ -76,7 +78,6 @@ export class NutritionStore {
   private readonly _allMealsMetToday       = signal<boolean>(false);
   private readonly _preLogGuardrails       = signal<PreLogGuardrail[]>([]);
   private readonly _restrictionsInitialized = signal<boolean>(false);
-  private readonly _skippedMealsEmitted    = signal<Set<string>>(new Set());
 
   private readonly _searchSubject = new Subject<string>();
 
@@ -203,7 +204,8 @@ export class NutritionStore {
             return [];
           }
           this._loading.set(true);
-          return this.nutritionApi.searchFoods(query).pipe(
+          const restrictions = this._userRestrictions() as unknown as string[];
+          return this.nutritionApi.searchFoods(query, restrictions).pipe(
             map(items => ({ query, items })),
           );
         }),
@@ -532,21 +534,18 @@ export class NutritionStore {
       { mealType: MealType.DINNER,    closesAt: 22, windowEnd: `${today}T22:00:00` },
     ];
 
-    const emitted = new Set(this._skippedMealsEmitted());
-    const groups  = this.recordsByMealType();
+    const groups = this.recordsByMealType();
 
     for (const { mealType, closesAt, windowEnd } of windows) {
       if (hour < closesAt) continue;
-      const key = `${mealType}-${today}`;
-      if (emitted.has(key)) continue;
       if (groups[mealType].length > 0) continue;
+      const lsKey = `nutrismart_meal_skipped_${user.id}_${today}_${mealType}`;
+      if (localStorage.getItem(lsKey)) continue;
 
       this.eventBus.publish(new MealSkipped(user.id, mealType, windowEnd, today));
       this.notificationService.notify('info', `notifications.meal_skipped_${mealType.toLowerCase()}`);
-      emitted.add(key);
+      localStorage.setItem(lsKey, '1');
     }
-
-    this._skippedMealsEmitted.set(emitted);
   }
 
   /**
@@ -563,7 +562,7 @@ export class NutritionStore {
    * or {@link DailyGoalMet} at most once per session day.
    */
   private checkAndPublishDailyGoalEvents(userId: number): void {
-    const today    = new Date().toISOString().slice(0, 10);
+    const today    = localIsoDate();
     const intake   = this.getDailyIntakeFor(new Date());
     const user     = this.iamStore.currentUser();
     // Fall back to user targets when no daily-balance record exists for today.
@@ -581,7 +580,7 @@ export class NutritionStore {
 
     if (!exceeded) {
       const totals       = this.dailyTotals();
-      const remaining    = intake ? intake.remaining : dailyGoal - totals.calories;
+      const remaining    = intake ? intake.remaining : roundToOneDecimal(dailyGoal - totals.calories);
       const adherencePct = dailyGoal > 0
         ? Math.round((totals.calories / dailyGoal) * 100)
         : 0;

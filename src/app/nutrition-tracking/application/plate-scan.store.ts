@@ -1,10 +1,8 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { TranslateStore } from '@ngx-translate/core';
 import { IamStore } from '../../iam/application/iam.store';
 import { DomainEventBus } from '../../shared/application/domain-event-bus';
 import { MealPhotoAnalyzed } from '../domain/events/meal-photo-analyzed.event';
 import { MealType } from '../domain/model/meal-type.enum';
-import { MealRecord, MealRecordProps } from '../domain/model/meal-record.entity';
 import { ScanResult } from '../domain/model/scan-result.entity';
 import { NutritionStore } from './nutrition.store';
 import { PlateScanApi } from '../infrastructure/plate-scan-api';
@@ -42,7 +40,6 @@ export class PlateScanStore {
   private plateScanApi    = inject(PlateScanApi);
   private iamStore        = inject(IamStore);
   private nutritionStore  = inject(NutritionStore);
-  private translateStore  = inject(TranslateStore);
   private eventBus        = inject(DomainEventBus);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
@@ -155,44 +152,26 @@ export class PlateScanStore {
    */
   async logScannedPlate(mealType: MealType): Promise<void> {
     const result = this._scanResult();
-    const user   = this.iamStore.currentUser();
-    if (!result || !user) return;
+    if (!result) return;
 
     this._loading.set(true);
     this._error.set(null);
 
-    const timestamp = new Date().toISOString();
-
-    try {
-      for (const item of result.detectedItems) {
-        const { foodItemName, foodItemNameEs } = this._resolveLocalizedNames(
-          item.nameKey, 'food_items', item.name,
-        );
-        const props: MealRecordProps = {
-          id:            0,
-          foodId:        null,
-          foodItemName,
-          foodItemNameEs,
-          mealType,
-          quantity:      item.quantityGrams,
-          unit:          'g',
-          calories:      item.calories,
-          protein:       item.protein,
-          carbs:         item.carbs,
-          fat:           item.fat,
-          fiber:         0,
-          sugar:         0,
-          loggedAt:      timestamp,
-          userId:        user.id,
-        };
-        await this.nutritionStore.recordMeal(new MealRecord(props));
-      }
-      this._loading.set(false);
-      this.reset();
-    } catch {
-      this._error.set('Failed to log meal from scan.');
-      this._loading.set(false);
-    }
+    return new Promise((resolve) => {
+      this.plateScanApi.confirmPlateScan(result, mealType).subscribe({
+        next: () => {
+          this.nutritionStore.loadMealHistory();
+          this._loading.set(false);
+          this.reset();
+          resolve();
+        },
+        error: () => {
+          this._error.set('Failed to log meal from scan.');
+          this._loading.set(false);
+          resolve();
+        },
+      });
+    });
   }
 
   /**
@@ -250,19 +229,6 @@ export class PlateScanStore {
         percent:   Math.round(m.ratio * 100),
         severity:  m.ratio >= PlateScanStore.DANGER_THRESHOLD ? 'danger' : 'warning',
       } as MacroAlert));
-  }
-
-  private _resolveLocalizedNames(
-    nameKey: string | null,
-    namespace: string,
-    fallback: string,
-  ): { foodItemName: string; foodItemNameEs: string } {
-    if (!nameKey) return { foodItemName: fallback, foodItemNameEs: fallback };
-    const enMap = this.translateStore.getTranslations('en') as Record<string, Record<string, string>>;
-    const esMap = this.translateStore.getTranslations('es') as Record<string, Record<string, string>>;
-    const enName = enMap?.[namespace]?.[nameKey] ?? fallback;
-    const esName = esMap?.[namespace]?.[nameKey] ?? fallback;
-    return { foodItemName: enName, foodItemNameEs: esName };
   }
 
   private _cloneScanResult(source: ScanResult): ScanResult {
