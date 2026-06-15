@@ -20,7 +20,7 @@
   padding: 40px;
   text-align: center;
   color: #8b8b8b;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .retry-button {
@@ -42,7 +42,7 @@
 
 .dashboard-header .page-title {
   margin: 0;
-  font-size: 26px;
+  font-size: var(--ns-text-2xl);
   font-weight: 700;
   color: var(--nutrismart-text-dark);
   letter-spacing: -0.3px;
@@ -51,7 +51,7 @@
 .dashboard-header .page-subtitle {
   margin: 4px 0 0;
   color: var(--nutrismart-text-light);
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 400;
 }
 
@@ -60,7 +60,7 @@
   align-items: center;
   border-radius: 999px;
   padding: 8px 16px;
-  font-size: 14px;
+  font-size: var(--ns-text-base);
   font-weight: 700;
 }
 
@@ -112,7 +112,7 @@
 }
 
 .risk-icon {
-  font-size: 22px;
+  font-size: var(--ns-text-xl);
 }
 
 .risk-content {
@@ -121,12 +121,12 @@
 
 .risk-content strong {
   display: block;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .risk-content p {
   margin: 2px 0 0;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
 }
 
 .risk-button {
@@ -173,14 +173,14 @@
   display: block;
   margin-bottom: 8px;
   color: #8e8e8e;
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   font-weight: 800;
   text-transform: uppercase;
 }
 
 .metric-card strong {
   display: block;
-  font-size: 36px;
+  font-size: var(--ns-text-4xl);
   line-height: 1;
   font-weight: 800;
 }
@@ -188,7 +188,7 @@
 .metric-card p {
   margin: 8px 0 0;
   color: #8d8d8d;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
 }
 
 .teal-value {
@@ -240,12 +240,12 @@
   padding: 6px 13px;
   background: #dff7ef;
   color: #0c7b67;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 700;
 }
 
 .fit-badge__icon {
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .middle-grid {
@@ -262,7 +262,7 @@
 
 .panel h2 {
   margin: 0 0 24px;
-  font-size: 22px;
+  font-size: var(--ns-text-xl);
   font-weight: 800;
   letter-spacing: -0.03em;
 }
@@ -287,20 +287,20 @@
 }
 
 .no-meals-icon {
-  font-size: 48px;
+  font-size: 3rem;
   margin-bottom: 10px;
 }
 
 .no-meals-logged-block h3 {
   margin: 0 0 8px;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 800;
 }
 
 .no-meals-logged-block p {
   margin: 0 0 20px;
   color: #8b8b8b;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .log-meal-button {
@@ -330,7 +330,7 @@
   padding: 7px 14px;
   background: transparent;
   color: #55938e;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
@@ -386,14 +386,14 @@
 }
 
 .meal-info strong {
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   font-weight: 800;
 }
 
 .meal-info p {
   margin: 2px 0 0;
   color: #929292;
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 
 .meal-title-row {
@@ -407,7 +407,7 @@
   padding: 3px 7px;
   background: #ffe3e3;
   color: #c65353;
-  font-size: 10px;
+  font-size: var(--ns-text-xs);
   font-weight: 800;
 }
 
@@ -417,7 +417,7 @@
 
 .meal-kcal {
   color: #05745f;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
 }
 
 .muted-kcal {
@@ -428,6 +428,60 @@
 .macros-panel {
   display: flex;
   flex-direction: column;
+}
+
+.empty-value {
+  color: #c0bab3;
+}
+
+.empty-hint {
+  color: #a0a0a0 !important;
+  font-style: italic;
+}
+
+.macros-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 8px;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.macros-empty-icon {
+  font-size: 2.5rem;
+  color: #c0bab3;
+}
+
+.macros-empty-title {
+  margin: 4px 0 0;
+  font-size: var(--ns-text-base);
+  font-weight: 700;
+  color: #4a4a4a;
+}
+
+.macros-empty-hint {
+  margin: 0;
+  color: #8b8b8b;
+  font-size: var(--ns-text-ui);
+}
+
+.macros-empty-cta {
+  margin-top: 8px;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 22px;
+  background: #55938e;
+  color: #ffffff;
+  font-size: var(--ns-text-ui);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.macros-empty-cta:hover {
+  background: #3f7874;
 }
 
 .donut-wrapper {
@@ -477,13 +531,13 @@
 }
 
 .donut-center strong {
-  font-size: 22px;
+  font-size: var(--ns-text-xl);
   font-weight: 800;
 }
 
 .donut-center span {
   color: #8b8b8b;
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 
 .macro-list {
@@ -496,11 +550,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
 }
 
 .macro-row-header strong {
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
 }
 
 .macro-dot {
@@ -565,14 +619,14 @@
 .streak-left span,
 .streak-right span {
   display: block;
-  font-size: 14px;
+  font-size: var(--ns-text-base);
   font-weight: 500;
 }
 
 .streak-left strong {
   display: block;
   margin-top: 6px;
-  font-size: 42px;
+  font-size: 2.625rem;
   line-height: 1;
   font-weight: 800;
 }
@@ -580,7 +634,7 @@
 .streak-left p,
 .streak-right p {
   margin: 4px 0 0;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .streak-right {
@@ -590,7 +644,7 @@
 .weekly-rate {
   display: block;
   margin-top: 6px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   opacity: .75;
 }
 
@@ -626,7 +680,7 @@
 }
 
 .week-dot-wrapper small {
-  font-size: 10px;
+  font-size: var(--ns-text-xs);
   opacity: 0.85;
 }
 
@@ -663,11 +717,11 @@
   }
 
   .dashboard-header .page-title {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
 
   .metric-card strong {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
 
   .panel {
