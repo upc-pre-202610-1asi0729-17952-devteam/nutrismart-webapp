@@ -3,13 +3,13 @@ import { RecoveryActionProps } from '../domain/model/recovery-action.value-objec
 
 /** API resource DTO for a {@link RecoveryPlan} as returned by the REST endpoint. */
 export interface RecoveryPlanResource extends BaseResource {
-  id:          number;
-  userId:      number | string;
-  trigger:     string;
-  status:      string;
-  actions:     RecoveryActionProps[];
-  activatedAt: string;
-  resolvedAt:  string | null;
+  id:         number;
+  userId:     number | string;
+  trigger:    string;
+  status:     string;
+  actions:    (RecoveryActionProps | string)[];
+  createdAt:  string;
+  expiresAt:  string | null;
 }
 
 /** Envelope for the `/recovery-plans` collection endpoint. */
