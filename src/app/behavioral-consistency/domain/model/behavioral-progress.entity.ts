@@ -47,10 +47,12 @@ export class BehavioralProgress implements BaseEntity {
     this._id                = props.id ?? 0;
     this._userId            = props.userId;
     this._adherenceStatus   = props.adherenceStatus;
-    this._streak            = props.streak;
     this._consecutiveMisses = props.consecutiveMisses;
     this._lastGoalMetDate   = props.lastGoalMetDate ?? '';
     this._goalMetDates      = [...(props.goalMetDates ?? [])];
+    this._streak            = this._goalMetDates.length > 0
+      ? this.computeStreak()
+      : props.streak;
   }
 
   // ─── Getters & Setters ────────────────────────────────────────────────────
@@ -88,19 +90,19 @@ export class BehavioralProgress implements BaseEntity {
    * @returns Array of 7 booleans, index 0 = Monday, index 6 = Sunday.
    */
   get weekDots(): boolean[] {
-    const today      = new Date();
-    const dayOfWeek  = (today.getUTCDay() + 6) % 7; // Mon = 0 … Sun = 6
-    const monday     = new Date(Date.UTC(
-      today.getUTCFullYear(),
-      today.getUTCMonth(),
-      today.getUTCDate() - dayOfWeek,
-    ));
+    const today     = new Date();
+    const dayOfWeek = (today.getDay() + 6) % 7; // Mon = 0 … Sun = 6, local time
+    const monday    = new Date(today);
+    monday.setDate(today.getDate() - dayOfWeek);
+    monday.setHours(0, 0, 0, 0);
 
     return Array.from({ length: 7 }, (_, i) => {
-      const d       = new Date(monday);
-      d.setUTCDate(monday.getUTCDate() + i);
-      const dateStr = d.toISOString().slice(0, 10);
-      return this._goalMetDates.includes(dateStr);
+      const d   = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      const y   = d.getFullYear();
+      const m   = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return this._goalMetDates.includes(`${y}-${m}-${day}`);
     });
   }
 
@@ -170,10 +172,36 @@ export class BehavioralProgress implements BaseEntity {
     if (this._goalMetDates.includes(date)) return;
 
     this._goalMetDates      = [...this._goalMetDates, date];
-    this._streak           += 1;
+    this._streak            = this.computeStreak();
     this._consecutiveMisses = 0;
     this._lastGoalMetDate   = date;
     this.recalculateAdherenceStatus();
+  }
+
+  /**
+   * Counts consecutive days in {@link _goalMetDates} ending on the most recent date.
+   * Works backwards from the latest date, stopping at the first gap.
+   */
+  private computeStreak(): number {
+    if (this._goalMetDates.length === 0) return 0;
+    const sorted = [...this._goalMetDates].sort();
+    let streak = 0;
+    let expected = sorted[sorted.length - 1];
+    for (let i = sorted.length - 1; i >= 0; i--) {
+      if (sorted[i] === expected) {
+        streak++;
+        expected = this.previousDay(expected);
+      } else {
+        break;
+      }
+    }
+    return streak;
+  }
+
+  private previousDay(dateStr: string): string {
+    const d = new Date(`${dateStr}T12:00:00`);
+    d.setDate(d.getDate() - 1);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   }
 
   /**
