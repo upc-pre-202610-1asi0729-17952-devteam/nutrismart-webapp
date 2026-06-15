@@ -2,7 +2,7 @@
 
 .panel-title {
   margin: 0 0 18px;
-  font-size: 14px;
+  font-size: var(--ns-text-base);
   font-weight: 700;
   color: var(--nutrismart-text-dark);
 }
@@ -18,12 +18,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: var(--nutrismart-text-mid);
 }
 
 .macro-row-header strong {
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: var(--nutrismart-text-dark);
 }
 
@@ -64,7 +64,7 @@
 
 .protein-compliance p {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: #0f7a67;
   font-weight: 600;
 }
@@ -77,7 +77,7 @@
 
 .days-logged-section h4 {
   margin: 0 0 10px;
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   font-weight: 600;
   color: var(--nutrismart-text-light);
   text-transform: uppercase;
@@ -111,6 +111,6 @@
 }
 
 .week-dot-wrapper small {
-  font-size: 10px;
+  font-size: var(--ns-text-xs);
   color: var(--nutrismart-text-light);
 }

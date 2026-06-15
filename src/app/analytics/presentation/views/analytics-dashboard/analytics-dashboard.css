@@ -21,7 +21,7 @@
 
 .page-title {
   margin: 0;
-  font-size: 26px;
+  font-size: var(--ns-text-2xl);
   font-weight: 700;
   color: var(--nutrismart-text-dark);
   letter-spacing: -0.3px;
@@ -37,7 +37,7 @@
 .state-message {
   text-align: center;
   padding: 48px 20px;
-  font-size: 14px;
+  font-size: var(--ns-text-base);
   color: var(--nutrismart-text-light);
   background: var(--nutrismart-white);
   border: 1px solid var(--nutrismart-border);
@@ -89,6 +89,6 @@
 
 @media (max-width: 600px) {
   .analytics-dashboard-container { padding: 68px 16px 16px; }
-  .dashboard-title  { font-size: 18px; }
+  .dashboard-title  { font-size: var(--ns-text-lg); }
   .header-actions   { flex-direction: column; align-items: flex-start; gap: 8px; }
 }
