@@ -1,0 +1,27 @@
+<div class="camera-wrapper">
+
+  @if (title) {
+    <h2 class="camera-title">{{ title }}</h2>
+  }
+
+  @if (cameraError()) {
+    <div class="camera-error">
+      <span class="material-icons camera-error__icon">videocam_off</span>
+      <p class="camera-error__msg">{{ cameraError()! | translate }}</p>
+      <button mat-stroked-button (click)="cancel()">{{ 'common.cancel' | translate }}</button>
+    </div>
+  } @else {
+    <div class="camera-preview">
+      <video #videoEl autoplay playsinline class="camera-video"></video>
+      <canvas #canvasEl class="camera-canvas"></canvas>
+    </div>
+    <div class="camera-actions">
+      <button mat-flat-button class="btn-capture" (click)="capture()">
+        <mat-icon>camera</mat-icon>
+        {{ 'smart_scan.capture_photo' | translate }}
+      </button>
+      <button mat-stroked-button (click)="cancel()">{{ 'common.cancel' | translate }}</button>
+    </div>
+  }
+
+</div>

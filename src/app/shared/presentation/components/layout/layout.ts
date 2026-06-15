@@ -1,9 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, HostListener, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { IamStore } from '../../../../iam/application/iam.store';
+import { LanguageSwitcher } from '../language-switcher/language-switcher';
 
 /**
  * Represents a single navigation item in the sidebar.
@@ -37,6 +38,7 @@ interface NavItem {
     RouterLink,
     RouterLinkActive,
     TranslatePipe,
+    LanguageSwitcher,
   ],
   templateUrl: './layout.html',
   styleUrl: './layout.css',
@@ -48,13 +50,19 @@ export class Layout {
   /** Controls sidebar visibility on mobile/tablet. */
   isSidebarOpen = signal(false);
 
+  /** Controls user dropdown visibility. */
+  isUserMenuOpen = signal(false);
+
   constructor() {
     inject(Router).events
       .pipe(
         filter(e => e instanceof NavigationEnd),
         takeUntilDestroyed(),
       )
-      .subscribe(() => this.isSidebarOpen.set(false));
+      .subscribe(() => {
+        this.isSidebarOpen.set(false);
+        this.isUserMenuOpen.set(false);
+      });
   }
 
   /** @param event – click event used to stop propagation from the sidebar itself. */
@@ -65,6 +73,16 @@ export class Layout {
 
   closeSidebar(): void {
     this.isSidebarOpen.set(false);
+  }
+
+  toggleUserMenu(event: Event): void {
+    event.stopPropagation();
+    this.isUserMenuOpen.update(open => !open);
+  }
+
+  @HostListener('document:click')
+  closeUserMenu(): void {
+    this.isUserMenuOpen.set(false);
   }
 
   /** Primary navigation items shown in the MAIN section. */
