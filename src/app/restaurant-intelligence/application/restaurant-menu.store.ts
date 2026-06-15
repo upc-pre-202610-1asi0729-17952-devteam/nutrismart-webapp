@@ -12,7 +12,7 @@ import { RawMenuScan, RestaurantMenuApi } from '../infrastructure/restaurant-men
 import { MacroAlert, MacroKey } from '../../nutrition-tracking/application/plate-scan.store';
 
 /** Active view state within the restaurant-menu flow. */
-export type MenuView = 'idle' | 'analyzing' | 'result';
+export type MenuView = 'idle' | 'analyzing' | 'result' | 'empty';
 
 /**
  * Application store for the restaurant-menu scanning flow (Restaurant Intelligence context).
@@ -100,15 +100,22 @@ export class RestaurantMenuStore {
     return new Promise((resolve) => {
       this.restaurantMenuApi.scanMenuPhoto(imageBase64).subscribe({
         next: (raw: RawMenuScan) => {
+          if (!raw.allDishes || raw.allDishes.length === 0) {
+            this._menuView.set('empty');
+            this._loading.set(false);
+            resolve();
+            return;
+          }
           const analysis = new MenuAnalysis({
             id:               raw.id,
             scannedAt:        raw.scannedAt,
             restaurantName:   raw.restaurantName,
             rankedDishes: raw.allDishes.map((d, i) => new RankedDish({
-              rank: i + 1, name: d.name, nameKey: d.nameKey,
+              rank: i + 1, name: d.name, nameEs: d.nameEs ?? null, nameKey: d.nameKey,
               calories: d.calories, protein: d.protein, carbs: d.carbs, fat: d.fat,
               compatibilityScore: d.compatibilityScore,
-              justification: d.justification, justificationKey: d.justificationKey,
+              justification: d.justification, justificationEs: d.justificationEs ?? null,
+              justificationKey: d.justificationKey,
               conflictingRestrictions: d.conflictingRestrictions,
             })),
             restrictedDishes: [],
