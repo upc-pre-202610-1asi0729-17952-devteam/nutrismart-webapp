@@ -48,15 +48,8 @@ export class AnalyticsApiHttpService extends AnalyticsApi {
     fromDate: string,
     toDate: string,
   ): Observable<Blob> {
-    return this.http
-      .post(
-        `${this.base}${environment.analyticsEndpointPath}/export`,
-        { userId, fromDate, toDate },
-        { responseType: 'blob' },
-      )
-      .pipe(
-        retry(2),
-        catchError(err => throwError(() => err)),
-      );
+    // POST /analytics/export is not yet implemented in the backend.
+    // Return an error so callers can show a meaningful message instead of a silent 404.
+    return throwError(() => new Error('PDF export is not yet available. The backend endpoint /analytics/export has not been implemented.'));
   }
 }
