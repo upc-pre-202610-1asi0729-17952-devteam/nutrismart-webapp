@@ -37,7 +37,10 @@ export class AnalyticsAssembler {
     const dateArray = Array.from({ length: days }, (_, i) => {
       const d = new Date(today);
       d.setDate(today.getDate() - (days - 1 - i));
-      return d.toISOString().split('T')[0];
+      const yyyy = d.getFullYear();
+      const mm   = String(d.getMonth() + 1).padStart(2, '0');
+      const dd   = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
     });
 
     const dateSet = new Set(dateArray);
@@ -45,7 +48,8 @@ export class AnalyticsAssembler {
     // Aggregate nutrition logs by day (DTO aggregation — not domain logic)
     const dailyMap = new Map<string, { calories: number; protein: number; carbs: number; fat: number; fiber: number }>();
     for (const log of raw.nutritionLogs) {
-      const date = log.loggedAt.split('T')[0];
+      const dt   = new Date(log.loggedAt);
+      const date = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
       if (!dateSet.has(date)) continue;
       const prev = dailyMap.get(date) ?? { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 };
       dailyMap.set(date, {
