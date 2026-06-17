@@ -46,12 +46,12 @@
 }
 
 .pw-lock-icon {
-  font-size: 30px;
+  font-size: var(--ns-text-3xl);
   color: var(--nutrismart-primary);
 }
 
 .pw-title {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--nutrismart-text-dark);
   margin: 0;
@@ -82,13 +82,13 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: var(--nutrismart-text-dark);
   text-align: left;
 }
 
 .pw-feature-icon {
-  font-size: 18px;
+  font-size: var(--ns-text-lg);
   color: var(--nutrismart-primary);
   flex-shrink: 0;
 }
@@ -102,7 +102,7 @@
   background: var(--nutrismart-primary);
   color: white;
   border-radius: 12px;
-  font-size: 14px;
+  font-size: var(--ns-text-base);
   font-weight: 700;
   text-decoration: none;
   font-family: 'Poppins', sans-serif;
@@ -117,10 +117,10 @@
   box-shadow: 0 6px 20px rgba(80,139,137,0.45);
 }
 
-.pw-btn-icon { font-size: 17px; }
+.pw-btn-icon { font-size: 1.0625rem; }
 
 .pw-note {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--nutrismart-text-light);
   margin: 0;
 }

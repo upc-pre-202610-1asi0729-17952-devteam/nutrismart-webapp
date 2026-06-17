@@ -33,8 +33,8 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
       height: resource.height,
       activityLevel: resource.activityLevel as ActivityLevel,
       plan: resource.plan ? (resource.plan as SubscriptionPlan) : null,
-      restrictions: resource.restrictions.map((r) => r as DietaryRestriction),
-      medicalConditions: resource.medicalConditions,
+      restrictions: (resource.restrictions ?? []).map((r) => r as DietaryRestriction),
+      medicalConditions: resource.medicalConditions ?? [],
       dailyCalorieTarget: resource.dailyCalorieTarget,
       proteinTarget: resource.proteinTarget,
       carbsTarget: resource.carbsTarget,
@@ -43,8 +43,12 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
       birthday: resource.birthday ?? '',
       biologicalSex: resource.biologicalSex ?? '',
       createdAt: resource.createdAt ?? '',
-      homeCity: resource.home_city ?? '',
-      goalStartedAt: resource.goal_started_at ?? '',
+      homeCity: resource.homeCity ?? '',
+      goalStartedAt: resource.goalStartedAt ?? '',
+      streak: resource.streak ?? 0,
+      consecutiveMisses: resource.consecutiveMisses ?? 0,
+      token: resource.token ?? '',
+      planExpiresAt: resource.planExpiresAt ?? null,
     });
   }
 
@@ -76,8 +80,9 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
       birthday: entity.birthday,
       biologicalSex: entity.biologicalSex,
       createdAt: entity.createdAt,
-      home_city: entity.homeCity,
-      goal_started_at: entity.goalStartedAt,
+      homeCity: entity.homeCity,
+      goalStartedAt: entity.goalStartedAt,
+      planExpiresAt: entity.planExpiresAt,
     };
   }
 

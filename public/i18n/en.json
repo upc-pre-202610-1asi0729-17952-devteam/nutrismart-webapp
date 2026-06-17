@@ -22,7 +22,8 @@
     "profile": "Profile",
     "logout": "Log out",
     "open_menu": "Open menu",
-    "close_menu": "Close menu"
+    "close_menu": "Close menu",
+    "user_menu": "User menu"
   },
   "common": {
     "save": "Save",
@@ -50,6 +51,7 @@
     "login_subtitle": "Log in to resume your nutritional plan and adherence tracking.",
     "register_title": "Create your account",
     "register_subtitle": "Start your personalized nutritional journey today.",
+    "subscription_notice": "NutriSmart requires a paid subscription (from $7.99/month) to access all features. You will choose your plan after completing registration.",
     "forgot_title": "Forgot your password?",
     "forgot_subtitle": "Enter your email and we'll send you a reset link.",
     "reset_title": "Set a new password",
@@ -75,6 +77,8 @@
     "error_password_required": "Password is required",
     "error_password_min": "Password must be at least 8 characters",
     "error_passwords_mismatch": "Passwords do not match",
+    "show_password": "Show",
+    "hide_password": "Hide",
     "error_invalid_credentials": "Invalid email or password",
     "error_account_blocked": "Account temporarily locked. Try again in 15 minutes.",
     "error_email_taken": "This email is already registered",
@@ -86,7 +90,16 @@
     "password_hint_number": "Contains a number",
     "password_hint_uppercase": "Contains an uppercase letter",
     "forgot_success_title": "Check your inbox",
-    "forgot_success_msg": "We sent a reset link to your email."
+    "forgot_success_msg": "We sent a reset link to your email.",
+    "new_password": "New password",
+    "show": "Show",
+    "hide": "Hide",
+    "reset_btn": "Set new password",
+    "reset_success_title": "Password updated",
+    "reset_success_msg": "Your password has been changed. Redirecting you to login…",
+    "reset_invalid_link": "This reset link is invalid or has already been used.",
+    "reset_link_expired": "This reset link has expired. Please request a new one.",
+    "error_generic": "Something went wrong. Please try again."
   },
   "onboarding": {
     "step1_label": "Goal",
@@ -171,9 +184,11 @@
     "visual_range_overweight": "23–28%",
     "visual_range_obese": "28%+",
     "home_city_loading": "Loading cities...",
-    "error_home_city_invalid": "Select a valid city from the list"
+    "error_home_city_invalid": "Select a valid city from the list",
+    "location_detection_failed": "Unable to detect your location. Enter your city manually."
   },
   "subscription": {
+    "btn_back": "Back",
     "title": "Choose your plan",
     "subtitle": "Unlock the full power of AI-driven nutrition. Cancel anytime.",
     "badge_popular": "Most popular",
@@ -360,6 +375,12 @@
     "retry": "Retry",
     "view_daily_log_btn": "View daily log",
     "net_balance_desc": "kcal net today",
+    "calories_consumed_empty_desc": "Log your first meal to start tracking",
+    "calories_remaining_empty_desc": "This is your calorie goal for today",
+    "net_balance_empty_desc": "Your net balance will appear here",
+    "macros_empty_hint": "Log a meal to see your daily macros here",
+    "macros_empty_cta": "Log your first meal",
+    "no_meals_banner_title": "No meals logged yet",
     "meal_more": "+{{count}} more",
     "weekly_completion": "weekly completion",
     "pattern": {
@@ -473,6 +494,8 @@
     "impact_exceeded": "Will exceed your daily goal ({{percent}}%)",
     "calorie_limit_exceeded": "Calorie limit exceeded",
     "exceeded_warning": "You have exceeded your goal. Consider a lighter dinner.",
+    "macro_limit_exceeded": "Macro limit exceeded",
+    "macro_exceeded_warning": "One or more macros have exceeded their daily limit. Review your meal composition.",
     "restrictions_warning": "Some results contain ingredients that match your active restrictions: {{ restrictions }}",
     "restricted_items_note": "Restricted items are disabled. Only available items can be added.",
     "add_food_to": "+ Add food to {{ meal }}",
@@ -533,7 +556,8 @@
     "demo_travel": "Travel",
     "demo_travel_on": "✓ Travel ON",
     "demo_travel_off": "Travel OFF",
-    "location_denied_msg": "We don't have access to your location. Enable it to get weather-based recommendations and Travel Mode, or enter your city manually in the side panel.",
+    "location_denied_msg": "We don't have access to your location. Enable it to get weather-based recommendations and Travel Mode, or change your city using the location selector above.",
+    "allow_location": "Allow location",
     "enable_location": "Enable location",
     "banner_travel_desc": "Your current location is different from your usual area. We're showing you typical dishes from {{ city }} that match your profile and dietary restrictions.",
     "banner_hot_desc": "Location detected automatically. We've suggested light, refreshing and hydrating options that match your profile.",
@@ -588,7 +612,6 @@
     "updated_just_now": "Just updated",
     "updated_mins_ago": "Updated {{ mins }} min ago",
     "location_picker_title": "Your location",
-    "location_picker_temp": "Temperature (demo)",
     "location_picker_close": "Close",
     "travel_chip": "Traveling to {{ city }}",
     "context_adjustment": {
@@ -694,6 +717,8 @@
     "placeholder_waist": "e.g. 90 cm",
     "placeholder_neck": "e.g. 38 cm",
     "placeholder_goal": "e.g. 65 kg",
+    "tooltip_weight": "Your current body weight in kilograms, recorded at the time of your last log. Log regularly for accurate metrics.",
+    "tooltip_fat_mass": "Fat mass is the total weight of fat tissue in your body, derived from your body fat percentage and current weight.",
     "tooltip_bmi": "BMI (Body Mass Index) measures body fat based on your weight and height. It's a rough screening tool — not a diagnosis.",
     "tooltip_bmr": "BMR (Basal Metabolic Rate) is the calories your body burns at complete rest — just to keep your organs running.",
     "tooltip_tdee": "TDEE (Total Daily Energy Expenditure) is your total calorie burn per day, including physical activity. Your caloric target is based on this.",
@@ -736,18 +761,18 @@
       "no_history": "No target changes recorded yet.",
       "calorie_delta": "{{ delta }} kcal",
       "trigger": {
-        "ONBOARDING":              "Initial setup",
-        "PROFILE_CHANGE":          "Profile update",
-        "GOAL_SWITCH":             "Goal change",
-        "STAGNATION_RESPONSE":     "Stagnation adjustment",
-        "ACTIVITY_TREND":          "Activity trend",
+        "ONBOARDING": "Initial setup",
+        "PROFILE_CHANGE": "Profile update",
+        "GOAL_SWITCH": "Goal change",
+        "STAGNATION_RESPONSE": "Stagnation adjustment",
+        "ACTIVITY_TREND": "Activity trend",
         "BODY_COMPOSITION_UPDATE": "Body composition update"
       }
     },
     "activity_trend": {
-      "detected":          "High activity trend detected",
-      "average_burned":    "Avg. {{ kcal }} kcal/day burned over the last 7 days",
-      "tdee_adjusted":     "Daily calorie target adjusted by +{{ delta }} kcal",
+      "detected": "High activity trend detected",
+      "average_burned": "Avg. {{ kcal }} kcal/day burned over the last 7 days",
+      "tdee_adjusted": "Daily calorie target adjusted by +{{ delta }} kcal",
       "threshold_reached": "Activity threshold reached (≥ 300 kcal/day avg)"
     }
   },
@@ -790,7 +815,13 @@
     "impact_approaching": "Will reach {{ percent }}% of your daily target",
     "impact_exceeded": "Will exceed your daily target ({{ percent }}%)",
     "qty_error_min": "Minimum quantity is 1 g",
-    "qty_error_max": "Maximum quantity is 2000 g"
+    "qty_error_max": "Maximum quantity is 2000 g",
+    "capture_photo": "Capture photo",
+    "camera_title_plate": "Take a photo of your plate",
+    "camera_title_menu": "Take a photo of the menu",
+    "camera_error": "Unable to access the camera. Please check your browser permissions.",
+    "menu_empty_title": "No menu items could be detected",
+    "menu_empty_desc": "The image may not contain a readable menu. Please try a clearer photo."
   },
   "menu_dishes": {
     "hake_ceviche": "Hake ceviche",
@@ -816,9 +847,12 @@
   "ingredient_categories": {
     "grain": "Grain",
     "animal_protein": "Animal protein",
+    "protein": "Protein",
     "vegetable": "Vegetable",
     "fruit": "Fruit",
     "dairy": "Dairy",
+    "fat": "Fat",
+    "beverage": "Beverage",
     "legume": "Legume",
     "seasoning": "Seasoning",
     "other": "Other"
@@ -860,7 +894,8 @@
     "no_results": "No ingredients found",
     "no_matching_recipes": "No recipes match your current ingredients. Try adding more.",
     "recipe_impact_warning": "Adding this reaches {{ percent }}% of your daily goal",
-    "recipe_impact_danger": "Adding this exceeds your daily goal ({{ percent }}%)"
+    "recipe_impact_danger": "Adding this exceeds your daily goal ({{ percent }}%)",
+    "remove_error": "Failed to remove ingredient. Please try again."
   },
   "upgrade_gate": {
     "title": "This feature requires the {{ plan }} plan",
@@ -916,6 +951,7 @@
     "placeholder_cvv": "123",
     "expiry_short": "Exp.",
     "card_preview_label": "Card summary",
+    "btn_back": "Back",
     "btn_continue": "Continue to review",
     "error_required": "This field is required.",
     "error_invalid_card": "Enter a valid 16-digit card number.",
@@ -981,6 +1017,7 @@
     "chart_calories_aria": "Daily calorie intake bar chart",
     "macros_title": "Avg. Macros",
     "macros_days_logged": "Days with complete log:",
+    "macros_complete_days_summary": "{{ count }} of {{ total }} complete days ({{ percent }}%)",
     "weight_chart_title": "Weight Evolution",
     "weight_chart_aria": "Weight evolution line chart",
     "weight_chart_no_data": "Not enough weight data to display the chart.",
@@ -1008,7 +1045,12 @@
     "status_on_track": "On track",
     "status_at_risk": "At risk",
     "status_dropped": "Dropped",
-    "status_recovered": "Recovered"
+    "status_recovered": "Recovered",
+    "events": {
+      "behavioralDropDetected": "Consistency drop detected",
+      "consistencyRecovered": "Consistency recovered",
+      "nutritionalAbandonmentRisk": "Nutritional abandonment risk"
+    }
   },
   "restaurant": {
     "error_scan_failed": "Failed to analyse the menu photo. Please try again.",

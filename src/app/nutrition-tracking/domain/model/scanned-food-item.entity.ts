@@ -4,12 +4,19 @@ import { MacronutrientDistribution } from './macronutrient-distribution.value-ob
 
 export interface ScannedFoodItemProps {
   id: number;
+  foodItemId: number | null;
   name: string;
+  nameEs: string | null;
   nameKey: string | null;
   quantityGrams: number;
   macros: MacronutrientDistribution;
   restrictions: DietaryRestriction[];
   isEdited: boolean;
+  isEstimate: boolean;
+  caloriesPer100g: number;
+  proteinPer100g: number;
+  carbsPer100g: number;
+  fatPer100g: number;
 }
 
 /**
@@ -22,21 +29,35 @@ export interface ScannedFoodItemProps {
  */
 export class ScannedFoodItem implements BaseEntity {
   private _id: number;
+  private _foodItemId: number | null;
   private _name: string;
+  private _nameEs: string | null;
   private _nameKey: string | null;
   private _quantityGrams: number;
   private _macros: MacronutrientDistribution;
   private _restrictions: DietaryRestriction[];
   private _isEdited: boolean;
+  private _isEstimate: boolean;
+  private _caloriesPer100g: number;
+  private _proteinPer100g: number;
+  private _carbsPer100g: number;
+  private _fatPer100g: number;
 
   constructor(props: ScannedFoodItemProps) {
-    this._id            = props.id;
-    this._name          = props.name;
-    this._nameKey       = props.nameKey ?? null;
-    this._quantityGrams = props.quantityGrams;
-    this._macros        = props.macros;
-    this._restrictions  = [...props.restrictions];
-    this._isEdited      = props.isEdited;
+    this._id             = props.id;
+    this._foodItemId     = props.foodItemId ?? null;
+    this._name           = props.name;
+    this._nameEs         = props.nameEs ?? null;
+    this._nameKey        = props.nameKey ?? null;
+    this._quantityGrams  = props.quantityGrams;
+    this._macros         = props.macros;
+    this._restrictions   = [...props.restrictions];
+    this._isEdited       = props.isEdited;
+    this._isEstimate     = props.isEstimate;
+    this._caloriesPer100g = props.caloriesPer100g;
+    this._proteinPer100g  = props.proteinPer100g;
+    this._carbsPer100g    = props.carbsPer100g;
+    this._fatPer100g      = props.fatPer100g;
   }
 
   // ─── Getters & Setters ────────────────────────────────────────────────────
@@ -44,8 +65,12 @@ export class ScannedFoodItem implements BaseEntity {
   get id(): number { return this._id; }
   set id(v: number) { this._id = v; }
 
+  get foodItemId(): number | null { return this._foodItemId; }
+
   get name(): string { return this._name; }
   set name(v: string) { this._name = v; }
+
+  get nameEs(): string | null { return this._nameEs; }
 
   get nameKey(): string | null { return this._nameKey; }
 
@@ -65,6 +90,13 @@ export class ScannedFoodItem implements BaseEntity {
   get isEdited(): boolean { return this._isEdited; }
   set isEdited(v: boolean) { this._isEdited = v; }
 
+  get isEstimate(): boolean { return this._isEstimate; }
+
+  get caloriesPer100g(): number { return this._caloriesPer100g; }
+  get proteinPer100g(): number  { return this._proteinPer100g; }
+  get carbsPer100g(): number    { return this._carbsPer100g; }
+  get fatPer100g(): number      { return this._fatPer100g; }
+
   // ─── Domain Behaviour ─────────────────────────────────────────────────────
 
   get macroLabel(): string {
@@ -77,6 +109,10 @@ export class ScannedFoodItem implements BaseEntity {
     this._macros = this._macros.scale(ratio);
     this._quantityGrams = newQuantityGrams;
     this._isEdited = true;
+  }
+
+  getLocalizedName(lang: string): string {
+    return (lang === 'es' && this._nameEs) ? this._nameEs : this._name;
   }
 
   isRestrictedFor(activeRestrictions: DietaryRestriction[]): boolean {

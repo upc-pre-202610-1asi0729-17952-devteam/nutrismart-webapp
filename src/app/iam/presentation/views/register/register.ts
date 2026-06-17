@@ -65,10 +65,8 @@ export function emailTakenValidator(iamApi: IamApi): AsyncValidatorFn {
       debounceTime(400),
       distinctUntilChanged(),
       switchMap((e) =>
-        iamApi.getUsers().pipe(
-          map((users) =>
-            users.some((u) => u.email.toLowerCase() === e) ? { emailTaken: true } : null,
-          ),
+        iamApi.checkEmail(e).pipe(
+          map((res) => (res.exists ? { emailTaken: true } : null)),
           catchError(() => of(null)),
         ),
       ),

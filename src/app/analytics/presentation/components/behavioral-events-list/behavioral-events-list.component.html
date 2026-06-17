@@ -6,7 +6,7 @@
       @for (event of behavioralEvents; track $index) {
         <li class="event-item">
           <span class="event-date">{{ formatDate(event.date) }}</span>
-          <span class="event-description">{{ event.description }}</span>
+          <span class="event-description">{{ event.description | translate }}</span>
         </li>
       }
     </ul>

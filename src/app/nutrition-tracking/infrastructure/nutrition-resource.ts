@@ -8,25 +8,25 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
 export interface FoodItemResource extends BaseResource {
   id: number;
   name: string;
-  name_es?: string;
+  nameEs?: string;
   source: string;
-  serving_size: number;
-  serving_unit: string;
-  calories_per_100g: number;
-  protein_per_100g: number;
-  carbs_per_100g: number;
-  fat_per_100g: number;
-  fiber_per_100g: number;
-  sugar_per_100g: number;
+  servingSize: number;
+  servingUnit: string;
+  caloriesPer100g: number;
+  proteinPer100g: number;
+  carbsPer100g: number;
+  fatPer100g: number;
+  fiberPer100g: number;
+  sugarPer100g: number;
   restrictions: string[];
   /** Machine-readable key matching pantry/recipe ingredient identifiers. */
-  name_key?: string;
+  nameKey?: string;
   /** Food category (e.g. "Grain", "Prepared dish"). */
   category?: string;
-  item_type?: 'INGREDIENT' | 'DISH';
-  weather_types?: string[];
-  origin_city?: string | null;
-  origin_country?: string | null;
+  itemType?: 'INGREDIENT' | 'DISH';
+  weatherTypes?: string[];
+  originCity?: string | null;
+  originCountry?: string | null;
 }
 
 /** Envelope for the `/foods` collection endpoint. */
@@ -71,7 +71,7 @@ export interface DailyIntakeResource extends BaseResource {
   id: number;
   userId: number;
   date: string;
-  daily_goal: number;
+  dailyGoal: number;
   consumed: number;
   active: number;
 }

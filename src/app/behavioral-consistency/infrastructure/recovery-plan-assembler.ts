@@ -1,6 +1,6 @@
 import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { AdherenceDropTrigger } from '../domain/model/adherence-drop-trigger.enum';
-import { RecoveryAction } from '../domain/model/recovery-action.value-object';
+import { RecoveryAction, RecoveryActionProps } from '../domain/model/recovery-action.value-object';
 import { RecoveryActionType } from '../domain/model/recovery-action-type.enum';
 import { RecoveryPlan } from '../domain/model/recovery-plan.entity';
 import { RecoveryPlanStatus } from '../domain/model/recovery-plan-status.enum';
@@ -26,13 +26,23 @@ export class RecoveryPlanAssembler implements BaseAssembler<
       userId:      resource.userId as number,
       trigger:     resource.trigger as AdherenceDropTrigger,
       status:      resource.status as RecoveryPlanStatus,
-      actions:     (resource.actions ?? []).map(a => new RecoveryAction({
-        type:           a.type as RecoveryActionType,
-        descriptionKey: a.descriptionKey,
-        priority:       a.priority,
-      })),
-      activatedAt: resource.activatedAt,
-      resolvedAt:  resource.resolvedAt ?? null,
+      actions:     (resource.actions ?? []).map((a, index) => {
+        if (typeof a === 'string') {
+          return new RecoveryAction({
+            type:           a as RecoveryActionType,
+            descriptionKey: `behavioral.recovery.action.${a.toLowerCase()}`,
+            priority:       index + 1,
+          });
+        }
+        const props = a as RecoveryActionProps;
+        return new RecoveryAction({
+          type:           props.type as RecoveryActionType,
+          descriptionKey: props.descriptionKey,
+          priority:       props.priority,
+        });
+      }),
+      activatedAt: resource.createdAt,
+      resolvedAt:  resource.expiresAt ?? null,
     });
   }
 
@@ -44,13 +54,13 @@ export class RecoveryPlanAssembler implements BaseAssembler<
    */
   toResourceFromEntity(entity: RecoveryPlan): RecoveryPlanResource {
     return {
-      id:          entity.id,
-      userId:      entity.userId,
-      trigger:     entity.trigger,
-      status:      entity.status,
-      actions:     entity.actions.map(a => a.toJSON()),
-      activatedAt: entity.activatedAt,
-      resolvedAt:  entity.resolvedAt,
+      id:        entity.id,
+      userId:    entity.userId,
+      trigger:   entity.trigger,
+      status:    entity.status,
+      actions:   entity.actions.map(a => a.type),
+      createdAt: entity.activatedAt,
+      expiresAt: entity.resolvedAt ?? new Date(new Date(entity.activatedAt).getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     };
   }
 

@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { LanguageSwitcher } from '../../../../shared/presentation/components/language-switcher/language-switcher';
 import { DecimalPipe } from '@angular/common';
 import { PaymentStore } from '../../../application/payment.store';
 import { Subscription } from '../../../domain/model/subscription.entity';
@@ -14,7 +15,7 @@ import { Subscription } from '../../../domain/model/subscription.entity';
 @Component({
   selector: 'app-subscription-confirmed',
   standalone: true,
-  imports: [TranslatePipe, DecimalPipe],
+  imports: [TranslatePipe, DecimalPipe, LanguageSwitcher],
   templateUrl: './subscription-confirmed.html',
   styleUrl: './subscription-confirmed.css',
 })

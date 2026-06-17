@@ -23,7 +23,7 @@
   display: flex;
   align-items: center;
   padding: 0 18px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 500;
   color: var(--nutrismart-text-mid);
   text-decoration: none;

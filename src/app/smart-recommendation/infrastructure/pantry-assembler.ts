@@ -22,25 +22,24 @@ export class PantryItemAssembler
   toEntityFromResource(r: PantryItemResource, food?: FoodItem): PantryItem {
     return new PantryItem({
       id:              r.id,
-      foodId:          r.food_id,
-      name:            food?.name ?? r.food_id,
+      foodId:          r.foodId,
+      name:            food?.name ?? r.foodId,
       nameEs:          food?.nameEs ?? '',
       nameKey:         food?.nameKey,
       category:        (food?.category ?? 'Other') as IngredientCategory,
-      quantityGrams:   r.quantity_grams,
+      quantityGrams:   r.quantityG,
       caloriesPer100g: food?.caloriesPer100g ?? 0,
       userId:          r.userId,
-      addedAt:         r.added_at,
+      addedAt:         '',
     });
   }
 
   toResourceFromEntity(e: PantryItem): PantryItemResource {
     return {
-      id:             e.id,
-      food_id:        e.foodId ?? '',
-      quantity_grams: e.quantityGrams,
-      userId:         e.userId,
-      added_at:       e.addedAt,
+      id:       e.id,
+      foodId:   e.foodId ?? '',
+      quantityG: e.quantityGrams,
+      userId:   e.userId,
     };
   }
 
@@ -60,38 +59,34 @@ export class RecipeSuggestionAssembler
   constructor(private readonly translate: TranslateService) {}
 
   toEntityFromResource(r: RecipeSuggestionResource): RecipeSuggestion {
-    const es   = this.translate.currentLang === 'es';
-    const name = es && r.name_es ? r.name_es : r.name;
     return new RecipeSuggestion({
       id:                   r.id,
-      name,
-      nameKey:              r.name_key,
-      calories:             r.calories,
-      protein:              r.protein,
-      carbs:                r.carbs,
-      fat:                  r.fat,
-      ingredients:          r.ingredients.map(i => ({ foodId: i.foodId, quantity_grams: i.quantity_grams })),
-      goalType:             r.goal_type as UserGoal,
-      prepTimeMinutes:      r.prep_time_minutes,
-      coversMacroPct:       r.covers_macro_pct,
-      restrictionsConflict: [...(r.restrictions_conflict ?? [])],
+      name:                 r.name,
+      nameEs:               r.nameEs,
+      calories:             r.estimatedCalories,
+      protein:              r.estimatedProtein,
+      carbs:                r.estimatedCarbs,
+      fat:                  r.estimatedFat,
+      ingredients:          r.ingredients.map(s => ({ nameKey: s, quantityGrams: 0 })),
+      goalType:             r.goalType as UserGoal,
+      prepTimeMinutes:      r.prepTimeMinutes,
+      coversMacroPct:       0,
+      restrictionsConflict: [],
     });
   }
 
   toResourceFromEntity(e: RecipeSuggestion): RecipeSuggestionResource {
     return {
-      id:                    e.id,
-      name:                  e.name,
-      name_key:              e.nameKey,
-      calories:              e.calories,
-      protein:               e.protein,
-      carbs:                 e.carbs,
-      fat:                   e.fat,
-      ingredients:           e.ingredients,
-      goal_type:             e.goalType,
-      prep_time_minutes:     e.prepTimeMinutes,
-      covers_macro_pct:      e.coversMacroPct,
-      restrictions_conflict: e.restrictionsConflict,
+      id:                e.id,
+      name:              e.name,
+      nameEs:            e.nameEs,
+      goalType:          e.goalType,
+      prepTimeMinutes:   e.prepTimeMinutes,
+      estimatedCalories: e.calories,
+      estimatedProtein:  e.protein,
+      estimatedCarbs:    e.carbs,
+      estimatedFat:      e.fat,
+      ingredients:       e.ingredients.map(i => i.nameKey),
     };
   }
 

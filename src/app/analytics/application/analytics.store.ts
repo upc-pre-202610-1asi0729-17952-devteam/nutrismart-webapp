@@ -1,8 +1,9 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { AnalyticsApi } from '../infrastructure/analytics-api';
 import { AnalyticsAssembler } from '../infrastructure/analytics-assembler';
+import { PdfGeneratorService, PdfReportOptions } from '../infrastructure/pdf-generator.service';
 import { AnalyticsData, AnalyticsPeriod } from '../domain/model/analytics-models';
 import { IamStore } from '../../iam/application/iam.store';
 
@@ -10,6 +11,7 @@ import { IamStore } from '../../iam/application/iam.store';
 export class AnalyticsStore {
   private readonly analyticsApi        = inject(AnalyticsApi);
   private readonly analyticsAssembler  = inject(AnalyticsAssembler);
+  private readonly pdfGenerator        = inject(PdfGeneratorService);
   private readonly iamStore            = inject(IamStore);
 
   private readonly _currentAnalyticsData  = signal<AnalyticsData | null>(null);
@@ -106,29 +108,27 @@ export class AnalyticsStore {
     );
   }
 
-  /**
-   * Requests a PDF report export for the given date range.
-   * @param fromDate - Report start date (YYYY-MM-DD).
-   * @param toDate - Report end date (YYYY-MM-DD).
-   */
-  exportReport(fromDate: string, toDate: string): Observable<Blob> {
-    const userId = this.iamStore.currentUser()?.id;
-    if (!userId) {
+  exportReport(options: PdfReportOptions): Observable<Blob> {
+    const data = this._currentAnalyticsData();
+    if (!data) {
       this._error.set('analytics.error_load');
-      return throwError(() => new Error('User not authenticated.'));
+      return throwError(() => new Error('No analytics data loaded.'));
     }
 
     this._loading.set(true);
     this._error.set(null);
 
-    return this.analyticsApi.exportPdfReport(userId, fromDate, toDate).pipe(
-      tap(() => this._loading.set(false)),
-      catchError(err => {
-        this._loading.set(false);
-        this._error.set('analytics.error_load');
-        return throwError(() => err);
-      }),
-    );
+    try {
+      const user     = this.iamStore.currentUser();
+      const userName = user ? `${user.firstName} ${user.lastName}`.trim() || undefined : undefined;
+      const blob     = this.pdfGenerator.generate(data, options, userName);
+      this._loading.set(false);
+      return of(blob);
+    } catch (err) {
+      this._loading.set(false);
+      this._error.set('analytics.error_load');
+      return throwError(() => err);
+    }
   }
 
   /** Opens the PDF export modal. */

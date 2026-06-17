@@ -58,11 +58,11 @@ export class AnalyticsDomainService {
       const prev = history[i - 1].status;
       const curr = history[i].status;
       if (prev !== 'DROPPED' && curr === 'DROPPED')
-        events.push({ date: history[i].date, description: 'BehavioralDropDetected' });
+        events.push({ date: history[i].date, description: 'analytics.events.behavioralDropDetected' });
       else if (prev === 'DROPPED' && curr === 'ON_TRACK')
-        events.push({ date: history[i].date, description: 'ConsistencyRecovered' });
+        events.push({ date: history[i].date, description: 'analytics.events.consistencyRecovered' });
       else if (prev === 'ON_TRACK' && curr === 'AT_RISK')
-        events.push({ date: history[i].date, description: 'NutritionalAbandonmentRisk' });
+        events.push({ date: history[i].date, description: 'analytics.events.nutritionalAbandonmentRisk' });
     }
     return events;
   }

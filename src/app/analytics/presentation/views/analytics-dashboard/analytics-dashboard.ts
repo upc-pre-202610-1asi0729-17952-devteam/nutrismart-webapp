@@ -115,7 +115,20 @@ export class AnalyticsDashboardComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    const cached = this.analyticsData();
+    if (cached !== null) {
+      const lastCachedDate = cached.dailyCaloriesHistory.at(-1)?.date ?? null;
+      if (lastCachedDate !== null && lastCachedDate !== this.localDateString()) {
+        this.analyticsStore.loadAnalyticsData(this.selectedPeriod()).subscribe();
+        return;
+      }
+    }
     this.analyticsStore.loadAnalyticsData('7_DAYS').subscribe();
+  }
+
+  private localDateString(): string {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   }
 
   onPeriodChange(period: AnalyticsPeriod): void {
@@ -131,12 +144,20 @@ export class AnalyticsDashboardComponent implements OnInit {
   }
 
   onExportRequest(req: ExportPdfRequest): void {
-    this.analyticsStore.exportReport(req.fromDate, req.toDate).subscribe({
+    this.analyticsStore.exportReport({
+      fromDate:        req.fromDate,
+      toDate:          req.toDate,
+      includeDaily:     req.includeDaily,
+      includeMacros:    req.includeMacros,
+      includeWeight:    req.includeWeight,
+      includeAdherence: req.includeAdherence,
+      includeActivity:  req.includeActivity,
+    }).subscribe({
       next: (blob) => {
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `analytics-${req.fromDate}_${req.toDate}.pdf`;
+        const a   = document.createElement('a');
+        a.href    = url;
+        a.download = `nutrismart-analytics-${req.fromDate}_${req.toDate}.pdf`;
         a.click();
         URL.revokeObjectURL(url);
         this.analyticsStore.closeExportPdfModal();

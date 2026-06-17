@@ -19,7 +19,7 @@ export class LocationSnapshotAssembler {
       userId:     typeof r.userId === 'string' ? parseInt(r.userId, 10) : r.userId as unknown as number,
       city:       r.city,
       country:    r.country,
-      recordedAt: r.recorded_at,
+      recordedAt: r.recordedAt,
     });
   }
 }
@@ -33,22 +33,22 @@ export class WeatherContextAssembler
       snapshotId:         String(r.id),
       city:               r.city,
       country:            r.country,
-      temperatureCelsius: r.temperature_celsius,
+      temperatureCelsius: r.temperatureCelsius,
       condition:          r.condition,
-      weatherType:        r.weather_type as WeatherType,
-      updatedAt:          r.updated_at,
+      weatherType:        r.weatherType as WeatherType,
+      updatedAt:          r.updatedAt,
     });
   }
 
   toResourceFromEntity(e: WeatherContext): WeatherContextResource {
     return {
-      id:                  e.id,
-      city:                e.city,
-      country:             e.country,
-      temperature_celsius: e.temperatureCelsius,
-      condition:           e.condition,
-      weather_type:        e.weatherType,
-      updated_at:          e.updatedAt,
+      id:                 e.id,
+      city:               e.city,
+      country:            e.country,
+      temperatureCelsius: e.temperatureCelsius,
+      condition:          e.condition,
+      weatherType:        e.weatherType,
+      updatedAt:          e.updatedAt,
     };
   }
 
@@ -66,21 +66,21 @@ export class TravelContextAssembler
       userId:      r.userId,
       city:        r.city,
       country:     r.country,
-      isActive:    r.is_active,
-      isManual:    r.is_manual,
-      activatedAt: r.activated_at,
+      isActive:    r.isActive,
+      isManual:    r.isManual,
+      activatedAt: r.activatedAt,
     });
   }
 
   toResourceFromEntity(e: TravelContext): TravelContextResource {
     return {
-      id:           e.id,
-      userId:       String(e.userId),
-      city:         e.city,
-      country:      e.country,
-      is_active:    e.isActive,
-      is_manual:    e.isManual,
-      activated_at: e.activatedAt,
+      id:          e.id,
+      userId:      String(e.userId),
+      city:        e.city,
+      country:     e.country,
+      isActive:    e.isActive,
+      isManual:    e.isManual,
+      activatedAt: e.activatedAt,
     };
   }
 
@@ -96,25 +96,25 @@ export class RecommendationSessionAssembler
     return new RecommendationSession({
       id:                   typeof r.id === 'string' ? 0 : r.id as number,
       userId:               typeof r.userId === 'string' ? parseInt(r.userId, 10) : r.userId as unknown as number,
-      adherenceStatus:      r.adherence_status as AdherenceStatus,
-      consecutiveMisses:    r.consecutive_misses,
-      simplifiedKcalTarget: r.simplified_kcal_target,
-      createdAt:            r.created_at,
-      isActive:             r.is_active,
-      weatherSnapshotId:    r.weather_snapshot_id ?? null,
+      adherenceStatus:      r.adherenceStatus as AdherenceStatus,
+      consecutiveMisses:    r.consecutiveMisses,
+      simplifiedKcalTarget: r.simplifiedKcalTarget,
+      createdAt:            r.createdAt,
+      isActive:             r.isActive,
+      weatherSnapshotId:    r.weatherSnapshotId ?? null,
     });
   }
 
   toResourceFromEntity(e: RecommendationSession): RecommendationSessionResource {
     return {
-      id:                     e.id,
-      userId:                 String(e.userId),
-      adherence_status:       e.adherenceStatus,
-      consecutive_misses:     e.consecutiveMisses,
-      simplified_kcal_target: e.simplifiedKcalTarget,
-      created_at:             e.createdAt,
-      is_active:              e.isActive,
-      weather_snapshot_id:    e.weatherSnapshotId,
+      id:                   e.id,
+      userId:               String(e.userId),
+      adherenceStatus:      e.adherenceStatus,
+      consecutiveMisses:    e.consecutiveMisses,
+      simplifiedKcalTarget: e.simplifiedKcalTarget,
+      createdAt:            e.createdAt,
+      isActive:             e.isActive,
+      weatherSnapshotId:    e.weatherSnapshotId,
     };
   }
 

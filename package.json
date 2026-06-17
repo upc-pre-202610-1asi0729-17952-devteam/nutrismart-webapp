@@ -26,6 +26,7 @@
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "json-server": "^1.0.0-beta.15",
+    "jspdf": "^4.2.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

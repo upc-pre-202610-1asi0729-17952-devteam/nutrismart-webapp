@@ -10,7 +10,7 @@
             {{ macro.name | translate }}
           </span>
           <strong [class.macro-above-target]="macro.isAboveTarget">
-            {{ macro.consumed }}g / {{ macro.target }}g
+            {{ macro.consumed | number:'1.0-2' }}g / {{ macro.target | number:'1.0-2' }}g
           </strong>
         </div>
         <div class="macro-track" [attr.aria-label]="(macro.name | translate) + ': ' + macroPercent(macro.consumed, macro.target) + '%'">
@@ -32,17 +32,23 @@
 
   <div class="days-logged-section">
     <h4>{{ 'analytics.macros_days_logged' | translate }}</h4>
-    <div class="week-dots" role="list">
-      @for (dot of daysWithCompleteLog; track $index) {
-        <div class="week-dot-wrapper" role="listitem">
-          <span
-            class="week-dot"
-            [class.filled]="dot"
-            [attr.aria-label]="weekLabels[$index]"
-          ></span>
-          <small aria-hidden="true">{{ weekLabels[$index] }}</small>
-        </div>
-      }
-    </div>
+    @if (period === '7_DAYS') {
+      <div class="week-dots" role="list">
+        @for (dot of daysWithCompleteLog; track $index) {
+          <div class="week-dot-wrapper" role="listitem">
+            <span
+              class="week-dot"
+              [class.filled]="dot"
+              [attr.aria-label]="weekLabels()[$index]"
+            ></span>
+            <small aria-hidden="true">{{ weekLabels()[$index] }}</small>
+          </div>
+        }
+      </div>
+    } @else {
+      <p class="complete-days-summary">
+        {{ 'analytics.macros_complete_days_summary' | translate: { count: completeDaysCount, total: completeDaysTotal, percent: completeDaysPercent } }}
+      </p>
+    }
   </div>
 </div>

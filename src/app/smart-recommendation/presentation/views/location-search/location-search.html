@@ -6,28 +6,35 @@
     <p class="location-search-subtitle">{{ 'recommendations.location_search_subtitle' | translate }}</p>
 
     <div class="location-search-input-row">
-      <input
-        class="location-search-input"
-        type="text"
-        [placeholder]="'recommendations.location_search_placeholder' | translate"
-        [ngModel]="cityInput()"
-        (ngModelChange)="cityInput.set($event)"
-        (keyup.enter)="confirm()" />
+      <div class="location-search-input-wrapper">
+        <input
+          class="location-search-input"
+          type="text"
+          autocomplete="off"
+          [value]="citySearchQuery()"
+          [placeholder]="(citiesLoading() ? 'recommendations.location_search_loading' : 'recommendations.location_search_placeholder') | translate"
+          (input)="onCityInput($event)"
+          (focus)="showSuggestions.set(true)"
+          (blur)="onInputBlur()"
+          (keyup.enter)="confirm()" />
+        @if (showSuggestions() && suggestions().length > 0) {
+          <ul class="city-suggestions" role="listbox">
+            @for (s of suggestions(); track s.city + s.country) {
+              <li
+                class="city-suggestion-item"
+                role="option"
+                (mousedown)="selectSuggestion(s.city, s.country)"
+              >{{ s.city }}, {{ s.country }}</li>
+            }
+          </ul>
+        }
+      </div>
       <button
         class="btn btn--primary"
         [disabled]="!canConfirm || store.loading()"
         (click)="confirm()">
         {{ 'recommendations.location_search_confirm' | translate }}
       </button>
-    </div>
-
-    <div class="location-search-quick">
-      <span class="quick-label">{{ 'recommendations.location_search_quick' | translate }}</span>
-      <div class="quick-chips">
-        @for (item of knownCities; track item.city) {
-          <button class="chip" (click)="selectCity(item.city, item.country)">{{ item.city }}</button>
-        }
-      </div>
     </div>
 
     <button class="btn btn--ghost" (click)="goBack()">

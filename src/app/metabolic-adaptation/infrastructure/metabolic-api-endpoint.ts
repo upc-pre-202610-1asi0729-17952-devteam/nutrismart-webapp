@@ -60,7 +60,7 @@ export class BodyCompositionEndpoint extends BaseApiEndpoint<
         const matches = resources.filter(r => String(r.userId) === String(userId));
         if (!matches.length) return null;
         const latest = [...matches].sort(
-          (a, b) => new Date(b.measured_at).getTime() - new Date(a.measured_at).getTime(),
+          (a, b) => new Date(b.measuredAt).getTime() - new Date(a.measuredAt).getTime(),
         )[0];
         return this.assembler.toEntityFromResource(latest);
       }),

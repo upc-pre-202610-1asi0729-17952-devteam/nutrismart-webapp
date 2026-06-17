@@ -37,8 +37,8 @@ export class NutritionApi extends BaseApi {
    * @param query - Partial food name (minimum 2 characters recommended).
    * @returns Observable emitting matching {@link FoodItem} entities.
    */
-  searchFoods(query: string): Observable<FoodItem[]> {
-    return this.foodSearchEndpoint.searchByName(query);
+  searchFoods(query: string, restrictions?: string[]): Observable<FoodItem[]> {
+    return this.foodSearchEndpoint.searchByName(query, restrictions);
   }
 
   /**

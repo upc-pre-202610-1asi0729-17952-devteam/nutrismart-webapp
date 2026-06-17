@@ -22,7 +22,8 @@
     "profile": "Perfil",
     "logout": "Cerrar sesión",
     "open_menu": "Abrir menú",
-    "close_menu": "Cerrar menú"
+    "close_menu": "Cerrar menú",
+    "user_menu": "Menú de usuario"
   },
   "common": {
     "save": "Guardar",
@@ -50,6 +51,7 @@
     "login_subtitle": "Inicia sesión para retomar tu plan nutricional.",
     "register_title": "Crea tu cuenta",
     "register_subtitle": "Comienza tu viaje nutricional personalizado hoy.",
+    "subscription_notice": "NutriSmart requiere una suscripción de pago (desde $7.99/mes) para acceder a todas las funciones. Podrás elegir tu plan al finalizar el registro.",
     "forgot_title": "¿Olvidaste tu contraseña?",
     "forgot_subtitle": "Ingresa tu email y te enviaremos un enlace.",
     "reset_title": "Establece una nueva contraseña",
@@ -75,6 +77,8 @@
     "error_password_required": "La contraseña es obligatoria",
     "error_password_min": "La contraseña debe tener al menos 8 caracteres",
     "error_passwords_mismatch": "Las contraseñas no coinciden",
+    "show_password": "Mostrar",
+    "hide_password": "Ocultar",
     "error_invalid_credentials": "Email o contraseña inválidos",
     "error_account_blocked": "Cuenta bloqueada temporalmente. Intentá en 15 minutos.",
     "error_email_taken": "Este correo ya está registrado",
@@ -86,7 +90,16 @@
     "password_hint_number": "Contiene un número",
     "password_hint_uppercase": "Contiene una letra mayúscula",
     "forgot_success_title": "Revisa tu bandeja de entrada",
-    "forgot_success_msg": "Enviamos un enlace de restablecimiento a tu correo."
+    "forgot_success_msg": "Enviamos un enlace de restablecimiento a tu correo.",
+    "new_password": "Nueva contraseña",
+    "show": "Mostrar",
+    "hide": "Ocultar",
+    "reset_btn": "Establecer nueva contraseña",
+    "reset_success_title": "Contraseña actualizada",
+    "reset_success_msg": "Tu contraseña ha sido cambiada. Redirigiendo al inicio de sesión…",
+    "reset_invalid_link": "Este enlace de restablecimiento es inválido o ya fue usado.",
+    "reset_link_expired": "Este enlace ha expirado. Por favor solicita uno nuevo.",
+    "error_generic": "Algo salió mal. Por favor intenta de nuevo."
   },
   "onboarding": {
     "step1_label": "Objetivo",
@@ -171,9 +184,11 @@
     "visual_range_overweight": "23–28%",
     "visual_range_obese": "28%+",
     "home_city_loading": "Cargando ciudades...",
-    "error_home_city_invalid": "Selecciona una ciudad válida de la lista"
+    "error_home_city_invalid": "Selecciona una ciudad válida de la lista",
+    "location_detection_failed": "No se pudo detectar tu ubicación. Escribe tu ciudad manualmente."
   },
   "subscription": {
+    "btn_back": "Atrás",
     "title": "Elige tu plan",
     "subtitle": "Desbloquea el poder total de la nutrición con IA. Cancela cuando quieras.",
     "badge_popular": "Más popular",
@@ -360,6 +375,12 @@
     "retry": "Reintentar",
     "view_daily_log_btn": "Ver registro diario",
     "net_balance_desc": "kcal neto hoy",
+    "calories_consumed_empty_desc": "Registra tu primera comida para comenzar",
+    "calories_remaining_empty_desc": "Esta es tu meta calórica de hoy",
+    "net_balance_empty_desc": "Tu balance neto aparecerá aquí",
+    "macros_empty_hint": "Registra una comida para ver tus macros diarios aquí",
+    "macros_empty_cta": "Registrar primera comida",
+    "no_meals_banner_title": "Aún no hay comidas registradas",
     "meal_more": "+{{count}} más",
     "weekly_completion": "completado esta semana",
     "pattern": {
@@ -473,6 +494,8 @@
     "impact_exceeded": "Superará tu meta diaria ({{percent}}%)",
     "calorie_limit_exceeded": "Límite calórico superado",
     "exceeded_warning": "Has superado tu meta. Considera una cena más ligera.",
+    "macro_limit_exceeded": "Límite de macros superado",
+    "macro_exceeded_warning": "Uno o más macronutrientes han superado su límite diario. Revisa la composición de tus comidas.",
     "restrictions_warning": "Algunos resultados contienen ingredientes que coinciden con tus restricciones activas: {{ restrictions }}",
     "restricted_items_note": "Los artículos restringidos están deshabilitados. Solo se pueden agregar artículos disponibles.",
     "add_food_to": "+ Agregar alimento a {{ meal }}",
@@ -533,7 +556,8 @@
     "demo_travel": "Viaje",
     "demo_travel_on": "✓ Viaje ON",
     "demo_travel_off": "Viaje OFF",
-    "location_denied_msg": "No tenemos acceso a tu ubicación. Actívala para recibir recomendaciones basadas en el clima y el Modo Viaje, o ingresa tu ciudad manualmente en el panel lateral.",
+    "location_denied_msg": "No tenemos acceso a tu ubicación. Actívala para recibir recomendaciones basadas en el clima y el Modo Viaje, o cambia tu ciudad usando el selector de ubicación en la parte superior.",
+    "allow_location": "Activar ubicación",
     "enable_location": "Activar ubicación",
     "banner_travel_desc": "Tu ubicación actual es diferente a tu zona habitual. Te mostramos platos típicos de {{ city }} que se ajustan a tu perfil y restricciones alimentarias.",
     "banner_hot_desc": "Ubicación detectada automáticamente. Te sugerimos opciones ligeras, refrescantes e hidratantes que se adaptan a tu perfil.",
@@ -588,7 +612,6 @@
     "updated_just_now": "Recién actualizado",
     "updated_mins_ago": "Actualizado hace {{ mins }} min",
     "location_picker_title": "Tu ubicación",
-    "location_picker_temp": "Temperatura (demo)",
     "location_picker_close": "Cerrar",
     "travel_chip": "Viajando a {{ city }}",
     "context_adjustment": {
@@ -694,6 +717,8 @@
     "placeholder_waist": "ej. 90 cm",
     "placeholder_neck": "ej. 38 cm",
     "placeholder_goal": "ej. 65 kg",
+    "tooltip_weight": "Tu peso corporal actual en kilogramos, registrado en el momento de tu último registro. Registra con frecuencia para obtener métricas precisas.",
+    "tooltip_fat_mass": "La masa grasa es el peso total del tejido adiposo en tu cuerpo, calculado a partir de tu porcentaje de grasa corporal y tu peso actual.",
     "tooltip_bmi": "El IMC (Índice de Masa Corporal) mide la grasa corporal en función de tu peso y altura. Es una herramienta de detección aproximada, no un diagnóstico.",
     "tooltip_bmr": "La TMB (Tasa Metabólica Basal) son las calorías que quema tu cuerpo en reposo completo, solo para mantener tus órganos funcionando.",
     "tooltip_tdee": "El TDEE es el gasto calórico total diario, incluyendo tu actividad física. Tu objetivo calórico se calcula a partir de este valor.",
@@ -736,18 +761,18 @@
       "no_history": "Aún no se han registrado cambios en los objetivos.",
       "calorie_delta": "{{ delta }} kcal",
       "trigger": {
-        "ONBOARDING":              "Configuración inicial",
-        "PROFILE_CHANGE":          "Actualización de perfil",
-        "GOAL_SWITCH":             "Cambio de objetivo",
-        "STAGNATION_RESPONSE":     "Ajuste por estancamiento",
-        "ACTIVITY_TREND":          "Tendencia de actividad",
+        "ONBOARDING": "Configuración inicial",
+        "PROFILE_CHANGE": "Actualización de perfil",
+        "GOAL_SWITCH": "Cambio de objetivo",
+        "STAGNATION_RESPONSE": "Ajuste por estancamiento",
+        "ACTIVITY_TREND": "Tendencia de actividad",
         "BODY_COMPOSITION_UPDATE": "Actualización de composición corporal"
       }
     },
     "activity_trend": {
-      "detected":          "Tendencia de actividad alta detectada",
-      "average_burned":    "Promedio de {{ kcal }} kcal/día quemadas en los últimos 7 días",
-      "tdee_adjusted":     "Objetivo calórico diario ajustado en +{{ delta }} kcal",
+      "detected": "Tendencia de actividad alta detectada",
+      "average_burned": "Promedio de {{ kcal }} kcal/día quemadas en los últimos 7 días",
+      "tdee_adjusted": "Objetivo calórico diario ajustado en +{{ delta }} kcal",
       "threshold_reached": "Umbral de actividad alcanzado (≥ 300 kcal/día promedio)"
     }
   },
@@ -790,7 +815,13 @@
     "impact_approaching": "Alcanzará el {{ percent }}% de tu objetivo diario",
     "impact_exceeded": "Superará tu objetivo diario ({{ percent }}%)",
     "qty_error_min": "La cantidad mínima es 1 g",
-    "qty_error_max": "La cantidad máxima es 2000 g"
+    "qty_error_max": "La cantidad máxima es 2000 g",
+    "capture_photo": "Capturar foto",
+    "camera_title_plate": "Toma una foto de tu plato",
+    "camera_title_menu": "Toma una foto del menú",
+    "camera_error": "No se pudo acceder a la cámara. Verifica los permisos en tu navegador.",
+    "menu_empty_title": "No se encontraron platos en el menú",
+    "menu_empty_desc": "La imagen puede no contener un menú legible. Intentá con una foto más clara."
   },
   "menu_dishes": {
     "hake_ceviche": "Ceviche de merluza",
@@ -805,9 +836,12 @@
   "ingredient_categories": {
     "grain": "Cereal",
     "animal_protein": "Proteína animal",
+    "protein": "Proteína",
     "vegetable": "Verdura",
     "fruit": "Fruta",
     "dairy": "Lácteo",
+    "fat": "Grasa",
+    "beverage": "Bebida",
     "legume": "Legumbre",
     "seasoning": "Condimento",
     "other": "Otro"
@@ -860,7 +894,8 @@
     "no_results": "No se encontraron ingredientes",
     "no_matching_recipes": "Ninguna receta coincide con tus ingredientes actuales. Intenta agregar más.",
     "recipe_impact_warning": "Añadir esto llegaría al {{ percent }}% de tu meta diaria",
-    "recipe_impact_danger": "Añadir esto superaría tu meta diaria ({{ percent }}%)"
+    "recipe_impact_danger": "Añadir esto superaría tu meta diaria ({{ percent }}%)",
+    "remove_error": "No se pudo eliminar el ingrediente. Inténtalo de nuevo."
   },
   "upgrade_gate": {
     "title": "Esta función requiere el plan {{ plan }}",
@@ -916,6 +951,7 @@
     "placeholder_cvv": "123",
     "expiry_short": "Venc.",
     "card_preview_label": "Resumen de tarjeta",
+    "btn_back": "Atrás",
     "btn_continue": "Continuar a revisión",
     "error_required": "Este campo es obligatorio.",
     "error_invalid_card": "Ingresa un número de tarjeta válido de 16 dígitos.",
@@ -981,6 +1017,7 @@
     "chart_calories_aria": "Gráfica de barras de ingesta calórica diaria",
     "macros_title": "Macros promedio",
     "macros_days_logged": "Días con registro completo:",
+    "macros_complete_days_summary": "{{ count }} de {{ total }} días completos ({{ percent }}%)",
     "weight_chart_title": "Evolución del peso",
     "weight_chart_aria": "Gráfica de línea de evolución del peso",
     "weight_chart_no_data": "No hay suficientes datos de peso para mostrar la gráfica.",
@@ -1008,7 +1045,12 @@
     "status_on_track": "En camino",
     "status_at_risk": "En riesgo",
     "status_dropped": "Caída",
-    "status_recovered": "Recuperado"
+    "status_recovered": "Recuperado",
+    "events": {
+      "behavioralDropDetected": "Caída de consistencia detectada",
+      "consistencyRecovered": "Recuperaste tu consistencia",
+      "nutritionalAbandonmentRisk": "Riesgo de abandono nutricional"
+    }
   },
   "physical_activity": {
     "title": "Actividad física",

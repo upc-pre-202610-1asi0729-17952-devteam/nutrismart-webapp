@@ -23,7 +23,7 @@
 }
 
 .page-title {
-  font-size: 26px;
+  font-size: var(--ns-text-2xl);
   font-weight: 700;
   color: var(--nutrismart-text-dark);
   margin: 0;
@@ -31,7 +31,7 @@
 }
 
 .page-subtitle {
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: var(--nutrismart-text-light);
   margin: 0;
 }
@@ -53,7 +53,7 @@
   color: #fff;
   border: none;
   border-radius: 10px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s, opacity 0.2s;
@@ -70,7 +70,7 @@
 }
 
 .log-activity-btn__icon {
-  font-size: 18px;
+  font-size: var(--ns-text-lg);
 }
 
 /* ── Error banner ── */
@@ -82,12 +82,12 @@
   border: 1.5px solid #fecaca;
   border-radius: 12px;
   padding: 14px 18px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: #991b1b;
 }
 
 .error-banner__icon {
-  font-size: 18px;
+  font-size: var(--ns-text-lg);
   flex-shrink: 0;
 }
 
@@ -100,7 +100,7 @@
 }
 
 .loading-icon {
-  font-size: 36px;
+  font-size: var(--ns-text-4xl);
   color: var(--nutrismart-primary);
   animation: spin 1s linear infinite;
 }

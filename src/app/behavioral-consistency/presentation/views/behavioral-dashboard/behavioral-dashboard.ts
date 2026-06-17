@@ -1,5 +1,5 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
-import { NgClass } from '@angular/common';
+import { DecimalPipe, NgClass } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -78,6 +78,7 @@ interface StreakVm {
 @Component({
   selector: 'app-behavioral-dashboard',
   imports: [
+    DecimalPipe,
     NgClass,
     TranslatePipe,
     MacroWarningBanner,
@@ -237,6 +238,8 @@ export class BehavioralDashboard implements OnInit {
     };
   });
 
+  protected readonly hasNoTodayLogs = computed(() => this.nutritionStore.dailyTotals().calories === 0);
+
   /** Warning signals delegated to the domain via {@link NutritionStore.todayMacroWarnings}. */
   protected readonly approachingMacros = computed(() => this.nutritionStore.todayMacroWarnings().approaching);
   protected readonly exceededMacros    = computed(() => this.nutritionStore.todayMacroWarnings().exceeded);
@@ -266,7 +269,7 @@ export class BehavioralDashboard implements OnInit {
     if (!user) return;
 
     await firstValueFrom(this.behavioralStore.ensureProgressForUser(user.id));
-    this.behavioralStore.loadRecoveryPlan(user.id);
+    await this.behavioralStore.loadRecoveryPlan(user.id);
 
     await Promise.all([
       this.nutritionStore.loadMealHistory(),
@@ -292,7 +295,8 @@ export class BehavioralDashboard implements OnInit {
       return { nameKey, description: '', caloriesLabel: '— kcal', dotClass, notLogged: true, missed: false };
     }
     const totalKcal = todayRecords.reduce((sum, r) => sum + r.calories, 0);
-    const foodName = todayRecords[0].foodItemName;
+    const lang = locale.startsWith('es') ? 'es' : 'en';
+    const foodName = todayRecords[0].getLocalizedFoodName(lang);
     const time = new Date(todayRecords[0].loggedAt).toLocaleTimeString(locale, {
       hour: 'numeric',
       minute: '2-digit',

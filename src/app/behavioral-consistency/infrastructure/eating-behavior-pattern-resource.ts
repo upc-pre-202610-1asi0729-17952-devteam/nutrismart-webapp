@@ -6,12 +6,11 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
 export interface EatingBehaviorPatternResource extends BaseResource {
   id: number;
   userId: number | string;
-  weeklyCompletionRate: number;
-  currentStreak: number;
-  consecutiveMisses: number;
+  weeklyCompletionRate?: number;
+  streak?: number;
   /** Raw string value of {@link BehaviorPatternType}. */
-  patternType: string;
-  analyzedAt: string;
+  patternType?: string;
+  detectedAt?: string;
 }
 
 /** Envelope for the `/eating-behavior-patterns` collection endpoint. */

@@ -5,12 +5,12 @@
       {{ 'recommendations.log_dialog_title' | translate }}
     </h2>
     <p class="dialog-subtitle">
-      {{ 'recommendations.log_dialog_subtitle' | translate: { name: card().name } }}
+      {{ 'recommendations.log_dialog_subtitle' | translate: { name: getCardName() } }}
     </p>
 
     <!-- Card summary -->
     <div class="card-info">
-      <span class="card-name">{{ card().name }}</span>
+      <span class="card-name">{{ getCardName() }}</span>
       <span class="card-desc">{{ card().description }}</span>
     </div>
 

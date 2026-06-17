@@ -111,6 +111,28 @@
     }
 
     <!-- ════════════════════════════════════════════════════════════
+         CAMERA — plate capture
+    ═══════════════════════════════════════════════════════════════ -->
+    @if (plateCameraActive()) {
+      <app-camera-capture
+        [title]="'smart_scan.camera_title_plate' | translate"
+        (captured)="onPlateCaptured($event)"
+        (cancelled)="onPlateCameraCancel()">
+      </app-camera-capture>
+    }
+
+    <!-- ════════════════════════════════════════════════════════════
+         CAMERA — menu capture
+    ═══════════════════════════════════════════════════════════════ -->
+    @if (menuCameraActive()) {
+      <app-camera-capture
+        [title]="'smart_scan.camera_title_menu' | translate"
+        (captured)="onMenuCaptured($event)"
+        (cancelled)="onMenuCameraCancel()">
+      </app-camera-capture>
+    }
+
+    <!-- ════════════════════════════════════════════════════════════
          ANALYZING — plate scan spinner
     ═══════════════════════════════════════════════════════════════ -->
     @if (plateScanStore.plateView() === 'analyzing') {
@@ -145,7 +167,7 @@
           @for (item of plateScanStore.scanResult()!.detectedItems; track item.id) {
             <li class="detected-item">
               <span class="detected-item__name">
-                {{ item.nameKey ? ('food_items.' + item.nameKey | translate) : item.name }}
+                {{ item.nameKey ? ('food_items.' + item.nameKey | translate) : item.getLocalizedName(currentLang()) }}
               </span>
               <label class="detected-item__qty">
                 <input type="number"
@@ -271,6 +293,22 @@
     }
 
     <!-- ════════════════════════════════════════════════════════════
+         MENU EMPTY — no dishes detected
+    ═══════════════════════════════════════════════════════════════ -->
+    @if (restaurantMenuStore.menuView() === 'empty') {
+      <div class="invalid-state">
+        <span class="material-icons invalid-state__icon">search_off</span>
+        <h2 class="invalid-state__title">{{ 'smart_scan.menu_empty_title' | translate }}</h2>
+        <p class="invalid-state__desc">{{ 'smart_scan.menu_empty_desc' | translate }}</p>
+        <div class="invalid-state__actions">
+          <button mat-flat-button class="btn-teal" (click)="onCancel()">
+            {{ 'smart_scan.try_again' | translate }}
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- ════════════════════════════════════════════════════════════
          MENU RESULT — CompatibleDishesRanked
     ═══════════════════════════════════════════════════════════════ -->
     @if (restaurantMenuStore.menuView() === 'result' && restaurantMenuStore.menuAnalysis()) {
@@ -288,12 +326,12 @@
                 {{ 'smart_scan.best_match' | translate }}
               </span>
               <mat-card-title>
-                {{ best.nameKey ? ('menu_dishes.' + best.nameKey | translate) : best.name }}
+                {{ best.getLocalizedName(currentLang()) }}
               </mat-card-title>
             </mat-card-header>
             <mat-card-content>
               <p class="best-dish__justification">
-                {{ best.justificationKey ? ('menu_dishes.' + best.justificationKey | translate) : best.justification }}
+                {{ best.getLocalizedJustification(currentLang()) }}
               </p>
               <div class="best-dish__macros">
                 <span class="macro-chip">{{ best.calories }} kcal</span>
@@ -348,7 +386,7 @@
                 <span class="alternative-item__rank">#{{ dish.rank }}</span>
                 <div class="alternative-item__info">
                   <span class="alternative-item__name">
-                    {{ dish.nameKey ? ('menu_dishes.' + dish.nameKey | translate) : dish.name }}
+                    {{ dish.getLocalizedName(currentLang()) }}
                   </span>
                   <span class="alternative-item__meta">
                     {{ dish.calories }} kcal · P{{ dish.protein }}g ·
@@ -396,7 +434,7 @@
               @for (dish of restaurantMenuStore.menuAnalysis()!.restrictedDishes; track dish.name) {
                 <li class="restricted-item">
                   <span class="restricted-item__name">
-                    {{ dish.nameKey ? ('menu_dishes.' + dish.nameKey | translate) : dish.name }}
+                    {{ dish.getLocalizedName(currentLang()) }}
                   </span>
                   <span class="restricted-item__reason">
                     {{ 'smart_scan.contains' | translate }}

@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { filter } from 'rxjs';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { filter, map, startWith } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,13 +11,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatChipsModule } from '@angular/material/chips';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { SubscriptionPlan } from '../../../../iam/domain/model/subscription-plan.enum';
 import { MealType } from '../../../../nutrition-tracking/domain/model/meal-type.enum';
 import { MacroKey, PlateScanStore } from '../../../../nutrition-tracking/application/plate-scan.store';
 import { RestaurantMenuStore } from '../../../application/restaurant-menu.store';
 import { RankedDish } from '../../../domain/model/menu-analysis.entity';
+import { CameraCapture } from '../../../../shared/presentation/components/camera-capture/camera-capture';
 
 /**
  * Smart Scan view — route `/smart-scan`.
@@ -45,15 +46,25 @@ import { RankedDish } from '../../../domain/model/menu-analysis.entity';
     MatFormFieldModule,
     MatExpansionModule,
     MatChipsModule,
+    CameraCapture,
   ],
   templateUrl: './restaurant-menu.html',
   styleUrl: './restaurant-menu.css',
 })
 export class RestaurantMenu implements OnInit {
-  protected iamStore           = inject(IamStore);
-  protected plateScanStore     = inject(PlateScanStore);
+  protected iamStore            = inject(IamStore);
+  protected plateScanStore      = inject(PlateScanStore);
   protected restaurantMenuStore = inject(RestaurantMenuStore);
-  private   router             = inject(Router);
+  private   router              = inject(Router);
+  private   _translate          = inject(TranslateService);
+
+  protected readonly currentLang = toSignal(
+    this._translate.onLangChange.pipe(
+      map(e => e.lang),
+      startWith(this._translate.currentLang ?? 'en'),
+    ),
+    { initialValue: this._translate.currentLang ?? 'en' },
+  );
 
   protected readonly MealType = MealType;
 
@@ -62,6 +73,8 @@ export class RestaurantMenu implements OnInit {
   protected plateDragActive      = signal(false);
   protected menuDragActive       = signal(false);
   protected quantityErrors       = signal<Map<number, string>>(new Map());
+  protected plateCameraActive    = signal(false);
+  protected menuCameraActive     = signal(false);
 
   protected isBasic = computed(() => {
     const user = this.iamStore.currentUser();
@@ -73,10 +86,12 @@ export class RestaurantMenu implements OnInit {
     return user?.plan === SubscriptionPlan.PREMIUM;
   });
 
-  /** True when neither scan flow is active — renders the landing card grid. */
+  /** True when neither scan flow nor camera capture is active — renders the landing card grid. */
   protected isLanding = computed(() =>
     this.plateScanStore.plateView() === 'idle' &&
-    this.restaurantMenuStore.menuView() === 'idle',
+    this.restaurantMenuStore.menuView() === 'idle' &&
+    !this.plateCameraActive() &&
+    !this.menuCameraActive(),
   );
 
   protected isLoading = computed(() =>
@@ -164,8 +179,17 @@ export class RestaurantMenu implements OnInit {
     await this._readAndScanPlate(file);
   }
 
-  async onTakePhotoPlate(): Promise<void> {
-    await this.plateScanStore.analyzePlatePhoto('demo-plate-base64');
+  onTakePhotoPlate(): void {
+    this.plateCameraActive.set(true);
+  }
+
+  async onPlateCaptured(imageBase64: string): Promise<void> {
+    this.plateCameraActive.set(false);
+    await this.plateScanStore.analyzePlatePhoto(imageBase64);
+  }
+
+  onPlateCameraCancel(): void {
+    this.plateCameraActive.set(false);
   }
 
   async onUploadMenu(event: Event): Promise<void> {
@@ -174,8 +198,17 @@ export class RestaurantMenu implements OnInit {
     await this._readAndScanMenu(file);
   }
 
-  async onTakePhotoMenu(): Promise<void> {
-    await this.restaurantMenuStore.analyzeMenuPhoto('demo-menu-base64');
+  onTakePhotoMenu(): void {
+    this.menuCameraActive.set(true);
+  }
+
+  async onMenuCaptured(imageBase64: string): Promise<void> {
+    this.menuCameraActive.set(false);
+    await this.restaurantMenuStore.analyzeMenuPhoto(imageBase64);
+  }
+
+  onMenuCameraCancel(): void {
+    this.menuCameraActive.set(false);
   }
 
   // ─── Plate result actions ─────────────────────────────────────────────────
@@ -244,6 +277,8 @@ export class RestaurantMenu implements OnInit {
   private _resetAll(): void {
     this.plateScanStore.reset();
     this.restaurantMenuStore.reset();
+    this.plateCameraActive.set(false);
+    this.menuCameraActive.set(false);
   }
 
   private _defaultMealType(): MealType {

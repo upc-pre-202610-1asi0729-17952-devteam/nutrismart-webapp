@@ -5,12 +5,11 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment.development';
 import { BillingRecord } from '../domain/model/billing-record.entity';
 import { BillingHistoryAssembler } from './billing-history-assembler';
-import { BillingHistoryResource } from './billing-history-resource';
+import { BillingHistoryResource, NewBillingRecord } from './billing-history-resource';
+
+export type { NewBillingRecord };
 
 const assembler = new BillingHistoryAssembler();
-
-/** Payload for creating a new billing record (id is server-assigned). */
-export type NewBillingRecord = Omit<BillingHistoryResource, 'id'>;
 
 /**
  * HTTP façade for the `/billing-history` REST resource.
@@ -38,7 +37,7 @@ export class BillingHistoryApi {
         map(resources =>
           resources
             .map(r => assembler.toEntityFromResource(r))
-            .sort((a, b) => b.date.localeCompare(a.date)),
+            .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? '')),
         ),
         catchError(() => of([])),
       );

@@ -6,7 +6,7 @@
     @if (isSkipped()) {
       <span class="badge badge--skipped" role="status">{{ 'nutrition.meal_skipped' | translate }}</span>
     } @else {
-      <span class="meal-kcal">{{ totalCalories() }} {{ 'nutrition.kcal' | translate }}</span>
+      <span class="meal-kcal">{{ totalCalories() | number:'1.0-0' }} {{ 'nutrition.kcal' | translate }}</span>
     }
   </div>
 
@@ -24,7 +24,7 @@
             <span class="record-qty">{{ record.quantity }} {{ 'units.' + record.unit | translate }}</span>
           </div>
           <div class="record-macros">
-            <span class="record-kcal">{{ record.calories }} {{ 'nutrition.kcal' | translate }}</span>
+            <span class="record-kcal">{{ record.calories | number:'1.0-2' }} {{ 'nutrition.kcal' | translate }}</span>
             <span class="record-detail">{{ record.macroSummary }}</span>
           </div>
           <button class="remove-btn"

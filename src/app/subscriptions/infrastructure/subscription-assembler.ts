@@ -29,8 +29,8 @@ export class SubscriptionAssembler {
       userId:        resource.userId,
       plan:          resource.plan as SubscriptionPlan,
       status:        STATUS_MAP[resource.status] ?? 'expired',
-      startDate:     resource.startDate,
-      endDate:       resource.nextRenewal,
+      startDate:     resource.billingCycleStart,
+      endDate:       resource.billingCycleEnd,
       pricePerMonth: resource.pricePerMonth,
     });
   }
@@ -53,8 +53,8 @@ export class SubscriptionAssembler {
       userId:      String(entity.userId),
       plan:        entity.plan,
       status:      STATUS_REVERSE[entity.status],
-      startDate:   entity.startDate,
-      nextRenewal: entity.endDate,
+      billingCycleStart: entity.startDate,
+      billingCycleEnd:   entity.endDate,
     };
   }
 }

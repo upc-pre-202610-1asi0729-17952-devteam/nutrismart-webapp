@@ -4,6 +4,7 @@ import { DietaryRestriction } from '../../../iam/domain/model/dietary-restrictio
 export interface RankedDishProps {
   rank: number;
   name: string;
+  nameEs: string | null;
   nameKey: string | null;
   calories: number;
   protein: number;
@@ -11,6 +12,7 @@ export interface RankedDishProps {
   fat: number;
   compatibilityScore: number;
   justification: string;
+  justificationEs: string | null;
   justificationKey: string | null;
   conflictingRestrictions?: DietaryRestriction[];
 }
@@ -18,6 +20,7 @@ export interface RankedDishProps {
 export class RankedDish {
   readonly rank: number;
   readonly name: string;
+  readonly nameEs: string | null;
   readonly nameKey: string | null;
   readonly calories: number;
   readonly protein: number;
@@ -25,21 +28,32 @@ export class RankedDish {
   readonly fat: number;
   readonly compatibilityScore: number;
   readonly justification: string;
+  readonly justificationEs: string | null;
   readonly justificationKey: string | null;
   readonly conflictingRestrictions: DietaryRestriction[];
 
   constructor(props: RankedDishProps) {
-    this.rank                   = props.rank;
-    this.name                   = props.name;
-    this.nameKey                = props.nameKey;
-    this.calories               = props.calories;
-    this.protein                = props.protein;
-    this.carbs                  = props.carbs;
-    this.fat                    = props.fat;
-    this.compatibilityScore     = props.compatibilityScore;
-    this.justification          = props.justification;
-    this.justificationKey       = props.justificationKey;
+    this.rank                    = props.rank;
+    this.name                    = props.name;
+    this.nameEs                  = props.nameEs ?? null;
+    this.nameKey                 = props.nameKey;
+    this.calories                = props.calories;
+    this.protein                 = props.protein;
+    this.carbs                   = props.carbs;
+    this.fat                     = props.fat;
+    this.compatibilityScore      = props.compatibilityScore;
+    this.justification           = props.justification;
+    this.justificationEs         = props.justificationEs ?? null;
+    this.justificationKey        = props.justificationKey;
     this.conflictingRestrictions = [...(props.conflictingRestrictions ?? [])];
+  }
+
+  getLocalizedName(lang: string): string {
+    return (lang === 'es' && this.nameEs) ? this.nameEs : this.name;
+  }
+
+  getLocalizedJustification(lang: string): string {
+    return (lang === 'es' && this.justificationEs) ? this.justificationEs : this.justification;
   }
 
   formattedScore(): string {
@@ -53,19 +67,26 @@ export class RankedDish {
 
 export interface RestrictedDishProps {
   name: string;
+  nameEs: string | null;
   nameKey: string | null;
   restriction: DietaryRestriction;
 }
 
 export class RestrictedDish {
   readonly name: string;
+  readonly nameEs: string | null;
   readonly nameKey: string | null;
   readonly restriction: DietaryRestriction;
 
   constructor(props: RestrictedDishProps) {
     this.name        = props.name;
+    this.nameEs      = props.nameEs ?? null;
     this.nameKey     = props.nameKey;
     this.restriction = props.restriction;
+  }
+
+  getLocalizedName(lang: string): string {
+    return (lang === 'es' && this.nameEs) ? this.nameEs : this.name;
   }
 }
 
@@ -139,7 +160,7 @@ export class MenuAnalysis implements BaseEntity {
     for (const dish of this._rankedDishes) {
       const conflict = dish.firstConflict(activeRestrictions);
       if (conflict) {
-        restricted.push(new RestrictedDish({ name: dish.name, nameKey: dish.nameKey, restriction: conflict }));
+        restricted.push(new RestrictedDish({ name: dish.name, nameEs: dish.nameEs, nameKey: dish.nameKey, restriction: conflict }));
       } else {
         compatible.push(dish);
       }

@@ -1,7 +1,9 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { LanguageSwitcher } from '../../../../shared/presentation/components/language-switcher/language-switcher';
 import { DecimalPipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { startWith } from 'rxjs';
@@ -40,14 +42,15 @@ function expiryValidator(control: AbstractControl): ValidationErrors | null {
 @Component({
   selector: 'app-payment-gateway',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslatePipe, DecimalPipe],
+  imports: [ReactiveFormsModule, TranslatePipe, DecimalPipe, LanguageSwitcher],
   templateUrl: './payment-gateway.html',
   styleUrl: './payment-gateway.css',
 })
 export class PaymentGateway implements OnInit {
-  private readonly fb     = inject(FormBuilder);
-  private readonly store  = inject(PaymentStore);
-  private readonly router = inject(Router);
+  private readonly fb       = inject(FormBuilder);
+  private readonly store    = inject(PaymentStore);
+  private readonly router   = inject(Router);
+  private readonly location = inject(Location);
 
   protected readonly selectedPlan  = this.store.selectedPlan;
   protected readonly selectedPrice = this.store.selectedPrice;
@@ -99,8 +102,12 @@ export class PaymentGateway implements OnInit {
       return;
     }
     if (this.store.paymentMethod()) {
-      this.router.navigate(['/subscription/checkout']);
+      this.router.navigate(['/subscription/checkout'], { replaceUrl: true });
     }
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
   /**

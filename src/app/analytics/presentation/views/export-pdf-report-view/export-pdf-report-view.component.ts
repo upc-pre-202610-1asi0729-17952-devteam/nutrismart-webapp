@@ -9,6 +9,11 @@ import { TranslateModule } from '@ngx-translate/core';
 export interface ExportPdfRequest {
   fromDate: string;
   toDate: string;
+  includeDaily: boolean;
+  includeMacros: boolean;
+  includeWeight: boolean;
+  includeAdherence: boolean;
+  includeActivity: boolean;
 }
 
 @Component({
@@ -36,11 +41,11 @@ export class ExportPdfReportViewComponent {
   toDate: Date | null = null;
 
   readonly reportOptions = [
-    { labelKey: 'analytics.export_option_daily',    selected: true },
-    { labelKey: 'analytics.export_option_macros',   selected: true },
-    { labelKey: 'analytics.export_option_weight',   selected: true },
-    { labelKey: 'analytics.export_option_adherence',selected: true },
-    { labelKey: 'analytics.export_option_activity', selected: true },
+    { labelKey: 'analytics.export_option_daily',     key: 'includeDaily',     selected: true },
+    { labelKey: 'analytics.export_option_macros',    key: 'includeMacros',    selected: true },
+    { labelKey: 'analytics.export_option_weight',    key: 'includeWeight',    selected: true },
+    { labelKey: 'analytics.export_option_adherence', key: 'includeAdherence', selected: true },
+    { labelKey: 'analytics.export_option_activity',  key: 'includeActivity',  selected: true },
   ];
 
   get isGenerateButtonDisabled(): boolean {
@@ -49,9 +54,15 @@ export class ExportPdfReportViewComponent {
 
   onGeneratePdf(): void {
     if (!this.fromDate || !this.toDate) return;
+    const opts = Object.fromEntries(this.reportOptions.map(o => [o.key, o.selected])) as Record<string, boolean>;
     this.exportRequest.emit({
-      fromDate: this.fromDate.toISOString().split('T')[0],
-      toDate: this.toDate.toISOString().split('T')[0],
+      fromDate:        this.fromDate.toISOString().split('T')[0],
+      toDate:          this.toDate.toISOString().split('T')[0],
+      includeDaily:     opts['includeDaily'],
+      includeMacros:    opts['includeMacros'],
+      includeWeight:    opts['includeWeight'],
+      includeAdherence: opts['includeAdherence'],
+      includeActivity:  opts['includeActivity'],
     });
   }
 

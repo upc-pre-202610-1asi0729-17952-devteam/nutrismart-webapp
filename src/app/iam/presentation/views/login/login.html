@@ -5,7 +5,9 @@
 <div class="auth-container">
   <div class="auth-card">
     <div class="auth-logo">
-      <img src="/logo.png" alt="NutriSmart" width="48" height="48" />
+      <div class="logo-circle">
+        <img src="/favicon.svg" alt="NutriSmart" width="32" height="32" />
+      </div>
       <span class="auth-brand">NutriSmart</span>
     </div>
 
@@ -51,8 +53,8 @@
             [placeholder]="'auth.password' | translate"
             autocomplete="current-password"
           />
-          <button type="button" class="eye-toggle" (click)="togglePassword()" aria-label="Toggle password visibility">
-            {{ showPassword() ? 'Hide' : 'Show' }}
+          <button type="button" class="eye-toggle" (click)="togglePassword()" [attr.aria-label]="(showPassword() ? 'auth.hide_password' : 'auth.show_password') | translate">
+            {{ (showPassword() ? 'auth.hide_password' : 'auth.show_password') | translate }}
           </button>
         </div>
         @if (form.get('password')?.invalid && form.get('password')?.touched) {

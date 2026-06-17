@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -9,7 +9,8 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { CityLookupApi } from '../../../../shared/infrastructure/city-lookup-api';
+import { CityLocation, GeocodingService } from '../../../../shared/infrastructure/geocoding.service';
+import { GeolocationService } from '../../../../shared/infrastructure/geolocation.service';
 
 /**
  * Validates that the date entered corresponds to a person at least `minAge`
@@ -113,9 +114,10 @@ export class Onboarding implements OnInit {
   iamStore       = inject(IamStore);
   metabolicStore = inject(MetabolicStore);
 
-  private router        = inject(Router);
-  private fb            = inject(FormBuilder);
-  private cityLookupApi = inject(CityLookupApi);
+  private router       = inject(Router);
+  private fb           = inject(FormBuilder);
+  private geolocation  = inject(GeolocationService);
+  private geocoding    = inject(GeocodingService);
 
   /** Expose enum to template. */
   readonly UserGoal = UserGoal;
@@ -151,30 +153,21 @@ export class Onboarding implements OnInit {
 
   // ─── Step 1 state ─────────────────────────────────────────────────────────
 
-  selectedActivity    = signal<ActivityLevel>(ActivityLevel.MODERATE);
-  availableCities     = signal<string[]>([]);
-  citiesLoading       = signal(true);
-  citySearchQuery     = signal('');
-  showCitySuggestions = signal(false);
+  selectedActivity      = signal<ActivityLevel>(ActivityLevel.MODERATE);
+  citiesLoading         = signal(true);
+  citySearchQuery       = signal('');
+  showCitySuggestions   = signal(false);
+  citySuggestions       = signal<CityLocation[]>([]);
+  selectedCityCountry   = signal<string>('');
 
-  readonly filteredCities = computed(() => {
-    const q = this.citySearchQuery().toLowerCase().trim();
-    if (!q) return this.availableCities();
-    return this.availableCities().filter(c => c.toLowerCase().includes(q));
-  });
-
-  private readonly cityValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-    const cities = this.availableCities();
-    if (cities.length === 0) return null;
-    return cities.includes(control.value) ? null : { invalidCity: true };
-  };
+  private citySearchTimer: ReturnType<typeof setTimeout> | null = null;
 
   bodyForm = this.fb.group({
     birthday:      ['', [Validators.required, minAgeValidator(13)]],
     biologicalSex: ['', Validators.required],
     weight:        [null as number | null, [Validators.required, Validators.min(30), Validators.max(300)]],
     height:        [null as number | null, [Validators.required, Validators.min(100), Validators.max(250)]],
-    homeCity:      ['', [Validators.required, this.cityValidator]],
+    homeCity:      ['', Validators.required],
   });
 
   // ─── Step 2 state ─────────────────────────────────────────────────────────
@@ -269,9 +262,13 @@ export class Onboarding implements OnInit {
 
   async ngOnInit(): Promise<void> {
     try {
-      const cities = await firstValueFrom(this.cityLookupApi.getKnownCities());
-      this.availableCities.set(cities);
-      this.bodyForm.get('homeCity')!.updateValueAndValidity();
+      const coords   = await this.geolocation.getCurrentPosition();
+      const location = await firstValueFrom(this.geocoding.reverseGeocode(coords.lat, coords.lon));
+      this.citySearchQuery.set(`${location.city}, ${location.country}`);
+      this.selectedCityCountry.set(location.country);
+      this.bodyForm.get('homeCity')!.setValue(location.city);
+    } catch {
+      // No pre-fill if geolocation is denied or unavailable
     } finally {
       this.citiesLoading.set(false);
     }
@@ -341,11 +338,28 @@ export class Onboarding implements OnInit {
     const value = (event.target as HTMLInputElement).value;
     this.citySearchQuery.set(value);
     this.bodyForm.get('homeCity')!.setValue('');
+    this.selectedCityCountry.set('');
     this.showCitySuggestions.set(true);
+
+    if (this.citySearchTimer !== null) clearTimeout(this.citySearchTimer);
+    if (value.trim().length < 2) {
+      this.citySuggestions.set([]);
+      return;
+    }
+
+    this.citySearchTimer = setTimeout(async () => {
+      try {
+        const results = await firstValueFrom(this.geocoding.searchCities(value.trim()));
+        this.citySuggestions.set(results);
+      } catch {
+        this.citySuggestions.set([]);
+      }
+    }, 350);
   }
 
-  selectCity(city: string): void {
-    this.citySearchQuery.set(city);
+  selectCity(city: string, country: string): void {
+    this.citySearchQuery.set(`${city}, ${country}`);
+    this.selectedCityCountry.set(country);
     this.bodyForm.get('homeCity')!.setValue(city);
     this.bodyForm.get('homeCity')!.markAsTouched();
     this.showCitySuggestions.set(false);

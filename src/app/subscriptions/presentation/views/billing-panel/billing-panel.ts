@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { SubscriptionsStore } from '../../../application/subscriptions.store';
 import { PaymentStore } from '../../../application/payment.store';
 import { IamStore } from '../../../../iam/application/iam.store';
@@ -17,7 +17,7 @@ import { BillingRecord } from '../../../domain/model/billing-record.entity';
 @Component({
   selector: 'app-billing-panel',
   standalone: true,
-  imports: [TranslatePipe, DecimalPipe],
+  imports: [TranslatePipe, DecimalPipe, DatePipe],
   templateUrl: './billing-panel.html',
   styleUrl: './billing-panel.css',
 })
@@ -48,7 +48,7 @@ export class BillingPanel implements OnInit {
    */
   changePlan(): void {
     this.payStore.clearFlow();
-    this.router.navigate(['/subscription']);
+    this.router.navigate(['/subscription'], { state: { fromProfile: true } });
   }
 
   /**

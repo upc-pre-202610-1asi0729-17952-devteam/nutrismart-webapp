@@ -47,12 +47,12 @@
 }
 
 .gf-icon {
-  font-size: 26px;
+  font-size: var(--ns-text-2xl);
   color: #4285F4;
 }
 
 .gf-badge {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 700;
   color: #4285F4;
   background: #e8f0fe;
@@ -64,7 +64,7 @@
 
 /* ── Title & desc ── */
 .gf-title {
-  font-size: 17px;
+  font-size: 1.0625rem;
   font-weight: 700;
   color: var(--nutrismart-text-dark);
   margin: 0;
@@ -72,7 +72,7 @@
 }
 
 .gf-desc {
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: var(--nutrismart-text-mid);
   line-height: 1.6;
   margin: 0;
@@ -98,7 +98,7 @@
 }
 
 .gf-feature-icon {
-  font-size: 16px;
+  font-size: var(--ns-text-md);
   color: var(--nutrismart-primary);
   flex-shrink: 0;
 }
@@ -115,7 +115,7 @@
   color: white;
   border: none;
   border-radius: 10px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 700;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
@@ -130,4 +130,4 @@
 
 .gf-btn:active { transform: translateY(0); }
 
-.gf-btn-icon { font-size: 17px; }
+.gf-btn-icon { font-size: 1.0625rem; }

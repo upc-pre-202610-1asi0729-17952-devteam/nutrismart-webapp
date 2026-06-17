@@ -7,8 +7,8 @@
       <p class="page-subtitle">{{ 'body_progress.page_subtitle' | translate }}</p>
     </div>
     <div class="header-actions">
-      <button class="btn btn--primary" [disabled]="store.loading()" (click)="onOpenLogModal()">
-        {{ (store.hasLoggedToday() ? 'body_progress.update_weight_btn' : 'body_progress.log_weight_btn') | translate }}
+      <button class="btn btn--primary" [disabled]="store.hasLoggedToday() || store.loading()" (click)="onOpenLogModal()">
+        {{ 'body_progress.log_weight_btn' | translate }}
       </button>
     </div>
   </header>
@@ -28,8 +28,8 @@
       <span class="stale-banner-text">
         {{ 'body_progress.stale_banner' | translate:{ date: formattedUpdatedLabel() } }}
       </span>
-      <button class="btn btn--primary btn--sm" (click)="onOpenLogModal()">
-        {{ (store.hasLoggedToday() ? 'body_progress.update_weight_btn' : 'body_progress.log_now') | translate }}
+      <button class="btn btn--primary btn--sm" [disabled]="store.hasLoggedToday()" (click)="onOpenLogModal()">
+        {{ 'body_progress.log_now' | translate }}
       </button>
     </div>
   }
@@ -49,7 +49,17 @@
 
     <!-- Current Weight -->
     <div class="metric-card" [class.metric-card--stale]="store.isStale()">
-      <div class="metric-card-label">{{ 'body_progress.metric_weight' | translate }}</div>
+      <div class="tooltip-trigger">
+        <span class="metric-card-label">{{ 'body_progress.metric_weight' | translate }}</span>
+        <button class="icon-btn" type="button"
+                [attr.aria-label]="'body_progress.aria_more_info' | translate"
+                (click)="toggleTooltip('weight')">
+          <span class="material-icons">info_outline</span>
+        </button>
+      </div>
+      @if (activeTooltip() === 'weight') {
+        <p class="metric-tooltip">{{ 'body_progress.tooltip_weight' | translate }}</p>
+      }
       <div class="metric-card-value">
         {{ store.currentMetric()?.weightKg | number:'1.1-1' }}
         <span class="metric-card-unit">kg</span>
@@ -98,8 +108,11 @@
           <p class="metric-tooltip">{{ 'body_progress.tooltip_body_fat' | translate }}</p>
         }
         <div class="metric-card-value">
-          {{ store.composition()?.bodyFatPercent() | number:'1.1-1' }}
-          <span class="metric-card-unit">%</span>
+          @if (store.composition()?.bodyFatPercent()) {
+            {{ store.composition()!.bodyFatPercent() | number:'1.1-1' }}<span class="metric-card-unit">%</span>
+          } @else {
+            <span class="metric-card-value--empty">--</span>
+          }
         </div>
         <div class="metric-card-sub">{{ 'body_progress.us_navy' | translate }}</div>
       </div>
@@ -139,8 +152,11 @@
           <p class="metric-tooltip">{{ 'body_progress.tooltip_lean_mass' | translate }}</p>
         }
         <div class="metric-card-value">
-          {{ store.composition()?.leanMassKg() | number:'1.1-1' }}
-          <span class="metric-card-unit">kg</span>
+          @if (store.composition()?.bodyFatPercent()) {
+            {{ store.composition()!.leanMassKg() | number:'1.1-1' }}<span class="metric-card-unit">kg</span>
+          } @else {
+            <span class="metric-card-value--empty">--</span>
+          }
         </div>
         <div class="metric-card-sub">{{ 'body_progress.lean_mass_desc' | translate }}</div>
       </div>
@@ -364,25 +380,36 @@
               <h2 class="composition-title">{{ 'body_progress.composition_title' | translate }}</h2>
               <p class="composition-subtitle">{{ 'body_progress.composition_subtitle' | translate }}</p>
             </div>
-            <button class="link-btn" (click)="onOpenCompositionModal()">
-              {{ 'body_progress.update_measurements' | translate }}
-            </button>
           </div>
           <div class="composition-grid">
             <div class="composition-item">
-              <span class="composition-item-label">{{ 'body_progress.lean_mass' | translate }}</span>
-              <strong class="composition-item-value">
-                {{ store.composition() ? (store.composition()!.leanMassKg() | number:'1.1-1') + ' kg' : '--' }}
-              </strong>
-            </div>
-            <div class="composition-item">
-              <span class="composition-item-label">{{ 'body_progress.fat_mass' | translate }}</span>
+              <div class="tooltip-trigger">
+                <span class="composition-item-label">{{ 'body_progress.fat_mass' | translate }}</span>
+                <button class="icon-btn" type="button"
+                        [attr.aria-label]="'body_progress.aria_more_info' | translate"
+                        (click)="toggleTooltip('fat_mass')">
+                  <span class="material-icons">info_outline</span>
+                </button>
+              </div>
+              @if (activeTooltip() === 'fat_mass') {
+                <p class="metric-tooltip">{{ 'body_progress.tooltip_fat_mass' | translate }}</p>
+              }
               <strong class="composition-item-value">
                 {{ store.composition() ? (store.composition()!.fatMassKg() | number:'1.1-1') + ' kg' : '--' }}
               </strong>
             </div>
             <div class="composition-item">
-              <span class="composition-item-label">{{ 'body_progress.fat_percent' | translate }}</span>
+              <div class="tooltip-trigger">
+                <span class="composition-item-label">{{ 'body_progress.fat_percent' | translate }}</span>
+                <button class="icon-btn" type="button"
+                        [attr.aria-label]="'body_progress.aria_more_info' | translate"
+                        (click)="toggleTooltip('fat_percent_comp')">
+                  <span class="material-icons">info_outline</span>
+                </button>
+              </div>
+              @if (activeTooltip() === 'fat_percent_comp') {
+                <p class="metric-tooltip">{{ 'body_progress.tooltip_body_fat' | translate }}</p>
+              }
               <strong class="composition-item-value">
                 {{ store.composition() ? (store.composition()!.bodyFatPercent() | number:'1.1-1') + '%' : '--' }}
               </strong>

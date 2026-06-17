@@ -9,7 +9,7 @@
 .page-header { margin-bottom: 2rem; }
 
 .page-title {
-  font-size: 26px;
+  font-size: var(--ns-text-2xl);
   font-weight: 700;
   color: var(--nutrismart-text-dark);
   letter-spacing: -0.3px;
@@ -17,7 +17,7 @@
 }
 
 .page-subtitle {
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: var(--nutrismart-text-light);
   margin: 0;
 }
@@ -50,11 +50,38 @@
   }
 }
 
+@media (max-width: 720px) {
+  .scan-cards-grid { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 640px) {
   .smart-scan-page {
     padding: 68px 16px 16px;
   }
-  .scan-cards-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .meal-type-field { width: 100%; }
+
+  .impact-item__macro { min-width: 64px; }
+
+  .detected-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "name   remove"
+      "qty    kcal"
+      "macros macros";
+    row-gap: 0.35rem;
+  }
+  .detected-item__name   { grid-area: name;   min-width: 0; }
+  .detected-item__qty    { grid-area: qty; }
+  .detected-item__kcal   { grid-area: kcal;   min-width: 0; text-align: right; }
+  .detected-item__macros { grid-area: macros; min-width: 0; }
+  .detected-item__remove { grid-area: remove; justify-self: end; }
+
+  .alternative-item { flex-wrap: wrap; }
+  .alternative-item__log { width: 100%; margin-top: 0.25rem; }
 }
 
 .scan-card {

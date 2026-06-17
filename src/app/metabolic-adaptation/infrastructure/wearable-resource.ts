@@ -10,9 +10,9 @@ export interface WearableConnectionResource extends BaseResource {
 
 export interface ActivityLogResource extends BaseResource {
   userId: number | string;
-  activity_type: string;
-  duration_minutes: number;
-  calories_burned: number;
+  activityType: string;
+  durationMinutes: number;
+  caloriesBurned: number;
   timestamp: string;
 }
 

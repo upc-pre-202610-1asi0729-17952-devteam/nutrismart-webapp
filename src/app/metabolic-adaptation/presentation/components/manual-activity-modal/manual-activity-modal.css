@@ -49,12 +49,12 @@
 }
 
 .modal-header-icon .material-icons {
-  font-size: 20px;
+  font-size: 1.25rem;
   color: var(--nutrismart-primary);
 }
 
 .modal-title {
-  font-size: 16px;
+  font-size: var(--ns-text-md);
   font-weight: 700;
   margin: 0;
   color: var(--nutrismart-text-dark);
@@ -76,7 +76,7 @@
   flex-shrink: 0;
 }
 
-.modal-close .material-icons { font-size: 18px; }
+.modal-close .material-icons { font-size: var(--ns-text-lg); }
 .modal-close:hover { background: #fee2e2; color: #ef4444; }
 
 /* ── Form body ── */
@@ -89,7 +89,7 @@
 }
 
 .form-label {
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   font-weight: 600;
   color: var(--nutrismart-text-mid);
   letter-spacing: 0.1px;
@@ -105,7 +105,7 @@
 .form-select-icon {
   position: absolute;
   left: 12px;
-  font-size: 18px;
+  font-size: var(--ns-text-lg);
   color: var(--nutrismart-text-light);
   pointer-events: none;
   z-index: 1;
@@ -114,7 +114,7 @@
 .form-select-arrow {
   position: absolute;
   right: 12px;
-  font-size: 18px;
+  font-size: var(--ns-text-lg);
   color: var(--nutrismart-text-light);
   pointer-events: none;
 }
@@ -125,7 +125,7 @@
   padding: 11px 40px 11px 40px;
   border-radius: 10px;
   border: 1.5px solid var(--nutrismart-border);
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-family: 'Poppins', sans-serif;
   color: var(--nutrismart-text-dark);
   background: var(--nutrismart-bg);
@@ -153,7 +153,7 @@
 .form-input-icon {
   position: absolute;
   left: 12px;
-  font-size: 18px;
+  font-size: var(--ns-text-lg);
   color: var(--nutrismart-text-light);
   pointer-events: none;
 }
@@ -163,7 +163,7 @@
   padding: 11px 50px 11px 40px;
   border: none;
   border-radius: 10px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-family: 'Poppins', sans-serif;
   color: var(--nutrismart-text-dark);
   background: transparent;
@@ -173,7 +173,7 @@
 .form-input-unit {
   position: absolute;
   right: 14px;
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   font-weight: 600;
   color: var(--nutrismart-text-light);
   pointer-events: none;
@@ -183,13 +183,13 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   color: #ef4444;
   margin: 0;
   font-weight: 500;
 }
 
-.form-error-icon { font-size: 14px; }
+.form-error-icon { font-size: var(--ns-text-base); }
 
 /* ── Calories preview ── */
 .cal-preview {
@@ -210,7 +210,7 @@
 }
 
 .cal-preview-label {
-  font-size: 10px;
+  font-size: var(--ns-text-xs);
   font-weight: 700;
   color: rgba(255,255,255,0.7);
   text-transform: uppercase;
@@ -218,7 +218,7 @@
 }
 
 .cal-preview-value {
-  font-size: 32px;
+  font-size: 2rem;
   font-weight: 700;
   color: white;
   letter-spacing: -1px;
@@ -226,7 +226,7 @@
 }
 
 .cal-preview-unit {
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 600;
   color: rgba(255,255,255,0.7);
 }
@@ -239,13 +239,13 @@
 }
 
 .cal-preview-flame {
-  font-size: 32px;
+  font-size: 2rem;
   color: #fbbf24;
   filter: drop-shadow(0 2px 6px rgba(251,191,36,0.5));
 }
 
 .cal-preview-meta {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: rgba(255,255,255,0.65);
   text-align: right;
 }
@@ -264,7 +264,7 @@
   color: var(--nutrismart-text-light);
 }
 
-.cal-placeholder-icon { font-size: 18px; }
+.cal-placeholder-icon { font-size: var(--ns-text-lg); }
 
 /* ── Actions ── */
 .modal-actions {
@@ -281,7 +281,7 @@
   color: var(--nutrismart-text-mid);
   border: 1.5px solid var(--nutrismart-border);
   border-radius: 10px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 600;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
@@ -299,7 +299,7 @@
   color: white;
   border: none;
   border-radius: 10px;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 700;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
@@ -314,10 +314,10 @@
   pointer-events: none;
 }
 
-.btn-save .material-icons { font-size: 16px; }
+.btn-save .material-icons { font-size: var(--ns-text-md); }
 
 .btn-loading-icon {
-  font-size: 16px;
+  font-size: var(--ns-text-md);
   animation: spin 1s linear infinite;
 }
 

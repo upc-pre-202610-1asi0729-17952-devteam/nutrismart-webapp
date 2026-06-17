@@ -15,7 +15,7 @@
 }
 
 .history-panel__title {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: var(--nutrismart-text-dark);
   margin: 0;
@@ -33,12 +33,12 @@
 }
 
 .history-panel__empty-icon {
-  font-size: 40px;
+  font-size: 2.5rem;
   opacity: 0.4;
 }
 
 .history-panel__empty-text {
-  font-size: 14px;
+  font-size: var(--ns-text-base);
   margin: 0;
 }
 
@@ -56,7 +56,7 @@
 .history-table__head th {
   padding: 10px 24px;
   text-align: left;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.6px;
@@ -124,7 +124,7 @@
   background: none;
   border: none;
   color: var(--nutrismart-primary, #2d9e8f);
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 600;
   cursor: pointer;
   padding: 6px 12px;
@@ -137,7 +137,7 @@
 }
 
 .see-all-btn__icon {
-  font-size: 16px;
+  font-size: var(--ns-text-md);
 }
 
 /* ── Pagination ── */
@@ -159,7 +159,7 @@
   border-radius: 8px;
   border: 1.5px solid var(--nutrismart-border, #e5e7eb);
   background: #fff;
-  font-size: 20px;
+  font-size: 1.25rem;
   line-height: 1;
   color: var(--nutrismart-text-dark);
   cursor: pointer;
@@ -177,7 +177,7 @@
 }
 
 .pagination-info {
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: var(--nutrismart-text-light);
   min-width: 120px;
   text-align: center;
@@ -191,7 +191,7 @@
 
   .history-table__head th {
     padding: 8px 12px;
-    font-size: 10px;
+    font-size: var(--ns-text-xs);
   }
 
   .history-table__row td {

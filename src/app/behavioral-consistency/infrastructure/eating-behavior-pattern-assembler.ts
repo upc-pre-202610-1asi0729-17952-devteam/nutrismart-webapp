@@ -24,11 +24,11 @@ export class EatingBehaviorPatternAssembler implements BaseAssembler<
     return new EatingBehaviorPattern({
       id:                   resource.id ?? undefined,
       userId:               resource.userId as number,
-      weeklyCompletionRate: resource.weeklyCompletionRate,
-      currentStreak:        resource.currentStreak,
-      consecutiveMisses:    resource.consecutiveMisses,
-      patternType:          resource.patternType as BehaviorPatternType,
-      analyzedAt:           resource.analyzedAt,
+      weeklyCompletionRate: 0,
+      currentStreak:        0,
+      consecutiveMisses:    0,
+      patternType:          (resource.patternType ?? BehaviorPatternType.IRREGULAR) as BehaviorPatternType,
+      analyzedAt:           resource.detectedAt ?? new Date().toISOString().slice(0, 10),
     });
   }
 
@@ -43,10 +43,9 @@ export class EatingBehaviorPatternAssembler implements BaseAssembler<
       id:                   entity.id,
       userId:               entity.userId,
       weeklyCompletionRate: entity.weeklyCompletionRate,
-      currentStreak:        entity.currentStreak,
-      consecutiveMisses:    entity.consecutiveMisses,
+      streak:               entity.currentStreak,
       patternType:          entity.patternType,
-      analyzedAt:           entity.analyzedAt,
+      detectedAt:           entity.analyzedAt,
     };
   }
 

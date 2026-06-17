@@ -31,8 +31,8 @@ export class BehavioralProgressAssembler implements BaseAssembler<
       adherenceStatus:  resource.adherenceStatus as AdherenceStatus,
       streak:           resource.streak,
       consecutiveMisses: resource.consecutiveMisses,
-      lastGoalMetDate:  resource.lastGoalMetDate,
-      goalMetDates:     [...(resource.goalMetDates ?? [])],
+      lastGoalMetDate:  resource.lastEvaluatedAt,
+      goalMetDates:     resource.goalMetDates ?? [],
     });
   }
 
@@ -45,13 +45,14 @@ export class BehavioralProgressAssembler implements BaseAssembler<
    */
   toResourceFromEntity(entity: BehavioralProgress): BehavioralProgressResource {
     return {
-      id: entity.id,
-      userId: entity.userId,
-      adherenceStatus: entity.adherenceStatus,
-      streak: entity.streak,
-      consecutiveMisses: entity.consecutiveMisses,
-      lastGoalMetDate: entity.lastGoalMetDate,
-      goalMetDates: entity.goalMetDates,
+      id:                   entity.id,
+      userId:               entity.userId,
+      adherenceStatus:      entity.adherenceStatus,
+      streak:               entity.streak,
+      consecutiveMisses:    entity.consecutiveMisses,
+      weeklyCompletionRate: entity.weeklyCompletionRate,
+      lastEvaluatedAt:      entity.lastGoalMetDate,
+      goalMetDates:         entity.goalMetDates,
     };
   }
 

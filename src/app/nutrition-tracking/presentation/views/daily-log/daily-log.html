@@ -80,11 +80,11 @@
           <span class="macro-label">{{ macro.label | translate }}</span>
           <div class="macro-value-row">
             <span class="macro-value" [class.macro-value--over]="macro.over">
-              {{ macro.value }}
+              {{ macro.value | number:'1.0-2' }}
             </span>
             <span class="macro-unit">{{ macro.unit }}</span>
           </div>
-          <span class="macro-target">/{{ macro.target }} {{ macro.unit }}</span>
+          <span class="macro-target">/{{ macro.target | number:'1.0-2' }} {{ macro.unit }}</span>
           <div class="macro-bar">
             <div class="macro-bar-fill"
                  [style.width.%]="macro.percent"
@@ -122,7 +122,8 @@
       <app-daily-balance-panel
         [consumed]="filteredTotals().calories"
         [dailyGoal]="dailyGoalTarget()"
-        [active]="selectedActive()">
+        [active]="selectedActive()"
+        [macroExceeded]="anyMacroExceeded()">
       </app-daily-balance-panel>
     </aside>
 

@@ -1,4 +1,5 @@
 import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
@@ -33,6 +34,7 @@ import { MacroWarningBanner } from '../../../../shared/presentation/components/m
 @Component({
   selector: 'app-daily-log',
   imports: [
+    DecimalPipe,
     MealSectionComponent,
     FoodSearchPanelComponent,
     DailyBalancePanelComponent,
@@ -238,6 +240,11 @@ export class DailyLog implements OnInit {
   /** Warning signals delegated to the domain via {@link NutritionStore.todayMacroWarnings}. */
   protected readonly approachingMacros = computed(() => this.nutritionStore.todayMacroWarnings().approaching);
   protected readonly exceededMacros    = computed(() => this.nutritionStore.todayMacroWarnings().exceeded);
+
+  /** True when any non-calorie macro has exceeded its daily target. */
+  protected readonly anyMacroExceeded = computed(() =>
+    this.summaryMacros().some(m => m.label !== 'nutrition.calories' && m.over)
+  );
 
   /** Summary bar macro descriptors. */
   protected summaryMacros = computed(() => {

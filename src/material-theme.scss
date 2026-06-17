@@ -55,6 +55,18 @@ body {
   --nutrismart-shadow: 0 2px 12px rgba(80, 139, 137, 0.08);
   --nutrismart-shadow-md: 0 4px 20px rgba(80, 139, 137, 0.12);
 
+  /* Typographic scale — use these instead of raw px values */
+  --ns-text-xs:   0.625rem;
+  --ns-text-sm:   0.75rem;
+  --ns-text-ui:   0.8125rem;
+  --ns-text-base: 0.875rem;
+  --ns-text-md:   1rem;
+  --ns-text-lg:   1.125rem;
+  --ns-text-xl:   1.375rem;
+  --ns-text-2xl:  1.625rem;
+  --ns-text-3xl:  1.875rem;
+  --ns-text-4xl:  2.25rem;
+
   @include mat.toolbar-overrides(
     (
       container-background-color: #508b89,
@@ -64,6 +76,7 @@ body {
 }
 
 html {
+  font-size: 16px;
   @include mat.theme(
     (
       color: (

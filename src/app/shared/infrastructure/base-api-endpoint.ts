@@ -144,13 +144,14 @@ export abstract class BaseApiEndpoint<
    */
   protected handleError(operation: string) {
     return (error: HttpErrorResponse): Observable<never> => {
-      let errorMessage = operation;
-      if (error.status === 404) {
-        errorMessage = `${operation}: Resource not found`;
-      } else if (error.error instanceof ErrorEvent) {
-        errorMessage = `${operation}: ${error.error.message}`;
+      let errorMessage: string;
+      if (error.error instanceof ErrorEvent) {
+        errorMessage = error.error.message;
       } else {
-        errorMessage = `${operation}: ${error.statusText || 'Unexpected error'}`;
+        errorMessage =
+          error.error?.message ??
+          error.error?.detail ??
+          `HTTP ${error.status}`;
       }
       return throwError(() => new Error(errorMessage));
     };
