@@ -1,8 +1,19 @@
+<div class="sub-lang">
+  <app-language-switcher />
+</div>
+
 <div class="pg-shell">
   <div class="pg-wrapper">
 
     <!-- ── Form card (left on desktop, bottom on mobile) ─────────────────── -->
     <div class="pg-form-card">
+
+      <button type="button" class="pg-btn-back" (click)="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        {{ 'payment.btn_back' | translate }}
+      </button>
 
       <div class="pg-header">
         <svg class="pg-lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

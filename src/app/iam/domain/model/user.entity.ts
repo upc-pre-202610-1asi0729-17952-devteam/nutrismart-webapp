@@ -53,6 +53,14 @@ export interface UserProps {
   homeCity?: string;
   /** ISO date (YYYY-MM-DD) when the current goal was started. */
   goalStartedAt?: string;
+  /** Number of consecutive days meeting the behavioral goal. */
+  streak?: number;
+  /** Number of consecutive days missing the behavioral goal. */
+  consecutiveMisses?: number;
+  /** JWT token returned by the authentication endpoint. */
+  token?: string;
+  /** ISO date (YYYY-MM-DD) when cancelled-plan access expires. Null/undefined when no pending expiry. */
+  planExpiresAt?: string | null;
 }
 
 /**
@@ -105,6 +113,14 @@ export class User implements BaseEntity {
   private _homeCity: string;
   /** @see UserProps.goalStartedAt */
   private _goalStartedAt: string;
+  /** @see UserProps.streak */
+  private _streak: number;
+  /** @see UserProps.consecutiveMisses */
+  private _consecutiveMisses: number;
+  /** @see UserProps.token */
+  private _token: string;
+  /** @see UserProps.planExpiresAt */
+  private _planExpiresAt: string | null;
 
   /**
    * Creates a new User domain entity.
@@ -133,6 +149,10 @@ export class User implements BaseEntity {
     this._createdAt = props.createdAt ?? '';
     this._homeCity = props.homeCity ?? '';
     this._goalStartedAt = props.goalStartedAt ?? '';
+    this._streak = props.streak ?? 0;
+    this._consecutiveMisses = props.consecutiveMisses ?? 0;
+    this._token = props.token ?? '';
+    this._planExpiresAt = props.planExpiresAt ?? null;
   }
 
   // ─── Getters & Setters ────────────────────────────────────────────────────
@@ -324,6 +344,38 @@ export class User implements BaseEntity {
   /** @param value - New goalStartedAt date. */
   set goalStartedAt(value: string) {
     this._goalStartedAt = value;
+  }
+
+  /** Number of consecutive days meeting the behavioral goal. */
+  get streak(): number {
+    return this._streak;
+  }
+  set streak(value: number) {
+    this._streak = value;
+  }
+
+  /** Number of consecutive days missing the behavioral goal. */
+  get consecutiveMisses(): number {
+    return this._consecutiveMisses;
+  }
+  set consecutiveMisses(value: number) {
+    this._consecutiveMisses = value;
+  }
+
+  /** JWT token returned by the authentication endpoint. */
+  get token(): string {
+    return this._token;
+  }
+  set token(value: string) {
+    this._token = value;
+  }
+
+  /** ISO date when cancelled-plan access expires, or null when no pending expiry. */
+  get planExpiresAt(): string | null {
+    return this._planExpiresAt;
+  }
+  set planExpiresAt(value: string | null) {
+    this._planExpiresAt = value;
   }
 
   // ─── Computed / Behaviour Methods ─────────────────────────────────────────

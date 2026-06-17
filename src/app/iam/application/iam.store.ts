@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
-import { catchError, filter, map, tap } from 'rxjs/operators';
+import { catchError, filter, switchMap, tap } from 'rxjs/operators';
 import { DomainEventBus } from '../../shared/application/domain-event-bus';
 import { AccountCreated } from '../../shared/domain/account-created.event';
 import { MetabolicTargetSet } from '../../shared/domain/metabolic-target-set.event';
@@ -135,6 +135,8 @@ export class IamStore {
       createdAt: user.createdAt,
       homeCity: user.homeCity,
       goalStartedAt: user.goalStartedAt,
+      token: user.token || undefined,
+      planExpiresAt: user.planExpiresAt ?? undefined,
     };
     localStorage.setItem(SESSION_KEY, JSON.stringify(props));
   }
@@ -148,10 +150,23 @@ export class IamStore {
       const raw = localStorage.getItem(SESSION_KEY);
       if (!raw) return;
       const props = JSON.parse(raw) as UserProps;
+      if (props.token && this.isTokenExpired(props.token)) {
+        this.clearSession();
+        return;
+      }
       this._currentUser.set(new User(props));
       this._isAuthenticated.set(true);
     } catch {
       this.clearSession();
+    }
+  }
+
+  private isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp * 1000 <= Date.now();
+    } catch {
+      return true;
     }
   }
 
@@ -167,8 +182,6 @@ export class IamStore {
    * @returns Observable emitting the authenticated {@link User} on success.
    */
   login(email: string, password: string): Observable<User> {
-    void password;
-
     if (this.isLoginBlocked()) {
       this._error.set('auth.error_account_blocked');
       return throwError(() => new Error('auth.error_account_blocked'));
@@ -177,12 +190,7 @@ export class IamStore {
     this._loading.set(true);
     this._error.set(null);
 
-    return this.iamApi.getUsers().pipe(
-      map((users) => {
-        const user = users.find((u) => u.email === email);
-        if (!user) throw new Error('auth.error_invalid_credentials');
-        return user;
-      }),
+    return this.iamApi.login(email, password).pipe(
       tap((user) => {
         this._failedLoginAttempts.set(0);
         this._blockedUntil.set(null);
@@ -204,7 +212,7 @@ export class IamStore {
           this._blockedUntil.set(new Date(Date.now() + 15 * 60 * 1000));
           this._error.set('auth.error_account_blocked');
         } else {
-          this._error.set(err.message);
+          this._error.set('auth.error_invalid_credentials');
         }
         return throwError(() => err);
       }),
@@ -247,16 +255,43 @@ export class IamStore {
       createdAt: new Date().toISOString().slice(0, 10),
     });
 
-    return this.iamApi.createUser(newUser).pipe(
-      tap((created) => {
-        this._currentUser.set(created);
-        this._isAuthenticated.set(true);
-        this._loading.set(false);
-        this.saveSession(created);
+    return this.iamApi.createUser(newUser, data.password).pipe(
+      switchMap((created) => {
         this.eventBus.publish(
           new AccountCreated(created.id, created.email, created.firstName, created.lastName, created.goal),
         );
-        this.router.navigate(['/onboarding']);
+        return this.login(data.email, data.password).pipe(
+          tap(() => {
+            const user = this._currentUser();
+            if (!user || user.id) return;
+            const patched = new User({
+              id:                 created.id,
+              firstName:          user.firstName,
+              lastName:           user.lastName,
+              email:              user.email,
+              goal:               user.goal,
+              weight:             user.weight,
+              height:             user.height,
+              activityLevel:      user.activityLevel,
+              plan:               user.plan,
+              restrictions:       user.restrictions,
+              medicalConditions:  user.medicalConditions,
+              dailyCalorieTarget: user.dailyCalorieTarget,
+              proteinTarget:      user.proteinTarget,
+              carbsTarget:        user.carbsTarget,
+              fatTarget:          user.fatTarget,
+              fiberTarget:        user.fiberTarget,
+              birthday:           user.birthday,
+              biologicalSex:      user.biologicalSex,
+              createdAt:          user.createdAt,
+              homeCity:           user.homeCity,
+              goalStartedAt:      user.goalStartedAt,
+              token:              user.token,
+            });
+            this._currentUser.set(patched);
+            this.saveSession(patched);
+          }),
+        );
       }),
       catchError((err) => {
         this._loading.set(false);
@@ -367,6 +402,7 @@ export class IamStore {
       createdAt: user.createdAt,
       homeCity: user.homeCity,
       goalStartedAt: user.goalStartedAt,
+      token: user.token,
     });
     this._currentUser.set(updated);
     this.persist();
@@ -428,6 +464,7 @@ export class IamStore {
       createdAt: user.createdAt,
       homeCity: user.homeCity,
       goalStartedAt: new Date().toISOString().slice(0, 10),
+      token: user.token,
     });
     this._currentUser.set(updated);
     this.persist();
@@ -538,6 +575,117 @@ export class IamStore {
    *
    * @param plan - The new {@link SubscriptionPlan}.
    */
+  clearPlan(): void {
+    const user = this._currentUser();
+    if (!user) return;
+    const updated = new User({
+      id:                 user.id,
+      firstName:          user.firstName,
+      lastName:           user.lastName,
+      email:              user.email,
+      goal:               user.goal,
+      weight:             user.weight,
+      height:             user.height,
+      activityLevel:      user.activityLevel,
+      plan:               null,
+      restrictions:       user.restrictions,
+      medicalConditions:  user.medicalConditions,
+      dailyCalorieTarget: user.dailyCalorieTarget,
+      proteinTarget:      user.proteinTarget,
+      carbsTarget:        user.carbsTarget,
+      fatTarget:          user.fatTarget,
+      fiberTarget:        user.fiberTarget,
+      birthday:           user.birthday,
+      biologicalSex:      user.biologicalSex,
+      createdAt:          user.createdAt,
+      homeCity:           user.homeCity,
+      goalStartedAt:      user.goalStartedAt,
+      token:              user.token,
+      planExpiresAt:      null,
+    });
+    this._currentUser.set(updated);
+    this.saveSession(updated);
+    this.persist();
+  }
+
+  /**
+   * Clears only the plan expiry date while keeping the active plan intact.
+   * Called by the subscription guard when it detects that planExpiresAt is
+   * stale (the subscription is still active in SubscriptionsStore).
+   */
+  clearPlanExpiry(): void {
+    const user = this._currentUser();
+    if (!user) return;
+    const updated = new User({
+      id:                 user.id,
+      firstName:          user.firstName,
+      lastName:           user.lastName,
+      email:              user.email,
+      goal:               user.goal,
+      weight:             user.weight,
+      height:             user.height,
+      activityLevel:      user.activityLevel,
+      plan:               user.plan,
+      restrictions:       user.restrictions,
+      medicalConditions:  user.medicalConditions,
+      dailyCalorieTarget: user.dailyCalorieTarget,
+      proteinTarget:      user.proteinTarget,
+      carbsTarget:        user.carbsTarget,
+      fatTarget:          user.fatTarget,
+      fiberTarget:        user.fiberTarget,
+      birthday:           user.birthday,
+      biologicalSex:      user.biologicalSex,
+      createdAt:          user.createdAt,
+      homeCity:           user.homeCity,
+      goalStartedAt:      user.goalStartedAt,
+      token:              user.token,
+      planExpiresAt:      null,
+    });
+    this._currentUser.set(updated);
+    this.saveSession(updated);
+    this.persist();
+  }
+
+  /**
+   * Marks the current plan as pending expiry on the given date without
+   * removing access immediately. The subscription guard will enforce the
+   * cutoff once the date passes.
+   *
+   * @param expiryDate - ISO date string (YYYY-MM-DD) of the last access day.
+   */
+  schedulePlanExpiry(expiryDate: string): void {
+    const user = this._currentUser();
+    if (!user) return;
+    const updated = new User({
+      id:                 user.id,
+      firstName:          user.firstName,
+      lastName:           user.lastName,
+      email:              user.email,
+      goal:               user.goal,
+      weight:             user.weight,
+      height:             user.height,
+      activityLevel:      user.activityLevel,
+      plan:               user.plan,
+      restrictions:       user.restrictions,
+      medicalConditions:  user.medicalConditions,
+      dailyCalorieTarget: user.dailyCalorieTarget,
+      proteinTarget:      user.proteinTarget,
+      carbsTarget:        user.carbsTarget,
+      fatTarget:          user.fatTarget,
+      fiberTarget:        user.fiberTarget,
+      birthday:           user.birthday,
+      biologicalSex:      user.biologicalSex,
+      createdAt:          user.createdAt,
+      homeCity:           user.homeCity,
+      goalStartedAt:      user.goalStartedAt,
+      token:              user.token,
+      planExpiresAt:      expiryDate,
+    });
+    this._currentUser.set(updated);
+    this.saveSession(updated);
+    this.persist();
+  }
+
   upgradePlan(plan: SubscriptionPlan): void {
     const user = this._currentUser();
     if (!user) return;
@@ -563,6 +711,7 @@ export class IamStore {
       createdAt:          user.createdAt,
       homeCity:           user.homeCity,
       goalStartedAt:      user.goalStartedAt,
+      token:              user.token,
     });
     this._currentUser.set(updated);   // New reference → signal emits immediately
     this.saveSession(updated);        // Update localStorage before the API round-trip

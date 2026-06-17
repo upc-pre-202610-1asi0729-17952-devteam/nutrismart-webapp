@@ -17,9 +17,11 @@ export interface BehavioralProgressResource extends BaseResource {
   streak: number;
   /** Number of consecutive missed days. */
   consecutiveMisses: number;
-  /** Last date where the user met the daily goal, in ISO format. */
-  lastGoalMetDate: string | null;
-  /** ISO dates (YYYY-MM-DD) on which the daily goal was completed. */
+  /** Weekly goal completion rate (0.0 – 1.0) as computed by the backend. */
+  weeklyCompletionRate: number;
+  /** ISO timestamp of the last backend evaluation. */
+  lastEvaluatedAt: string | null;
+  /** ISO date strings (YYYY-MM-DD) of days the daily goal was met. */
   goalMetDates: string[];
 }
 

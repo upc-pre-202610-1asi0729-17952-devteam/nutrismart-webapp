@@ -197,25 +197,36 @@ export class PantryStore {
   async deletePantryItem(itemId: number): Promise<void> {
     const user    = this.iamStore.currentUser();
     const removed = this._pantryItems().find(i => i.id === itemId);
-    this._loading.set(true);
+
+    // Optimistic removal: update the UI immediately without waiting for the API.
+    this._pantryItems.update(prev => prev.filter(i => i.id !== itemId));
+    this._refreshSuggestions();
+
     return new Promise((resolve) => {
       this.pantryApi.deletePantryItem(itemId).subscribe({
         next: () => {
-          this._pantryItems.update(prev => prev.filter(i => i.id !== itemId));
-          this._loading.set(false);
-          resolve();
           if (user && removed) {
             this.eventBus.publish(new PantryUpdated(user.id, 'removed', removed.nameKey ?? removed.name));
           }
-          this._refreshSuggestions();
+          resolve();
         },
         error: () => {
-          this._error.set('Failed to remove ingredient.');
-          this._loading.set(false);
+          // Rollback: restore the item in its original position on failure.
+          if (removed) {
+            this._pantryItems.update(prev =>
+              [...prev, removed].sort((a, b) => a.id - b.id),
+            );
+            this._refreshSuggestions();
+          }
+          this._error.set('pantry.remove_error');
           resolve();
         },
       });
     });
+  }
+
+  clearError(): void {
+    this._error.set(null);
   }
 
   /** Updates the search query signal (used to filter ingredient search results). */
@@ -239,7 +250,7 @@ export class PantryStore {
 
     const pantryKeys        = new Set(
       this._pantryItems()
-        .map(i => i.foodId)
+        .map(i => i.nameKey)
         .filter((k): k is string => !!k),
     );
     const userRestrictions  = user.restrictions as string[] ?? [];

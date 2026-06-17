@@ -9,7 +9,7 @@ export interface SubscriptionResource {
   userId: string | number;
   plan: string;
   status: string;
-  startDate: string;
-  nextRenewal: string;
+  billingCycleStart: string;
+  billingCycleEnd: string;
   pricePerMonth?: number;
 }

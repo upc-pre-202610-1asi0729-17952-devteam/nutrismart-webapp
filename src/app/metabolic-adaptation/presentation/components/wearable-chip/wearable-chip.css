@@ -6,7 +6,7 @@
   border-radius: 20px;
   background: #f3f4f6;
   color: #6b7280;
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   font-weight: 500;
   white-space: nowrap;
   user-select: none;
@@ -21,7 +21,7 @@
 }
 
 .wearable-chip__icon {
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .wearable-chip__dot {

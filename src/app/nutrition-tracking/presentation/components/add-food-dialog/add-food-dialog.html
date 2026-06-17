@@ -55,19 +55,19 @@
     <!-- Macro preview grid - T20 -->
     <div class="macro-grid" aria-live="polite" [attr.aria-label]="'nutrition.macro_preview' | translate">
       <div class="macro-chip">
-        <span class="chip-value">{{ nutrients().calories }}</span>
+        <span class="chip-value">{{ nutrients().calories | number:'1.0-2' }}</span>
         <span class="chip-label">{{ 'nutrition.calories' | translate }}</span>
       </div>
       <div class="macro-chip">
-        <span class="chip-value">{{ nutrients().protein }}g</span>
+        <span class="chip-value">{{ nutrients().protein | number:'1.0-2' }}g</span>
         <span class="chip-label">{{ 'nutrition.protein' | translate }}</span>
       </div>
       <div class="macro-chip">
-        <span class="chip-value">{{ nutrients().carbs }}g</span>
+        <span class="chip-value">{{ nutrients().carbs | number:'1.0-2' }}g</span>
         <span class="chip-label">{{ 'nutrition.carbs' | translate }}</span>
       </div>
       <div class="macro-chip">
-        <span class="chip-value">{{ nutrients().fat }}g</span>
+        <span class="chip-value">{{ nutrients().fat | number:'1.0-2' }}g</span>
         <span class="chip-label">{{ 'nutrition.fat' | translate }}</span>
       </div>
     </div>

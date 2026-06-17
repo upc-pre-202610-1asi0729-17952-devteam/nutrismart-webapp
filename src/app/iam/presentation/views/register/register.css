@@ -37,6 +37,17 @@
   color: var(--nutrismart-primary, #508B89);
 }
 
+.logo-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--nutrismart-primary, #508B89);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .auth-title {
   font-size: 1.4rem;
   font-weight: 700;
@@ -50,6 +61,26 @@
   text-align: center;
   margin: 0 0 20px;
   font-size: 0.9rem;
+}
+
+.subscription-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  color: #92400e;
+  margin-bottom: 20px;
+  line-height: 1.45;
+}
+
+.subscription-notice__icon {
+  flex-shrink: 0;
+  font-size: 1rem;
+  margin-top: 1px;
 }
 
 .auth-error {

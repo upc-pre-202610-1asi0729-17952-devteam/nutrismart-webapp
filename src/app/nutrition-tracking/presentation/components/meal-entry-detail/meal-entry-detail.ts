@@ -1,4 +1,5 @@
 import { Component, computed, EventEmitter, inject, input, Output, signal } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -16,7 +17,7 @@ import { MealRecord } from '../../../domain/model/meal-record.entity';
  */
 @Component({
   selector: 'app-meal-entry-detail',
-  imports: [TranslatePipe, FormsModule],
+  imports: [DecimalPipe, TranslatePipe, FormsModule],
   templateUrl: './meal-entry-detail.html',
   styleUrl: './meal-entry-detail.css',
 })

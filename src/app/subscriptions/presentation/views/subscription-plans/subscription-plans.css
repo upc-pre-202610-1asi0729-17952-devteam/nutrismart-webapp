@@ -1,3 +1,10 @@
+.sub-lang {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 10;
+}
+
 .subscription-shell {
   min-height: 100vh;
   background: var(--nutrismart-bg, #f5f7f7);
@@ -32,13 +39,44 @@
   margin-bottom: 24px;
 }
 
+.subscription-topbar {
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 8px;
+}
+
+.sp-btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px 6px 8px;
+  border: 1.5px solid var(--nutrismart-border, #e0eaea);
+  border-radius: var(--nutrismart-radius-sm, 10px);
+  background: transparent;
+  color: var(--nutrismart-text-mid, #4a6060);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.sp-btn-back svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.sp-btn-back:hover {
+  background: var(--nutrismart-bg, #f5f7f7);
+}
+
 .subscription-header {
   text-align: center;
   margin-bottom: 32px;
 }
 
 .page-title {
-  font-size: 26px;
+  font-size: var(--ns-text-2xl);
   font-weight: 700;
   color: var(--nutrismart-text-dark, #1a2e2e);
   letter-spacing: -0.3px;
@@ -47,7 +85,7 @@
 
 .page-subtitle {
   color: var(--nutrismart-text-light, #8aa8a8);
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   margin: 0;
 }
 
@@ -206,12 +244,32 @@
 
 .subscription-footer {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 .legal-text {
   font-size: 0.8rem;
   color: var(--nutrismart-text-light, #8aa8a8);
   margin: 0;
+}
+
+.sp-btn-maybe-later {
+  background: none;
+  border: none;
+  color: var(--nutrismart-text-light, #8aa8a8);
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.sp-btn-maybe-later:hover {
+  color: var(--nutrismart-text-mid, #4a6060);
 }
 
 /* Cancel confirmation modal */

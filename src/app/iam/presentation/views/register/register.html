@@ -5,12 +5,19 @@
 <div class="auth-container">
   <div class="auth-card">
     <div class="auth-logo">
-      <img src="/logo.png" alt="NutriSmart" width="48" height="48" />
+      <div class="logo-circle">
+        <img src="/favicon.svg" alt="NutriSmart" width="32" height="32" />
+      </div>
       <span class="auth-brand">NutriSmart</span>
     </div>
 
     <h1 class="auth-title">{{ 'auth.register_title' | translate }}</h1>
     <p class="auth-subtitle">{{ 'auth.register_subtitle' | translate }}</p>
+
+    <div class="subscription-notice" role="note">
+      <span class="subscription-notice__icon" aria-hidden="true">💳</span>
+      <span>{{ 'auth.subscription_notice' | translate }}</span>
+    </div>
 
     @if (registerError()) {
       <div class="auth-error" role="alert">{{ registerError() | translate }}</div>
@@ -89,8 +96,8 @@
             [placeholder]="'auth.password' | translate"
             autocomplete="new-password"
           />
-          <button type="button" class="eye-toggle" (click)="togglePassword()" aria-label="Toggle password visibility">
-            {{ showPassword() ? 'Hide' : 'Show' }}
+          <button type="button" class="eye-toggle" (click)="togglePassword()" [attr.aria-label]="(showPassword() ? 'auth.hide_password' : 'auth.show_password') | translate">
+            {{ (showPassword() ? 'auth.hide_password' : 'auth.show_password') | translate }}
           </button>
         </div>
 

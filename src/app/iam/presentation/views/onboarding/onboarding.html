@@ -91,24 +91,23 @@
                   (blur)="onCityBlur()"
                   autocomplete="off"
                 />
-                @if (showCitySuggestions() && filteredCities().length > 0) {
+                @if (showCitySuggestions() && citySuggestions().length > 0) {
                   <ul class="city-suggestions" role="listbox">
-                    @for (city of filteredCities(); track city) {
+                    @for (suggestion of citySuggestions(); track suggestion.city + suggestion.country) {
                       <li
                         class="city-suggestion-item"
                         role="option"
-                        (mousedown)="selectCity(city)"
-                      >{{ city }}</li>
+                        (mousedown)="selectCity(suggestion.city, suggestion.country)"
+                      >{{ suggestion.city }}, {{ suggestion.country }}</li>
                     }
                   </ul>
                 }
               </div>
-              @if (bodyForm.get('homeCity')?.touched) {
-                @if (bodyForm.get('homeCity')?.errors?.['required']) {
-                  <span class="field-error">{{ 'onboarding.error_home_city_required' | translate }}</span>
-                } @else if (bodyForm.get('homeCity')?.errors?.['invalidCity']) {
-                  <span class="field-error">{{ 'onboarding.error_home_city_invalid' | translate }}</span>
-                }
+              @if (bodyForm.get('homeCity')?.touched && bodyForm.get('homeCity')?.errors?.['required']) {
+                <span class="field-error">{{ 'onboarding.error_home_city_required' | translate }}</span>
+              }
+              @if (!citiesLoading() && !citySearchQuery()) {
+                <span class="field-hint">{{ 'onboarding.location_detection_failed' | translate }}</span>
               }
             </div>
           </form>

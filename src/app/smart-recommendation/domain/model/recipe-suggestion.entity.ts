@@ -2,8 +2,8 @@ import { BaseEntity } from '../../../shared/infrastructure/base-entity';
 import { UserGoal } from '../../../iam/domain/model/user-goal.enum';
 
 export interface RecipeIngredient {
-  foodId: string;
-  quantity_grams: number;
+  nameKey: string;
+  quantityGrams: number;
 }
 
 /**
@@ -14,6 +14,7 @@ export interface RecipeIngredient {
 export interface RecipeSuggestionProps {
   id: number;
   name: string;
+  nameEs?: string;
   nameKey?: string;
   calories: number;
   protein: number;
@@ -37,6 +38,7 @@ export interface RecipeSuggestionProps {
 export class RecipeSuggestion implements BaseEntity {
   private _id: number;
   private _name: string;
+  private _nameEs: string | undefined;
   private _nameKey: string | undefined;
   private _calories: number;
   private _protein: number;
@@ -51,6 +53,7 @@ export class RecipeSuggestion implements BaseEntity {
   constructor(props: RecipeSuggestionProps) {
     this._id                   = props.id;
     this._name                 = props.name;
+    this._nameEs               = props.nameEs;
     this._nameKey              = props.nameKey;
     this._calories             = props.calories;
     this._protein              = props.protein;
@@ -70,6 +73,9 @@ export class RecipeSuggestion implements BaseEntity {
 
   get name(): string { return this._name; }
   set name(v: string) { this._name = v; }
+
+  get nameEs(): string | undefined { return this._nameEs; }
+  set nameEs(v: string | undefined) { this._nameEs = v; }
 
   get nameKey(): string | undefined { return this._nameKey; }
   set nameKey(v: string | undefined) { this._nameKey = v; }
@@ -129,11 +135,16 @@ export class RecipeSuggestion implements BaseEntity {
     return `P ${this._protein}g · C ${this._carbs}g · F ${this._fat}g`;
   }
 
+  /** Returns the recipe name in the given language, falling back to English. */
+  getLocalizedName(lang: string): string {
+    return (lang === 'es' && this._nameEs) ? this._nameEs : this._name;
+  }
+
   /**
-   * Comma-separated list of ingredient names for display.
+   * Comma-separated list of ingredient nameKeys for display.
    */
   get ingredientList(): string {
-    return this._ingredients.map(i => i.foodId).join(', ');
+    return this._ingredients.map(i => i.nameKey).join(', ');
   }
 
   /**
@@ -149,7 +160,7 @@ export class RecipeSuggestion implements BaseEntity {
   }
 
   isCompatibleWith(pantryKeys: Set<string>): boolean {
-    const hits = this._ingredients.filter(ing => pantryKeys.has(ing.foodId)).length;
+    const hits = this._ingredients.filter(ing => pantryKeys.has(ing.nameKey)).length;
     return hits > 0 && hits / this._ingredients.length >= 0.5;
   }
 

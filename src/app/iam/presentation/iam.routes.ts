@@ -16,9 +16,14 @@ const register = () => import('./views/register/register').then((m) => m.Registe
 const forgotPassword = () =>
   import('./views/forgot-password/forgot-password').then((m) => m.ForgotPassword);
 
+/** Lazy-loads the {@link ResetPassword} standalone component. */
+const resetPassword = () =>
+  import('./views/reset-password/reset-password').then((m) => m.ResetPassword);
+
 export const iamRoutes: Routes = [
   { path: 'login', loadComponent: login, title: 'NutriSmart - Sign In' },
   { path: 'register', loadComponent: register, title: 'NutriSmart - Create Account' },
   { path: 'forgot-password', loadComponent: forgotPassword, title: 'NutriSmart - Forgot Password' },
+  { path: 'reset-password', loadComponent: resetPassword, title: 'NutriSmart - Reset Password' },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];

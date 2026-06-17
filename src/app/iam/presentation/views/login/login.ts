@@ -83,9 +83,9 @@ export class Login {
       next: () => {
         this.loading.set(false);
       },
-      error: (err: Error) => {
+      error: () => {
         this.loading.set(false);
-        this.loginError.set(err.message);
+        this.loginError.set(this.iamStore.error());
       },
     });
   }

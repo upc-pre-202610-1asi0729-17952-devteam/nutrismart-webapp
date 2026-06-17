@@ -35,19 +35,30 @@ export class FoodSearchEndpoint extends BaseApiEndpoint<
    * @param query - Partial food name to search for.
    * @returns Observable emitting matching {@link FoodItem} entities.
    */
-  searchByName(query: string): Observable<FoodItem[]> {
+  searchByName(query: string, restrictions?: string[]): Observable<FoodItem[]> {
     const q = query.toLowerCase();
+    let params = new HttpParams();
+    if (restrictions && restrictions.length > 0) {
+      params = params.set('restrictions', restrictions.join(','));
+    }
     return this.http
-      .get<FoodItemResource[]>(this.endpointUrl)
+      .get<FoodItemResource[]>(this.endpointUrl, { params })
       .pipe(
-        map((resources) =>
-          resources
+        map((resources) => {
+          const seen = new Set<string>();
+          return resources
             .filter((r) =>
               r.name.toLowerCase().includes(q) ||
-              (r.name_es?.toLowerCase().includes(q) ?? false),
+              (r.nameEs?.toLowerCase().includes(q) ?? false),
             )
-            .map((r) => this.assembler.toEntityFromResource(r)),
-        ),
+            .filter((r) => {
+              const key = r.nameKey ?? r.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+              if (seen.has(key)) return false;
+              seen.add(key);
+              return true;
+            })
+            .map((r) => this.assembler.toEntityFromResource(r));
+        }),
       );
   }
 }

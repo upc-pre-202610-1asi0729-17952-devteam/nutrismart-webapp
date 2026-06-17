@@ -1,82 +1,144 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { MealType } from '../domain/model/meal-type.enum';
 import { MacronutrientDistribution } from '../domain/model/macronutrient-distribution.value-object';
 import { ScanResult } from '../domain/model/scan-result.entity';
 import { ScannedFoodItem } from '../domain/model/scanned-food-item.entity';
+import { environment } from '../../../environments/environment.development';
+
+interface ConfirmPlateScanPayload {
+  mealType: string;
+  items: Array<{
+    foodItemId: number | null;
+    name: string;
+    nameEs: string | null;
+    quantityG: number;
+    caloriesPer100g: number;
+    proteinPer100g: number;
+    carbsPer100g: number;
+    fatPer100g: number;
+    isEstimate: boolean;
+  }>;
+}
+
+interface ScanPlateResponse {
+  detectedItems: Array<{
+    foodItemId: number | null;
+    name: string;
+    nameEs: string | null;
+    estimatedQuantityG: number;
+    caloriesPer100g: number;
+    proteinPer100g: number;
+    carbsPer100g: number;
+    fatPer100g: number;
+    isEstimate: boolean;
+  }>;
+}
 
 /**
  * Application-facing API façade for plate-photo scanning (ScanMealPhoto command).
  *
- * Lives in Nutrition Tracking because plate scanning is a mechanism for logging
- * food into DailyIntake, driven by the {@link ScanResult} aggregate.
- *
- * All methods return mock data while a real backend is not available.
+ * Calls POST /api/v1/nutrition-log/smart-scan/plate with the imageBase64 payload
+ * and maps the response to the {@link ScanResult} aggregate.
  *
  * @author Del Aguila Del Aguila, Olenka Priscilla
  */
 @Injectable({ providedIn: 'root' })
 export class PlateScanApi extends BaseApi {
-  private _http      = inject(HttpClient);
-  private _translate = inject(TranslateService);
+  private _http = inject(HttpClient);
+
+  private readonly _plateUrl = environment.apiBaseUrl + '/nutrition-log/smart-scan/plate';
 
   constructor() { super(); }
 
-  private _t(namespace: string, key: string | null, fallback: string): string {
-    if (!key) return fallback;
-    const resolved = this._translate.instant(`${namespace}.${key}`);
-    return resolved !== `${namespace}.${key}` ? resolved : fallback;
-  }
-
   /**
-   * Submits a food-plate image for nutritional analysis (ScanMealPhoto command).
+   * Submits a food-plate image for nutritional analysis via Gemini + DeepSeek.
    *
-   * @param imageBase64 - Base-64-encoded image data.
+   * @param imageBase64 - Base-64-encoded image data (data URL accepted).
    * @returns Observable emitting a {@link ScanResult} with status 'success' or 'invalid'.
    */
   scanFoodPlate(imageBase64: string): Observable<ScanResult> {
-    const mocks: ScanResult[] = [
-      new ScanResult({
-        id: 1, status: 'success', imageBase64,
-        detectedItems: [
-          new ScannedFoodItem({ id: 1, name: this._t('food_items', 'grilled_chicken_breast', 'Grilled chicken breast'), nameKey: 'grilled_chicken_breast', quantityGrams: 150, macros: new MacronutrientDistribution({ calories: 248, protein: 47, carbs: 0,  fat: 5, fiber: 0, sugar: 0 }), restrictions: [], isEdited: false }),
-          new ScannedFoodItem({ id: 2, name: this._t('food_items', 'white_rice',             'White rice'),             nameKey: 'white_rice',             quantityGrams: 180, macros: new MacronutrientDistribution({ calories: 234, protein: 4,  carbs: 52, fat: 0, fiber: 0, sugar: 0 }), restrictions: [], isEdited: false }),
-          new ScannedFoodItem({ id: 3, name: this._t('food_items', 'mixed_salad',            'Mixed salad'),            nameKey: 'mixed_salad',            quantityGrams: 80,  macros: new MacronutrientDistribution({ calories: 45,  protein: 2,  carbs: 8,  fat: 0, fiber: 0, sugar: 0 }), restrictions: [], isEdited: false }),
-        ],
-        mealType: MealType.LUNCH, source: 'Google Cloud Vision API · Open Food Facts', scannedAt: new Date().toISOString(),
-      }),
-      new ScanResult({
-        id: 2, status: 'success', imageBase64,
-        detectedItems: [
-          new ScannedFoodItem({ id: 1, name: this._t('food_items', 'quinoa',         'Quinoa, cooked'),   nameKey: 'quinoa',         quantityGrams: 150, macros: new MacronutrientDistribution({ calories: 180, protein: 7,  carbs: 32, fat: 3, fiber: 0, sugar: 0 }), restrictions: [], isEdited: false }),
-          new ScannedFoodItem({ id: 2, name: this._t('food_items', 'chicken_breast', 'Chicken breast'),   nameKey: 'chicken_breast', quantityGrams: 180, macros: new MacronutrientDistribution({ calories: 297, protein: 56, carbs: 0,  fat: 6, fiber: 0, sugar: 0 }), restrictions: [], isEdited: false }),
-          new ScannedFoodItem({ id: 3, name: this._t('food_items', 'broccoli',       'Broccoli, cooked'), nameKey: 'broccoli',       quantityGrams: 100, macros: new MacronutrientDistribution({ calories: 35,  protein: 2,  carbs: 7,  fat: 0, fiber: 0, sugar: 0 }), restrictions: [], isEdited: false }),
-        ],
-        mealType: MealType.DINNER, source: 'Google Cloud Vision API · Open Food Facts', scannedAt: new Date().toISOString(),
-      }),
-      new ScanResult({
-        id: 3, status: 'success', imageBase64,
-        detectedItems: [
-          new ScannedFoodItem({ id: 1, name: this._t('food_items', 'cooked_oatmeal',  'Cooked oatmeal'),  nameKey: 'cooked_oatmeal',  quantityGrams: 200, macros: new MacronutrientDistribution({ calories: 300, protein: 13, carbs: 54, fat: 5, fiber: 0, sugar: 0 }), restrictions: [], isEdited: false }),
-          new ScannedFoodItem({ id: 2, name: this._t('food_items', 'banana',          'Banana'),          nameKey: 'banana',          quantityGrams: 120, macros: new MacronutrientDistribution({ calories: 107, protein: 1,  carbs: 28, fat: 0, fiber: 0, sugar: 0 }), restrictions: [], isEdited: false }),
-          new ScannedFoodItem({ id: 3, name: this._t('food_items', 'hard_boiled_egg', 'Hard-boiled egg'), nameKey: 'hard_boiled_egg', quantityGrams: 60,  macros: new MacronutrientDistribution({ calories: 93,  protein: 8,  carbs: 1,  fat: 7, fiber: 0, sugar: 0 }), restrictions: [], isEdited: false }),
-        ],
-        mealType: MealType.BREAKFAST, source: 'Google Cloud Vision API · Open Food Facts', scannedAt: new Date().toISOString(),
-      }),
-    ];
-    return of(mocks[Math.floor(Math.random() * mocks.length)]);
+    return this._http.post<ScanPlateResponse>(this._plateUrl, { imageBase64 }).pipe(
+      map(response => this._toScanResult(response, imageBase64)),
+      catchError(() => of(this._emptyScanResult(imageBase64))),
+    );
   }
 
   /**
-   * Persists the user-confirmed scan items as a meal log entry (ConfirmScanResult command).
-   *
-   * @param scanResult - The confirmed {@link ScanResult} aggregate.
-   * @returns Observable that completes when the entry is saved.
+   * Persists the confirmed scan items via the backend confirm endpoint.
+   * Estimated items are saved to the food DB if they don't already exist.
    */
-  confirmPlateScan(scanResult: ScanResult): Observable<void> {
-    return of(void 0);
+  confirmPlateScan(scanResult: ScanResult, mealType: MealType): Observable<void> {
+    const payload: ConfirmPlateScanPayload = {
+      mealType: mealType.toString(),
+      items: scanResult.detectedItems.map(item => ({
+        foodItemId:      item.foodItemId,
+        name:            item.name,
+        nameEs:          item.nameEs,
+        quantityG:       item.quantityGrams,
+        caloriesPer100g: item.caloriesPer100g,
+        proteinPer100g:  item.proteinPer100g,
+        carbsPer100g:    item.carbsPer100g,
+        fatPer100g:      item.fatPer100g,
+        isEstimate:      item.isEstimate,
+      })),
+    };
+    return this._http
+      .post<void>(this._plateUrl + '/confirm', payload)
+      .pipe(catchError(() => of(void 0)));
+  }
+
+  // ─── Mapping ──────────────────────────────────────────────────────────────
+
+  private _toScanResult(response: ScanPlateResponse, imageBase64: string): ScanResult {
+    if (!response.detectedItems || response.detectedItems.length === 0) {
+      return this._emptyScanResult(imageBase64);
+    }
+
+    const detectedItems = response.detectedItems.map((item, idx) => {
+      const qty       = item.estimatedQuantityG ?? 100;
+      const calories  = ((item.caloriesPer100g ?? 0) * qty) / 100;
+      const protein   = ((item.proteinPer100g  ?? 0) * qty) / 100;
+      const carbs     = ((item.carbsPer100g    ?? 0) * qty) / 100;
+      const fat       = ((item.fatPer100g      ?? 0) * qty) / 100;
+
+      return new ScannedFoodItem({
+        id:              item.foodItemId ?? idx + 1,
+        foodItemId:      item.foodItemId ?? null,
+        name:            item.name,
+        nameEs:          item.nameEs ?? null,
+        nameKey:         null,
+        quantityGrams:   qty,
+        macros: new MacronutrientDistribution({ calories, protein, carbs, fat, fiber: 0, sugar: 0 }),
+        restrictions:    [],
+        isEdited:        false,
+        isEstimate:      item.isEstimate,
+        caloriesPer100g: item.caloriesPer100g ?? 0,
+        proteinPer100g:  item.proteinPer100g  ?? 0,
+        carbsPer100g:    item.carbsPer100g    ?? 0,
+        fatPer100g:      item.fatPer100g      ?? 0,
+      });
+    });
+
+    return new ScanResult({
+      id:            1,
+      status:        'success',
+      imageBase64,
+      detectedItems,
+      mealType:      MealType.LUNCH,
+      source:        'Gemini AI · Smart Scan',
+      scannedAt:     new Date().toISOString(),
+    });
+  }
+
+  private _emptyScanResult(imageBase64: string): ScanResult {
+    return new ScanResult({
+      id: 0, status: 'invalid', imageBase64,
+      detectedItems: [], mealType: MealType.LUNCH,
+      source: 'Gemini AI · Smart Scan', scannedAt: new Date().toISOString(),
+    });
   }
 }

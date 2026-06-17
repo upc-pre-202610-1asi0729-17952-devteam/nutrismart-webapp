@@ -5,6 +5,7 @@ import { MacroWarning, MacroName } from './macro-warning.value-object';
 import { GuardrailSeverity } from './guardrail-severity.enum';
 import { GuardrailType } from './guardrail-type.enum';
 import { PreLogGuardrail } from './pre-log-guardrail.value-object';
+import { roundToOneDecimal } from '../../../shared/domain/round.util';
 
 /**
  * Constructor DTO for creating a {@link DailyIntake} instance.
@@ -82,7 +83,7 @@ export class DailyIntake implements BaseEntity {
    * @returns Remaining kilocalories (negative when exceeded).
    */
   get remaining(): number {
-    return this._dailyGoal + this._active - this._consumed;
+    return roundToOneDecimal(this._dailyGoal + this._active - this._consumed);
   }
 
   /**

@@ -1,8 +1,10 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { filter, firstValueFrom } from 'rxjs';
 import { DomainEventBus } from '../../shared/application/domain-event-bus';
+import { SessionStarted } from '../../shared/domain/session-started.event';
 import { SessionTerminated } from '../../shared/domain/session-terminated.event';
 import { SubscriptionPlan } from '../../iam/domain/model/subscription-plan.enum';
+import { IamStore } from '../../iam/application/iam.store';
 import { PaymentGatewayPort } from '../domain/ports/payment-gateway.port';
 import { PaymentIntent } from '../domain/model/payment-intent.entity';
 import { PaymentMethod } from '../domain/model/payment-method.value-object';
@@ -11,8 +13,6 @@ import { Subscription } from '../domain/model/subscription.entity';
 
 /** Alias for the canonical plan prices defined on the domain entity. */
 const PLAN_PRICES = Subscription.MONTHLY_PRICES;
-
-const STORAGE_KEY = 'nutrismart_payment_method';
 
 /**
  * State store for the multi-step payment flow.
@@ -32,6 +32,7 @@ export class PaymentStore {
   private readonly gateway            = inject(PaymentGatewayPort);
   private readonly subscriptionsStore = inject(SubscriptionsStore);
   private readonly eventBus           = inject(DomainEventBus);
+  private readonly iamStore           = inject(IamStore);
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
@@ -42,17 +43,27 @@ export class PaymentStore {
   private _error         = signal<string | null>(null);
 
   constructor() {
+    // Restore card for sessions already active at startup (session restored from localStorage).
     this.restorePaymentMethod();
     // Root services live for the full app lifetime — no takeUntilDestroyed needed.
     this.eventBus.events$
-      .pipe(filter(e => e instanceof SessionTerminated))
-      .subscribe(() => this.reset());
+      .pipe(filter((e): e is SessionStarted => e instanceof SessionStarted))
+      .subscribe(() => this.restorePaymentMethod());
+    this.eventBus.events$
+      .pipe(filter((e): e is SessionTerminated => e instanceof SessionTerminated))
+      .subscribe(e => this.reset(e.userId));
   }
 
   // ─── Storage helpers ──────────────────────────────────────────────────────
 
+  /** Builds a user-scoped storage key so cards are never shared across accounts. */
+  private storageKey(): string {
+    const userId = this.iamStore.currentUser()?.id;
+    return `nutrismart_payment_method_${userId ?? 'guest'}`;
+  }
+
   private saveToStorage(method: PaymentMethod): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    localStorage.setItem(this.storageKey(), JSON.stringify({
       holderName:  method.holderName,
       last4:       method.last4,
       brand:       method.brand,
@@ -63,16 +74,19 @@ export class PaymentStore {
 
   private restorePaymentMethod(): void {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(this.storageKey());
       if (!raw) return;
       this._paymentMethod.set(new PaymentMethod(JSON.parse(raw)));
     } catch {
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(this.storageKey());
     }
   }
 
-  private clearFromStorage(): void {
-    localStorage.removeItem(STORAGE_KEY);
+  private clearFromStorage(userId?: number | string): void {
+    const key = userId !== undefined
+      ? `nutrismart_payment_method_${userId}`
+      : this.storageKey();
+    localStorage.removeItem(key);
   }
 
   // ─── Public Read-only Signals ─────────────────────────────────────────────
@@ -202,14 +216,16 @@ export class PaymentStore {
 
   /**
    * Clears all payment flow state including the stored card.
-   * Call on logout or when the user fully abandons the subscription flow.
+   * Pass `userId` when calling from a logout handler (at that point
+   * `iamStore.currentUser()` is already null, so the key must be built
+   * from the event data instead of the signal).
    */
-  reset(): void {
+  reset(userId?: number | string): void {
     this._selectedPlan.set(null);
     this._paymentMethod.set(null);
     this._processing.set(false);
     this._confirmed.set(false);
     this._error.set(null);
-    this.clearFromStorage();
+    this.clearFromStorage(userId);
   }
 }

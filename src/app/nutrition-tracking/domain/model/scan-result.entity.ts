@@ -45,8 +45,12 @@ export class ScanResult implements BaseEntity {
     this._status        = props.status;
     this._imageBase64   = props.imageBase64;
     this._detectedItems = props.detectedItems.map(i => new ScannedFoodItem({
-      id: i.id, name: i.name, nameKey: i.nameKey, quantityGrams: i.quantityGrams,
+      id: i.id, foodItemId: i.foodItemId, name: i.name, nameEs: i.nameEs,
+      nameKey: i.nameKey, quantityGrams: i.quantityGrams,
       macros: i.macros, restrictions: i.restrictions, isEdited: i.isEdited,
+      isEstimate: i.isEstimate,
+      caloriesPer100g: i.caloriesPer100g, proteinPer100g: i.proteinPer100g,
+      carbsPer100g: i.carbsPer100g, fatPer100g: i.fatPer100g,
     }));
     this._mealType   = props.mealType;
     this._source     = props.source;

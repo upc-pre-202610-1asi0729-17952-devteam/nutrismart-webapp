@@ -1,3 +1,7 @@
+<div class="sub-lang">
+  <app-language-switcher />
+</div>
+
 <div class="subscription-shell">
   <!-- Loading state -->
   @if (store.loading()) {
@@ -13,6 +17,17 @@
     </div>
   }
 
+  @if (fromProfile()) {
+    <div class="subscription-topbar">
+      <button type="button" class="sp-btn-back" (click)="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        {{ 'subscription.btn_back' | translate }}
+      </button>
+    </div>
+  }
+
   <div class="subscription-header">
     <h1 class="page-title">{{ 'subscription.title' | translate }}</h1>
     <p class="page-subtitle">{{ 'subscription.subtitle' | translate }}</p>
@@ -22,7 +37,7 @@
   @if (store.hasActivePlan()) {
     <div class="current-plan-banner" role="status">
       <strong>{{ 'subscriptions.current_plan' | translate }}:</strong>
-      {{ ('subscription.plan_' + (currentPlan() ?? '' | lowercase)) | translate }}
+      {{ ('subscription.plan_' + ((currentPlan() ?? '') | lowercase)) | translate }}
     </div>
   }
 
@@ -78,6 +93,11 @@
 
   <div class="subscription-footer">
     <p class="legal-text">{{ 'subscription.legal' | translate }}</p>
+    @if (!fromProfile()) {
+      <button type="button" class="sp-btn-maybe-later" (click)="maybeLater()">
+        {{ 'subscription.maybe_later' | translate }}
+      </button>
+    }
   </div>
 
   <!-- Cancel confirmation dialog -->

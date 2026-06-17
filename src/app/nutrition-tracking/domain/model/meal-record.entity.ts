@@ -144,7 +144,8 @@ export class MealRecord implements BaseEntity {
    * @returns e.g. "P 47g · C 0g · G 5g"
    */
   get macroSummary(): string {
-    return `P ${this._protein}g · C ${this._carbs}g · G ${this._fat}g`;
+    const r = (v: number) => +v.toFixed(2);
+    return `P ${r(this._protein)}g · C ${r(this._carbs)}g · G ${r(this._fat)}g`;
   }
 
   /**

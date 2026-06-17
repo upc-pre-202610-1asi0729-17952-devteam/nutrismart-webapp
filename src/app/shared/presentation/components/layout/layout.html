@@ -29,7 +29,7 @@
 
     <div class="sidebar-logo">
       <div class="logo-icon">
-        <img src="/logo.png" alt="NutriSmart logo" class="logo-img" />
+        <img src="/favicon.svg" alt="NutriSmart logo" class="logo-img" />
       </div>
       <span class="logo-text">NutriSmart</span>
     </div>
@@ -69,15 +69,44 @@
     </div>
 
     <div class="sidebar-footer">
-      <div class="user-row">
-        <div class="user-avatar">{{ iamStore.currentUser()?.initials }}</div>
-        <div class="user-info">
-          <div class="user-name">{{ iamStore.currentUser()?.fullName }}</div>
-          <div class="user-links">
-            <a [routerLink]="'/profile'" (click)="closeSidebar()">{{ 'nav.profile' | translate }}</a>
-            · <a href="#" (click)="iamStore.logout()">{{ 'nav.logout' | translate }}</a>
+      <div class="sidebar-lang">
+        <app-language-switcher />
+      </div>
+      <div class="user-menu-wrapper">
+        <button
+          class="user-row"
+          type="button"
+          (click)="toggleUserMenu($event)"
+          [attr.aria-expanded]="isUserMenuOpen()"
+          [attr.aria-label]="'nav.user_menu' | translate">
+          <div class="user-avatar">{{ iamStore.currentUser()?.initials }}</div>
+          <div class="user-info">
+            <div class="user-name">{{ iamStore.currentUser()?.fullName }}</div>
+            <div class="user-email">{{ iamStore.currentUser()?.email }}</div>
           </div>
-        </div>
+          <span class="user-chevron" [class.user-chevron--open]="isUserMenuOpen()">⌃</span>
+        </button>
+
+        @if (isUserMenuOpen()) {
+          <div class="user-dropdown" role="menu" (click)="$event.stopPropagation()">
+            <a
+              class="user-dropdown-item"
+              role="menuitem"
+              [routerLink]="'/profile'"
+              (click)="closeSidebar(); isUserMenuOpen.set(false)">
+              <span class="user-dropdown-icon">👤</span>
+              {{ 'nav.profile' | translate }}
+            </a>
+            <button
+              class="user-dropdown-item user-dropdown-item--danger"
+              type="button"
+              role="menuitem"
+              (click)="iamStore.logout()">
+              <span class="user-dropdown-icon">↩</span>
+              {{ 'nav.logout' | translate }}
+            </button>
+          </div>
+        }
       </div>
     </div>
   </nav>

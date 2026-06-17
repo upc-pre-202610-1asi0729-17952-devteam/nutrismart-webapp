@@ -27,7 +27,7 @@ export class BillingHistoryAssembler {
     return new BillingRecord({
       id:       String(resource.id),
       userId:   String(resource.userId),
-      date:     resource.date,
+      date:     resource.paidAt ?? '',
       plan:     resource.plan as SubscriptionPlan,
       amount:   resource.amount,
       currency: resource.currency,

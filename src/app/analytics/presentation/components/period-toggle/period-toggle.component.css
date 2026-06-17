@@ -13,7 +13,7 @@
   border-radius: 8px;
   background: transparent;
   font-family: 'Poppins', sans-serif;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 500;
   color: var(--nutrismart-text-mid);
   cursor: pointer;

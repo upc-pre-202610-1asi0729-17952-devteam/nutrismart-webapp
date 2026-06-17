@@ -1,4 +1,5 @@
 import { Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { map, startWith } from 'rxjs';
@@ -15,7 +16,7 @@ import { MealRecord } from '../../../domain/model/meal-record.entity';
  */
 @Component({
   selector: 'app-meal-section',
-  imports: [TranslatePipe],
+  imports: [DecimalPipe, TranslatePipe],
   templateUrl: './meal-section.html',
   styleUrl: './meal-section.css',
 })

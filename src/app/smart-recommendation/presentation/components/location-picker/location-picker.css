@@ -28,14 +28,14 @@
   border-color: #2d7a6f;
 }
 
-.search-chip-icon { font-size: 14px; flex-shrink: 0; }
+.search-chip-icon { font-size: var(--ns-text-base); flex-shrink: 0; }
 
 .search-chip-input {
   flex: 1;
   border: none;
   outline: none;
   background: transparent;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 600;
   color: var(--nutrismart-text-dark);
   min-width: 0;
@@ -43,7 +43,7 @@
 .search-chip-input::placeholder { font-weight: 600; color: var(--nutrismart-text-dark); }
 
 .search-chip-chevron {
-  font-size: 10px;
+  font-size: var(--ns-text-xs);
   color: var(--nutrismart-text-light);
   flex-shrink: 0;
   transition: transform 0.15s;
@@ -80,7 +80,7 @@
   padding: 8px 10px;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: var(--nutrismart-text-dark);
   transition: background 0.12s;
   user-select: none;
@@ -91,13 +91,13 @@
   font-weight: 600;
 }
 
-.location-icon { font-size: 14px; flex-shrink: 0; }
+.location-icon { font-size: var(--ns-text-base); flex-shrink: 0; }
 .location-name { flex: 1; }
-.location-temp { font-size: 12px; font-weight: 600; color: var(--nutrismart-text-light); }
+.location-temp { font-size: var(--ns-text-sm); font-weight: 600; color: var(--nutrismart-text-light); }
 
 .location-empty {
   padding: 10px;
-  font-size: 12px;
+  font-size: var(--ns-text-sm);
   color: var(--nutrismart-text-light);
   text-align: center;
 }
@@ -111,7 +111,7 @@
 
 .slider-label {
   display: block;
-  font-size: 10px;
+  font-size: var(--ns-text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -126,7 +126,7 @@
 }
 
 .slider-min, .slider-max {
-  font-size: 10px;
+  font-size: var(--ns-text-xs);
   color: var(--nutrismart-text-light);
   white-space: nowrap;
 }
@@ -139,7 +139,7 @@
 
 .slider-value {
   text-align: center;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   font-weight: 700;
   color: var(--nutrismart-text-dark);
   margin-top: 6px;

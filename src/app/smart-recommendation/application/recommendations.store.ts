@@ -2,6 +2,8 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { filter, firstValueFrom } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { RecommendationsApi, RecommendationCard } from '../infrastructure/recommendations-api';
+import { GeolocationService } from '../../shared/infrastructure/geolocation.service';
+import { GeocodingService } from '../../shared/infrastructure/geocoding.service';
 import { WeatherContext } from '../domain/model/weather-context.entity';
 import { TravelContext } from '../domain/model/travel-context.entity';
 import { RecommendationSession } from '../domain/model/recommendation-session.entity';
@@ -29,6 +31,8 @@ export class RecommendationsStore {
   private eventBus            = inject(DomainEventBus);
   private translate           = inject(TranslateService);
   private notificationService = inject(NotificationService);
+  private geolocation         = inject(GeolocationService);
+  private geocoding           = inject(GeocodingService);
 
   constructor() {
     this.subscribeToAdherenceEvents();
@@ -38,39 +42,39 @@ export class RecommendationsStore {
 
   // ─── Private Signals ──────────────────────────────────────────────────────
 
-  private _weatherContext   = signal<WeatherContext | null>(null);
-  private _travelContext    = signal<TravelContext | null>(null);
-  private _unrecognizedCity = signal<boolean>(false);
-  private _session          = signal<RecommendationSession | null>(null);
-  private _weatherCards     = signal<RecommendationCard[]>([]);
-  private _travelCards      = signal<RecommendationCard[]>([]);
-  private _preventiveCard   = signal<RecommendationCard | null>(null);
-  private _interventionCard = signal<RecommendationCard | null>(null);
-  private _bestDishCard     = signal<RecommendationCard | null>(null);
-  private _loading            = signal<boolean>(false);
-  private _locationDenied     = signal<boolean>(false);
-  private _error              = signal<string | null>(null);
-  private _availableLocations = signal<WeatherContext[]>([]);
-  private _demoTemperature    = signal<number | null>(null);
-  private _homeCity           = signal<string>('Lima');
+  private _weatherContext      = signal<WeatherContext | null>(null);
+  private _travelContext       = signal<TravelContext | null>(null);
+  private _unrecognizedCity    = signal<boolean>(false);
+  private _session             = signal<RecommendationSession | null>(null);
+  private _weatherCards        = signal<RecommendationCard[]>([]);
+  private _travelCards         = signal<RecommendationCard[]>([]);
+  private _preventiveCard      = signal<RecommendationCard | null>(null);
+  private _interventionCard    = signal<RecommendationCard | null>(null);
+  private _bestDishCard        = signal<RecommendationCard | null>(null);
+  private _loading             = signal<boolean>(false);
+  private _locationDenied      = signal<boolean>(false);
+  private _hasLocationSnapshot = signal<boolean>(false);
+  private _error               = signal<string | null>(null);
+  private _availableLocations  = signal<WeatherContext[]>([]);
+  private _homeCity            = signal<string>('');
 
   // ─── Public Read-only Signals ─────────────────────────────────────────────
 
-  readonly weatherContext   = this._weatherContext.asReadonly();
-  readonly travelContext    = this._travelContext.asReadonly();
-  readonly session          = this._session.asReadonly();
-  readonly weatherCards     = this._weatherCards.asReadonly();
-  readonly travelCards      = this._travelCards.asReadonly();
-  readonly preventiveCard   = this._preventiveCard.asReadonly();
-  readonly interventionCard = this._interventionCard.asReadonly();
+  readonly weatherContext      = this._weatherContext.asReadonly();
+  readonly travelContext       = this._travelContext.asReadonly();
+  readonly session             = this._session.asReadonly();
+  readonly weatherCards        = this._weatherCards.asReadonly();
+  readonly travelCards         = this._travelCards.asReadonly();
+  readonly preventiveCard      = this._preventiveCard.asReadonly();
+  readonly interventionCard    = this._interventionCard.asReadonly();
   /** Best dish recommended after a menu analysis — populated by {@link CompatibleDishesRanked}. */
-  readonly bestDishCard     = this._bestDishCard.asReadonly();
-  readonly loading            = this._loading.asReadonly();
-  readonly locationDenied     = this._locationDenied.asReadonly();
-  readonly unrecognizedCity   = this._unrecognizedCity.asReadonly();
-  readonly error              = this._error.asReadonly();
-  readonly availableLocations = this._availableLocations.asReadonly();
-  readonly demoTemperature    = this._demoTemperature.asReadonly();
+  readonly bestDishCard        = this._bestDishCard.asReadonly();
+  readonly loading             = this._loading.asReadonly();
+  readonly locationDenied      = this._locationDenied.asReadonly();
+  readonly hasLocationSnapshot = this._hasLocationSnapshot.asReadonly();
+  readonly unrecognizedCity    = this._unrecognizedCity.asReadonly();
+  readonly error               = this._error.asReadonly();
+  readonly availableLocations  = this._availableLocations.asReadonly();
 
   // ─── Computed Signals ─────────────────────────────────────────────────────
 
@@ -122,10 +126,11 @@ export class RecommendationsStore {
         createdAt: new Date().toISOString(), isActive: true,
       }));
 
-      const isAway = snapshot !== null && !snapshot.isHome(homeCity);
-      const city   = isAway ? snapshot!.city    : homeCity || 'Lima';
-      const country = isAway ? snapshot!.country : 'Peru';
-      this._homeCity.set(homeCity || 'Lima');
+      this._hasLocationSnapshot.set(snapshot !== null);
+      const isAway  = snapshot !== null && !snapshot.isHome(homeCity);
+      const city    = isAway ? snapshot!.city    : homeCity;
+      const country = snapshot?.country ?? '';
+      this._homeCity.set(homeCity);
 
       if (isAway) {
         const travel = existingTravel ?? new TravelContext({
@@ -133,7 +138,7 @@ export class RecommendationsStore {
         });
         travel.activate(city, country, false);
         this._travelContext.set(travel);
-        const travelCards = await firstValueFrom(this.api.getTravelRecommendations(this.resolveCityId(city)));
+        const travelCards = await firstValueFrom(this.api.getTravelRecommendations(this.resolveCityId(city), country));
         if (travelCards.length === 0) {
           this._unrecognizedCity.set(true);
         } else {
@@ -146,12 +151,35 @@ export class RecommendationsStore {
         }));
       }
 
-      const weather = await firstValueFrom(this.api.getCurrentWeather(city));
-      this._weatherContext.set(weather);
+      if (snapshot !== null) {
+        // Existing snapshot: sync weather with the known city (no browser permission needed)
+        try {
+          if (city && country) {
+            await firstValueFrom(this.api.syncWeatherSnapshot(city, country));
+          }
+        } catch {
+          // Continúa con el snapshot cacheado si OpenWeatherMap no está disponible
+        }
+        try {
+          const perm = await navigator.permissions.query({ name: 'geolocation' });
+          if (perm.state === 'denied') this._locationDenied.set(true);
+        } catch {
+          // permissions API not supported in all browsers
+        }
+      } else {
+        // No snapshot yet: auto-detect via Geolocation API (fires native browser dialog)
+        await this.detectAndSyncLocation();
+      }
 
-      if (weather) {
-        const weatherCards = await firstValueFrom(this.api.getWeatherRecommendations(weather.weatherType));
-        this._weatherCards.set(weatherCards);
+      let weather: WeatherContext | null = null;
+      if (city) {
+        weather = await firstValueFrom(this.api.getCurrentWeather(city));
+        this._weatherContext.set(weather);
+
+        if (weather) {
+          const weatherCards = await firstValueFrom(this.api.getWeatherRecommendations(weather.weatherType));
+          this._weatherCards.set(weatherCards);
+        }
       }
 
       await this.syncAdherenceFromBehavioralContext(user.id, userId);
@@ -222,10 +250,15 @@ export class RecommendationsStore {
       const ctx = await firstValueFrom(this.api.activateTravelMode(city, country, userId));
       ctx.isManual = manual;
       this._travelContext.set(ctx);
-      this._demoTemperature.set(null);
+
+      try {
+        await firstValueFrom(this.api.syncWeatherSnapshot(city, country));
+      } catch {
+        // Non-fatal: continue with cached snapshot if OWM is unavailable
+      }
 
       const [cards, weather] = await Promise.all([
-        firstValueFrom(this.api.getTravelRecommendations(this.resolveCityId(city))),
+        firstValueFrom(this.api.getTravelRecommendations(this.resolveCityId(city), country)),
         firstValueFrom(this.api.getCurrentWeather(city)),
       ]);
       if (weather) this._weatherContext.set(weather);
@@ -253,11 +286,13 @@ export class RecommendationsStore {
       const ctx = await firstValueFrom(this.api.deactivateTravelMode(userId));
       this._travelContext.set(ctx);
       this._travelCards.set([]);
-      this._demoTemperature.set(null);
-      const weather = await firstValueFrom(this.api.getCurrentWeather(this._homeCity()));
-      if (weather) {
-        this._weatherContext.set(weather);
-        this.applyAdjustmentToSession(weather.calorieAdjustmentFactor());
+      const homeCity = this._homeCity();
+      if (homeCity) {
+        const weather = await firstValueFrom(this.api.getCurrentWeather(homeCity));
+        if (weather) {
+          this._weatherContext.set(weather);
+          this.applyAdjustmentToSession(weather.calorieAdjustmentFactor());
+        }
       }
     } catch {
       this._error.set('recommendations.error_load_failed');
@@ -266,8 +301,77 @@ export class RecommendationsStore {
     }
   }
 
-  setDemoTemperature(temp: number | null): void {
-    this._demoTemperature.set(temp);
+  /**
+   * Requests the user's position via the browser Geolocation API, converts
+   * coordinates to city/country via OWM reverse geocoding, syncs the weather
+   * snapshot, and persists a new LocationSnapshot for the user.
+   *
+   * Failures at any step are silently degraded: the mock/existing data
+   * continues to display and `_locationDenied` is set when the browser
+   * permission was explicitly refused.
+   */
+  async detectAndSyncLocation(): Promise<void> {
+    const user = this.iamStore.currentUser();
+    if (!user) return;
+
+    try {
+      const coords   = await this.geolocation.getCurrentPosition();
+      const location = await firstValueFrom(this.geocoding.reverseGeocode(coords.lat, coords.lon));
+
+      try {
+        await firstValueFrom(this.api.syncWeatherSnapshot(location.city, location.country));
+      } catch {
+        // Non-fatal: OWM may be unavailable; continue with geocoded city
+      }
+
+      const snapshot = await firstValueFrom(
+        this.api.saveLocationSnapshot(String(user.id), location.city, location.country),
+      );
+
+      this._hasLocationSnapshot.set(true);
+      this._locationDenied.set(false);
+
+      const isAway = !snapshot.isHome(user.homeCity ?? '');
+      if (isAway) {
+        await this.activateTravelMode(location.city, location.country, false);
+      } else {
+        this._homeCity.set(location.city);
+        const weather = await firstValueFrom(this.api.getCurrentWeather(location.city));
+        if (weather) {
+          this._weatherContext.set(weather);
+          const weatherCards = await firstValueFrom(this.api.getWeatherRecommendations(weather.weatherType));
+          this._weatherCards.set(weatherCards);
+          this.applyAdjustmentToSession(weather.calorieAdjustmentFactor());
+        }
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : '';
+      if (message.includes('denied')) {
+        this._locationDenied.set(true);
+      }
+      // All other errors: degrade silently; existing snapshot data stays visible
+    }
+  }
+
+  async refreshWeatherIfChanged(): Promise<void> {
+    const city = this._weatherContext()?.city ?? this._homeCity();
+    if (!city) return;
+
+    try {
+      const weather = await firstValueFrom(this.api.getCurrentWeather(city));
+      if (!weather) return;
+
+      const previousType = this._weatherContext()?.weatherType;
+      this._weatherContext.set(weather);
+
+      if (!this.isTravelMode() && weather.weatherType !== previousType) {
+        const weatherCards = await firstValueFrom(this.api.getWeatherRecommendations(weather.weatherType));
+        this._weatherCards.set(weatherCards);
+        this.applyAdjustmentToSession(weather.calorieAdjustmentFactor());
+      }
+    } catch {
+      // Silent degradation — stale data stays visible
+    }
   }
 
   denyLocation(): void {
@@ -373,6 +477,7 @@ export class RecommendationsStore {
           id:          `best-dish-${event.occurredAt}`,
           foodId:      0,
           name:        event.bestDishName,
+          nameEs:      event.bestDishName,
           description: `${event.bestDishCalories} kcal · P${event.bestDishProtein}g · C${event.bestDishCarbs}g · G${event.bestDishFat}g`,
           calories:    event.bestDishCalories,
           protein:     `${event.bestDishProtein}g`,

@@ -23,6 +23,29 @@
     </nav>
   </aside>
 
+  <!-- Responsive dropdown nav (≤960px) -->
+  <div class="profile-nav-dropdown">
+    <button type="button" class="pnd-trigger" (click)="dropdownOpen.update(v => !v)">
+      <div class="avatar-circle pnd-avatar">{{ iamStore.currentUser()?.initials }}</div>
+      <span class="pnd-label">{{ activeNavItem()?.label | translate }}</span>
+      <span class="material-icons pnd-chevron" [class.pnd-chevron--open]="dropdownOpen()">expand_more</span>
+    </button>
+    @if (dropdownOpen()) {
+      <div class="pnd-menu">
+        @for (item of navItems; track item.id) {
+          <button
+            type="button"
+            class="pnd-menu-item"
+            [class.pnd-menu-item--active]="activePanel() === item.id"
+            (click)="setPanel(item.id)"
+          >
+            {{ item.label | translate }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+
   <!-- Right content panel -->
   <main class="profile-content">
 
@@ -129,7 +152,7 @@
                   </span>
                 </div>
                 <input type="number" class="form-input form-input-readonly"
-                       [value]="metabolicStore.currentMetric()?.weightKg ?? iamStore.currentUser()?.weight" readonly />
+                       [value]="iamStore.currentUser()?.weight" readonly />
               </div>
               <div class="form-group">
                 <label class="form-label">{{ 'profile.height' | translate }}</label>
@@ -147,27 +170,6 @@
               </select>
             </div>
           </form>
-
-          <div class="goal-section">
-            <p class="form-label">{{ 'profile.goal' | translate }}</p>
-            <div class="goal-toggle">
-              <button type="button" class="goal-btn"
-                      [class.active]="selectedGoal() === UserGoal.WEIGHT_LOSS"
-                      (click)="setGoal(UserGoal.WEIGHT_LOSS)">
-                {{ 'onboarding.goal_weight_loss' | translate }}
-              </button>
-              <button type="button" class="goal-btn"
-                      [class.active]="selectedGoal() === UserGoal.MUSCLE_GAIN"
-                      (click)="setGoal(UserGoal.MUSCLE_GAIN)">
-                {{ 'onboarding.goal_muscle_gain' | translate }}
-              </button>
-            </div>
-            @if (isGoalLocked()) {
-              <p class="goal-lock-note">
-                🔒 {{ 'body_progress.goal_locked_switch_disabled' | translate:{ days: daysUntilUnlock() } }}
-              </p>
-            }
-          </div>
 
           <button type="button" class="btn-save" (click)="applyPhysical()">{{ 'profile.save_btn' | translate }}</button>
         </section>
@@ -257,22 +259,14 @@
         </section>
       }
 
-      <!-- PANEL 4: Language -->
-      @case ('language') {
-        <section class="panel-section">
-          <h2 class="panel-title">{{ 'profile.language_title' | translate }}</h2>
-          <app-language-switcher></app-language-switcher>
-        </section>
-      }
-
-      <!-- PANEL 5: Subscription -->
+      <!-- PANEL 4: Subscription -->
       @case ('subscription') {
         <section class="panel-section">
           <app-billing-panel />
         </section>
       }
 
-      <!-- PANEL 6: Security and privacy -->
+      <!-- PANEL 5: Security and privacy -->
       @case ('security') {
         <section class="panel-section">
           <h2 class="panel-title">{{ 'profile.security_title' | translate }}</h2>
@@ -324,24 +318,5 @@
 
   </main>
 
-  <!-- ── Goal switch confirmation modal ──────────────────────────── -->
-  @if (showGoalLockConfirm()) {
-    <div class="profile-modal-overlay" (click)="onCancelGoalSwitch()">
-      <div class="profile-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
-        <h3 class="profile-modal-title">{{ 'body_progress.goal_switch_confirm_title' | translate }}</h3>
-        <p class="profile-modal-desc">
-          {{ 'body_progress.goal_switch_confirm_desc' | translate:{ goal: goalName(selectedGoal()) } }}
-        </p>
-        <div class="profile-modal-actions">
-          <button class="profile-modal-btn profile-modal-btn--cancel" (click)="onCancelGoalSwitch()">
-            {{ 'body_progress.goal_switch_cancel_btn' | translate }}
-          </button>
-          <button class="profile-modal-btn profile-modal-btn--confirm" (click)="onConfirmGoalSwitch()">
-            {{ 'body_progress.goal_switch_confirm_btn' | translate }}
-          </button>
-        </div>
-      </div>
-    </div>
-  }
 
 </div>

@@ -17,8 +17,8 @@
   box-shadow: 0 20px 60px rgba(0,0,0,.2);
 }
 
-.dialog-title    { font-size: 20px; font-weight: 700; margin: 0 0 4px; color: #1a1a1a; }
-.dialog-subtitle { font-size: 14px; color: #6b7280; margin: 0 0 20px; }
+.dialog-title    { font-size: 1.25rem; font-weight: 700; margin: 0 0 4px; color: #1a1a1a; }
+.dialog-subtitle { font-size: var(--ns-text-base); color: #6b7280; margin: 0 0 20px; }
 
 .card-info {
   background: #f5f5f0;
@@ -29,8 +29,8 @@
   flex-direction: column;
   gap: 4px;
 }
-.card-name { font-size: 15px; font-weight: 600; color: #1a1a1a; }
-.card-desc { font-size: 13px; color: #6b7280; }
+.card-name { font-size: 0.9375rem; font-weight: 600; color: #1a1a1a; }
+.card-desc { font-size: var(--ns-text-ui); color: #6b7280; }
 
 /* 2-cell macro grid */
 .macro-grid {
@@ -49,11 +49,11 @@
   align-items: center;
   gap: 2px;
 }
-.chip-value { font-size: 22px; font-weight: 700; color: #1a1a1a; }
-.chip-label { font-size: 12px; color: #6b7280; }
+.chip-value { font-size: var(--ns-text-xl); font-weight: 700; color: #1a1a1a; }
+.chip-label { font-size: var(--ns-text-sm); color: #6b7280; }
 
 .meal-type-section { margin-bottom: 20px; }
-.field-label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 8px; }
+.field-label { display: block; font-size: var(--ns-text-ui); font-weight: 600; color: #374151; margin-bottom: 8px; }
 .meal-type-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
 
 .meal-btn {
@@ -62,7 +62,7 @@
   border-radius: 20px;
   background: #fff;
   font-family: 'Poppins', system-ui, sans-serif;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   cursor: pointer;
   transition: all .2s;
   color: #1a1a1a;
@@ -100,7 +100,7 @@
 .impact-bar--warning .impact-fill { background: #f59e0b; }
 .impact-bar--danger  .impact-fill { background: #ef4444; }
 
-.impact-label { font-size: 12px; color: #374151; }
+.impact-label { font-size: var(--ns-text-sm); color: #374151; }
 .impact-bar--warning .impact-label { color: #92400e; }
 .impact-bar--danger  .impact-label { color: #b91c1c; }
 
@@ -110,7 +110,7 @@
   padding: 10px 20px;
   border-radius: 8px;
   font-family: 'Poppins', system-ui, sans-serif;
-  font-size: 14px;
+  font-size: var(--ns-text-base);
   font-weight: 600;
   cursor: pointer;
   transition: all .2s;

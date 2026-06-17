@@ -6,7 +6,15 @@
 export interface BillingHistoryResource {
   id: string;
   userId: string | number;
-  date: string;
+  paidAt?: string;
+  plan: string;
+  amount: number;
+  currency: string;
+  status: string;
+}
+
+export interface NewBillingRecord {
+  userId: string | number;
   plan: string;
   amount: number;
   currency: string;

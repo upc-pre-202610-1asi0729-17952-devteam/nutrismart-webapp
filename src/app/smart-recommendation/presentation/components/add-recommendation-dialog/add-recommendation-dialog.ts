@@ -68,6 +68,12 @@ export class AddRecommendationDialogComponent {
     return NutritionalRiskLevel.SAFE;
   });
 
+  protected getCardName(): string {
+    return (this.translate.currentLang === 'es' && this.card().nameEs)
+      ? this.card().nameEs
+      : this.card().name;
+  }
+
   /**
    * Returns the i18n label for a given meal type.
    *

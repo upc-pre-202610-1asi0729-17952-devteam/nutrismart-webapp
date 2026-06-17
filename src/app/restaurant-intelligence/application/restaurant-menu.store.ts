@@ -12,7 +12,7 @@ import { RawMenuScan, RestaurantMenuApi } from '../infrastructure/restaurant-men
 import { MacroAlert, MacroKey } from '../../nutrition-tracking/application/plate-scan.store';
 
 /** Active view state within the restaurant-menu flow. */
-export type MenuView = 'idle' | 'analyzing' | 'result';
+export type MenuView = 'idle' | 'analyzing' | 'result' | 'empty';
 
 /**
  * Application store for the restaurant-menu scanning flow (Restaurant Intelligence context).
@@ -100,15 +100,22 @@ export class RestaurantMenuStore {
     return new Promise((resolve) => {
       this.restaurantMenuApi.scanMenuPhoto(imageBase64).subscribe({
         next: (raw: RawMenuScan) => {
+          if (!raw.allDishes || raw.allDishes.length === 0) {
+            this._menuView.set('empty');
+            this._loading.set(false);
+            resolve();
+            return;
+          }
           const analysis = new MenuAnalysis({
             id:               raw.id,
             scannedAt:        raw.scannedAt,
             restaurantName:   raw.restaurantName,
             rankedDishes: raw.allDishes.map((d, i) => new RankedDish({
-              rank: i + 1, name: d.name, nameKey: d.nameKey,
+              rank: i + 1, name: d.name, nameEs: d.nameEs ?? null, nameKey: d.nameKey,
               calories: d.calories, protein: d.protein, carbs: d.carbs, fat: d.fat,
               compatibilityScore: d.compatibilityScore,
-              justification: d.justification, justificationKey: d.justificationKey,
+              justification: d.justification, justificationEs: d.justificationEs ?? null,
+              justificationKey: d.justificationKey,
               conflictingRestrictions: d.conflictingRestrictions,
             })),
             restrictedDishes: [],
@@ -143,7 +150,7 @@ export class RestaurantMenuStore {
     this._error.set(null);
 
     const { foodItemName, foodItemNameEs } = this._resolveLocalizedNames(
-      dish.nameKey, 'menu_dishes', dish.name,
+      dish.nameKey, 'menu_dishes', dish.name, dish.nameEs,
     );
     const props: MealRecordProps = {
       id:           0,
@@ -229,12 +236,14 @@ export class RestaurantMenuStore {
     nameKey: string | null,
     namespace: string,
     fallback: string,
+    fallbackEs: string | null = null,
   ): { foodItemName: string; foodItemNameEs: string } {
-    if (!nameKey) return { foodItemName: fallback, foodItemNameEs: fallback };
+    const esDefault = fallbackEs ?? fallback;
+    if (!nameKey) return { foodItemName: fallback, foodItemNameEs: esDefault };
     const enMap = this.translateStore.getTranslations('en') as Record<string, Record<string, string>>;
     const esMap = this.translateStore.getTranslations('es') as Record<string, Record<string, string>>;
     const enName = enMap?.[namespace]?.[nameKey] ?? fallback;
-    const esName = esMap?.[namespace]?.[nameKey] ?? fallback;
+    const esName = esMap?.[namespace]?.[nameKey] ?? esDefault;
     return { foodItemName: enName, foodItemNameEs: esName };
   }
 }

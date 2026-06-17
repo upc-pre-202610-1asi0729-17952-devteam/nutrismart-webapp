@@ -19,18 +19,32 @@ export class ScanResultAssembler
       id:     r.id,
       status: r.status as any,
       imageBase64: r.image_base64,
-      detectedItems: r.detected_items.map((item, idx) => new ScannedFoodItem({
-        id:            item.id ?? idx + 1,
-        name:          item.name,
-        nameKey:       item.name_key ?? null,
-        quantityGrams: item.quantity_grams,
-        macros: new MacronutrientDistribution({
-          calories: item.calories, protein: item.protein,
-          carbs: item.carbs, fat: item.fat, fiber: 0, sugar: 0,
-        }),
-        restrictions:  item.restrictions.map(s => s as DietaryRestriction),
-        isEdited:      item.is_edited,
-      })),
+      detectedItems: r.detected_items.map((item, idx) => {
+        const qty = item.quantity_grams || 100;
+        const cal100 = qty > 0 ? (item.calories / qty) * 100 : 0;
+        const prt100 = qty > 0 ? (item.protein  / qty) * 100 : 0;
+        const crb100 = qty > 0 ? (item.carbs    / qty) * 100 : 0;
+        const fat100 = qty > 0 ? (item.fat      / qty) * 100 : 0;
+        return new ScannedFoodItem({
+          id:              item.id ?? idx + 1,
+          foodItemId:      item.id ?? null,
+          name:            item.name,
+          nameEs:          null,
+          nameKey:         item.name_key ?? null,
+          quantityGrams:   qty,
+          macros: new MacronutrientDistribution({
+            calories: item.calories, protein: item.protein,
+            carbs: item.carbs, fat: item.fat, fiber: 0, sugar: 0,
+          }),
+          restrictions:    item.restrictions.map(s => s as DietaryRestriction),
+          isEdited:        item.is_edited,
+          isEstimate:      false,
+          caloriesPer100g: cal100,
+          proteinPer100g:  prt100,
+          carbsPer100g:    crb100,
+          fatPer100g:      fat100,
+        });
+      }),
       mealType:   r.meal_type as MealType,
       source:     r.source,
       scannedAt:  r.scanned_at,

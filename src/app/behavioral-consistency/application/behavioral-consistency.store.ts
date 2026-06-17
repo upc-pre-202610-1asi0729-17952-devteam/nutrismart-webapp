@@ -26,6 +26,7 @@ import { MetabolicTargetSet } from '../../shared/domain/metabolic-target-set.eve
 import { MealSkipped } from '../../shared/domain/meal-skipped.event';
 import { RestrictedItemBlocked } from '../../shared/domain/restricted-item-blocked.event';
 import { NotificationService } from '../../shared/application/notification.service';
+import { localIsoDate } from '../../shared/domain/local-date.util';
 
 /**
  * Central state store for the Behavioral Consistency bounded context.
@@ -67,8 +68,6 @@ export class BehavioralConsistencyStore {
   /** Last error message from a failed async operation, or `null`. */
   private _error = signal<string | null>(null);
 
-  /** ISO date of the last day a MealSkipped-sourced miss was registered. Prevents multiple misses per day. */
-  private _lastMissedDate = signal<string | null>(null);
 
   // ─── Public readonly signals ───────────────────────────────────────────────
 
@@ -221,7 +220,7 @@ export class BehavioralConsistencyStore {
     const progress = this._currentProgress();
     if (!progress) return;
 
-    if (progress.lastGoalMetDate === date) return;
+    if (progress.goalMetDates.includes(date)) return;
 
     const prevStreak    = progress.streak;
     const wasDegraded   = progress.adherenceStatus !== AdherenceStatus.ON_TRACK;
@@ -229,7 +228,7 @@ export class BehavioralConsistencyStore {
 
     progress.markGoalMet(date);
     this._currentProgress.set(progress);
-    this.persist();
+    this.persist(true);
 
     if (wasDegraded && progress.isOnTrack()) {
       this.eventBus.publish(new ConsistencyRecovered(progress.userId));
@@ -324,14 +323,14 @@ export class BehavioralConsistencyStore {
   /**
    * Persists the current behavioral progress to the API via a full PUT replacement.
    */
-  private persist(): void {
+  private persist(goalMetToday = false): void {
     const progress = this._currentProgress();
     if (!progress) return;
 
     this._loading.set(true);
     this._error.set(null);
 
-    this.behavioralConsistencyApi.updateBehavioralProgress(progress).subscribe({
+    this.behavioralConsistencyApi.updateBehavioralProgress(progress, goalMetToday).subscribe({
       next: updated => {
         this._currentProgress.set(updated);
         this._loading.set(false);
@@ -369,7 +368,7 @@ export class BehavioralConsistencyStore {
    * @returns Current date string.
    */
   private todayIsoDate(): string {
-    return new Date().toISOString().split('T')[0];
+    return localIsoDate();
   }
 
   /** Clamps an arbitrary milestone value to the nearest allowed literal. */
@@ -390,10 +389,13 @@ export class BehavioralConsistencyStore {
    *
    * @param userId - Numeric identifier of the user.
    */
-  loadRecoveryPlan(userId: number): void {
-    this.recoveryPlanApi.getActiveByUserId(userId).subscribe({
-      next: plan => this._activeRecoveryPlan.set(plan ?? null),
-    });
+  async loadRecoveryPlan(userId: number): Promise<void> {
+    try {
+      const plan = await firstValueFrom(this.recoveryPlanApi.getActiveByUserId(userId));
+      this._activeRecoveryPlan.set(plan ?? null);
+    } catch {
+      // non-critical: proceed without a pre-loaded recovery plan
+    }
   }
 
   /**
@@ -525,11 +527,12 @@ export class BehavioralConsistencyStore {
         const progress = this._currentProgress();
         if (progress?.userId !== event.userId) return;
 
-        const today = new Date().toISOString().slice(0, 10);
-        if (progress.lastGoalMetDate === today) return;
-        if (this._lastMissedDate() === today) return;
+        const today = localIsoDate();
+        if (progress.goalMetDates.includes(today)) return;
+        const lsKey = `nutrismart_goal_missed_${progress.userId}_${today}`;
+        if (localStorage.getItem(lsKey)) return;
 
-        this._lastMissedDate.set(today);
+        localStorage.setItem(lsKey, '1');
         this.markGoalMissed();
       });
   }

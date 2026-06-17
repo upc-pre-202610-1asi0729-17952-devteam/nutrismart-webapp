@@ -18,27 +18,27 @@
 
       <div class="macros-grid">
         <div class="macro-card macro-card--calories">
-          <span class="macro-value">{{ entry().calories }}</span>
+          <span class="macro-value">{{ entry().calories | number:'1.0-2' }}</span>
           <span class="macro-label">{{ 'nutrition.calories' | translate }} ({{ 'nutrition.kcal' | translate }})</span>
         </div>
         <div class="macro-card">
-          <span class="macro-value">{{ entry().protein }}g</span>
+          <span class="macro-value">{{ entry().protein | number:'1.0-2' }}g</span>
           <span class="macro-label">{{ 'nutrition.protein' | translate }}</span>
         </div>
         <div class="macro-card">
-          <span class="macro-value">{{ entry().carbs }}g</span>
+          <span class="macro-value">{{ entry().carbs | number:'1.0-2' }}g</span>
           <span class="macro-label">{{ 'nutrition.carbs' | translate }}</span>
         </div>
         <div class="macro-card">
-          <span class="macro-value">{{ entry().fat }}g</span>
+          <span class="macro-value">{{ entry().fat | number:'1.0-2' }}g</span>
           <span class="macro-label">{{ 'nutrition.fat' | translate }}</span>
         </div>
         <div class="macro-card">
-          <span class="macro-value">{{ entry().fiber }}g</span>
+          <span class="macro-value">{{ entry().fiber | number:'1.0-2' }}g</span>
           <span class="macro-label">{{ 'nutrition.fiber' | translate }}</span>
         </div>
         <div class="macro-card">
-          <span class="macro-value">{{ entry().sugar }}g</span>
+          <span class="macro-value">{{ entry().sugar | number:'1.0-2' }}g</span>
           <span class="macro-label">{{ 'nutrition.sugar' | translate }}</span>
         </div>
       </div>

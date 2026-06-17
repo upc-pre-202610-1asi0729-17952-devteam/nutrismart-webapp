@@ -2,7 +2,7 @@
 
 .panel-title {
   margin: 0 0 16px;
-  font-size: 14px;
+  font-size: var(--ns-text-base);
   font-weight: 700;
   color: var(--nutrismart-text-dark);
 }
@@ -37,7 +37,7 @@
 .timeline-dot:hover { transform: scale(1.15); }
 
 .timeline-date {
-  font-size: 9px;
+  font-size: var(--ns-text-xs);
   color: var(--nutrismart-text-light);
   text-align: center;
   white-space: nowrap;
@@ -52,6 +52,6 @@
 .no-data-message {
   padding: 24px 0;
   text-align: center;
-  font-size: 13px;
+  font-size: var(--ns-text-ui);
   color: var(--nutrismart-text-light);
 }

@@ -76,8 +76,8 @@ export class BehavioralConsistencyApi extends BaseApi {
    * @param progress - The updated {@link BehavioralProgress} entity.
    * @returns Observable emitting the updated entity as returned by the server.
    */
-  updateBehavioralProgress(progress: BehavioralProgress): Observable<BehavioralProgress> {
-    return this.endpoint.update(progress, progress.id);
+  updateBehavioralProgress(progress: BehavioralProgress, goalMetToday = false): Observable<BehavioralProgress> {
+    return this.endpoint.update(progress, progress.id, goalMetToday);
   }
 
   /**

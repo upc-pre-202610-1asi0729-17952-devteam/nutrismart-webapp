@@ -38,8 +38,13 @@
     <section class="top-cards">
       <article class="metric-card">
         <span class="metric-label">{{ 'dashboard.calories_consumed_label' | translate }}</span>
-        <strong>{{ calories.consumed }}</strong>
-        <p>{{ 'dashboard.calories_consumed_desc' | translate: { target: calories.target } }}</p>
+        @if (hasNoTodayLogs()) {
+          <strong class="empty-value">—</strong>
+          <p class="empty-hint">{{ 'dashboard.calories_consumed_empty_desc' | translate }}</p>
+        } @else {
+          <strong>{{ calories.consumed | number:'1.0-0' }}</strong>
+          <p>{{ 'dashboard.calories_consumed_desc' | translate: { target: calories.target } }}</p>
+        }
 
         <div class="progress-track">
           <div
@@ -52,8 +57,13 @@
 
       <article class="metric-card">
         <span class="metric-label">{{ 'dashboard.calories_remaining_label' | translate }}</span>
-        <strong class="teal-value">{{ calories.remaining }}</strong>
-        <p>{{ 'dashboard.calories_remaining_desc' | translate }}</p>
+        @if (hasNoTodayLogs()) {
+          <strong class="teal-value empty-value">{{ calories.remaining | number:'1.0-0' }}</strong>
+          <p class="empty-hint">{{ 'dashboard.calories_remaining_empty_desc' | translate }}</p>
+        } @else {
+          <strong class="teal-value">{{ calories.remaining | number:'1.0-0' }}</strong>
+          <p>{{ 'dashboard.calories_remaining_desc' | translate }}</p>
+        }
 
         <div class="progress-track muted">
           <div class="progress-fill remaining-fill"></div>
@@ -62,14 +72,18 @@
 
       <article class="metric-card">
         <span class="metric-label">{{ 'dashboard.net_balance_label' | translate }}</span>
-        <strong>{{ calories.netBalance }}</strong>
-        <p>{{ 'dashboard.net_balance_desc' | translate }}</p>
-
-        @if (calories.googleFitCalories !== null) {
-          <span class="fit-badge">
-            <span class="material-icons fit-badge__icon">directions_run</span>
-            {{ 'dashboard.fit_badge' | translate: { calories: calories.googleFitCalories } }}
-          </span>
+        @if (hasNoTodayLogs()) {
+          <strong class="empty-value">—</strong>
+          <p class="empty-hint">{{ 'dashboard.net_balance_empty_desc' | translate }}</p>
+        } @else {
+          <strong>{{ calories.netBalance | number:'1.0-0' }}</strong>
+          <p>{{ 'dashboard.net_balance_desc' | translate }}</p>
+          @if (calories.googleFitCalories !== null) {
+            <span class="fit-badge">
+              <span class="material-icons fit-badge__icon">directions_run</span>
+              {{ 'dashboard.fit_badge' | translate: { calories: calories.googleFitCalories } }}
+            </span>
+          }
         }
       </article>
     </section>
@@ -128,57 +142,68 @@
       <article class="panel macros-panel">
         <h2>{{ 'dashboard.daily_macros' | translate }}</h2>
 
-        <div class="donut-wrapper">
-          <svg viewBox="0 0 120 120" class="donut-chart" aria-hidden="true">
-            <circle class="donut-bg" cx="60" cy="60" r="42"></circle>
-            <circle
-              class="donut-arc donut-protein"
-              cx="60" cy="60" r="42"
-              [style.stroke-dasharray]="arcs.protein.dasharray"
-              [style.stroke-dashoffset]="arcs.protein.dashoffset">
-            </circle>
-            <circle
-              class="donut-arc donut-carbs"
-              cx="60" cy="60" r="42"
-              [style.stroke-dasharray]="arcs.carbs.dasharray"
-              [style.stroke-dashoffset]="arcs.carbs.dashoffset">
-            </circle>
-            <circle
-              class="donut-arc donut-fat"
-              cx="60" cy="60" r="42"
-              [style.stroke-dasharray]="arcs.fat.dasharray"
-              [style.stroke-dashoffset]="arcs.fat.dashoffset">
-            </circle>
-          </svg>
-
-          <div class="donut-center">
-            <strong>{{ calories.consumed }}</strong>
-            <span>kcal</span>
+        @if (hasNoTodayLogs()) {
+          <div class="macros-empty-state">
+            <span class="material-icons macros-empty-icon" aria-hidden="true">restaurant</span>
+            <p class="macros-empty-title">{{ 'dashboard.no_meals_banner_title' | translate }}</p>
+            <p class="macros-empty-hint">{{ 'dashboard.macros_empty_hint' | translate }}</p>
+            <button type="button" class="macros-empty-cta" (click)="onLogMeal()">
+              {{ 'dashboard.macros_empty_cta' | translate }}
+            </button>
           </div>
-        </div>
+        } @else {
+          <div class="donut-wrapper">
+            <svg viewBox="0 0 120 120" class="donut-chart" aria-hidden="true">
+              <circle class="donut-bg" cx="60" cy="60" r="42"></circle>
+              <circle
+                class="donut-arc donut-protein"
+                cx="60" cy="60" r="42"
+                [style.stroke-dasharray]="arcs.protein.dasharray"
+                [style.stroke-dashoffset]="arcs.protein.dashoffset">
+              </circle>
+              <circle
+                class="donut-arc donut-carbs"
+                cx="60" cy="60" r="42"
+                [style.stroke-dasharray]="arcs.carbs.dasharray"
+                [style.stroke-dashoffset]="arcs.carbs.dashoffset">
+              </circle>
+              <circle
+                class="donut-arc donut-fat"
+                cx="60" cy="60" r="42"
+                [style.stroke-dasharray]="arcs.fat.dasharray"
+                [style.stroke-dashoffset]="arcs.fat.dashoffset">
+              </circle>
+            </svg>
 
-        <div class="macro-list">
-          @for (macro of macros.macros; track macro.nameKey) {
-            <div class="macro-row">
-              <div class="macro-row-header">
-                <span>
-                  <i class="macro-dot" [ngClass]="macro.colorClass"></i>
-                  {{ macro.nameKey | translate }}
-                </span>
+            <div class="donut-center">
+              <strong>{{ calories.consumed | number:'1.0-0' }}</strong>
+              <span>kcal</span>
+            </div>
+          </div>
 
-                <strong>{{ macro.consumed }}g / {{ macro.target }}g</strong>
-              </div>
+          <div class="macro-list">
+            @for (macro of macros.macros; track macro.nameKey) {
+              <div class="macro-row">
+                <div class="macro-row-header">
+                  <span>
+                    <i class="macro-dot" [ngClass]="macro.colorClass"></i>
+                    {{ macro.nameKey | translate }}
+                  </span>
 
-              <div class="macro-track">
-                <div
-                  class="macro-fill"
-                  [ngClass]="macro.colorClass"
-                  [style.width.%]="macroPercent(macro.consumed, macro.target)">
+                  <strong>{{ macro.consumed | number:'1.0-2' }}g / {{ macro.target | number:'1.0-2' }}g</strong>
+                </div>
+
+                <div class="macro-track">
+                  <div
+                    class="macro-fill"
+                    [ngClass]="macro.colorClass"
+                    [style.width.%]="macroPercent(macro.consumed, macro.target)">
+                  </div>
                 </div>
               </div>
-            </div>
-          }
-        </div>
+            }
+          </div>
+        }
       </article>
     </section>
 
@@ -186,7 +211,7 @@
     <section class="streak-card" [ngClass]="streak.streakClass">
       <div class="streak-left">
         <span>{{ 'dashboard.active_streak_label' | translate }}</span>
-        <strong>{{ streak.streak }}</strong>
+        <strong>{{ streak.streak | number:'1.0-0' }}</strong>
         <p>{{ streak.descKey | translate: streak.descParams }}</p>
       </div>
 
@@ -207,7 +232,7 @@
         </div>
 
         <p>{{ streak.footerKey | translate: streak.footerParams }}</p>
-        <span class="weekly-rate">{{ streak.weeklyCompletionRate }}% {{ 'dashboard.weekly_completion' | translate }}</span>
+        <span class="weekly-rate">{{ streak.weeklyCompletionRate | number:'1.0-0' }}% {{ 'dashboard.weekly_completion' | translate }}</span>
       </div>
     </section>
   </main>
