@@ -54,7 +54,7 @@ interface ScanMenuResponse {
 /**
  * Application-facing API façade for restaurant-menu scanning (ScanMenuPhoto command).
  *
- * Calls POST /api/v1/nutrition-log/smart-scan/menu with the imageBase64 payload
+ * Calls POST /api/v1/restaurant-intelligence/menu-scan with the imageBase64 payload
  * and maps the response to the {@link RawMenuScan} format consumed by the store.
  *
  * @author Del Aguila Del Aguila, Olenka Priscilla
@@ -64,7 +64,7 @@ export class RestaurantMenuApi extends BaseApi {
   private _http      = inject(HttpClient);
   private _translate = inject(TranslateService);
 
-  private readonly _menuUrl = environment.apiBaseUrl + '/nutrition-log/smart-scan/menu';
+  private readonly _menuUrl = environment.apiBaseUrl + '/restaurant-intelligence/menu-scan';
 
   constructor() { super(); }
 

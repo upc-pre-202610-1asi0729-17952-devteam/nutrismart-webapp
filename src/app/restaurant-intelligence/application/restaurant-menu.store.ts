@@ -150,7 +150,7 @@ export class RestaurantMenuStore {
     this._error.set(null);
 
     const { foodItemName, foodItemNameEs } = this._resolveLocalizedNames(
-      dish.nameKey, 'menu_dishes', dish.name,
+      dish.nameKey, 'menu_dishes', dish.name, dish.nameEs,
     );
     const props: MealRecordProps = {
       id:           0,
@@ -236,12 +236,14 @@ export class RestaurantMenuStore {
     nameKey: string | null,
     namespace: string,
     fallback: string,
+    fallbackEs: string | null = null,
   ): { foodItemName: string; foodItemNameEs: string } {
-    if (!nameKey) return { foodItemName: fallback, foodItemNameEs: fallback };
+    const esDefault = fallbackEs ?? fallback;
+    if (!nameKey) return { foodItemName: fallback, foodItemNameEs: esDefault };
     const enMap = this.translateStore.getTranslations('en') as Record<string, Record<string, string>>;
     const esMap = this.translateStore.getTranslations('es') as Record<string, Record<string, string>>;
     const enName = enMap?.[namespace]?.[nameKey] ?? fallback;
-    const esName = esMap?.[namespace]?.[nameKey] ?? fallback;
+    const esName = esMap?.[namespace]?.[nameKey] ?? esDefault;
     return { foodItemName: enName, foodItemNameEs: esName };
   }
 }
