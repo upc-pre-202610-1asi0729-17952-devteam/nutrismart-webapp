@@ -1,7 +1,8 @@
 import { HttpInterceptorFn } from '@angular/common/http';
+import { environment } from '../../../environments/environment.development';
 
 const SESSION_KEY = 'nutrismart_session';
-const API_HOST = 'localhost:8080';
+const API_HOST = new URL(environment.apiBaseUrl).host;
 
 function isTokenExpired(token: string): boolean {
   try {
