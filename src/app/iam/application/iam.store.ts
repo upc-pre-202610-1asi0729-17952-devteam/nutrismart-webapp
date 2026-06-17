@@ -206,6 +206,7 @@ export class IamStore {
       }),
       catchError((err) => {
         this._loading.set(false);
+        this.clearSession();
         const attempts = this._failedLoginAttempts() + 1;
         this._failedLoginAttempts.set(attempts);
         if (attempts >= 5) {
