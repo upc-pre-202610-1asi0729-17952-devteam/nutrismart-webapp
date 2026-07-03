@@ -1,5 +1,6 @@
 import { Component, computed, EventEmitter, inject, Output } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { IamStore } from '../../../../iam/application/iam.store';
 import { DietaryRestriction } from '../../../../iam/domain/model/dietary-restriction.enum';
@@ -26,6 +27,7 @@ export class FoodSearchPanelComponent {
   protected nutritionStore = inject(NutritionStore);
   private   iamStore       = inject(IamStore);
   private   translate      = inject(TranslateService);
+  private   router         = inject(Router);
 
   protected get currentLang(): string { return this.translate.currentLang ?? 'en'; }
 
@@ -73,5 +75,10 @@ export class FoodSearchPanelComponent {
   onSelectFood(food: FoodItem): void {
     if (this.isRestricted(food)) return;
     this.foodSelected.emit(food);
+  }
+
+  /** Redirects to Smart Scan when no food matches the search. */
+  onOpenSmartScan(): void {
+    this.router.navigate(['/nutrition-log/smart-scan']);
   }
 }
