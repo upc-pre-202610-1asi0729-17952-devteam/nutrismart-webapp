@@ -11,6 +11,8 @@ import { AnalyticsApi } from './analytics/infrastructure/analytics-api';
 import { AnalyticsApiHttpService } from './analytics/infrastructure/analytics-api-http.service';
 import { PaymentGatewayPort } from './subscriptions/domain/ports/payment-gateway.port';
 import { SimulatedPaymentGateway } from './subscriptions/infrastructure/simulated-payment-gateway';
+import { StripePaymentGateway } from './subscriptions/infrastructure/stripe-payment-gateway';
+import { isStripeConfigured } from './subscriptions/infrastructure/stripe-loader';
 
 function initLanguage(translate: TranslateService) {
   return async () => {
@@ -31,7 +33,7 @@ function initLanguage(translate: TranslateService) {
  * - `provideHttpClient` — Angular's HTTP client (required by TranslateHttpLoader).
  * - `provideTranslateService` — ngx-translate (language bootstrapped via APP_INITIALIZER).
  * - `provideTranslateHttpLoader` — loads translation files from `/i18n/<lang>.json`.
- * - `AnalyticsApi` — Provides the mock implementation for AnalyticsApi.
+ * - `AnalyticsApi` — Provides the real HTTP implementation (`AnalyticsApiHttpService`).
  */
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -41,7 +43,9 @@ export const appConfig: ApplicationConfig = {
     provideTranslateService(),
     provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),
     { provide: AnalyticsApi, useClass: AnalyticsApiHttpService },
-    { provide: PaymentGatewayPort, useClass: SimulatedPaymentGateway },
+    // Use the real Stripe gateway when a publishable key is configured;
+    // otherwise fall back to the simulated gateway for local development.
+    { provide: PaymentGatewayPort, useClass: isStripeConfigured() ? StripePaymentGateway : SimulatedPaymentGateway },
     {
       provide: APP_INITIALIZER,
       useFactory: initLanguage,

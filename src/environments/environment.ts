@@ -12,6 +12,8 @@ export const environment = {
   recipesEndpointPath: '/recipes',
   subscriptionsEndpointPath: '/subscriptions',
   billingHistoryEndpointPath: '/billing-history',
+  paymentMethodsEndpointPath: '/payment-methods',
+  paymentsEndpointPath: '/payments',
   behavioralProgressEndpointPath: '/behavioral-progress',
   eatingBehaviorPatternsEndpointPath: '/eating-behavior-patterns',
   recoveryPlansEndpointPath: '/recovery-plans',
@@ -25,4 +27,12 @@ export const environment = {
   activityLogsEndpointPath: '/activity-logs',
   metabolicAdaptationLogsEndpointPath: '/metabolic-adaptation-logs',
   owmApiKey: '{OWM_API_KEY}',
+  // Google Health OAuth2 (authorization-code, same-tab redirect flow).
+  // Leave clientId empty to run in simulated mode (no redirect to Google).
+  googleHealthClientId: '{GOOGLE_HEALTH_CLIENT_ID}',
+  googleHealthScope: 'https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly',
+  googleOAuthRedirectUri: 'https://app-smart.nutriproject.xyz/oauth/health/callback',
+  // Stripe publishable key (pk_live_.../pk_test_...). Inyectada en build de producción.
+  // La secret key (sk_...) NUNCA va aquí; vive solo en el backend.
+  stripePublishableKey: '{STRIPE_PUBLISHABLE_KEY}',
 };
