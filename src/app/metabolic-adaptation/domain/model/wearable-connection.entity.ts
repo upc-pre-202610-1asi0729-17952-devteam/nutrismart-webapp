@@ -8,6 +8,7 @@ export interface WearableConnectionProps {
   status: WearableStatus;
   lastSyncedAt: string;
   authorizedAt: string;
+  autoSyncEnabled: boolean;
 }
 
 /**
@@ -23,14 +24,16 @@ export class WearableConnection implements BaseEntity {
   #status: WearableStatus;
   #lastSyncedAt: string;
   #authorizedAt: string;
+  #autoSyncEnabled: boolean;
 
   constructor(props: WearableConnectionProps) {
-    this.#id           = props.id;
-    this.#userId       = props.userId;
-    this.#provider     = props.provider;
-    this.#status       = props.status;
-    this.#lastSyncedAt = props.lastSyncedAt;
-    this.#authorizedAt = props.authorizedAt;
+    this.#id              = props.id;
+    this.#userId          = props.userId;
+    this.#provider        = props.provider;
+    this.#status          = props.status;
+    this.#lastSyncedAt    = props.lastSyncedAt;
+    this.#authorizedAt    = props.authorizedAt;
+    this.#autoSyncEnabled = props.autoSyncEnabled;
   }
 
   get id(): number { return this.#id; }
@@ -46,6 +49,9 @@ export class WearableConnection implements BaseEntity {
   set lastSyncedAt(v: string) { this.#lastSyncedAt = v; }
 
   get authorizedAt(): string { return this.#authorizedAt; }
+
+  get autoSyncEnabled(): boolean { return this.#autoSyncEnabled; }
+  set autoSyncEnabled(v: boolean) { this.#autoSyncEnabled = v; }
 
   isHealthy(): boolean {
     return this.#status === WearableStatus.CONNECTED;

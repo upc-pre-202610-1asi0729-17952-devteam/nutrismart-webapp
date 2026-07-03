@@ -30,6 +30,27 @@ export class WearableConnectionEndpoint extends BaseApiEndpoint<
       }),
     );
   }
+
+  /** Connects a wearable via the OAuth flow: POSTs the authorization code for a server-side token exchange. */
+  connect(userId: string | number, provider: string, oauthCode: string): Observable<WearableConnection> {
+    return this.http
+      .post<WearableConnectionResource>(this.endpointUrl, { userId, provider, oauthCode })
+      .pipe(map(r => this.assembler.toEntityFromResource(r)));
+  }
+
+  /** Triggers a manual activity-data sync for a connection. */
+  sync(id: number): Observable<WearableConnection> {
+    return this.http
+      .post<WearableConnectionResource>(`${this.endpointUrl}/${id}/sync`, {})
+      .pipe(map(r => this.assembler.toEntityFromResource(r)));
+  }
+
+  /** Enables or disables automatic syncing for a connection. */
+  setAutoSync(id: number, enabled: boolean): Observable<WearableConnection> {
+    return this.http
+      .patch<WearableConnectionResource>(`${this.endpointUrl}/${id}/auto-sync`, { enabled })
+      .pipe(map(r => this.assembler.toEntityFromResource(r)));
+  }
 }
 
 export class ActivityLogEndpoint extends BaseApiEndpoint<

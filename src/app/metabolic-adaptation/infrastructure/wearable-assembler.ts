@@ -15,9 +15,10 @@ export class WearableConnectionAssembler
       id:           r.id,
       userId:       r.userId,
       provider:     r.provider,
-      status:       r.status as WearableStatus,
-      lastSyncedAt: r.last_synced_at,
-      authorizedAt: r.authorized_at,
+      status:          r.status as WearableStatus,
+      lastSyncedAt:    r.lastSyncedAt,
+      authorizedAt:    r.authorizedAt,
+      autoSyncEnabled: r.autoSyncEnabled ?? false,
     });
   }
 
@@ -26,9 +27,10 @@ export class WearableConnectionAssembler
       id:             e.id,
       userId:         e.userId,
       provider:       e.provider,
-      status:         e.status,
-      last_synced_at: e.lastSyncedAt,
-      authorized_at:  e.authorizedAt,
+      status:          e.status,
+      lastSyncedAt:    e.lastSyncedAt,
+      authorizedAt:    e.authorizedAt,
+      autoSyncEnabled: e.autoSyncEnabled,
     };
   }
 

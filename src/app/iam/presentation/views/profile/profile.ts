@@ -132,12 +132,20 @@ export class Profile implements OnInit {
     { value: DietaryRestriction.HALAL, label: 'restrictions.HALAL' },
   ];
 
-  /** Notification toggle signals (visual only). */
-  notif1 = signal(true);
-  notif2 = signal(true);
-  notif3 = signal(false);
-  notif4 = signal(true);
-  notif5 = signal(false);
+  /**
+   * Notification preference toggle signals. Initialised from the current user
+   * and persisted to the backend on change via {@link saveNotifications}.
+   * notif1: daily log reminder, notif2: weekly progress report,
+   * notif3: meal suggestions, notif4: streak alerts, notif5: marketing emails.
+   */
+  notif1 = signal(this.iamStore.currentUser()?.notifDailyLogReminder ?? true);
+  notif2 = signal(this.iamStore.currentUser()?.notifWeeklyProgressReport ?? true);
+  notif3 = signal(this.iamStore.currentUser()?.notifMealSuggestions ?? false);
+  notif4 = signal(this.iamStore.currentUser()?.notifStreakAlerts ?? true);
+  notif5 = signal(this.iamStore.currentUser()?.notifMarketingEmails ?? false);
+
+  /** Signal showing a success message after notification preferences are saved. */
+  notificationsSaved = signal(false);
 
   // ─── Panel 5 — Security ───────────────────────────────────────────────────
 
@@ -151,9 +159,18 @@ export class Profile implements OnInit {
   });
 
   /**
-   * Signal showing a success message after simulated password change.
+   * Signal showing a success message after a successful password change.
    */
   passwordChanged = signal(false);
+
+  /**
+   * Signal holding an i18n error key when the password change fails
+   * (e.g. wrong current password or mismatched confirmation).
+   */
+  passwordError = signal<string | null>(null);
+
+  /** Signal indicating a password change request is in flight. */
+  passwordSaving = signal(false);
 
   // ─── Nav items ────────────────────────────────────────────────────────────
 
@@ -280,16 +297,67 @@ export class Profile implements OnInit {
   }
 
   /**
-   * Simulates a password change (no backend call).
+   * Changes the user's password against the backend, verifying the current
+   * password server-side. Shows a success message on 200 or an error key on failure.
    */
   changePassword(): void {
+    this.passwordError.set(null);
     if (this.passwordForm.invalid) {
       this.passwordForm.markAllAsTouched();
       return;
     }
-    this.passwordForm.reset();
-    this.passwordChanged.set(true);
-    setTimeout(() => this.passwordChanged.set(false), 3000);
+    const { currentPassword, newPassword, confirmPassword } = this.passwordForm.value;
+    if (newPassword !== confirmPassword) {
+      this.passwordForm.get('confirmPassword')?.setErrors({ mismatch: true });
+      this.passwordError.set('profile.password_error_mismatch');
+      return;
+    }
+    this.passwordSaving.set(true);
+    this.iamStore.changePassword(currentPassword!, newPassword!).subscribe({
+      next: () => {
+        this.passwordSaving.set(false);
+        this.passwordForm.reset();
+        this.passwordChanged.set(true);
+        setTimeout(() => this.passwordChanged.set(false), 3000);
+      },
+      error: (err) => {
+        this.passwordSaving.set(false);
+        this.passwordError.set(
+          err?.status === 400 ? 'profile.password_error_incorrect' : 'profile.password_error_generic',
+        );
+      },
+    });
+  }
+
+  /**
+   * Toggles a notification preference signal and persists the full preference
+   * set to the backend.
+   *
+   * @param signalRef - The toggle signal to flip.
+   */
+  toggleNotification(signalRef: ReturnType<typeof signal<boolean>>): void {
+    signalRef.update((v) => !v);
+    this.saveNotifications();
+  }
+
+  /**
+   * Persists the current notification toggle state to the backend.
+   */
+  saveNotifications(): void {
+    this.iamStore
+      .updateNotificationPreferences({
+        dailyLogReminder: this.notif1(),
+        weeklyProgressReport: this.notif2(),
+        mealSuggestions: this.notif3(),
+        streakAlerts: this.notif4(),
+        marketingEmails: this.notif5(),
+      })
+      .subscribe({
+        next: () => {
+          this.notificationsSaved.set(true);
+          setTimeout(() => this.notificationsSaved.set(false), 2000);
+        },
+      });
   }
 
   /**

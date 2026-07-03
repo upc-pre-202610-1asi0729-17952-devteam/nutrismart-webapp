@@ -5,7 +5,6 @@ import { catchError, map, retry } from 'rxjs/operators';
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { WearableConnection } from '../domain/model/wearable-connection.entity';
 import { ActivityLog } from '../domain/model/activity-log.entity';
-import { WearableStatus } from '../domain/model/wearable-status.enum';
 import { WearableConnectionEndpoint, ActivityLogEndpoint } from './wearable-api-endpoint';
 
 @Injectable({ providedIn: 'root' })
@@ -20,18 +19,13 @@ export class WearableApi extends BaseApi {
     );
   }
 
-  connectGoogleFit(userId: string | number): Observable<WearableConnection> {
-    const now = new Date().toISOString();
-    const connection = new WearableConnection({
-      id:           0,
-      userId,
-      provider:     'google_fit',
-      status:       WearableStatus.CONNECTED,
-      lastSyncedAt: now,
-      authorizedAt: now,
-    });
-    return this.connectionEp.create(connection).pipe(
-      retry(2),
+  /**
+   * Connects Google Health via the server-side OAuth flow: sends the authorization
+   * code obtained from Google's consent screen so the backend can exchange it for
+   * tokens, persist the connection and import the first activity batch.
+   */
+  connectGoogleHealth(userId: string | number, oauthCode: string): Observable<WearableConnection> {
+    return this.connectionEp.connect(userId, 'google_health', oauthCode).pipe(
       catchError(err => throwError(() => err)),
     );
   }
@@ -44,30 +38,16 @@ export class WearableApi extends BaseApi {
   }
 
   syncNow(connection: WearableConnection): Observable<WearableConnection> {
-    const updated = new WearableConnection({
-      id:           connection.id,
-      userId:       connection.userId,
-      provider:     connection.provider,
-      status:       WearableStatus.CONNECTED,
-      lastSyncedAt: new Date().toISOString(),
-      authorizedAt: connection.authorizedAt,
-    });
-    return this.connectionEp.update(updated, connection.id).pipe(
+    return this.connectionEp.sync(connection.id).pipe(
       retry(2),
       catchError(err => throwError(() => err)),
     );
   }
 
-  markSyncFailed(connection: WearableConnection): Observable<WearableConnection> {
-    const updated = new WearableConnection({
-      id:           connection.id,
-      userId:       connection.userId,
-      provider:     connection.provider,
-      status:       WearableStatus.SYNC_FAILED,
-      lastSyncedAt: connection.lastSyncedAt,
-      authorizedAt: connection.authorizedAt,
-    });
-    return this.connectionEp.update(updated, connection.id).pipe(
+  /** Persists the auto-sync preference for a connection. */
+  setAutoSync(connection: WearableConnection, enabled: boolean): Observable<WearableConnection> {
+    return this.connectionEp.setAutoSync(connection.id, enabled).pipe(
+      retry(2),
       catchError(err => throwError(() => err)),
     );
   }

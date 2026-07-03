@@ -300,6 +300,17 @@
   letter-spacing: 1.5px;
 }
 
+/* Stripe Elements host — mirrors .pg-input sizing so the iframe lines up. */
+.pg-stripe-element {
+  padding: 12px 13px;
+  min-height: 44px;
+}
+
+.pg-stripe-element:focus-within {
+  border-color: var(--nutrismart-primary, #508B89);
+  box-shadow: 0 0 0 3px rgba(80, 139, 137, 0.12);
+}
+
 .pg-input--error {
   border-color: #ef4444;
 }

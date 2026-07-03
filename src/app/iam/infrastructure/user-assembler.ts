@@ -49,6 +49,11 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
       consecutiveMisses: resource.consecutiveMisses ?? 0,
       token: resource.token ?? '',
       planExpiresAt: resource.planExpiresAt ?? null,
+      notifDailyLogReminder: resource.notifDailyLogReminder,
+      notifWeeklyProgressReport: resource.notifWeeklyProgressReport,
+      notifMealSuggestions: resource.notifMealSuggestions,
+      notifStreakAlerts: resource.notifStreakAlerts,
+      notifMarketingEmails: resource.notifMarketingEmails,
     });
   }
 
@@ -83,6 +88,11 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
       homeCity: entity.homeCity,
       goalStartedAt: entity.goalStartedAt,
       planExpiresAt: entity.planExpiresAt,
+      notifDailyLogReminder: entity.notifDailyLogReminder,
+      notifWeeklyProgressReport: entity.notifWeeklyProgressReport,
+      notifMealSuggestions: entity.notifMealSuggestions,
+      notifStreakAlerts: entity.notifStreakAlerts,
+      notifMarketingEmails: entity.notifMarketingEmails,
     };
   }
 

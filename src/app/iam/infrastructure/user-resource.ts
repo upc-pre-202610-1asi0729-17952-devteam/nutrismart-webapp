@@ -60,6 +60,16 @@ export interface UserResource extends BaseResource {
   password?: string;
   /** ISO date (YYYY-MM-DD) when cancelled-plan access expires. Null when no pending expiry. */
   planExpiresAt?: string | null;
+  /** Notification preference: daily meal-log reminder. */
+  notifDailyLogReminder?: boolean;
+  /** Notification preference: weekly progress report. */
+  notifWeeklyProgressReport?: boolean;
+  /** Notification preference: meal suggestions. */
+  notifMealSuggestions?: boolean;
+  /** Notification preference: streak alerts. */
+  notifStreakAlerts?: boolean;
+  /** Notification preference: marketing emails. */
+  notifMarketingEmails?: boolean;
 }
 
 /**

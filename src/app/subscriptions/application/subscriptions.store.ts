@@ -126,11 +126,14 @@ export class SubscriptionsStore {
 
       if (existing) {
         existing.activate(plan);
+        // PUT es idempotente: reintentar ante fallos transitorios es seguro.
         saved = await firstValueFrom(this.api.updateSubscription(existing).pipe(retry(2)));
       } else {
         const draft = new Subscription({ id: 0, userId: user.id, plan, status: 'active', startDate: now, endDate: now });
         draft.activate(plan);
-        saved = await firstValueFrom(this.api.createSubscription(draft).pipe(retry(2)));
+        // No reintentar el POST: no es idempotente. El backend hace upsert de la
+        // suscripción activa, pero un reintento del cliente podría duplicar el cargo.
+        saved = await firstValueFrom(this.api.createSubscription(draft));
       }
 
       this._subscription.set(saved);

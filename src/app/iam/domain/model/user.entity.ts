@@ -61,6 +61,27 @@ export interface UserProps {
   token?: string;
   /** ISO date (YYYY-MM-DD) when cancelled-plan access expires. Null/undefined when no pending expiry. */
   planExpiresAt?: string | null;
+  /** Notification preference: daily meal-log reminder. */
+  notifDailyLogReminder?: boolean;
+  /** Notification preference: weekly progress report. */
+  notifWeeklyProgressReport?: boolean;
+  /** Notification preference: meal suggestions. */
+  notifMealSuggestions?: boolean;
+  /** Notification preference: streak alerts. */
+  notifStreakAlerts?: boolean;
+  /** Notification preference: marketing emails. */
+  notifMarketingEmails?: boolean;
+}
+
+/**
+ * User notification preference flags, mirrored one-to-one with the backend.
+ */
+export interface NotificationPreferences {
+  dailyLogReminder: boolean;
+  weeklyProgressReport: boolean;
+  mealSuggestions: boolean;
+  streakAlerts: boolean;
+  marketingEmails: boolean;
 }
 
 /**
@@ -121,6 +142,16 @@ export class User implements BaseEntity {
   private _token: string;
   /** @see UserProps.planExpiresAt */
   private _planExpiresAt: string | null;
+  /** @see UserProps.notifDailyLogReminder */
+  private _notifDailyLogReminder: boolean;
+  /** @see UserProps.notifWeeklyProgressReport */
+  private _notifWeeklyProgressReport: boolean;
+  /** @see UserProps.notifMealSuggestions */
+  private _notifMealSuggestions: boolean;
+  /** @see UserProps.notifStreakAlerts */
+  private _notifStreakAlerts: boolean;
+  /** @see UserProps.notifMarketingEmails */
+  private _notifMarketingEmails: boolean;
 
   /**
    * Creates a new User domain entity.
@@ -153,6 +184,11 @@ export class User implements BaseEntity {
     this._consecutiveMisses = props.consecutiveMisses ?? 0;
     this._token = props.token ?? '';
     this._planExpiresAt = props.planExpiresAt ?? null;
+    this._notifDailyLogReminder = props.notifDailyLogReminder ?? true;
+    this._notifWeeklyProgressReport = props.notifWeeklyProgressReport ?? true;
+    this._notifMealSuggestions = props.notifMealSuggestions ?? false;
+    this._notifStreakAlerts = props.notifStreakAlerts ?? true;
+    this._notifMarketingEmails = props.notifMarketingEmails ?? false;
   }
 
   // ─── Getters & Setters ────────────────────────────────────────────────────
@@ -376,6 +412,46 @@ export class User implements BaseEntity {
   }
   set planExpiresAt(value: string | null) {
     this._planExpiresAt = value;
+  }
+
+  /** Notification preference: daily meal-log reminder. */
+  get notifDailyLogReminder(): boolean {
+    return this._notifDailyLogReminder;
+  }
+  set notifDailyLogReminder(value: boolean) {
+    this._notifDailyLogReminder = value;
+  }
+
+  /** Notification preference: weekly progress report. */
+  get notifWeeklyProgressReport(): boolean {
+    return this._notifWeeklyProgressReport;
+  }
+  set notifWeeklyProgressReport(value: boolean) {
+    this._notifWeeklyProgressReport = value;
+  }
+
+  /** Notification preference: meal suggestions. */
+  get notifMealSuggestions(): boolean {
+    return this._notifMealSuggestions;
+  }
+  set notifMealSuggestions(value: boolean) {
+    this._notifMealSuggestions = value;
+  }
+
+  /** Notification preference: streak alerts. */
+  get notifStreakAlerts(): boolean {
+    return this._notifStreakAlerts;
+  }
+  set notifStreakAlerts(value: boolean) {
+    this._notifStreakAlerts = value;
+  }
+
+  /** Notification preference: marketing emails. */
+  get notifMarketingEmails(): boolean {
+    return this._notifMarketingEmails;
+  }
+  set notifMarketingEmails(value: boolean) {
+    this._notifMarketingEmails = value;
   }
 
   // ─── Computed / Behaviour Methods ─────────────────────────────────────────
