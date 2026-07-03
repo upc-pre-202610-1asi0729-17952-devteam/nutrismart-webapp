@@ -227,31 +227,31 @@
           <div class="notif-list">
             <div class="notif-row">
               <span>Daily log reminder</span>
-              <button type="button" class="toggle-btn" [class.on]="notif1()" (click)="notif1.update(v => !v)">
+              <button type="button" class="toggle-btn" [class.on]="notif1()" (click)="toggleNotification(notif1)">
                 {{ notif1() ? 'On' : 'Off' }}
               </button>
             </div>
             <div class="notif-row">
               <span>Weekly progress report</span>
-              <button type="button" class="toggle-btn" [class.on]="notif2()" (click)="notif2.update(v => !v)">
+              <button type="button" class="toggle-btn" [class.on]="notif2()" (click)="toggleNotification(notif2)">
                 {{ notif2() ? 'On' : 'Off' }}
               </button>
             </div>
             <div class="notif-row">
               <span>Meal suggestions</span>
-              <button type="button" class="toggle-btn" [class.on]="notif3()" (click)="notif3.update(v => !v)">
+              <button type="button" class="toggle-btn" [class.on]="notif3()" (click)="toggleNotification(notif3)">
                 {{ notif3() ? 'On' : 'Off' }}
               </button>
             </div>
             <div class="notif-row">
               <span>Streak alerts</span>
-              <button type="button" class="toggle-btn" [class.on]="notif4()" (click)="notif4.update(v => !v)">
+              <button type="button" class="toggle-btn" [class.on]="notif4()" (click)="toggleNotification(notif4)">
                 {{ notif4() ? 'On' : 'Off' }}
               </button>
             </div>
             <div class="notif-row">
               <span>Marketing emails</span>
-              <button type="button" class="toggle-btn" [class.on]="notif5()" (click)="notif5.update(v => !v)">
+              <button type="button" class="toggle-btn" [class.on]="notif5()" (click)="toggleNotification(notif5)">
                 {{ notif5() ? 'On' : 'Off' }}
               </button>
             </div>
@@ -276,6 +276,9 @@
           @if (passwordChanged()) {
             <div class="success-banner">{{ 'profile.password_changed' | translate }}</div>
           }
+          @if (passwordError()) {
+            <div class="field-error">{{ passwordError()! | translate }}</div>
+          }
 
           <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" novalidate>
             <div class="form-group">
@@ -295,7 +298,7 @@
               <label class="form-label">{{ 'profile.confirm_password' | translate }}</label>
               <input type="password" formControlName="confirmPassword" class="form-input" />
             </div>
-            <button type="submit" class="btn-save">{{ 'profile.change_password_btn' | translate }}</button>
+            <button type="submit" class="btn-save" [disabled]="passwordSaving()">{{ 'profile.change_password_btn' | translate }}</button>
           </form>
 
           <div class="security-divider"></div>
@@ -306,11 +309,6 @@
           <button type="button" class="btn-outline-danger" (click)="logoutAll()">
             {{ 'profile.logout_all_btn' | translate }}
           </button>
-
-          <div class="security-divider"></div>
-
-          <h3 class="subsection-title danger-text">Danger zone</h3>
-          <button type="button" class="btn-delete-account">{{ 'profile.delete_account' | translate }}</button>
         </section>
       }
 

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment.development';
 import { BaseApi } from '../../shared/infrastructure/base-api';
-import { User } from '../domain/model/user.entity';
+import { NotificationPreferences, User } from '../domain/model/user.entity';
 import { IamApiEndpoint } from './iam-api-endpoint';
 import { UserAssembler } from './user-assembler';
 import { LoginResponse, UserResource } from './user-resource';
@@ -69,15 +69,6 @@ export class IamApi extends BaseApi {
       `${environment.apiBaseUrl}/auth/check-email`,
       { params: { email } },
     );
-  }
-
-  /**
-   * Fetches all registered users.
-   *
-   * @returns Observable emitting an array of {@link User} entities.
-   */
-  getUsers(): Observable<User[]> {
-    return this.endpoint.getAll();
   }
 
   /**
@@ -146,5 +137,36 @@ export class IamApi extends BaseApi {
    */
   resetPassword(token: string, newPassword: string): Observable<void> {
     return this.http.post<void>(`${environment.apiBaseUrl}/auth/reset-password`, { token, newPassword });
+  }
+
+  /**
+   * Changes the authenticated user's password after verifying the current one.
+   *
+   * @param userId          - Numeric ID of the user.
+   * @param currentPassword - The user's current plain-text password.
+   * @param newPassword     - The new plain-text password (min 8 chars).
+   * @returns Observable that completes when the change succeeds; errors with 400 if the current password is wrong.
+   */
+  changePassword(userId: number, currentPassword: string, newPassword: string): Observable<void> {
+    return this.http.patch<void>(
+      `${environment.apiBaseUrl}${environment.iamEndpointPath}/${userId}/password`,
+      { currentPassword, newPassword },
+    );
+  }
+
+  /**
+   * Updates the user's notification preferences.
+   *
+   * @param userId - Numeric ID of the user.
+   * @param prefs  - The notification preference flags to persist.
+   * @returns Observable emitting the updated {@link User}.
+   */
+  updateNotificationPreferences(userId: number, prefs: NotificationPreferences): Observable<User> {
+    return this.http
+      .patch<UserResource>(
+        `${environment.apiBaseUrl}${environment.iamEndpointPath}/${userId}/notification-preferences`,
+        prefs,
+      )
+      .pipe(map((resource) => this.assembler.toEntityFromResource(resource)));
   }
 }
