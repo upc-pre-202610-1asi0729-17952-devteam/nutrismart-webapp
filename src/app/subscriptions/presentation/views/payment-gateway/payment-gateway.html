@@ -53,74 +53,87 @@
           }
         </div>
 
-        <div class="pg-field">
-          <label class="pg-label" for="cardNumber">{{ 'payment.card_number' | translate }}</label>
-          <input
-            id="cardNumber"
-            class="pg-input pg-input--mono"
-            [class.pg-input--error]="invalid('cardNumber')"
-            type="text"
-            inputmode="numeric"
-            autocomplete="cc-number"
-            maxlength="19"
-            [placeholder]="'payment.placeholder_number' | translate"
-            formControlName="cardNumber"
-            (input)="onCardInput($event)"
-            [attr.aria-invalid]="invalid('cardNumber')"
-            aria-describedby="cardNumber-err"
-          />
-          @if (invalid('cardNumber')) {
-            <span id="cardNumber-err" class="pg-error" role="alert">{{ 'payment.error_invalid_card' | translate }}</span>
-          }
-        </div>
-
-        <div class="pg-row">
+        @if (stripeMode) {
+          <!-- Stripe Elements: number + expiry + CVC in one secure iframe -->
           <div class="pg-field">
-            <label class="pg-label" for="expiry">{{ 'payment.expiry' | translate }}</label>
+            <label class="pg-label" for="cardElement">{{ 'payment.card_number' | translate }}</label>
+            <div id="cardElement" #cardElement class="pg-input pg-stripe-element"
+                 [class.pg-input--error]="!!stripeError()"
+                 aria-label="Card number, expiry and CVC"></div>
+            @if (stripeError()) {
+              <span class="pg-error" role="alert">{{ stripeError() }}</span>
+            }
+          </div>
+        } @else {
+          <div class="pg-field">
+            <label class="pg-label" for="cardNumber">{{ 'payment.card_number' | translate }}</label>
             <input
-              id="expiry"
+              id="cardNumber"
               class="pg-input pg-input--mono"
-              [class.pg-input--error]="invalid('expiry')"
+              [class.pg-input--error]="invalid('cardNumber')"
               type="text"
               inputmode="numeric"
-              autocomplete="cc-exp"
-              maxlength="5"
-              [placeholder]="'payment.placeholder_expiry' | translate"
-              formControlName="expiry"
-              (input)="onExpiryInput($event)"
-              [attr.aria-invalid]="invalid('expiry')"
-              aria-describedby="expiry-err"
+              autocomplete="cc-number"
+              maxlength="19"
+              [placeholder]="'payment.placeholder_number' | translate"
+              formControlName="cardNumber"
+              (input)="onCardInput($event)"
+              [attr.aria-invalid]="invalid('cardNumber')"
+              aria-describedby="cardNumber-err"
             />
-            @if (invalid('expiry')) {
-              <span id="expiry-err" class="pg-error" role="alert">{{ 'payment.error_invalid_expiry' | translate }}</span>
+            @if (invalid('cardNumber')) {
+              <span id="cardNumber-err" class="pg-error" role="alert">{{ 'payment.error_invalid_card' | translate }}</span>
             }
           </div>
 
-          <div class="pg-field">
-            <label class="pg-label" for="cvv">{{ 'payment.cvv' | translate }}</label>
-            <input
-              id="cvv"
-              class="pg-input pg-input--mono"
-              [class.pg-input--error]="invalid('cvv')"
-              type="password"
-              inputmode="numeric"
-              autocomplete="cc-csc"
-              maxlength="3"
-              [placeholder]="'payment.placeholder_cvv' | translate"
-              formControlName="cvv"
-              (focus)="cvvFocused.set(true)"
-              (blur)="cvvFocused.set(false)"
-              [attr.aria-invalid]="invalid('cvv')"
-              aria-describedby="cvv-err"
-            />
-            @if (invalid('cvv')) {
-              <span id="cvv-err" class="pg-error" role="alert">{{ 'payment.error_invalid_cvv' | translate }}</span>
-            }
-          </div>
-        </div>
+          <div class="pg-row">
+            <div class="pg-field">
+              <label class="pg-label" for="expiry">{{ 'payment.expiry' | translate }}</label>
+              <input
+                id="expiry"
+                class="pg-input pg-input--mono"
+                [class.pg-input--error]="invalid('expiry')"
+                type="text"
+                inputmode="numeric"
+                autocomplete="cc-exp"
+                maxlength="5"
+                [placeholder]="'payment.placeholder_expiry' | translate"
+                formControlName="expiry"
+                (input)="onExpiryInput($event)"
+                [attr.aria-invalid]="invalid('expiry')"
+                aria-describedby="expiry-err"
+              />
+              @if (invalid('expiry')) {
+                <span id="expiry-err" class="pg-error" role="alert">{{ 'payment.error_invalid_expiry' | translate }}</span>
+              }
+            </div>
 
-        <button type="submit" class="pg-btn-submit">
-          {{ 'payment.btn_continue' | translate }}
+            <div class="pg-field">
+              <label class="pg-label" for="cvv">{{ 'payment.cvv' | translate }}</label>
+              <input
+                id="cvv"
+                class="pg-input pg-input--mono"
+                [class.pg-input--error]="invalid('cvv')"
+                type="password"
+                inputmode="numeric"
+                autocomplete="cc-csc"
+                maxlength="3"
+                [placeholder]="'payment.placeholder_cvv' | translate"
+                formControlName="cvv"
+                (focus)="cvvFocused.set(true)"
+                (blur)="cvvFocused.set(false)"
+                [attr.aria-invalid]="invalid('cvv')"
+                aria-describedby="cvv-err"
+              />
+              @if (invalid('cvv')) {
+                <span id="cvv-err" class="pg-error" role="alert">{{ 'payment.error_invalid_cvv' | translate }}</span>
+              }
+            </div>
+          </div>
+        }
+
+        <button type="submit" class="pg-btn-submit" [disabled]="submitting()">
+          {{ (submitting() ? 'payment.processing' : 'payment.btn_continue') | translate }}
         </button>
 
       </form>

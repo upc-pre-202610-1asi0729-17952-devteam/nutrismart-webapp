@@ -46,6 +46,12 @@ const bodyProgressRoutes = () =>
 const wearableRoutes = () =>
   import('./metabolic-adaptation/presentation/wearable.routes').then((m) => m.wearableRoutes);
 
+/** Lazy-loads the Google Health OAuth callback view (redirect target). */
+const oauthHealthCallback = () =>
+  import('./metabolic-adaptation/presentation/views/oauth-health-callback/oauth-health-callback').then(
+    (m) => m.OAuthHealthCallbackView,
+  );
+
 /** Lazy-loads the analytics child routes. */
 const analyticsRoutes = () =>
   import('./analytics/presentation/analytics.routes').then((m) => m.ANALYTICS_ROUTES);
@@ -84,6 +90,7 @@ export const routes: Routes = [
   { path: 'smart-scan',  redirectTo: '/nutrition-log/smart-scan',     pathMatch: 'prefix' },
   { path: 'pantry',      redirectTo: '/recommendations/pantry',       pathMatch: 'prefix' },
   { path: 'wearable', loadChildren: wearableRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PREMIUM' } },
+  { path: 'oauth/health/callback', loadComponent: oauthHealthCallback, canActivate: [authGuard], title: 'NutriSmart - Conectando Google Health' },
   { path: 'analytics', loadChildren: analyticsRoutes, canActivate: [authGuard, subscriptionGuard, planGuard], data: { requiredPlan: 'PRO' } },
   { path: 'subscription', loadChildren: subscriptionsRoutes, canActivate: [authGuard] },
   { path: 'my-plan', loadChildren: myPlanRoutes, canActivate: [authGuard, subscriptionGuard] },

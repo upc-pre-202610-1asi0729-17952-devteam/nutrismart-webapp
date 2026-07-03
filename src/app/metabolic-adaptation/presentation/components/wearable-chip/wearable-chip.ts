@@ -1,10 +1,11 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 /**
- * Decorative chip indicating wearable device connection status.
+ * Interactive chip indicating wearable device connection status.
  *
- * Renders green when connected, gray otherwise. No interaction — purely visual.
+ * Renders green when connected, gray otherwise. Clicking it emits {@link clicked}
+ * so the host can open the Google Health sync dialog.
  */
 @Component({
   selector: 'app-wearable-chip',
@@ -15,4 +16,11 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class WearableChip {
   /** Whether a wearable device is currently connected. */
   readonly isConnected = input<boolean>(false);
+
+  /** Emitted when the user activates the chip (click / Enter / Space). */
+  readonly clicked = output<void>();
+
+  onActivate(): void {
+    this.clicked.emit();
+  }
 }

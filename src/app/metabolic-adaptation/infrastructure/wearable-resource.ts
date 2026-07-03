@@ -4,8 +4,9 @@ export interface WearableConnectionResource extends BaseResource {
   userId: number | string;
   provider: string;
   status: string;
-  last_synced_at: string;
-  authorized_at: string;
+  lastSyncedAt: string;
+  authorizedAt: string;
+  autoSyncEnabled: boolean;
 }
 
 export interface ActivityLogResource extends BaseResource {

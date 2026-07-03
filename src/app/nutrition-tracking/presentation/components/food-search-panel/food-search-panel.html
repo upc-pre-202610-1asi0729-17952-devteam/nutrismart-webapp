@@ -74,7 +74,10 @@
       <p class="empty-text">
         {{ 'nutrition.no_results' | translate: { query: nutritionStore.searchQuery() } }}
       </p>
-      <button class="add-manually-btn">{{ 'nutrition.add_manually' | translate }}</button>
+      <button class="smart-scan-btn" type="button" (click)="onOpenSmartScan()">
+        <span class="material-icons">photo_camera</span>
+        {{ 'nutrition.try_smart_scan' | translate }}
+      </button>
     </div>
   }
 </div>

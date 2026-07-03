@@ -96,7 +96,10 @@
 .empty-icon  { font-size: 2.5rem; color: #d1d5db; }
 .empty-text  { font-size: var(--ns-text-ui); color: #6b7280; text-align: center; margin: 0; }
 
-.add-manually-btn {
+.smart-scan-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   background: #e8f6f4;
   color: #2d9e8f;
   border: none;
@@ -108,5 +111,6 @@
   cursor: pointer;
   transition: background .2s;
 }
-.add-manually-btn:hover { background: #d0eeeb; }
+.smart-scan-btn:hover { background: #d0eeeb; }
+.smart-scan-btn .material-icons { font-size: 1.2rem; }
 

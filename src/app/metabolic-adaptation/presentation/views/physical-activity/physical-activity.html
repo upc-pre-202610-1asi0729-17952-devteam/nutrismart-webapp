@@ -7,7 +7,7 @@
       <p class="page-subtitle">{{ 'physical_activity.subtitle' | translate }}</p>
     </div>
     <div class="header-actions">
-      <app-wearable-chip [isConnected]="isWearableConnected()" />
+      <app-wearable-chip [isConnected]="isWearableConnected()" (clicked)="onChipClick()" />
       @if (isPremium) {
         <button class="log-activity-btn"
                 (click)="onOpenModal()"
@@ -53,6 +53,20 @@
   }
 
 </div>
+
+<!-- ── Wearable sync dialog ── -->
+@if (showSyncModal()) {
+  <app-wearable-sync-modal
+    [connection]="store.connection()"
+    [isLoading]="store.loading()"
+    [error]="store.error()"
+    [oauthConfigured]="oauthConfigured"
+    (connect)="onConnect()"
+    (syncNow)="onSyncNow()"
+    (disconnect)="onDisconnect()"
+    (autoSyncChange)="onAutoSyncChange($event)"
+    (cancel)="onCloseSyncModal()" />
+}
 
 <!-- ── Manual activity modal ── -->
 @if (showModal()) {

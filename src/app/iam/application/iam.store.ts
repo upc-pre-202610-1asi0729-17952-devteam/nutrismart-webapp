@@ -17,7 +17,7 @@ import { DietaryRestriction } from '../domain/model/dietary-restriction.enum';
 import { MedicalCondition } from '../domain/model/medical-condition.enum';
 import { SubscriptionPlan } from '../domain/model/subscription-plan.enum';
 import { UserGoal } from '../domain/model/user-goal.enum';
-import { User, UserProps } from '../domain/model/user.entity';
+import { NotificationPreferences, User, UserProps } from '../domain/model/user.entity';
 import { IamApi } from '../infrastructure/iam-api';
 
 const SESSION_KEY = 'nutrismart_session';
@@ -137,6 +137,11 @@ export class IamStore {
       goalStartedAt: user.goalStartedAt,
       token: user.token || undefined,
       planExpiresAt: user.planExpiresAt ?? undefined,
+      notifDailyLogReminder: user.notifDailyLogReminder,
+      notifWeeklyProgressReport: user.notifWeeklyProgressReport,
+      notifMealSuggestions: user.notifMealSuggestions,
+      notifStreakAlerts: user.notifStreakAlerts,
+      notifMarketingEmails: user.notifMarketingEmails,
     };
     localStorage.setItem(SESSION_KEY, JSON.stringify(props));
   }
@@ -337,6 +342,45 @@ export class IamStore {
   }
 
   // ─── Profile update methods ────────────────────────────────────────────────
+
+  /**
+   * Changes the current user's password against the backend, verifying the
+   * current password server-side. The password is never stored in local state.
+   *
+   * @param currentPassword - The user's current plain-text password.
+   * @param newPassword     - The new plain-text password (min 8 chars).
+   * @returns Observable that completes on success; errors (e.g. 400 wrong password) propagate to the caller.
+   */
+  changePassword(currentPassword: string, newPassword: string): Observable<void> {
+    const user = this._currentUser();
+    if (!user) return throwError(() => new Error('No authenticated user'));
+    return this.iamApi.changePassword(user.id, currentPassword, newPassword);
+  }
+
+  /**
+   * Updates the current user's notification preferences, persisting them to the
+   * backend and reflecting the change in local state on success.
+   *
+   * @param prefs - The full set of notification preference flags.
+   * @returns Observable emitting the updated {@link User}.
+   */
+  updateNotificationPreferences(prefs: NotificationPreferences): Observable<User> {
+    const user = this._currentUser();
+    if (!user) return throwError(() => new Error('No authenticated user'));
+    return this.iamApi.updateNotificationPreferences(user.id, prefs).pipe(
+      tap(() => {
+        // Apply onto the in-memory user (which holds the JWT the API response
+        // omits) so localStorage keeps the token while reflecting the new prefs.
+        user.notifDailyLogReminder = prefs.dailyLogReminder;
+        user.notifWeeklyProgressReport = prefs.weeklyProgressReport;
+        user.notifMealSuggestions = prefs.mealSuggestions;
+        user.notifStreakAlerts = prefs.streakAlerts;
+        user.notifMarketingEmails = prefs.marketingEmails;
+        this._currentUser.set(user);
+        this.saveSession(user);
+      }),
+    );
+  }
 
   /**
    * Updates basic profile fields and persists the change.

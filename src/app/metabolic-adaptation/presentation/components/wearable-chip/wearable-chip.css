@@ -11,7 +11,27 @@
   white-space: nowrap;
   user-select: none;
   border: 1.5px solid #e5e7eb;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+
+.wearable-chip:hover {
+  border-color: #9ca3af;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.wearable-chip--active:hover {
+  border-color: #34d399;
+}
+
+.wearable-chip:active {
+  transform: scale(0.97);
+}
+
+.wearable-chip:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
 }
 
 .wearable-chip--active {

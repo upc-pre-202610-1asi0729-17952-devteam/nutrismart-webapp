@@ -1,14 +1,19 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageSwitcher } from '../../../../shared/presentation/components/language-switcher/language-switcher';
 import { DecimalPipe } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { startWith } from 'rxjs';
+import type { Stripe, StripeCardElement, StripeElements } from '@stripe/stripe-js';
 import { PaymentStore } from '../../../application/payment.store';
 import { PaymentMethod } from '../../../domain/model/payment-method.value-object';
+import { PaymentMethodApi } from '../../../infrastructure/payment-method-api';
+import { getStripe, isStripeConfigured } from '../../../infrastructure/stripe-loader';
+import { IamStore } from '../../../../iam/application/iam.store';
 
 /** Validates that a string has exactly 16 numeric digits (ignoring spaces). */
 function cardNumberValidator(control: AbstractControl): ValidationErrors | null {
@@ -29,15 +34,15 @@ function expiryValidator(control: AbstractControl): ValidationErrors | null {
 /**
  * Payment gateway form (step 2 of the subscription flow).
  *
- * Renders a live-updating card preview that mirrors the user's input and
- * flips to show the CVV panel when that field is focused.
+ * Runs in one of two modes depending on {@link isStripeConfigured}:
+ * - **Stripe mode** (publishable key set): renders a Stripe Elements CardElement,
+ *   tokenizes the card in the browser (PCI-safe — the PAN never touches our DOM),
+ *   registers the payment method against the backend and stores the returned id.
+ * - **Simulated mode** (no key): keeps the manual card fields and the live preview,
+ *   used by {@link import('../../../infrastructure/simulated-payment-gateway').SimulatedPaymentGateway}.
  *
  * If a {@link PaymentMethod} is already stored in {@link PaymentStore} from a
- * previous step in the same session, the component redirects to checkout
- * immediately so the user does not need to re-enter card details.
- *
- * When integrating Stripe: replace the manual fields with Stripe Elements and
- * call {@link PaymentStore.setPaymentMethod} from the `token` callback.
+ * previous step in the same session, the component redirects to checkout.
  */
 @Component({
   selector: 'app-payment-gateway',
@@ -46,20 +51,39 @@ function expiryValidator(control: AbstractControl): ValidationErrors | null {
   templateUrl: './payment-gateway.html',
   styleUrl: './payment-gateway.css',
 })
-export class PaymentGateway implements OnInit {
-  private readonly fb       = inject(FormBuilder);
-  private readonly store    = inject(PaymentStore);
-  private readonly router   = inject(Router);
-  private readonly location = inject(Location);
+export class PaymentGateway implements OnInit, AfterViewInit, OnDestroy {
+  private readonly fb              = inject(FormBuilder);
+  private readonly store           = inject(PaymentStore);
+  private readonly router          = inject(Router);
+  private readonly location        = inject(Location);
+  private readonly paymentMethodApi = inject(PaymentMethodApi);
+  private readonly iamStore        = inject(IamStore);
 
   protected readonly selectedPlan  = this.store.selectedPlan;
   protected readonly selectedPrice = this.store.selectedPrice;
 
+  /** True when a Stripe publishable key is configured (real gateway). */
+  protected readonly stripeMode = isStripeConfigured();
+
+  /** Reference to the Stripe CardElement host (only present in Stripe mode). */
+  @ViewChild('cardElement') private cardElementRef?: ElementRef<HTMLDivElement>;
+
+  private stripe: Stripe | null = null;
+  private elements: StripeElements | null = null;
+  private cardElement: StripeCardElement | null = null;
+
+  /** Error message from Stripe (validation/tokenization/registration). */
+  readonly stripeError = signal<string>('');
+  /** True while tokenizing + registering the card. */
+  readonly submitting = signal<boolean>(false);
+  /** Card brand reported by Stripe Elements ('' until known). */
+  private readonly stripeBrand = signal<string>('');
+
   readonly form = this.fb.group({
     holderName: ['', [Validators.required, Validators.minLength(2)]],
-    cardNumber: ['', [Validators.required, cardNumberValidator]],
-    expiry:     ['', [Validators.required, expiryValidator]],
-    cvv:        ['', [Validators.required, Validators.pattern(/^\d{3}$/)]],
+    cardNumber: ['', this.stripeMode ? [] : [Validators.required, cardNumberValidator]],
+    expiry:     ['', this.stripeMode ? [] : [Validators.required, expiryValidator]],
+    cvv:        ['', this.stripeMode ? [] : [Validators.required, Validators.pattern(/^\d{3}$/)]],
   });
 
   /** Reactive snapshot of form values, updates on every keystroke. */
@@ -84,8 +108,16 @@ export class PaymentGateway implements OnInit {
   /** Expiry as typed, or placeholder. */
   readonly displayExpiry = computed(() => this.formValues().expiry || 'MM/YY');
 
-  /** Detected card brand from BIN prefix. */
+  /** Detected card brand — from Stripe Elements in Stripe mode, from BIN otherwise. */
   readonly displayBrand = computed(() => {
+    if (this.stripeMode) {
+      switch (this.stripeBrand()) {
+        case 'visa':       return 'VISA';
+        case 'mastercard': return 'MC';
+        case 'amex':       return 'AMEX';
+        default:           return '';
+      }
+    }
     const d = (this.formValues().cardNumber ?? '').replace(/\s/g, '');
     if (/^4/.test(d))       return 'VISA';
     if (/^5[1-5]/.test(d))  return 'MC';
@@ -106,12 +138,41 @@ export class PaymentGateway implements OnInit {
     }
   }
 
+  async ngAfterViewInit(): Promise<void> {
+    if (!this.stripeMode || !this.cardElementRef) return;
+    try {
+      this.stripe = await getStripe();
+      if (!this.stripe) { this.stripeError.set('Stripe failed to load'); return; }
+      this.elements = this.stripe.elements();
+      this.cardElement = this.elements.create('card', {
+        style: {
+          base: { fontFamily: 'inherit', fontSize: '15px', color: '#1a1a1a', '::placeholder': { color: '#9ca3af' } },
+          invalid: { color: '#ef4444' },
+        },
+      });
+      this.cardElement.mount(this.cardElementRef.nativeElement);
+      this.cardElement.on('change', (e) => {
+        this.stripeError.set(e.error?.message ?? '');
+        this.stripeBrand.set(e.brand && e.brand !== 'unknown' ? e.brand : '');
+      });
+    } catch {
+      this.stripeError.set('Stripe failed to load');
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.cardElement?.destroy();
+    this.cardElement = null;
+    this.elements = null;
+  }
+
   goBack(): void {
     this.location.back();
   }
 
   /**
    * Formats the card number input with spaces every 4 digits as the user types.
+   * (Simulated mode only.)
    *
    * @param event - The native input event.
    */
@@ -125,7 +186,7 @@ export class PaymentGateway implements OnInit {
   }
 
   /**
-   * Formats the expiry input as MM/YY automatically.
+   * Formats the expiry input as MM/YY automatically. (Simulated mode only.)
    *
    * @param event - The native input event.
    */
@@ -139,9 +200,12 @@ export class PaymentGateway implements OnInit {
   }
 
   /**
-   * Validates the form, builds a {@link PaymentMethod} and navigates to checkout.
+   * Validates the form and builds a {@link PaymentMethod}, then navigates to checkout.
+   * In Stripe mode the card is tokenized and registered against the backend first.
    */
-  submit(): void {
+  async submit(): Promise<void> {
+    if (this.stripeMode) { await this.submitStripe(); return; }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -157,6 +221,48 @@ export class PaymentGateway implements OnInit {
       expiryYear:  yy,
     }));
     this.router.navigate(['/subscription/checkout']);
+  }
+
+  /** Stripe flow: tokenize the card, register it on the backend, store it, go to checkout. */
+  private async submitStripe(): Promise<void> {
+    const holderCtrl = this.form.get('holderName')!;
+    if (holderCtrl.invalid) { holderCtrl.markAsTouched(); return; }
+    if (!this.stripe || !this.cardElement) { this.stripeError.set('Stripe is not ready'); return; }
+
+    const user = this.iamStore.currentUser();
+    if (!user) { this.stripeError.set('You must be signed in'); return; }
+
+    const holderName = (this.form.value.holderName ?? '').trim();
+    this.submitting.set(true);
+    this.stripeError.set('');
+    try {
+      const { paymentMethod, error } = await this.stripe.createPaymentMethod({
+        type: 'card',
+        card: this.cardElement,
+        billing_details: { name: holderName },
+      });
+      if (error || !paymentMethod?.card) {
+        this.stripeError.set(error?.message ?? 'Card error');
+        return;
+      }
+
+      const registered = await firstValueFrom(this.paymentMethodApi.register({
+        userId:                Number(user.id),
+        lastFour:              paymentMethod.card.last4,
+        brand:                 paymentMethod.card.brand,
+        expiryMonth:           paymentMethod.card.exp_month,
+        expiryYear:            paymentMethod.card.exp_year,
+        cardholderName:        holderName,
+        stripePaymentMethodId: paymentMethod.id,
+      }));
+
+      this.store.setPaymentMethod(registered);
+      this.router.navigate(['/subscription/checkout']);
+    } catch {
+      this.stripeError.set('payment.error_processing_failed');
+    } finally {
+      this.submitting.set(false);
+    }
   }
 
   /** Returns true when a form control is invalid and has been touched. */
