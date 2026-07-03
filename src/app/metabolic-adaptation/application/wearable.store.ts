@@ -131,19 +131,44 @@ export class WearableStore {
 
   // ─── Wearable Connection ──────────────────────────────────────────────────
 
-  async connectGoogleFit(): Promise<void> {
+  /**
+   * Registers a Google Health connection after the user authorized it through
+   * Google's OAuth consent screen. The `oauthCode` (when present) is the
+   * authorization code returned on the callback.
+   */
+  async connectGoogleHealth(oauthCode = ''): Promise<void> {
     const user = this.iamStore.currentUser();
     if (!user) return;
     this._loading.set(true);
     this._error.set(null);
     try {
-      const connection = await firstValueFrom(this.api.connectGoogleFit(user.id));
+      const connection = await firstValueFrom(this.api.connectGoogleHealth(user.id, oauthCode));
       this._connection.set(connection);
-      this.eventBus.publish(new WearableConnected(user.id, 'google_fit', connection.authorizedAt));
+      this.eventBus.publish(new WearableConnected(user.id, 'google_health', connection.authorizedAt));
     } catch {
       this._error.set('physical_activity.error_connect');
     } finally {
       this._loading.set(false);
+    }
+  }
+
+  /**
+   * Enables or disables automatic syncing for the current connection.
+   * Optimistic: the signal flips immediately and rolls back if the request fails.
+   */
+  async setAutoSync(enabled: boolean): Promise<void> {
+    const connection = this._connection();
+    if (!connection) return;
+    const previous = connection.autoSyncEnabled;
+    this._error.set(null);
+    try {
+      const updated = await firstValueFrom(this.api.setAutoSync(connection, enabled));
+      this._connection.set(updated);
+    } catch {
+      connection.autoSyncEnabled = previous;
+      this._connection.set(connection);
+      this._error.set('physical_activity.error_auto_sync');
+      throw new Error('auto_sync_failed');
     }
   }
 

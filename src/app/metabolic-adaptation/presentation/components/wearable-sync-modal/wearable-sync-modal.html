@@ -1,0 +1,110 @@
+<div class="modal-backdrop" (click)="onCancel()">
+  <div class="modal-dialog" role="dialog" aria-modal="true"
+       [attr.aria-label]="'physical_activity.sync_dialog.title' | translate"
+       (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-header-icon" [class.modal-header-icon--on]="isConnected()" aria-hidden="true">
+          <span class="material-icons">favorite</span>
+        </div>
+        <div>
+          <h3 class="modal-title">{{ 'physical_activity.sync_dialog.provider' | translate }}</h3>
+          <span class="modal-status"
+                [class.modal-status--on]="isConnected()">
+            {{ (isConnected() ? 'physical_activity.sync_dialog.connected' : 'physical_activity.sync_dialog.not_connected') | translate }}
+          </span>
+        </div>
+      </div>
+      <button class="modal-close" type="button"
+              [attr.aria-label]="'common.close' | translate"
+              (click)="onCancel()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <!-- Error -->
+    @if (error()) {
+      <div class="modal-error" role="alert">
+        <span class="material-icons">error_outline</span>
+        <span>{{ error()! | translate }}</span>
+      </div>
+    }
+
+    @if (!isConnected()) {
+      <!-- ── Disconnected state ── -->
+      <p class="sync-lead">{{ 'physical_activity.sync_dialog.connect_lead' | translate }}</p>
+      <ul class="sync-perms">
+        <li>
+          <span class="material-icons">check_circle</span>
+          {{ 'physical_activity.sync_dialog.perm_activity' | translate }}
+        </li>
+        <li>
+          <span class="material-icons">check_circle</span>
+          {{ 'physical_activity.sync_dialog.perm_calories' | translate }}
+        </li>
+      </ul>
+      <button class="sync-cta" type="button"
+              [disabled]="isLoading()"
+              (click)="onConnect()">
+        @if (isLoading()) {
+          <span class="material-icons sync-spin">refresh</span>
+        } @else {
+          <span class="material-icons">sync</span>
+        }
+        {{ 'physical_activity.sync_dialog.connect_btn' | translate }}
+      </button>
+      @if (oauthConfigured()) {
+        <p class="sync-hint">{{ 'physical_activity.sync_dialog.redirect_hint' | translate }}</p>
+      } @else {
+        <p class="sync-hint">{{ 'physical_activity.sync_dialog.simulated_hint' | translate }}</p>
+      }
+    } @else {
+      <!-- ── Connected state ── -->
+      <div class="sync-info">
+        <div class="sync-row">
+          <span class="sync-row-label">{{ 'physical_activity.sync_dialog.connected_since' | translate }}</span>
+          <span class="sync-row-value">{{ connectedSinceLabel() }}</span>
+        </div>
+        <div class="sync-row">
+          <span class="sync-row-label">{{ 'physical_activity.sync_dialog.last_sync' | translate }}</span>
+          <span class="sync-row-value">
+            {{ lastSyncLabel() ?? ('physical_activity.sync_dialog.never_synced' | translate) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="sync-autosync">
+        <div class="sync-autosync-text">
+          <span class="sync-autosync-title">{{ 'physical_activity.sync_dialog.auto_sync_title' | translate }}</span>
+          <span class="sync-autosync-desc">{{ 'physical_activity.sync_dialog.auto_sync_desc' | translate }}</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox"
+                 [checked]="autoSyncEnabled()"
+                 [disabled]="isLoading()"
+                 [attr.aria-label]="'physical_activity.sync_dialog.auto_sync_title' | translate"
+                 (change)="onAutoSyncToggle($event)" />
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+
+      <div class="sync-actions">
+        <button class="sync-btn-outline" type="button"
+                [disabled]="isLoading()"
+                (click)="onSyncNow()">
+          <span class="material-icons" [class.sync-spin]="isLoading()">sync</span>
+          {{ 'physical_activity.sync_dialog.sync_now' | translate }}
+        </button>
+        <button class="sync-btn-danger" type="button"
+                [disabled]="isLoading()"
+                (click)="onDisconnect()">
+          <span class="material-icons">link_off</span>
+          {{ 'physical_activity.sync_dialog.disconnect' | translate }}
+        </button>
+      </div>
+    }
+
+  </div>
+</div>
